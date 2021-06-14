@@ -25,3 +25,6 @@
 [submodule "model/variant/XSprayDrift"]
 	path = model/variant/XSprayDrift
 	url = https://gitlab.bayer.com/aqrisk-landscape/xspraydrift-component.git
+[submodule "model/core"]
+	path = model/core
+	url = https://gitlab.bayer.com/aqrisk-landscape/landscapemodel-core.git
