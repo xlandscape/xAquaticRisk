@@ -1,3 +1,6 @@
 [submodule "model/variant/AnalysisObserver"]
 	path = model/variant/AnalysisObserver
 	url = https://gitlab.bayer.com/aqrisk-landscape/analysisobserver.git
+[submodule "model/variant/CascadeToxswa"]
+	path = model/variant/CascadeToxswa
+	url = https://gitlab.bayer.com/aqrisk-landscape/cascadetoxswa-component.git
