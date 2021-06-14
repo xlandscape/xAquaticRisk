@@ -7,3 +7,6 @@
 [submodule "model/variant/CmfContinuous"]
 	path = model/variant/CmfContinuous
 	url = https://gitlab.bayer.com/aqrisk-landscape/cmfcontinuous-component.git
+[submodule "model/variant/LEffectModel"]
+	path = model/variant/LEffectModel
+	url = https://gitlab.bayer.com/aqrisk-landscape/leffectmodel-component.git
