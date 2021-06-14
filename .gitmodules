@@ -4,3 +4,6 @@
 [submodule "model/variant/CascadeToxswa"]
 	path = model/variant/CascadeToxswa
 	url = https://gitlab.bayer.com/aqrisk-landscape/cascadetoxswa-component.git
+[submodule "model/variant/CmfContinuous"]
+	path = model/variant/CmfContinuous
+	url = https://gitlab.bayer.com/aqrisk-landscape/cmfcontinuous-component.git
