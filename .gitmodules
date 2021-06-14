@@ -13,3 +13,6 @@
 [submodule "model/variant/LP50"]
 	path = model/variant/LP50
 	url = https://gitlab.bayer.com/aqrisk-landscape/lp50-component.git
+[submodule "model/variant/ReportingObserver"]
+	path = model/variant/ReportingObserver
+	url = https://gitlab.bayer.com/aqrisk-landscape/reportingobserver.git
