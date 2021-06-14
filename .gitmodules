@@ -10,3 +10,6 @@
 [submodule "model/variant/LEffectModel"]
 	path = model/variant/LEffectModel
 	url = https://gitlab.bayer.com/aqrisk-landscape/leffectmodel-component.git
+[submodule "model/variant/LP50"]
+	path = model/variant/LP50
+	url = https://gitlab.bayer.com/aqrisk-landscape/lp50-component.git
