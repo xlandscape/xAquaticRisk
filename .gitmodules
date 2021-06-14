@@ -1,0 +1,3 @@
+[submodule "model/variant/AnalysisObserver"]
+	path = model/variant/AnalysisObserver
+	url = https://gitlab.bayer.com/aqrisk-landscape/analysisobserver.git
