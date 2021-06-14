@@ -28,3 +28,6 @@
 [submodule "model/core"]
 	path = model/core
 	url = https://gitlab.bayer.com/aqrisk-landscape/landscapemodel-core.git
+[submodule "scenario/oudebeek-beek7-tdi"]
+	path = scenario/oudebeek-beek7-tdi
+	url = https://gitlab.bayer.com/aqrisk-landscape/scenario-oudebeek-beek7-tdi.git
