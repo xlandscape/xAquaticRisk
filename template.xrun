@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters>
+
+  <!-- SCENARIO -->
+
+  <!--
+  Parameter     :  Project
+  Description   :  The scenario used by the simulation
+  Values        :  scenario/Rummen_subCatch_Stream1North, scenario/Rummen_subCatch_20reaches,
+                   scenario/Rummen_subCatch_East, scenario/Rummen_subCatch_Velm, scenario/Rummen
+  Remark        :  Make sure that the scenario is present in the scenario sub-folder.
+  -->
+  <Project>scenario/oudebeek_beek7-T-Di-3.4.210128</Project>
+
+  <!--
+  Parameter     :  SimulationStart
+  Description   :  The first date that is simulated
+  Values        :  A date of format YYYY-MM-DD within the valid range of dates
+  Remark        :  The valid range of start dates is mainly determined by the input data for the selected scenario. The
+                   currently available ranges are (actual limitation is intersect of weather and hydrology):
+                   weather                :  01.01.1975 - 31.12.2018
+                   hydrology Rummen       :  01.01.1992 - 30.12.2017
+                   hydrology Rummen East  :  01.01.1992 - 30.12.2016
+                   hydrology Rummen Velm  :  01.01.2006 - 30.12.2016
+                   hydrology Stream1North :  01.01.1992 - 30.12.2016
+                   hydrology 20reaches    :  01.01.2007 - 01.01.2017
+  -->
+  <SimulationStart>2015-05-01</SimulationStart>
+
+  <!--
+  Parameter     :  SimulationEnd
+  Description   :  The last date that is simulated
+  Values        :  A date of format YYYY-MM-DD within the valid range of dates
+  Remark        :  Must be later tha the simulation start (or the same date). For limitations of allowed dates, see
+                   remark for SimulationStart.
+  -->
+  <SimulationEnd>2015-05-07</SimulationEnd>
+
+  <!-- ######## -->
+
+
+  <!-- PPP USE -->
+
+  <!--
+  Parameter     :  ApplicationRate
+  Description   :  The application rate in g/ha
+  Values        :  Any positive number (or zero)
+  Remark        :  The application rate applies to all applications within application sequences.
+  -->
+  <ApplicationRate>12.5</ApplicationRate>
+
+  <!--
+  Parameter     :  ApplicationTimeWindow
+  Description   :  The time windows within which applications take place
+  Values        :  format: MM-DD to MM-DD[, MM-DD to MM-DD[, ...]]
+  Remark        :  For each target field, year and application within an application sequence, a random date within the
+                   specified time window is selected. Example values:
+                   04-15 to 04-15 : All fields are applied on 15th of April every year
+                   04-07 to 04-21 : All fields are applied each year on a random date (per field and year) between 7th
+                                    and 21st of April
+                   04-07 to 04-21, 05-02 to 05-16 : All fields are applied twice each year; on a random date (per field
+                                                    and year) between 7th and 21st of April and on a random date (per
+                                                    field and year) between 2nd and 16th of May.
+  -->
+  <ApplicationTimeWindow>05-02 to 05-02</ApplicationTimeWindow>
+
+  <!-- ######## -->
+
+
+  <!-- MITIGATION -->
+
+  <!--
+  Parameter     :  InCropBuffer
+  Description   :  A in-crop buffer not applied in meters
+  Values        :  Zero or a positive number.
+  Remark        :  The in-crop buffer is geometrically applied to the field and might result in very small fields not
+                   being applied at all.
+  -->
+  <InCropBuffer>0</InCropBuffer>
+
+  <!--
+  Parameter     :  TechnologyDriftReduction
+  Description   :  The effect of drift-reducing nozzles to spay-drift deposition; the fraction filtered out
+  Values        :  A number between 0 and 1
+  Remark        :  Zero means no effect = full spray-drift deposition, 1 means full filtering = no deposition at all
+  -->
+  <TechnologyDriftReduction>0</TechnologyDriftReduction>
+
+  <!-- ######## -->
+
+
+  <!-- EXPOSURE -->
+
+  <!--
+  Parameter     :  CropStage
+  Description   :  The spray-drift scenario used in the simulation
+  Values        :  early or late
+  Remark        :  The scenario is applied to all applications of application sequences.
+  Best practice :  Select the spray-drift scenario fitting to te application dates.
+  -->
+  <CropStage>early</CropStage>
+
+  <!-- ######## -->
+
+
+  <!-- EFATE MODEL -->
+
+  <!--
+  Parameter     :  RunStepsRivernetwork
+  Description   :  Controls whether efate is calculated by the StepsRivernetwork component
+  Values        :  true or false
+    -->
+  <RunStepsRivernetwork>true</RunStepsRivernetwork>
+
+  <!--
+  Parameter     :  RunCascadeToxswa
+  Description   :  Controls whether efate is calculated by the CascadeToxswa component
+  Values        :  true or false
+    -->
+  <RunCascadeToxswa>true</RunCascadeToxswa>
+
+  <!--
+  Parameter     :  RunCmfContinuous
+  Description   :  Controls whether efate is calculated by the CmfContinuous component
+  Values        :  true or false
+    -->
+  <RunCmfContinuous>false</RunCmfContinuous>
+
+  <!--
+  Parameter     :  ThresholdSW
+  Description   :  The surface water value precision used by StepsRivernetwork
+  Values        :  A positive number
+  Remark        :  Only applies if RunStepsRivernetwork is true.
+  -->
+  <ThresholdSW>0.001</ThresholdSW>
+
+  <!--
+  Parameter     :  ThresholdSediment
+  Description   :  The sediment value precision used by StepsRivernetwork
+  Values        :  A positive number
+  Remark        :  Only applies if RunStepsRivernetwork is true.
+  -->
+  <ThresholdSediment>0.1</ThresholdSediment>
+
+  <!--
+  Parameter     :  MolarMass
+  Description   :  The molar mass of the applied substance
+  Values        :  A value in g/mol
+  -->
+  <MolarMass>505.2</MolarMass>
+
+  <!--
+  Parameter     :  SaturatedVapourPressure
+  Description   :  The saturated vapour pressure of the applied substance at 20°C
+  Values        :  A value in Pa
+  -->
+  <SaturatedVapourPressure>1.10E-06</SaturatedVapourPressure>
+
+  <!--
+  Parameter     :  MolarEnthalpyOfVaporization
+  Description   :  The molar enthalpy of vaporization of the applied substance
+  Values        :  A value in kJ/mol
+  -->
+  <MolarEnthalpyOfVaporization>95</MolarEnthalpyOfVaporization>
+
+  <!--
+  Parameter     :  SolubilityInWater
+  Description   :  The solubility in water of the applied substance at 20°C
+  Values        :  A value in mg/l
+  -->
+  <SolubilityInWater>0.001</SolubilityInWater>
+
+  <!--
+  Parameter     :  MolarEnthalpyOfDissolution
+  Description   :  The molar enthalpy of dissolution of the applied substance
+  Values        :  A value in kJ/mol
+  -->
+  <MolarEnthalpyOfDissolution>27</MolarEnthalpyOfDissolution>
+
+  <!--
+  Parameter     :  DiffusionCoefficient
+  Description   :  The diffusion coefficient of the applied substance at 20°C
+  Values        :  A value in m²/d
+  -->
+  <DiffusionCoefficient>4.30E-05</DiffusionCoefficient>
+
+  <!--
+  Parameter     :  DT50sw
+  Description   :  The half-life transformation time in water of the applied substance at 20°C
+  Values        :  A value in d
+  -->
+  <DT50sw>1000</DT50sw>
+
+  <!--
+  Parameter     :  MolarActivationEnthalpyOfTransformationInWater
+  Description   :  The molar activation enthalpy for transformation in water of the applied substance
+  Values        :  A value in kJ/mol
+  -->
+  <MolarActivationEnthalpyOfTransformationInWater>65.4</MolarActivationEnthalpyOfTransformationInWater>
+
+  <!--
+  Parameter     :  DT50sed
+  Description   :  The half-life transformation time in sediment of the applied substance at 20°C
+  Values        :  A value in d
+  -->
+  <DT50sed>43.9</DT50sed>
+
+  <!--
+  Parameter     :  MolarActivationEnthalpyOfTransformationInSediment
+  Description   :  The molar activation enthalpy for transformation in sediment of the applied substance
+  Values        :  A value in kJ/mol
+  -->
+  <MolarActivationEnthalpyOfTransformationInSediment>65.4</MolarActivationEnthalpyOfTransformationInSediment>
+
+  <!--
+  Parameter     :  KOC
+  Description   :  The organic carbon-water partition co-efficient of the applied substance
+  Values        :  A value in l/kg
+  Remark        :  The KOM used by some modules is automatically derived from the KOC by dividing it by 1.742
+  -->
+  <KOC>460000</KOC>
+
+  <!--
+  Parameter     :  ReferenceConcentrationForKOC
+  Description   :  The reference concentration for the KOC of the applied substance
+  Values        :  A value in mg/l
+  -->
+  <ReferenceConcentrationForKOC>1</ReferenceConcentrationForKOC>
+
+  <!--
+  Parameter     :  FreundlichExponentInSedimentAndSuspendedParticles
+  Description   :  The Freundlich exponent in sediment and suspended particles of the applied substance
+  Values        :  A value without unit
+  -->
+  <FreundlichExponentInSedimentAndSuspendedParticles>0.93</FreundlichExponentInSedimentAndSuspendedParticles>
+
+  <!--
+  Parameter     :  CoefficientForLinearSorptionOnMacrophytes
+  Description   :  The coefficient for linear sorption on macrophytes of the applied substance
+  Values        :  A value in l/kg
+  -->
+  <CoefficientForLinearSorptionOnMacrophytes>0</CoefficientForLinearSorptionOnMacrophytes>
+
+  <!-- ######## -->
+
+
+  <!-- EFFECT MODEL -->
+
+  <!--
+  Parameter     :  RunLGUTS
+  Description   :  Specifies whether effects are simulated by LGUTS for the switched-on efate components
+  Values        :  true or false
+  -->
+  <RunLGUTS>true</RunLGUTS>
+
+  <!--
+  Parameter     :  RunLPop
+  Description   :  Specifies whether effects are simulated by LPop for the switched-on efate components
+  Values        :  true or false
+  -->
+  <RunLPop>false</RunLPop>
+
+  <!--
+  Parameter     :  RunStreamCom
+  Description   :  Specifies whether effects are simulated by StreamCom for the switched-on efate components
+  Values        :  true or false
+  -->
+  <RunStreamCom>false</RunStreamCom>
+
+  <!--
+  Parameter     :  MultiplicationFactors_LPop
+  Description   :  Multiplication factors that applied during LPop simulations
+  Values        :  A space separated list of multiplication factors (decimal numbers)
+  Remark        :  Use a multiplication factor of 1 if no further investigation of the effect space is
+                   required; every additional multiplication factor increases processing time
+  -->
+  <MultiplicationFactors_LPop>1</MultiplicationFactors_LPop>
+
+  <!--
+  Parameter     :  StreamComReach1
+  Description   :  The first reach that is used for StreamCom simulations
+  Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
+  Remark        :  Leave empty to skip StreamCom simulation
+  -->
+  <StreamComReach1>10</StreamComReach1>
+
+  <!--
+  Parameter     :  StreamComReach2
+  Description   :  The second reach that is used for StreamCom simulations
+  Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
+  Remark        :  Leave empty to skip StreamCom simulation
+  -->
+  <StreamComReach2>570</StreamComReach2>
+
+  <!--
+  Parameter     :  StreamComReach3
+  Description   :  The third reach that is used for StreamCom simulations
+  Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
+  Remark        :  Leave empty to skip StreamCom simulation
+  -->
+  <StreamComReach3>580</StreamComReach3>
+
+  <!--
+  Parameter     :  StreamComReach4
+  Description   :  The first reach that is used for StreamCom simulations
+  Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
+  Remark        :  Leave empty to skip StreamCom simulation
+  -->
+  <StreamComReach4>1807</StreamComReach4>
+
+  <!--
+  Parameter     :  Species1
+  Description   :  The name of the first species to calculate effects for
+  Values        :  Any characters that are valid in file system identifiers
+  Remark        :  Individual effects for the species are calculated in LGUTS. The species will also be part of the
+                   StreamCom simulation if it is from the following list: Asellus aquaticus, Baetis rhodani,
+                   Dikerogammarus villosus, Ecdyonurus dispar, Epeorus assimilis, Gammarus fossarum, Gammarus pulex,
+                   Gammarus roeselii, Habrophlebia lauta, Lymnaea stagnalis, Planorbis planorbis,
+                   Potamopyrgus antipodarum, Rhithrogena semicolorata, Sphaerium corneum, Stagnicola palustris,
+                   Gasterosteus aculeatus, Perca fluviatilis or Salmo trutta
+  Best practice :  Species 1 should be parameterized as Asellus aquaticus, because its GUTS parametrization is used by
+                   the LEffectModel population which is implemented for Asellus aquaticus. Parameterizing a different
+                   species as species 1 makes the results of the population model harder to interpret: still, Asellus
+                   aquaticus is modelled, but with the sensitivity towards a (hypothetical) substance equaling the
+                   GUTS parameters parameterized here.
+  -->
+  <Species1>Asellus aquaticus</Species1>
+
+  <!--
+  Parameter     :  Species1DominantRateConstantSD
+  Description   :  The GUTS (SD) dominant rate constant for species 1 in 1/h
+  Values        :  Any number
+  -->
+  <Species1DominantRateConstantSD>0.01188</Species1DominantRateConstantSD>
+
+  <!--
+  Parameter     :  Species1ThresholdConcentrationSD
+  Description   :  The GUTS (SD) threshold for lethal effects for species 1 in ng/l
+  Values        :  Any positive number
+  -->
+  <Species1ThresholdConcentrationSD>0.05507</Species1ThresholdConcentrationSD>
+
+  <!--
+  Parameter     :  Species1KillingRateSD
+  Description   :  The GUTS (SD) killing rate for species 1 in l/(ng*h)
+  Values        :  Any positive number
+  -->
+  <Species1KillingRateSD>0.002615</Species1KillingRateSD>
+
+    <!--
+  Parameter     :  Species1DominantRateConstantIT
+  Description   :  The GUTS (IT) dominant rate constant for species 1 in 1/h
+  Values        :  Any number
+  -->
+  <Species1DominantRateConstantIT>0.0005541</Species1DominantRateConstantIT>
+
+  <!--
+  Parameter     :  Species1ThresholdDistributionIT
+  Description   :  The GUTS (IT) threshold for lethal effects for species 1 in ng/l
+  Values        :  Any positive number
+  -->
+  <Species1ThresholdDistributionIT>0.4429</Species1ThresholdDistributionIT>
+
+  <!--
+  Parameter     :  Species1WidthOfThresholdDistributionIT
+  Description   :  The GUTS (IT) killing rate for species 1
+  Values        :  Any positive number
+  -->
+  <Species1WidthOfThresholdDistributionIT>1.582</Species1WidthOfThresholdDistributionIT>
+
+  <!--
+  Parameter     :  Species2
+  Description   :  The name of the second species to calculate effects for
+  Values        :  Any characters that are valid in file system identifiers
+  Remark        :  See remark to parameter Species1
+  -->
+  <Species2>Cloeon dipterum</Species2>
+
+  <!--
+  Parameter     :  Species1DominantRateConstantSD
+  Description   :  The GUTS (SD) dominant rate constant for species 2 in 1/h
+  Values        :  Any number
+  -->
+  <Species2DominantRateConstantSD>0.03719</Species2DominantRateConstantSD>
+
+  <!--
+  Parameter     :  Species2ThresholdConcentrationSD
+  Description   :  The GUTS (SD) threshold for lethal effects for species 2 in ng/l
+  Values        :  Any positive number
+  -->
+  <Species2ThresholdConcentrationSD>4.702</Species2ThresholdConcentrationSD>
+
+  <!--
+  Parameter     :  Species2KillingRateSD
+  Description   :  The GUTS (SD) killing rate for species 2 in l/(ng*h)
+  Values        :  Any positive number
+  -->
+  <Species2KillingRateSD>0.0009361</Species2KillingRateSD>
+
+    <!--
+  Parameter     :  Species2DominantRateConstantIT
+  Description   :  The GUTS (IT) dominant rate constant for species 2 in 1/h
+  Values        :  Any number
+  -->
+  <Species2DominantRateConstantIT>0.01416</Species2DominantRateConstantIT>
+
+  <!--
+  Parameter     :  Species2ThresholdDistributionIT
+  Description   :  The GUTS (IT) threshold for lethal effects for species 2 in ng/l
+  Values        :  Any positive number
+  -->
+  <Species2ThresholdDistributionIT>36.27</Species2ThresholdDistributionIT>
+
+  <!--
+  Parameter     :  Species2WidthOfThresholdDistributionIT
+  Description   :  The GUTS (IT) killing rate for species 2 in 1
+  Values        :  Any positive number
+  -->
+  <Species2WidthOfThresholdDistributionIT>1.648</Species2WidthOfThresholdDistributionIT>
+
+  <!--
+  Parameter     :  Species3
+  Description   :  The name of the second species to calculate effects for
+  Values        :  Any characters that are valid in file system identifiers
+  Remark        :  See remark to parameter Species1
+  -->
+  <Species3>Gammarus pulex</Species3>
+
+  <!--
+  Parameter     :  Species1DominantRateConstantSD
+  Description   :  The GUTS (SD) dominant rate constant for species 3 in 1/h
+  Values        :  Any number
+  -->
+  <Species3DominantRateConstantSD>0.008858</Species3DominantRateConstantSD>
+
+  <!--
+  Parameter     :  Species3ThresholdConcentrationSD
+  Description   :  The GUTS (SD) threshold for lethal effects for species 3 in ng/l
+  Values        :  Any positive number
+  -->
+  <Species3ThresholdConcentrationSD>0.6292</Species3ThresholdConcentrationSD>
+
+  <!--
+  Parameter     :  Species3KillingRateSD
+  Description   :  The GUTS (SD) killing rate for species 3 in l/(ng*h)
+  Values        :  Any positive number
+  -->
+  <Species3KillingRateSD>0.01989</Species3KillingRateSD>
+
+    <!--
+  Parameter     :  Species3DominantRateConstantIT
+  Description   :  The GUTS (IT) dominant rate constant for species 3 in 1/h
+  Values        :  Any number
+  -->
+  <Species3DominantRateConstantIT>0.002324</Species3DominantRateConstantIT>
+
+  <!--
+  Parameter     :  Species3ThresholdDistributionIT
+  Description   :  The GUTS (IT) threshold for lethal effects for species 3 in ng/l
+  Values        :  Any positive number
+  -->
+  <Species3ThresholdDistributionIT>0.8206</Species3ThresholdDistributionIT>
+
+  <!--
+  Parameter     :  Species3WidthOfThresholdDistributionIT
+  Description   :  The GUTS (IT) killing rate for species 3 in 1
+  Values        :  Any positive number
+  -->
+  <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
+
+  <!-- ######## -->
+
+
+  <!-- SETTINGS -->
+
+  <!--
+  Parameter     :  NumberMC
+  Description   :  The number of Monte Carlo runs
+  Values        :  Any positive integer
+  Remark        :  MC runs are conducted (partly) in parallel according to the NumberParallelProcesses parameter.
+  Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long running simulations,
+                   30 for small simulations and 10 for anything in between.
+  -->
+  <NumberMC>1</NumberMC>
+
+  <!--
+  Parameter     :  ExportToSqlite
+  Description   :  Specifies whether PECs and individual effects are exported into a SQLite database
+  Values        :  true or false
+  Best practice :  The export feature is experimental and should be set to false for longer simulation runs.
+  -->
+  <ExportToSqlite>false</ExportToSqlite>
+
+  <!-- ######## -->
+
+
+  <!-- ANALYSIS -->
+
+  <!--
+  Parameter     :  ReportingReaches
+  Description   :  Pre-selection of reaches for which detailed reports are generated
+  Values        :  Comma-separated reach identifiers in the format rXYZ (no spaces)
+  Remark        :  Only in effect if a report is generated, i.e., if at least one efate module is switched on and
+                   RunEffects is true.
+  -->
+  <ReportingReaches>r577</ReportingReaches>
+
+  <!--
+  Parameter     :  PecDisplayedTime
+  Description   :  The PEC value that is plotted for each enabled efate component
+  Values        :  A date and time of format YYYY-MM-DD HH:MM within the valid range of dates
+  -->
+  <PecDisplayedTime>2015-05-02 12:00</PecDisplayedTime>
+
+  <!-- ######## -->
+
+
+  <!-- SIMULATION INFO -->
+
+  <!--
+  Parameter     :  SimID
+  Description   :  Unique identifier of a simulation run
+  Values        :  Any characters that are valid in file system identifiers
+  Remark        :  Running a simulation with the same name as an existing simulation run results in an error.
+  Best practice :  Change this parameter with every simulation run. When doing test runs, indicate the test character of
+                   clearly in the identifier. If conducting a run from the experiment table, register it there and use
+                   the naming scheme <experiment id>-<n> where n is the number of the run.
+  -->
+  <SimID>Test_Run_aqRisk</SimID>
+
+  <!--
+  Parameter     :  ParentRun
+  Description   :  A file pattern of potential parents for this run
+  Values        :  Empty (=do not use this feature) or a file pattern yielding at least one X3df data store file.
+  Remark        :  The feature is currently experimental.
+                   If the pattern yields more than one file, a single file will be sampled per Monte Carlo run.
+  Best practice :  Only fill out the parent run if you like to test the feature.
+  -->
+  <ParentRun></ParentRun>
+
+  <!--
+  Parameter     :  NumberParallelProcesses
+  Description   :  The number of Monte Carlo runs that are conducted simultaneously
+  Values        :  Any positive integer
+  Remark        :  This parameter should be modified according to the available hardware resources.
+  Best practice :  To best use the available hardware, apply this rule of thumb:
+                   min(NumberMC, NumberParallelProcesses) <= available processors
+                   if RunCascadeToxswa is false, else
+                   min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
+  -->
+  <NumberParallelProcesses>10</NumberParallelProcesses>
+
+  <!--
+  Parameter     :  CascadeToxswaWorkers
+  Description   :  The number of processes spawned by CascadeToxswa
+  Values        :  Any positive integer
+  Remark        :  This parameter should be modified according to the available hardware resources. Only in effect, if
+                   RunCascadeToxswa is true.
+  Best practice :  To best use the available hardware, apply this rule of thumb:
+                   min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
+  -->
+  <CascadeToxswaWorkers>2</CascadeToxswaWorkers>
+
+  <!-- ######## -->
+</Parameters>
