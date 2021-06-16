@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Experiment>
+    <General>
+        <MCRunTemplate>$(_X3DIR_)/../../variant/mc.xml</MCRunTemplate>
+        <MCBaseDir>$(_EXP_BASE_DIR_)\$(SimID)\mcs</MCBaseDir>
+        <NumberMC>$(NumberMC)</NumberMC>
+        <NumberParallelProcesses>$(NumberParallelProcesses)</NumberParallelProcesses>
+        <ExperimentDir>$(_EXP_BASE_DIR_)\$(SimID)</ExperimentDir>
+    </General>
+    <Observers>
+        <Observer module="observer" class="ConsoleObserver"/>
+        <Observer module="observer" class="LogFileObserver">
+            <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\experiment.log</LogFile>
+        </Observer>
+        <Observer module="ReportingObserver" class="ReportingObserver">
+            <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>
+            <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\reporting\$(Species1)_SD</Output_Folder>
+            <Key>$(SimID)</Key>
+            <CmfCont>$(RunCmfContinuous)</CmfCont>
+            <Cascade>$(RunCascadeToxswa)</Cascade>
+            <Steps>$(RunStepsRivernetwork)</Steps>
+            <Lguts>$(RunLGUTS)</Lguts>
+            <T0>$(SimulationStart)T00:00</T0>
+            <Tn>$(SimulationEnd)T23:00</Tn>
+            <Cmf_Depth>cmf_depth</Cmf_Depth>
+            <CmfCont_PecSW>cmfcont_pecsw</CmfCont_PecSW>
+            <CmfCont_Survival>cmfcont_survival</CmfCont_Survival>
+            <Steps_PecSW>steps_pecsw</Steps_PecSW>
+            <Steps_Survival>steps_survival</Steps_Survival>
+            <Cascade_PecSW>cascade_pecsw</Cascade_PecSW>
+            <Cascade_Survival>cascade_survival</Cascade_Survival>
+            <Reaches>$(ReportingReaches)</Reaches>
+            <Pec_P1>20</Pec_P1>
+            <Pec_P2>80</Pec_P2>
+            <Pec_X>Reaches</Pec_X>
+            <Pec_Y>PEC$_{SW}$ [$\mu$g L$^{-1}$]</Pec_Y>
+            <Pec_YLim>(0,2)</Pec_YLim>
+            <Pec_Ylim_Small>(0,0.5)</Pec_Ylim_Small>
+            <Pec_C>b</Pec_C>
+            <Pec_L>PEC$_{SW,max}$</Pec_L>
+            <Pec_Func>np.max</Pec_Func>
+            <Lguts_P1>20</Lguts_P1>
+            <Lguts_P2>80</Lguts_P2>
+            <Lguts_YLim>(0,1.1)</Lguts_YLim>
+            <Lguts_X>Reaches</Lguts_X>
+            <Lguts_Y>Survival rate [0-1; 1=alive]</Lguts_Y>
+            <Lguts_C>g</Lguts_C>
+            <Lguts_L>Survival rate</Lguts_L>
+            <Lguts_Func>np.min</Lguts_Func>
+            <LM_Spray_Drift_DS>/DepositionToReach/Deposition</LM_Spray_Drift_DS>
+            <LM_Spray_Drift_Reaches_DS>/DepositionToReach/Reaches</LM_Spray_Drift_Reaches_DS>
+            <LM_Compound_Name>CMP_A</LM_Compound_Name>
+            <LM_Simulation_Start>$(SimulationStart)</LM_Simulation_Start>
+            <LM_Cascade_DS>/CascadeToxswa/ConLiqWatTgtAvg</LM_Cascade_DS>
+            <LM_Cmf_Continuous_DS>/CmfContinuous/PEC_SW</LM_Cmf_Continuous_DS>
+            <LM_Steps_RiverNetwork_DS>/StepsRivernetwork/PEC_SW</LM_Steps_RiverNetwork_DS>
+            <LM_Hydrography_DS>/LandscapeScenario/hydrography</LM_Hydrography_DS>
+            <LM_Cascade_Reaches>/CascadeToxswa/Reaches</LM_Cascade_Reaches>
+            <LM_Cmf_Continuous_Reaches>/CmfContinuous/Reaches</LM_Cmf_Continuous_Reaches>
+            <LM_Steps_Rivernetwork_reaches>/StepsRivernetwork/Reaches</LM_Steps_Rivernetwork_reaches>
+            <LM_Catchment>$(:Catchment)</LM_Catchment>
+            <LM_Cmf_Depth_DS>/Hydrology/Depth</LM_Cmf_Depth_DS>
+            <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
+            <LM_Steps_Survival>/IndEffect_StepsRivernetwork_SD_Species1/GutsSurvivalReaches</LM_Steps_Survival>
+            <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
+            <LM_Cmf_Continuous_Survival>/IndEffect_CmfContinuous_SD_Species1/GutsSurvivalReaches</LM_Cmf_Continuous_Survival>
+            <LM_Cmf_Continuous_Survival_Mfs_Index>10</LM_Cmf_Continuous_Survival_Mfs_Index>
+            <LM_Cascade_Survival>/IndEffect_CascadeToxswa_SD_Species1/GutsSurvivalReaches</LM_Cascade_Survival>
+            <LM_Cascade_Survival_Mfs_Index>10</LM_Cascade_Survival_Mfs_Index>
+            <LM_Cmf_Survival_Offset>true</LM_Cmf_Survival_Offset>
+            <LM_Steps_Survival_Offset>true</LM_Steps_Survival_Offset>
+            <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
+        </Observer>
+        <Observer module="ReportingObserver" class="ReportingObserver">
+            <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>
+            <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\reporting\$(Species1)_IT</Output_Folder>
+            <Key>$(SimID)</Key>
+            <CmfCont>$(RunCmfContinuous)</CmfCont>
+            <Cascade>$(RunCascadeToxswa)</Cascade>
+            <Steps>$(RunStepsRivernetwork)</Steps>
+            <Lguts>$(RunLGUTS)</Lguts>
+            <T0>$(SimulationStart)T00:00</T0>
+            <Tn>$(SimulationEnd)T23:00</Tn>
+            <Cmf_Depth>cmf_depth</Cmf_Depth>
+            <CmfCont_PecSW>cmfcont_pecsw</CmfCont_PecSW>
+            <CmfCont_Survival>cmfcont_survival</CmfCont_Survival>
+            <Steps_PecSW>steps_pecsw</Steps_PecSW>
+            <Steps_Survival>steps_survival</Steps_Survival>
+            <Cascade_PecSW>cascade_pecsw</Cascade_PecSW>
+            <Cascade_Survival>cascade_survival</Cascade_Survival>
+            <Reaches>$(ReportingReaches)</Reaches>
+            <Pec_P1>20</Pec_P1>
+            <Pec_P2>80</Pec_P2>
+            <Pec_X>Reaches</Pec_X>
+            <Pec_Y>PEC$_{SW}$ [$\mu$g L$^{-1}$]</Pec_Y>
+            <Pec_YLim>(0,2)</Pec_YLim>
+            <Pec_Ylim_Small>(0,0.5)</Pec_Ylim_Small>
+            <Pec_C>b</Pec_C>
+            <Pec_L>PEC$_{SW,max}$</Pec_L>
+            <Pec_Func>np.max</Pec_Func>
+            <Lguts_P1>20</Lguts_P1>
+            <Lguts_P2>80</Lguts_P2>
+            <Lguts_YLim>(0,1.1)</Lguts_YLim>
+            <Lguts_X>Reaches</Lguts_X>
+            <Lguts_Y>Survival rate [0-1; 1=alive]</Lguts_Y>
+            <Lguts_C>g</Lguts_C>
+            <Lguts_L>Survival rate</Lguts_L>
+            <Lguts_Func>np.min</Lguts_Func>
+            <LM_Spray_Drift_DS>/DepositionToReach/Deposition</LM_Spray_Drift_DS>
+            <LM_Spray_Drift_Reaches_DS>/DepositionToReach/Reaches</LM_Spray_Drift_Reaches_DS>
+            <LM_Compound_Name>CMP_A</LM_Compound_Name>
+            <LM_Simulation_Start>$(SimulationStart)</LM_Simulation_Start>
+            <LM_Cascade_DS>/CascadeToxswa/ConLiqWatTgtAvg</LM_Cascade_DS>
+            <LM_Cmf_Continuous_DS>/CmfContinuous/PEC_SW</LM_Cmf_Continuous_DS>
+            <LM_Steps_RiverNetwork_DS>/StepsRivernetwork/PEC_SW</LM_Steps_RiverNetwork_DS>
+            <LM_Hydrography_DS>/LandscapeScenario/hydrography</LM_Hydrography_DS>
+            <LM_Cascade_Reaches>/CascadeToxswa/Reaches</LM_Cascade_Reaches>
+            <LM_Cmf_Continuous_Reaches>/CmfContinuous/Reaches</LM_Cmf_Continuous_Reaches>
+            <LM_Steps_Rivernetwork_reaches>/StepsRivernetwork/Reaches</LM_Steps_Rivernetwork_reaches>
+            <LM_Catchment>$(:Catchment)</LM_Catchment>
+            <LM_Cmf_Depth_DS>/Hydrology/Depth</LM_Cmf_Depth_DS>
+            <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
+            <LM_Steps_Survival>/IndEffect_StepsRivernetwork_IT_Species1/GutsSurvivalReaches</LM_Steps_Survival>
+            <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
+            <LM_Cmf_Continuous_Survival>/IndEffect_CmfContinuous_IT_Species1/GutsSurvivalReaches</LM_Cmf_Continuous_Survival>
+            <LM_Cmf_Continuous_Survival_Mfs_Index>10</LM_Cmf_Continuous_Survival_Mfs_Index>
+            <LM_Cascade_Survival>/IndEffect_CascadeToxswa_IT_Species1/GutsSurvivalReaches</LM_Cascade_Survival>
+            <LM_Cascade_Survival_Mfs_Index>10</LM_Cascade_Survival_Mfs_Index>
+            <LM_Cmf_Survival_Offset>true</LM_Cmf_Survival_Offset>
+            <LM_Steps_Survival_Offset>true</LM_Steps_Survival_Offset>
+            <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
+        </Observer>
+    </Observers>
+    <Parts>
+        <AnalysisObserver module="AnalysisObserver" class="AnalysisObserver"/>
+        <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa"/>
+        <CmfContinuous module="CmfContinuous" class="CmfContinuousEfate"/>
+        <LEffectModel module="LEffectModel" class="LEffectModel"/>
+        <LP50 module="LP50" class="LP50"/>
+        <ReportingObserver module="ReportingObserver" class="ReportingObserver"/>
+        <StepsRivernetwork module="StepsRivernetwork" class="StepsRivernetwork"/>
+        <StreamCom module="StreamCom" class="StreamCom"/>
+        <XSprayDrift module="XSprayDrift" class="SprayDrift"/>
+    </Parts>
+</Experiment>

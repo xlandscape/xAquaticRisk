@@ -10,7 +10,7 @@
                    scenario/Rummen_subCatch_East, scenario/Rummen_subCatch_Velm, scenario/Rummen
   Remark        :  Make sure that the scenario is present in the scenario sub-folder.
   -->
-  <Project>scenario/oudebeek_beek7-T-Di-3.4.210128</Project>
+  <Project>scenario/oudebeek-beek7-tdi</Project>
 
   <!--
   Parameter     :  SimulationStart

@@ -1,0 +1,2130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MCRun>
+  <Observers>
+    <Observer module="observer" class="ConsoleObserver"/>
+    <Observer module="observer" class="GraphMLObserver">
+      <Output_File>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\composition.graphml</Output_File>
+      <Include_Modules>true</Include_Modules>
+    </Observer>
+    <Observer module="observer" class="LogFileObserver">
+      <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\mc_$(_MC_NAME_).log</LogFile>
+    </Observer>
+  </Observers>
+  <Store module="stores" class="X3dfStore">
+    <File_Path>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store</File_Path>
+    <Observer>
+      <ObserverReference/>
+    </Observer>
+    <Initialization>$(ParentRun)</Initialization>
+    <Identifier>$(_MC_ID_)</Identifier>
+  </Store>
+  <Global>
+      <Temp0>20</Temp0>
+      <Q10>2.2</Q10>
+      <PlantUptake>0</PlantUptake>
+      <QFAC>-9999</QFAC>
+      <LGUTS_BackgroundHazardRate>0</LGUTS_BackgroundHazardRate>
+      <UseSubLethalToxEffects>True</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals>10</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual>70</NumberOfSiblingsPerSuperIndividual>
+      <InitialBiomassForMacroinvertebrates>1</InitialBiomassForMacroinvertebrates>
+      <InitialBiomassForFish>0.1</InitialBiomassForFish>
+      <MaximumPeriphytonGrowthRate>3.05</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity>17</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature>5500</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity>9</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity>7227.5</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition>270</DayOfYearForLitterAddition>
+      <C-PomSettlementRate>0.1</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition>4</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains>0.3</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity>80000</InitialF-PomDensity>
+      <InitialS-PomDensity>500</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders>0.0001</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity>4623</PeriphytonEnergyDensity>
+      <UsePopulationDensity>FALSE</UsePopulationDensity>
+      <SavePopulationSize>TRUE</SavePopulationSize>
+      <SaveTraitSize>TRUE</SaveTraitSize>
+      <SavePopulationDistribution>TRUE</SavePopulationDistribution>
+      <SaveTraitDistribution>TRUE</SaveTraitDistribution>
+      <MultiplicationFactors>0.0009765625 0.001953125 0.00390625 0.0078125 0.015625 0.03125 0.0625 0.125 0.25 0.5 1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768</MultiplicationFactors>
+  </Global>
+  <Composition>
+    <LandscapeScenario module="components" class="Lulc">
+      <BaseLandscapeGeometries>$(:LandscapeScenario)</BaseLandscapeGeometries>
+    </LandscapeScenario>
+    <Weather module="components" class="MarsWeather">
+      <FilePath>$(:Temperature)</FilePath>
+      <FirstDate type="date">$(SimulationStart)</FirstDate>
+      <LastDate type="date">$(SimulationEnd)</LastDate>
+    </Weather>
+    <Hydrology module="components" class="HydrologyFromTimeseries">
+      <Timeseries>$(:Hydrology)</Timeseries>
+      <FromTime type="date">$(SimulationStart)</FromTime>
+      <ToTime type="date">$(SimulationEnd)</ToTime>
+      <InflowTimeseriesPath>$(:Timeseries)</InflowTimeseriesPath>
+      <ImportInflows type="bool">$(RunCmfContinuous)</ImportInflows>
+    </Hydrology>
+    <PPM module="components" class="PpmCalendar">
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <SimulationEnd type="date">$(SimulationEnd)</SimulationEnd>
+      <ApplicationWindows>$(ApplicationTimeWindow)</ApplicationWindows>
+      <Fields>
+        <FromOutput component="LandscapeScenario" output="FeatureIds"/>
+      </Fields>
+      <Lulc>
+        <FromOutput component="LandscapeScenario" output="LulcTypeIds"/>
+      </Lulc>
+      <TargetLulcType>
+        <FromOutput component="LandscapeScenario" output="target_lulc_type"/>
+      </TargetLulcType>
+      <ApplicationRate type="float" unit="g/ha">$(ApplicationRate)</ApplicationRate>
+      <TechnologyDriftReduction type="float" unit="1">$(TechnologyDriftReduction)</TechnologyDriftReduction>
+      <InCropBuffer type="float" unit="m">$(InCropBuffer)</InCropBuffer>
+      <InFieldMargin type="float" unit="m">0</InFieldMargin>
+      <FieldGeometries type="list[bytes]">
+        <FromOutput component="LandscapeScenario" output="Geometries"/>
+      </FieldGeometries>
+      <MinimumAppliedArea type="float" unit="m²">10</MinimumAppliedArea>
+      <RandomSeed type="int">0</RandomSeed>
+      <ProbabilityFieldApplied type="float" unit="1">1</ProbabilityFieldApplied>
+    </PPM>
+    <SprayDrift module="XSprayDrift" class="SprayDrift">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\sd</ProcessingPath>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <SimulationEnd type="date">$(SimulationEnd)</SimulationEnd>
+      <Geometries>
+        <FromOutput component="LandscapeScenario" output="Geometries"/>
+      </Geometries>
+      <GeometryCrs>
+        <FromOutput component="LandscapeScenario" output="Crs"/>
+      </GeometryCrs>
+      <Extent>
+        <FromOutput component="LandscapeScenario" output="Extent"/>
+      </Extent>
+      <HabitatLulcTypes>
+        <FromOutput component="LandscapeScenario" output="habitat_lulc_types"/>
+      </HabitatLulcTypes>
+      <FieldDistanceSD type="float" unit="m">0</FieldDistanceSD>
+      <EPDistanceSD type="float" unit="m">0</EPDistanceSD>
+      <ReportingThreshold type="float" unit="g/ha">0</ReportingThreshold>
+      <ApplySimpleDriftFiltering type="bool">false</ApplySimpleDriftFiltering>
+      <LulcTypes>
+        <FromOutput component="LandscapeScenario" output="LulcTypeIds"/>
+      </LulcTypes>
+      <WindDirection type="int" unit="deg">-1</WindDirection>
+      <SprayDriftModel>XSprayDrift</SprayDriftModel>
+      <SourceExposure unit="g/ha">NA</SourceExposure>
+      <RautmannClass>orchards.$(CropStage)</RautmannClass>
+      <AppliedFields>
+        <FromOutput component="PPM" output="AppliedFields"/>
+      </AppliedFields>
+      <ApplicationDates>
+        <FromOutput component="PPM" output="ApplicationDates"/>
+      </ApplicationDates>
+      <ApplicationRates>
+        <FromOutput component="PPM" output="ApplicationRates"/>
+      </ApplicationRates>
+      <TechnologyDriftReductions>
+        <FromOutput component="PPM" output="TechnologyDriftReductions"/>
+      </TechnologyDriftReductions>
+      <AppliedAreas>
+        <FromOutput component="PPM" output="AppliedAreas"/>
+      </AppliedAreas>
+      <SpatialOutputScale>base_geometry</SpatialOutputScale>
+      <RandomSeed type="int">0</RandomSeed>
+      <MinimumDistanceToField type="float" unit="m">0</MinimumDistanceToField>
+      <FilteringLulcTypes type="list[int]"/>
+      <FilteringMinWidth type="float" unit="m">999</FilteringMinWidth>
+      <FilteringFraction type="float" unit="1">0</FilteringFraction>
+      <AgDriftBoomHeight>n/a</AgDriftBoomHeight>
+      <AgDriftDropletSize>n/a</AgDriftDropletSize>
+      <AgDriftQuantile type="float" unit="1">-1</AgDriftQuantile>
+    </SprayDrift>
+    <DepositionToReach module="components" class="DepositionToReach">
+      <Deposition>
+        <FromOutput component="SprayDrift" output="Exposure"/>
+      </Deposition>
+      <Reaches>
+        <FromOutput component="Hydrology" output="Reaches"/>
+      </Reaches>
+      <Mapping>
+        <FromOutput component="LandscapeScenario" output="reach_id"/>
+      </Mapping>
+    </DepositionToReach>
+    <StepsRivernetwork module="StepsRivernetwork" class="StepsRivernetwork" enabled="$(RunStepsRivernetwork)">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\steps</ProcessingPath>
+      <Hydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography"/>
+      </Hydrography>
+      <Catchment>$(:Catchment)</Catchment>
+      <WaterDischarge>
+        <FromOutput component="Hydrology" output="Flow"/>
+      </WaterDischarge>
+      <TimeseriesStart>
+        <FromOutput component="Hydrology" output="TimeseriesStart"/>
+      </TimeseriesStart>
+      <ReachesHydrology>
+        <FromOutput component="Hydrology" output="Reaches"/>
+      </ReachesHydrology>
+      <WaterVolume>
+        <FromOutput component="Hydrology" output="Volume"/>
+      </WaterVolume>
+      <WetSurfaceArea>
+        <FromOutput component="Hydrology" output="Area"/>
+      </WetSurfaceArea>
+      <DriftDeposition>
+        <FromOutput component="DepositionToReach" output="Deposition"/>
+      </DriftDeposition>
+      <ReachesDrift>
+        <FromOutput component="DepositionToReach" output="Reaches"/>
+      </ReachesDrift>
+      <MolarMass type="float" unit="g/mol">$(MolarMass)</MolarMass>
+      <DT50sw type="float" unit="d">$(DT50sw)</DT50sw>
+      <DT50sed type="float" unit="d">$(DT50sed)</DT50sed>
+      <KOC type="float" unit="l/kg">$(KOC)</KOC>
+      <Temp0 type="float" unit="°C">$(Temp0)</Temp0>
+      <Q10 type="float" unit="1">$(Q10)</Q10>
+      <PlantUptake type="float" unit="1">$(PlantUptake)</PlantUptake>
+      <QFAC type="float" unit="1">$(QFAC)</QFAC>
+      <ThresholdSW type="float" unit="mg/m³">$(ThresholdSW)</ThresholdSW>
+      <ThresholdSediment type="float" unit="mg/kg">$(ThresholdSediment)</ThresholdSediment>
+    </StepsRivernetwork>
+    <ExportStepsRivernetworkReaches module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </Values>
+      <Create type="bool">true</Create>
+    </ExportStepsRivernetworkReaches>
+    <ExportStepsRivernetworkPecs module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+      <Sql>
+        CREATE VIEW IF NOT EXISTS pec AS
+        SELECT CAST(strftime('%Y-%m-%d %H:%M', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i ||
+        ' hours', '1 hours')) AS TEXT) AS time,
+		CAST(strftime('%Y', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER) AS year,
+		CAST(strftime('%m', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS month,
+		CAST(strftime('%d', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS day,
+		CAST(strftime('%H', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS hour,
+		CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER) AS reach,
+        CAST(`ExportStepsRivernetworkPecs/PEC_SW` AS REAL) AS pec, CAST('ug/l' AS TEXT) AS unit
+		FROM `time/hour, space/base_geometry`
+        JOIN `space/reach` ON `time/hour, space/base_geometry`.j = `space/reach`.i
+      </Sql>
+    </ExportStepsRivernetworkPecs>
+    <CmfContinuous module="CmfContinuous" class="CmfContinuousEfate" enabled="$(RunCmfContinuous)">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\cmfcont</ProcessingPath>
+      <Begin type="date">$(SimulationStart)</Begin>
+      <End type="date">$(SimulationEnd)</End>
+      <Threads type="int">1</Threads>
+      <SolverType>CVodeKLU</SolverType>
+      <Hydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography"/>
+      </Hydrography>
+      <MolarMass type="float" unit="g/mol">$(MolarMass)</MolarMass>
+      <DT50sw type="float" unit="d">$(DT50sw)</DT50sw>
+      <DT50sed type="float" unit="d">$(DT50sed)</DT50sed>
+      <KOC type="float" unit="l/kg">$(KOC)</KOC>
+      <Temp0 type="float" unit="°C">$(Temp0)</Temp0>
+      <Q10 type="float" unit="1">$(Q10)</Q10>
+      <PlantUptake type="float" unit="1">$(PlantUptake)</PlantUptake>
+      <QFAC type="float" unit="1">$(QFAC)</QFAC>
+      <Catchment>$(:Catchment)</Catchment>
+      <DriftDeposition>
+        <FromOutput component="DepositionToReach" output="Deposition"/>
+      </DriftDeposition>
+      <Timeseries>
+        <FromOutput component="Hydrology" output="Inflow"/>
+      </Timeseries>
+      <ReachesDrift>
+        <FromOutput component="DepositionToReach" output="Reaches"/>
+      </ReachesDrift>
+      <InflowReaches>
+        <FromOutput component="Hydrology" output="InflowReaches"/>
+      </InflowReaches>
+    </CmfContinuous>
+    <ExportCmfContinuousReaches module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </Values>
+      <Create type="bool">true</Create>
+    </ExportCmfContinuousReaches>
+    <ExportCmfContinuousPecs module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`CmfContinuous/Reaches`)</ForeignKey>
+      <Sql>
+        CREATE VIEW IF NOT EXISTS pec AS
+        SELECT CAST(strftime('%Y-%m-%d %H:%M', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i ||
+        ' hours', '1 hours')) AS TEXT) AS time,
+		CAST(strftime('%Y', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER) AS year,
+		CAST(strftime('%m', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS month,
+		CAST(strftime('%d', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS day,
+		CAST(strftime('%H', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS hour,
+		CAST(`space/reach`.`ExportCmfContinuousReaches/Reaches` AS INTEGER) AS reach,
+        CAST(`ExportCmfContinuousPecs/PEC_SW` AS REAL) AS pec, CAST('ug/l' AS TEXT) AS unit
+		FROM `time/hour, space/base_geometry`
+        JOIN `space/reach` ON `time/hour, space/base_geometry`.j = `space/reach`.i
+      </Sql>
+    </ExportCmfContinuousPecs>
+    <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa" enabled="$(RunCascadeToxswa)">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\cascade</ProcessingPath>
+      <Hydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography"/>
+      </Hydrography>
+      <SuspendedSolids type="float" unit="g/m³">15</SuspendedSolids>
+      <Reaches>
+        <FromOutput component="DepositionToReach" output="Reaches"/>
+      </Reaches>
+      <TimeseriesStart>
+        <FromOutput component="Hydrology" output="TimeseriesStart"/>
+      </TimeseriesStart>
+      <WaterDischarge>
+        <FromOutput component="Hydrology" output="Flow"/>
+      </WaterDischarge>
+      <WaterDepth>
+        <FromOutput component="Hydrology" output="Depth"/>
+      </WaterDepth>
+      <Temperature>
+        <FromOutput component="Weather" output="TEMPERATURE_AVG"/>
+      </Temperature>
+      <MassLoadingSprayDrift>
+        <FromOutput component="DepositionToReach" output="Deposition"/>
+      </MassLoadingSprayDrift>
+      <MolarMass type="float" unit="g/mol">$(MolarMass)</MolarMass>
+      <SaturatedVapourPressure type="float" unit="Pa">$(SaturatedVapourPressure)</SaturatedVapourPressure>
+      <ReferenceTemperatureForSaturatedVapourPressure type="float" unit="°C">$(Temp0)</ReferenceTemperatureForSaturatedVapourPressure>
+      <MolarEnthalpyOfVaporization type="float" unit="kJ/mol">$(MolarEnthalpyOfVaporization)</MolarEnthalpyOfVaporization>
+      <SolubilityInWater type="float" unit="mg/l">$(SolubilityInWater)</SolubilityInWater>
+      <ReferenceTemperatureForWaterSolubility type="float" unit="°C">$(Temp0)</ReferenceTemperatureForWaterSolubility>
+      <MolarEnthalpyOfDissolution type="float" unit="kJ/mol">$(MolarEnthalpyOfDissolution)</MolarEnthalpyOfDissolution>
+      <DiffusionCoefficient type="float" unit="m²/d">$(DiffusionCoefficient)</DiffusionCoefficient>
+      <ReferenceTemperatureForDiffusion type="float" unit="°C">$(Temp0)</ReferenceTemperatureForDiffusion>
+      <HalfLifeTransformationInWater type="float" unit="d">$(DT50sw)</HalfLifeTransformationInWater>
+      <TemperatureAtWhichHalfLifeInWaterWasMeasured type="float" unit="°C">$(Temp0)</TemperatureAtWhichHalfLifeInWaterWasMeasured>
+      <MolarActivationEnthalpyOfTransformationInWater type="float" unit="kJ/mol">$(MolarActivationEnthalpyOfTransformationInWater)</MolarActivationEnthalpyOfTransformationInWater>
+      <HalfLifeTransformationInSediment type="float" unit="d">$(DT50sed)</HalfLifeTransformationInSediment>
+      <TemperatureAtWhichHalfLifeInSedimentWasMeasured type="float" unit="°C">$(Temp0)</TemperatureAtWhichHalfLifeInSedimentWasMeasured>
+      <MolarActivationEnthalpyOfTransformationInSediment type="float" unit="kJ/mol">$(MolarActivationEnthalpyOfTransformationInSediment)</MolarActivationEnthalpyOfTransformationInSediment>
+      <CoefficientForEquilibriumSorptionInSediment type="float" unit="l/kg" eval="true">$(KOC) / 1.742</CoefficientForEquilibriumSorptionInSediment>
+      <ReferenceConcentrationInLiquidPhaseInSediment type="float" unit="mg/l">$(ReferenceConcentrationForKOC)</ReferenceConcentrationInLiquidPhaseInSediment>
+      <FreundlichExponentInSediment type="float" unit="1">$(FreundlichExponentInSedimentAndSuspendedParticles)</FreundlichExponentInSediment>
+      <CoefficientForEquilibriumSorptionOfSuspendedSoils type="float" unit="l/kg" eval="true">$(KOC) / 1.742</CoefficientForEquilibriumSorptionOfSuspendedSoils>
+      <ReferenceConcentrationForSuspendedSoils type="float" unit="mg/l">$(ReferenceConcentrationForKOC)</ReferenceConcentrationForSuspendedSoils>
+      <FreundlichExponentForSuspendedSoils type="float" unit="1">$(FreundlichExponentInSedimentAndSuspendedParticles)</FreundlichExponentForSuspendedSoils>
+      <CoefficientForLinearSorptionOnMacrophytes type="float" unit="l/kg">0</CoefficientForLinearSorptionOnMacrophytes>
+      <NumberWorkers type="int">$(CascadeToxswaWorkers)</NumberWorkers>
+    </CascadeToxswa>
+    <ExportCascadeToxswaReaches module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="LandscapeScenario" output="hydrography"/>
+      </Values>
+      <Create type="bool">true</Create>
+    </ExportCascadeToxswaReaches>
+    <ExportCascadeToxswaPecs module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/base_geometry`(`CascadeToxswa/hydrography_id`)</ForeignKey>
+      <Sql>
+        CREATE VIEW IF NOT EXISTS pec AS
+        SELECT CAST(strftime('%Y-%m-%d %H:%M', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i ||
+        ' hours', '1 hours')) AS TEXT) AS time,
+		CAST(strftime('%Y', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER) AS year,
+		CAST(strftime('%m', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS month,
+		CAST(strftime('%d', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS day,
+		CAST(strftime('%H', datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours'))
+		AS INTEGER)AS hour,
+		CAST(`space/base_geometry`.`ExportCascadeToxswaReaches/hydrography_id` AS INTEGER) AS reach,
+        CAST(`ExportCascadeToxswaPecs/ConLiqWatTgtAvg` * 1000 AS REAL) AS pec, CAST('ug/l' AS TEXT) AS unit
+		FROM `time/hour, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/hour, space/base_geometry`.j = `space/base_geometry`.i
+      </Sql>
+    </ExportCascadeToxswaPecs>
+    <IndEffect_StepsRivernetwork_SD_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_sd_$(Species1)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species1ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species1KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_StepsRivernetwork_SD_Species1>
+    <IndEffect_StepsRivernetwork_SD_Species2 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_sd_$(Species2)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species2DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species2ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species2KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_StepsRivernetwork_SD_Species2>
+    <IndEffect_StepsRivernetwork_SD_Species3 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_sd_$(Species3)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species3DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species3ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species3KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_StepsRivernetwork_SD_Species3>
+    <IndEffect_LP50_StepsRivernetwork_SD_Species1 module="LP50" class="LP50" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_sd_$(Species1)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_StepsRivernetwork_SD_Species1" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_StepsRivernetwork_SD_Species1>
+    <ExportStepsRivernetworkLP50Species1SD module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_StepsRivernetwork_SD_Species1" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
+        AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species1SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportStepsRivernetworkLP50Species1SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportStepsRivernetworkLP50Species1SD>
+    <IndEffect_LP50_StepsRivernetwork_SD_Species2 module="LP50" class="LP50" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_sd_$(Species2)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_StepsRivernetwork_SD_Species2" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_StepsRivernetwork_SD_Species2>
+    <ExportStepsRivernetworkLP50Species2SD module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_StepsRivernetwork_SD_Species2" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER) AS
+        reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species2SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportStepsRivernetworkLP50Species2SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportStepsRivernetworkLP50Species2SD>
+    <IndEffect_LP50_StepsRivernetwork_SD_Species3 module="LP50" class="LP50" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_sd_$(Species3)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_StepsRivernetwork_SD_Species3" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_StepsRivernetwork_SD_Species3>
+    <ExportStepsRivernetworkLP50Species3SD module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_StepsRivernetwork_SD_Species3" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
+        AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species3SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportStepsRivernetworkLP50Species3SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportStepsRivernetworkLP50Species3SD>
+    <IndEffect_StepsRivernetwork_IT_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_it_$(Species1)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_StepsRivernetwork_IT_Species1>
+    <IndEffect_StepsRivernetwork_IT_Species2 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_it_$(Species2)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species2DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_StepsRivernetwork_IT_Species2>
+    <IndEffect_StepsRivernetwork_IT_Species3 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_it_$(Species3)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species3DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_StepsRivernetwork_IT_Species3>
+    <IndEffect_LP50_StepsRivernetwork_IT_Species1 module="LP50" class="LP50" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_it_$(Species1)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_StepsRivernetwork_IT_Species1" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_StepsRivernetwork_IT_Species1>
+    <ExportStepsRivernetworkLP50Species1IT module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_StepsRivernetwork_IT_Species1" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
+        AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species1IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportStepsRivernetworkLP50Species1IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportStepsRivernetworkLP50Species1IT>
+    <IndEffect_LP50_StepsRivernetwork_IT_Species2 module="LP50" class="LP50" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_it_$(Species2)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_StepsRivernetwork_IT_Species2" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_StepsRivernetwork_IT_Species2>
+    <ExportStepsRivernetworkLP50Species2IT module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_StepsRivernetwork_IT_Species2" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
+        AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species2IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportStepsRivernetworkLP50Species2IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportStepsRivernetworkLP50Species2IT>
+    <IndEffect_LP50_StepsRivernetwork_IT_Species3 module="LP50" class="LP50" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_it_$(Species3)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_StepsRivernetwork_IT_Species3" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_StepsRivernetwork_IT_Species3>
+    <ExportStepsRivernetworkLP50Species3IT module="components" class="ExportData" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_StepsRivernetwork_IT_Species3" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
+        AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species3IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportStepsRivernetworkLP50Species3IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportStepsRivernetworkLP50Species3IT>
+    <IndEffect_CmfContinuous_SD_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_sd_$(Species1)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species1ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species1KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CmfContinuous_SD_Species1>
+    <IndEffect_CmfContinuous_SD_Species2 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_sd_$(Species2)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species2DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species2ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species2KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CmfContinuous_SD_Species2>
+    <IndEffect_CmfContinuous_SD_Species3 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_sd_$(Species3)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species3DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species3ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species3KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CmfContinuous_SD_Species3>
+    <IndEffect_LP50_CmfContinuous_SD_Species1 module="LP50" class="LP50" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_sd_$(Species1)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CmfContinuous_SD_Species1" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CmfContinuous_SD_Species1>
+    <ExportCmfContinuousLP50Species1SD module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CmfContinuous_SD_Species1" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCmfContinuousReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportCmfContinuousReaches/Reaches` AS INTEGER) AS reach,
+        CAST(CASE WHEN `ExportCmfContinuousLP50Species1SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCmfContinuousLP50Species1SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportCmfContinuousLP50Species1SD>
+    <IndEffect_LP50_CmfContinuous_SD_Species2 module="LP50" class="LP50" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_sd_$(Species2)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CmfContinuous_SD_Species2" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CmfContinuous_SD_Species2>
+    <ExportCmfContinuousLP50Species2SD module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CmfContinuous_SD_Species2" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCmfContinuousReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportCmfContinuousReaches/Reaches` AS INTEGER) AS reach,
+        CAST(CASE WHEN `ExportCmfContinuousLP50Species2SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCmfContinuousLP50Species2SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportCmfContinuousLP50Species2SD>
+    <IndEffect_LP50_CmfContinuous_SD_Species3 module="LP50" class="LP50" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_sd_$(Species3)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CmfContinuous_SD_Species3" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CmfContinuous_SD_Species3>
+    <ExportCmfContinuousLP50Species3SD module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CmfContinuous_SD_Species3" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCmfContinuousReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportCmfContinuousReaches/Reaches` AS INTEGER) AS reach,
+        CAST(CASE WHEN `ExportCmfContinuousLP50Species3SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCmfContinuousLP50Species3SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportCmfContinuousLP50Species3SD>
+    <IndEffect_CmfContinuous_IT_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_it_$(Species1)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CmfContinuous_IT_Species1>
+    <IndEffect_CmfContinuous_IT_Species2 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_it_$(Species2)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species2DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CmfContinuous_IT_Species2>
+    <IndEffect_CmfContinuous_IT_Species3 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_it_$(Species3)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species3DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CmfContinuous_IT_Species3>
+    <IndEffect_LP50_CmfContinuous_IT_Species1 module="LP50" class="LP50" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_it_$(Species1)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CmfContinuous_IT_Species1" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CmfContinuous_IT_Species1>
+    <ExportCmfContinuousLP50Species1IT module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CmfContinuous_IT_Species1" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCmfContinuousReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportCmfContinuousReaches/Reaches` AS INTEGER) AS reach,
+        CAST(CASE WHEN `ExportCmfContinuousLP50Species1IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCmfContinuousLP50Species1IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportCmfContinuousLP50Species1IT>
+    <IndEffect_LP50_CmfContinuous_IT_Species2 module="LP50" class="LP50" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_it_$(Species2)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CmfContinuous_IT_Species2" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CmfContinuous_IT_Species2>
+    <ExportCmfContinuousLP50Species2IT module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CmfContinuous_IT_Species2" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCmfContinuousReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportCmfContinuousReaches/Reaches` AS INTEGER) AS reach,
+        CAST(CASE WHEN `ExportCmfContinuousLP50Species2IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCmfContinuousLP50Species2IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
+    </ExportCmfContinuousLP50Species2IT>
+    <IndEffect_LP50_CmfContinuous_IT_Species3 module="LP50" class="LP50" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_it_$(Species3)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CmfContinuous_IT_Species3" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CmfContinuous_IT_Species3>
+    <ExportCmfContinuousLP50Species3IT module="components" class="ExportData" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CmfContinuous.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CmfContinuous_IT_Species3" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCmfContinuousReaches/Reaches`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/base_geometry`.`ExportCmfContinuousReaches/Reaches` AS INTEGER)
+        AS reach, CAST(CASE WHEN `ExportCmfContinuousLP50Species3IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCmfContinuousLP50Species3IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
+    </ExportCmfContinuousLP50Species3IT>
+    <IndEffect_CascadeToxswa_SD_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_sd_$(Species1)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species1ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species1KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CascadeToxswa_SD_Species1>
+    <IndEffect_CascadeToxswa_SD_Species2 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_sd_$(Species2)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species2DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species2ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species2KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CascadeToxswa_SD_Species2>
+    <IndEffect_CascadeToxswa_SD_Species3 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_sd_$(Species3)</ProcessingPath>
+      <Model>CatchmentGUTSSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species3DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species3ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species3KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CascadeToxswa_SD_Species3>
+    <IndEffect_LP50_CascadeToxswa_SD_Species1 module="LP50" class="LP50" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_sd_$(Species1)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CascadeToxswa_SD_Species1" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CascadeToxswa_SD_Species1>
+    <ExportCascadeToxswaLP50Species1SD module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CascadeToxswa_SD_Species1" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCascadeToxswaReaches/hydrography_id`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/base_geometry`.`ExportCascadeToxswaReaches/hydrography_id`
+        AS INTEGER) AS reach, CAST(CASE WHEN `ExportCascadeToxswaLP50Species1SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCascadeToxswaLP50Species1SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
+    </ExportCascadeToxswaLP50Species1SD>
+    <IndEffect_LP50_CascadeToxswa_SD_Species2 module="LP50" class="LP50" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_sd_$(Species2)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CascadeToxswa_SD_Species2" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CascadeToxswa_SD_Species2>
+    <ExportCascadeToxswaLP50Species2SD module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CascadeToxswa_SD_Species2" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCascadeToxswaReaches/hydrography_id`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/base_geometry`.`ExportCascadeToxswaReaches/hydrography_id`
+        AS INTEGER) AS reach, CAST(CASE WHEN `ExportCascadeToxswaLP50Species2SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCascadeToxswaLP50Species2SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
+    </ExportCascadeToxswaLP50Species2SD>
+    <IndEffect_LP50_CascadeToxswa_SD_Species3 module="LP50" class="LP50" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_sd_$(Species3)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CascadeToxswa_SD_Species3" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CascadeToxswa_SD_Species3>
+    <ExportCascadeToxswaLP50Species3SD module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CascadeToxswa_SD_Species3" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCascadeToxswaReaches/hydrography_id`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_SD` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/base_geometry`.`ExportCascadeToxswaReaches/hydrography_id`
+        AS INTEGER) AS reach, CAST(CASE WHEN `ExportCascadeToxswaLP50Species3SD/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCascadeToxswaLP50Species3SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
+    </ExportCascadeToxswaLP50Species3SD>
+    <IndEffect_CascadeToxswa_IT_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_it_$(Species1)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CascadeToxswa_IT_Species1>
+    <IndEffect_CascadeToxswa_IT_Species2 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_it_$(Species2)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species2DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CascadeToxswa_IT_Species2>
+    <IndEffect_CascadeToxswa_IT_Species3 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_it_$(Species3)</ProcessingPath>
+      <Model>CatchmentGUTSIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species3DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Verbosity type="int">0</Verbosity>
+    </IndEffect_CascadeToxswa_IT_Species3>
+    <IndEffect_LP50_CascadeToxswa_IT_Species1 module="LP50" class="LP50" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_it_$(Species1)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CascadeToxswa_IT_Species1" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CascadeToxswa_IT_Species1>
+    <ExportCascadeToxswaLP50Species1IT module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CascadeToxswa_IT_Species1" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCascadeToxswaReaches/hydrography_id`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/base_geometry`.`ExportCascadeToxswaReaches/hydrography_id`
+        AS INTEGER) AS reach, CAST(CASE WHEN `ExportCascadeToxswaLP50Species1IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCascadeToxswaLP50Species1IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
+    </ExportCascadeToxswaLP50Species1IT>
+    <IndEffect_LP50_CascadeToxswa_IT_Species2 module="LP50" class="LP50" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_it_$(Species2)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CascadeToxswa_IT_Species2" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CascadeToxswa_IT_Species2>
+    <ExportCascadeToxswaLP50Species2IT module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CascadeToxswa_IT_Species2" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCascadeToxswaReaches/hydrography_id`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/base_geometry`.`ExportCascadeToxswaReaches/hydrography_id`
+        AS INTEGER) AS reach, CAST(CASE WHEN `ExportCascadeToxswaLP50Species2IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCascadeToxswaLP50Species2IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
+    </ExportCascadeToxswaLP50Species2IT>
+    <IndEffect_LP50_CascadeToxswa_IT_Species3 module="LP50" class="LP50" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_it_$(Species3)</ProcessingPath>
+      <Values>
+        <FromOutput component="IndEffect_CascadeToxswa_IT_Species3" output="GutsSurvivalReaches" />
+      </Values>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches" />
+      </Reaches>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
+      <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
+      <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
+    </IndEffect_LP50_CascadeToxswa_IT_Species3>
+    <ExportCascadeToxswaLP50Species3IT module="components" class="ExportData" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and '$(ExportToSqlite)' == 'true'">
+      <TargetStoreType>SqlLite</TargetStoreType>
+      <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
+      <Values>
+        <FromOutput component="IndEffect_LP50_CascadeToxswa_IT_Species3" output="LP50"/>
+      </Values>
+      <Create type="bool">false</Create>
+      <ForeignKey type="list[str]">|`space/each`(`ExportCascadeToxswaReaches/hydrography_id`)</ForeignKey>
+      <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_IT` AS
+        SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
+        ' years')) AS INTEGER) AS year, CAST(`space/base_geometry`.`ExportCascadeToxswaReaches/hydrography_id`
+        AS INTEGER) AS reach, CAST(CASE WHEN `ExportCascadeToxswaLP50Species3IT/LP50` &lt; 0 THEN NULL ELSE
+        `ExportCascadeToxswaLP50Species3IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+        JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
+    </ExportCascadeToxswaLP50Species3IT>
+    <PopEffect_StepsRivernetwork_SD_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLPop)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_steps_sd_$(Species1)</ProcessingPath>
+      <Model>LPopSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species1ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species1KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+    </PopEffect_StepsRivernetwork_SD_Species1>
+    <PopEffect_CmfContinuous_SD_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLPop)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_cmf_sd_$(Species1)</ProcessingPath>
+      <Model>LPopSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species1ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species1KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+    </PopEffect_CmfContinuous_SD_Species1>
+    <PopEffect_CascadeToxswa_SD_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLPop)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_cascade_sd_$(Species1)</ProcessingPath>
+      <Model>LPopSD</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantSD)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ParameterZOfSDModel type="float" unit="ng/l">$(Species1ThresholdConcentrationSD)</ParameterZOfSDModel>
+      <ParameterBOfSDModel type="float" unit="l/(ng*h)">$(Species1KillingRateSD)</ParameterBOfSDModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+    </PopEffect_CascadeToxswa_SD_Species1>
+    <PopEffect_StepsRivernetwork_IT_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLPop)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_steps_it_$(Species1)</ProcessingPath>
+      <Model>LPopIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+    </PopEffect_StepsRivernetwork_IT_Species1>
+    <PopEffect_CmfContinuous_IT_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLPop)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_cmf_it_$(Species1)</ProcessingPath>
+      <Model>LPopIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+    </PopEffect_CmfContinuous_IT_Species1>
+    <PopEffect_CascadeToxswa_IT_Species1 module="LEffectModel" class="LEffectModel" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLPop)' == 'true'">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_cascade_it_$(Species1)</ProcessingPath>
+      <Model>LPopIT</Model>
+      <MinimumClutchSize type="int">14</MinimumClutchSize>
+      <BackgroundMortalityRate type="float" unit="1/d">0.005</BackgroundMortalityRate>
+      <DensityDependentMortalityRate type="float" unit="m²/d">0.000025</DensityDependentMortalityRate>
+      <DominantRateConstant type="float" unit="1/h">$(Species1DominantRateConstantIT)</DominantRateConstant>
+      <BackgroundHazardRate type="float" unit="1/h">$(LGUTS_BackgroundHazardRate)</BackgroundHazardRate>
+      <ThresholdOfITModel type="float" unit="ng/l">$(Species1ThresholdDistributionIT)</ThresholdOfITModel>
+      <BetaOfITModel type="float" unit="1">$(Species1WidthOfThresholdDistributionIT)</BetaOfITModel>
+      <AverageTemperatureParameterOfForcingFunction type="float" unit="°C">10</AverageTemperatureParameterOfForcingFunction>
+      <AmplitudeTemperatureFluctuationsParameter type="float" unit="°C">10</AmplitudeTemperatureFluctuationsParameter>
+      <ShiftForwardOfDayNumberWithLowestTemperature type="int" unit="d">31</ShiftForwardOfDayNumberWithLowestTemperature>
+      <PerIndividualProbabilityOfMigration type="float" unit="1/d">0.05</PerIndividualProbabilityOfMigration>
+      <ProbabilityOfAMigratingIndividualToMoveDownstream type="float" unit="1">0.667</ProbabilityOfAMigratingIndividualToMoveDownstream>
+      <ReachListHydrography>
+        <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+      </ReachListHydrography>
+      <SimulationStart type="date">$(SimulationStart)</SimulationStart>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <ReachListConcentrations>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </ReachListConcentrations>
+      <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+      <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
+      <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+    </PopEffect_CascadeToxswa_IT_Species1>
+    <StreamCom1_StepsRivernetwork module="StreamCom" class="StreamCom" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach1)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_1</ProcessingPath>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach1)</Reach>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom1_StepsRivernetwork>
+    <StreamCom1_CmfContinuous module="StreamCom" class="StreamCom" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach1)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cmf_1</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach1)</Reach>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom1_CmfContinuous>
+    <StreamCom1_CascadeToxswa module="StreamCom" class="StreamCom" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach1)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cascade_1</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach1)</Reach>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom1_CascadeToxswa>
+    <StreamCom2_StepsRivernetwork module="StreamCom" class="StreamCom" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach2)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_2</ProcessingPath>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach2)</Reach>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom2_StepsRivernetwork>
+    <StreamCom2_CmfContinuous module="StreamCom" class="StreamCom" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach2)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cmf_2</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach2)</Reach>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom2_CmfContinuous>
+    <StreamCom2_CascadeToxswa module="StreamCom" class="StreamCom" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach2)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cascade_2</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach2)</Reach>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom2_CascadeToxswa>
+    <StreamCom3_StepsRivernetwork module="StreamCom" class="StreamCom" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach3)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_3</ProcessingPath>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach3)</Reach>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom3_StepsRivernetwork>
+    <StreamCom3_CmfContinuous module="StreamCom" class="StreamCom" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach3)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cmf_3</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach3)</Reach>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom3_CmfContinuous>
+    <StreamCom3_CascadeToxswa module="StreamCom" class="StreamCom" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach3)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cascade_3</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach3)</Reach>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom3_CascadeToxswa>
+    <StreamCom4_StepsRivernetwork module="StreamCom" class="StreamCom" enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach4)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_4</ProcessingPath>
+      <Reaches>
+        <FromOutput component="StepsRivernetwork" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach4)</Reach>
+      <Concentrations>
+        <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom4_StepsRivernetwork>
+    <StreamCom4_CmfContinuous module="StreamCom" class="StreamCom" enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach4)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cmf_4</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CmfContinuous" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach4)</Reach>
+      <Concentrations>
+        <FromOutput component="CmfContinuous" output="PEC_SW"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom4_CmfContinuous>
+    <StreamCom4_CascadeToxswa module="StreamCom" class="StreamCom" enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunStreamCom)' == 'true' and '$(StreamComReach4)' != ''">
+      <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_cascade_4</ProcessingPath>
+      <Reaches>
+        <FromOutput component="CascadeToxswa" output="Reaches"/>
+      </Reaches>
+      <Reach type="int">$(StreamComReach4)</Reach>
+      <Concentrations>
+        <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+      </Concentrations>
+      <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
+      <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">$(Species1DominantRateConstantSD) $(Species2DominantRateConstantSD) $(Species3DominantRateConstantSD)</DominantRateConstantsForLm>
+      <ThresholdsForLethalEffects type="list[float]" scales="other/species" unit="ng/l">$(Species1ThresholdConcentrationSD) $(Species2ThresholdConcentrationSD) $(Species3ThresholdConcentrationSD)</ThresholdsForLethalEffects>
+      <KillingRates type="list[float]" scales="other/species" unit="l/(ng*h)">$(Species1KillingRateSD) $(Species2KillingRateSD) $(Species3KillingRateSD)</KillingRates>
+      <SiteInformation>$(:SiteInformation)</SiteInformation>
+      <SpeciesParameters>$(:SpeciesParameters)</SpeciesParameters>
+      <WaterTemperature>$(:WaterTemperature)</WaterTemperature>
+      <Site>Niers_Peutenweg</Site>
+      <FirstDay type="date">$(SimulationStart)</FirstDay>
+      <LastDay type="date">$(SimulationEnd)</LastDay>
+      <UseSubLethalToxEffects type="bool">$(UseSubLethalToxEffects)</UseSubLethalToxEffects>
+      <ThresholdPopulationSizeForSuperIndividuals type="int" unit="1">$(ThresholdPopulationSizeForSuperIndividuals)</ThresholdPopulationSizeForSuperIndividuals>
+      <NumberOfSiblingsPerSuperIndividual type="int" unit="1">$(NumberOfSiblingsPerSuperIndividual)</NumberOfSiblingsPerSuperIndividual>
+      <MaximumPeriphytonGrowthRate type="float" unit="1/d">$(MaximumPeriphytonGrowthRate)</MaximumPeriphytonGrowthRate>
+      <PeriphytonCarryingCapacity type="float" unit="g/m²">$(PeriphytonCarryingCapacity)</PeriphytonCarryingCapacity>
+      <PeriphytonArrheniusTemperature type="float" unit="K">$(PeriphytonArrheniusTemperature)</PeriphytonArrheniusTemperature>
+      <InitialLeafLitterDensity type="float" unit="g/m²">$(InitialLeafLitterDensity)</InitialLeafLitterDensity>
+      <LeafLitterEnergyDensity type="float" unit="J/g">$(LeafLitterEnergyDensity)</LeafLitterEnergyDensity>
+      <DayOfYearForLitterAddition type="int" unit="d">$(DayOfYearForLitterAddition)</DayOfYearForLitterAddition>
+      <C-PomSettlementRate type="float" unit="1/d">$(C-PomSettlementRate)</C-PomSettlementRate>
+      <MaximumVelocityClassForC-PomAddition type="int">$(MaximumVelocityClassForC-PomAddition)</MaximumVelocityClassForC-PomAddition>
+      <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">$(SettlementRateForF-PomAndAnimalRemains)</SettlementRateForF-PomAndAnimalRemains>
+      <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
+      <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
+      <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">$(FractionOfS-PomAvailableToFilterFeeders)</FractionOfS-PomAvailableToFilterFeeders>
+      <PeriphytonEnergyDensity type="float" unit="J/g">$(PeriphytonEnergyDensity)</PeriphytonEnergyDensity>
+      <UsePopulationDensity type="bool">$(UsePopulationDensity)</UsePopulationDensity>
+      <SavePopulationSize type="bool">$(SavePopulationSize)</SavePopulationSize>
+      <SaveTraitSize type="bool">$(SaveTraitSize)</SaveTraitSize>
+      <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
+      <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
+      <Biomass>$(:Biomass)</Biomass>
+      <BiomassIndividual type="bool">true</BiomassIndividual>
+    </StreamCom4_CascadeToxswa>
+    <DeleteFolder module="components" class="DeleteFolder">
+      <Path>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing</Path>
+    </DeleteFolder>
+  </Composition>
+</MCRun>
