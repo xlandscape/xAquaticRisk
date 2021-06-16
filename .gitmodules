@@ -1,0 +1,33 @@
+[submodule "model/variant/AnalysisObserver"]
+	path = model/variant/AnalysisObserver
+	url = https://gitlab.bayer.com/aqrisk-landscape/analysisobserver.git
+[submodule "model/variant/CascadeToxswa"]
+	path = model/variant/CascadeToxswa
+	url = https://gitlab.bayer.com/aqrisk-landscape/cascadetoxswa-component.git
+[submodule "model/variant/CmfContinuous"]
+	path = model/variant/CmfContinuous
+	url = https://gitlab.bayer.com/aqrisk-landscape/cmfcontinuous-component.git
+[submodule "model/variant/LEffectModel"]
+	path = model/variant/LEffectModel
+	url = https://gitlab.bayer.com/aqrisk-landscape/leffectmodel-component.git
+[submodule "model/variant/LP50"]
+	path = model/variant/LP50
+	url = https://gitlab.bayer.com/aqrisk-landscape/lp50-component.git
+[submodule "model/variant/ReportingObserver"]
+	path = model/variant/ReportingObserver
+	url = https://gitlab.bayer.com/aqrisk-landscape/reportingobserver.git
+[submodule "model/variant/StepsRivernetwork"]
+	path = model/variant/StepsRivernetwork
+	url = https://gitlab.bayer.com/aqrisk-landscape/stepsrivernetwork-component.git
+[submodule "model/variant/StreamCom"]
+	path = model/variant/StreamCom
+	url = https://gitlab.bayer.com/aqrisk-landscape/streamcom-component.git
+[submodule "model/variant/XSprayDrift"]
+	path = model/variant/XSprayDrift
+	url = https://gitlab.bayer.com/aqrisk-landscape/xspraydrift-component.git
+[submodule "model/core"]
+	path = model/core
+	url = https://gitlab.bayer.com/aqrisk-landscape/landscapemodel-core.git
+[submodule "scenario/oudebeek-beek7-tdi"]
+	path = scenario/oudebeek-beek7-tdi
+	url = https://gitlab.bayer.com/aqrisk-landscape/scenario-oudebeek-beek7-tdi.git
