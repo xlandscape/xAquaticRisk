@@ -58,11 +58,11 @@
       <FirstDate type="date">$(SimulationStart)</FirstDate>
       <LastDate type="date">$(SimulationEnd)</LastDate>
     </Weather>
-    <Hydrology module="components" class="HydrologyFromTimeseries">
-      <Timeseries>$(:Hydrology)</Timeseries>
+    <Hydrology module="components" class="HydrologyFromTimeSeries">
+      <TimeSeries>$(:Hydrology)</TimeSeries>
       <FromTime type="date">$(SimulationStart)</FromTime>
       <ToTime type="date">$(SimulationEnd)</ToTime>
-      <InflowTimeseriesPath>$(:Timeseries)</InflowTimeseriesPath>
+      <InflowTimeSeriesPath>$(:Timeseries)</InflowTimeSeriesPath>
       <ImportInflows type="bool">$(RunCmfContinuous)</ImportInflows>
     </Hydrology>
     <PPM module="components" class="PpmCalendar">
@@ -162,7 +162,7 @@
         <FromOutput component="Hydrology" output="Flow"/>
       </WaterDischarge>
       <TimeseriesStart>
-        <FromOutput component="Hydrology" output="TimeseriesStart"/>
+        <FromOutput component="Hydrology" output="TimeSeriesStart"/>
       </TimeseriesStart>
       <ReachesHydrology>
         <FromOutput component="Hydrology" output="Reaches"/>
@@ -299,7 +299,7 @@
         <FromOutput component="DepositionToReach" output="Reaches"/>
       </Reaches>
       <TimeseriesStart>
-        <FromOutput component="Hydrology" output="TimeseriesStart"/>
+        <FromOutput component="Hydrology" output="TimeSeriesStart"/>
       </TimeseriesStart>
       <WaterDischarge>
         <FromOutput component="Hydrology" output="Flow"/>
