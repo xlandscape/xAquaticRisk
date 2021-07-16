@@ -6,7 +6,7 @@ library(directlabels)
 # Define script inputs
 params <- list(
   x3df       = "F:\\dev\\Test_Run_aqRisk Rummen\\mcs\\X3DH2OESPRSXAVEPJB\\processing\\sim.x3df\\arr.dat",
-  outout.dir = "\\\\by0w5z\\GisData\\External1\\Projects_TS\\current\\Aquatic_Catchment\\processing\\Experiments\\test runs\\reporting_dlt"
+  output.dir = "F:\\dev\\Test_Run_aqRisk Rummen\\reporting_dlt"
 )
 
 # Load spatio-temporal data (PEC per reach and hour)
@@ -44,7 +44,7 @@ ggplot(d, aes(s.percentile, t.percentile, z = value)) +
   ylab("Temporal percentile (hours)") +
   theme(text = element_text(face = "bold")) +
   ylim(c(.99, 1))
-ggsave(file.path(params$outout.dir, "spatio-temporal percentiles v3.png"))
+ggsave(file.path(params$output.dir, "spatio-temporal percentiles v3.png"))
 
 # 3d contours
 
@@ -64,7 +64,7 @@ ggplot(d, aes(s.percentile, t.percentile, z = value)) +
   geom_dl(aes(label = ..level..), method = "bottom.pieces", stat = "contour", breaks = brk) +
   theme_bw() +
   xlim(c(0, 1))
-ggsave(file.path(params$outout.dir, "spatio-temporal percentiles (daily max).png"))
+ggsave(file.path(params$output.dir, "spatio-temporal percentiles (daily max).png"))
 
 # Weekly scale
 d <- data[, .(value = max(value)), .(reach, time %/% (24 * 7))]
@@ -81,7 +81,7 @@ ggplot(d, aes(s.percentile, t.percentile, z = value)) +
   geom_dl(aes(label = ..level..), method = "bottom.pieces", stat = "contour", breaks = brk) +
   theme_bw() +
   xlim(c(0, 1))
-ggsave(file.path(params$outout.dir, "spatio-temporal percentiles (weekly max).png"))
+ggsave(file.path(params$output.dir, "spatio-temporal percentiles (weekly max).png"))
 
 # Four-weekly scale
 d <- data[, .(value = max(value)), .(reach, time %/% (24 * 7 * 4))]
@@ -98,7 +98,7 @@ ggplot(d, aes(s.percentile, t.percentile, z = value)) +
   geom_dl(aes(label = ..level..), method = "top.pieces", stat = "contour", breaks = brk) +
   theme_bw() +
   xlim(c(0, 1))
-ggsave(file.path(params$outout.dir, "spatio-temporal percentiles (four-weekly max).png"))
+ggsave(file.path(params$output.dir, "spatio-temporal percentiles (four-weekly max).png"))
 
 # Twelve-weekly scale
 d <- data[, .(value = max(value)), .(reach, time %/% (24 * 7 * 12))]
@@ -116,7 +116,7 @@ ggplot(d, aes(s.percentile, t.percentile, z = value)) +
   theme_bw() +
   xlim(c(0, 1)) +
   ylim(c(0, 1))
-ggsave(file.path(params$outout.dir, "spatio-temporal percentiles (twelve-weekly max).png"))
+ggsave(file.path(params$output.dir, "spatio-temporal percentiles (twelve-weekly max).png"))
 
 # Timeseries one reach
 reaches <- sample(data[, max(value), reach][V1 > 0, unique(reach)], 10)
@@ -125,20 +125,20 @@ for (r in reaches) {
   ggplot(x, aes(time, value)) +
     geom_line() +
     theme_bw()
-  ggsave(file.path(params$outout.dir, paste("reach", r, "hourly.png")))
+  ggsave(file.path(params$output.dir, paste("reach", r, "hourly.png")))
 }
 
 # Timeseries multiple reaches
 d <- data[reach %in% reaches & time > 3048 & time < 3120]
 d <- merge(d, reaches, "reach")
-saveRDS(d, file.path(params$outout.dir, "10 reaches sample.rds"))
+saveRDS(d, file.path(params$output.dir, "10 reaches sample.rds"))
 ggplot(d, aes(time, value, col =  reach.id)) +
   geom_line() +
   theme_bw() +
   ylab("PEC_SW [ug/l]") +
   xlab("time [hour]")
-ggsave(file.path(params$outout.dir, "10 reaches around first application.png"))
-d <- readRDS(file.path(params$outout.dir, "10 reaches sample.rds"))
+ggsave(file.path(params$output.dir, "10 reaches around first application.png"))
+d <- readRDS(file.path(params$output.dir, "10 reaches sample.rds"))
 
 
 ###
@@ -157,7 +157,7 @@ ggplot(d.sed, aes(time, value, col =  reach.id)) +
   ylab("PEC_SED [mg/kg]") +
   xlab("time [hour]") +
   xlim(c(3050, 3099))
-ggsave(file.path(params$outout.dir, "10 reaches around first application (sediment).png"))
+ggsave(file.path(params$output.dir, "10 reaches around first application (sediment).png"))
 
 ####
 data <- merge(data, reaches, "reach")

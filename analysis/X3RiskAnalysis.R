@@ -18,9 +18,15 @@ initializeParameters <- function(inputs, args = NULL) {
   }
   else {
     positionalMatch <- match(names(args), inputs$positional)
-    arguments <- c(sapply(names(args)[is.na(positionalMatch)], function(x) paste0("--", x, "=", args[[x]]), USE.NAMES = FALSE), sapply(inputs$positional, function(x) args[[x]], USE.NAMES = FALSE))
+    arguments <- c(
+      sapply(names(args)[is.na(positionalMatch)], function(x) paste0("--", x, "=", args[[x]]), USE.NAMES = FALSE),
+      sapply(inputs$positional, function(x) args[[x]], USE.NAMES = FALSE)
+    )
   }
-  parsedArgs <- parse_args(OptionParser(usage = paste("%prog [options]", paste(inputs$positional, collapse = " ")), option_list = inputs$optional), arguments, positional_arguments = length(inputs$positional))
+  parsedArgs <- parse_args(
+    OptionParser(
+      usage = paste("%prog [options]", paste(inputs$positional, collapse = " ")), option_list = inputs$optional),
+    arguments, positional_arguments = length(inputs$positional))
   optionalArguments <- lapply(names(parsedArgs$options), function(x) parsedArgs$options[[x]])
   names(optionalArguments) <- names(parsedArgs$options)
   positionalArguments <- as.list(parsedArgs$args)
@@ -88,23 +94,41 @@ temporalAggregation <- function(x3df, dataset, t.quantiles = seq(0, 1, .01)) {
   cat("Preparing analysis...\n")
   hdf5 <- h5file(paste0(x3df, "/arr.dat"), "r")
   dataset <- hdf5[dataset]
-  chunks <- data.table(expand.grid(seq(1, dataset@dim[2], dataset@chunksize[2]), seq(1, dataset@dim[3], dataset@chunksize[3])))
-  chunks[, c("Var3", "Var4") := list(ifelse(Var1 + dataset@chunksize[2] > dataset@dim[2], dataset@dim[2] - Var1 + 1, dataset@chunksize[2]), ifelse(Var2 + dataset@chunksize[3] > dataset@dim[3], dataset@dim[3] - Var2 + 1, dataset@chunksize[3]))]
+  chunks <- data.table(
+    expand.grid(seq(1, dataset@dim[2], dataset@chunksize[2]), seq(1, dataset@dim[3], dataset@chunksize[3])))
+  chunks[,
+    c("Var3", "Var4") := list(
+      ifelse(Var1 + dataset@chunksize[2] > dataset@dim[2], dataset@dim[2] - Var1 + 1, dataset@chunksize[2]),
+      ifelse(Var2 + dataset@chunksize[3] > dataset@dim[3], dataset@dim[3] - Var2 + 1, dataset@chunksize[3])
+    )]
   chunks <- chunks[Var3 > 0 & Var4 > 0 & !(Var3 == 1 & Var4 == 1)]
   cat("Temporal aggregation\n")
   data.qt <- rbindlist(pblapply(1:nrow(chunks), function(i) {
-    dataSpace <- selectDataSpace(dataset, c(1, chunks[i, Var1], chunks[i, Var2]), c(dataset@dim[1], chunks[i, Var3], chunks[i, Var4]))
-    q <- as.data.table(apply(apply(readDataSet(dataset, dataSpace), c(2, 3), function(x) quantile(x, t.quantiles)), 1, function(x) x))
-    q[, cell := 0:(dataSpace@count[2] - 1) + chunks[i, Var1] + dataset@dim[2] * (rep(0:(dataSpace@count[3] - 1), each = dataSpace@count[2]) + chunks[i, Var2] - 1)]
+    dataSpace <- selectDataSpace(
+      dataset, c(1, chunks[i, Var1], chunks[i, Var2]), c(dataset@dim[1], chunks[i, Var3], chunks[i, Var4]))
+    q <- as.data.table(
+      apply(apply(readDataSet(dataset, dataSpace), c(2, 3), function(x) quantile(x, t.quantiles)), 1, function(x) x))
+    q[,
+      cell := 0:(dataSpace@count[2] - 1) + chunks[i, Var1] + dataset@dim[2] * (rep(
+         0:(dataSpace@count[3] - 1), each = dataSpace@count[2]) + chunks[i, Var2] - 1)
+    ]
   }))
   h5close(hdf5)
   setkey(data.qt, cell)
   data.qt
 }
 
-riskAnalysisMaps <- function(data, output, spatialInfo, valueName = "Value", t.quantiles = c("50%", "75%", "90%", "95%", "100%")) {
+riskAnalysisMaps <- function(
+  data, output, spatialInfo, valueName = "Value", t.quantiles = c("50%", "75%", "90%", "95%", "100%")) {
   cat(paste0("Risk analysis maps max", valueName, "|t (x, MCrun)\n"))
-  r <- raster(xmn = spatialInfo$extent[1], xmx = spatialInfo$extent[2], ymn = spatialInfo$extent[3], ymx = spatialInfo$extent[4], crs = spatialInfo$crs, resolution = spatialInfo$resolution)
+  r <- raster(
+    xmn = spatialInfo$extent[1],
+    xmx = spatialInfo$extent[2],
+    ymn = spatialInfo$extent[3],
+    ymx = spatialInfo$extent[4],
+    crs = spatialInfo$crs,
+    resolution = spatialInfo$resolution
+  )
   pbsapply(t.quantiles, function(qt) {
     val <- data[[qt]]
     length(val) <- ncell(r)
@@ -143,16 +167,29 @@ riskAnalysisPercentiles <- function(data, analysisScales, valueName = "Value", s
   cat(paste0("Risk analysis Xth%ile (max", valueName, "|t)|x (MCrun)\n"))
   data.qt <- melt(data, setdiff(names(analysisScales), ".def"), variable.name = "t.percentile")
   rbindlist(pblapply(1:nrow(analysisScales), function(i) {
-    res <- data.qt[eval(parse(text = analysisScales[i, .def])), list(s.percentile = paste0(s.quantiles * 100, "%"), value = quantile(value, s.quantiles)), t.percentile]
+    res <- data.qt[
+      eval(parse(text = analysisScales[i, .def])),
+      list(s.percentile = paste0(s.quantiles * 100, "%"), value = quantile(value, s.quantiles)),
+      t.percentile
+    ]
     res[, names(analysisScales) := as.list(analysisScales[i])][, .def := NULL]
   }))
 }
 
-riskAnalysisTable <- function(data, valueName = "Value", s.quantiles = c(0, .01, .05, .1, .25, .5, .75, .9, .95, .99, 1), t.quantiles = c(.5, .75, .9, .95, 1)) {
+riskAnalysisTable <- function(
+  data,
+  valueName = "Value",
+  s.quantiles = c(0, .01, .05, .1, .25, .5, .75, .9, .95, .99, 1),
+  t.quantiles = c(.5, .75, .9, .95, 1)
+) {
   cat(paste0("Risk analysis table < Xth%ile (max", valueName, "|t)|x >...\n"))
   sq <- paste0(s.quantiles * 100, "%")
   tq <- paste0(t.quantiles * 100, "%")
-  overview <- dcast(data[s.percentile %in% sq & t.percentile %in% tq], lulc + distance + t.percentile ~ s.percentile, value.var = "value")
+  overview <- dcast(
+    data[s.percentile %in% sq & t.percentile %in% tq],
+    lulc + distance + t.percentile ~ s.percentile,
+    value.var = "value"
+  )
   setcolorder(overview, c("lulc", "distance", "t.percentile", sq))
   overview
 }
@@ -185,7 +222,8 @@ writeToXlsx <- function(data, file, author = "X3 Risk Analysis") {
   saveWorkbook(wb, file)
 }
 
-contourplots <- function(data, analysisScales, output, prefix = "QX(QT)--", suffix = "", threshold = 0, type = "contour") {
+contourplots <- function(
+  data, analysisScales, output, prefix = "QX(QT)--", suffix = "", threshold = 0, type = "contour") {
   cat("Contourplots\n")
   suppressMessages(pbsapply(1:nrow(analysisScales), function(i) {
     dat <- data[lulc == analysisScales[i, lulc] & distance == analysisScales[i, distance] & value >= threshold]
@@ -197,13 +235,22 @@ contourplots <- function(data, analysisScales, output, prefix = "QX(QT)--", suff
     p <- p +
       xlab("Spatial percentile") +
       ylab("Temporal percentile") +
-      ggtitle(paste("Spatial and temporal percentiles of", analysisScales[i, lulc], "(log10) --", analysisScales[i, distance], "m")) +
+      ggtitle(
+        paste(
+          "Spatial and temporal percentiles of",
+          analysisScales[i, lulc],
+          "(log10) --",
+          analysisScales[i, distance],
+          "m"
+        )
+      ) +
       scale_x_continuous(breaks = 1:10 * 10) +
       scale_y_continuous(breaks = 1:10 * 10) +
       scale_color_gradient(low = "darkgreen", high = "red")
     if(type == "contour")
       direct.label(p, "bottom.pieces")
-    ggsave(file.path(output, paste0(prefix, analysisScales[i, distance], "--", analysisScales[i, lulc], suffix, ".png")))
+    ggsave(
+      file.path(output, paste0(prefix, analysisScales[i, distance], "--", analysisScales[i, lulc], suffix, ".png")))
     TRUE
   }))
 }
@@ -211,14 +258,27 @@ contourplots <- function(data, analysisScales, output, prefix = "QX(QT)--", suff
 plotPerTimestep <- function(x3df, dataset, output, spatialInfo, max.value) {
   cat("Plot per timestep\n")
   dir.create(output)
-  r <- raster(xmn = spatialInfo$extent[1], xmx = spatialInfo$extent[2], ymn = spatialInfo$extent[3], ymx = spatialInfo$extent[4], crs = spatialInfo$crs, resolution = spatialInfo$resolution)
+  r <- raster(
+    xmn = spatialInfo$extent[1],
+    xmx = spatialInfo$extent[2],
+    ymn = spatialInfo$extent[3],
+    ymx = spatialInfo$extent[4],
+    crs = spatialInfo$crs,
+    resolution = spatialInfo$resolution
+  )
   hdf5 <- h5file(paste0(x3df, "/arr.dat"), "r")
   dataset <- hdf5[dataset]
   pbsapply(1:dataset@dim[1], function(t) {
     r[] <- as.vector(sqrt(dataset[t,,]))
     r[r <= 1e-5] <- NA
     png(file = file.path(output, sprintf("%06d.png", t)), width = 1080, height = 1080)
-    plot(flip(r, "y"), zlim = c(0, max.value), col = rev(rainbow(255, start = 0, end = 1 / 3)), main = paste0("t = ", t), colNA = "lightgrey")
+    plot(
+      flip(r, "y"),
+      zlim = c(0, max.value),
+      col = rev(rainbow(255, start = 0, end = 1 / 3)),
+      main = paste0("t = ", t),
+      colNA = "lightgrey"
+    )
     dev.off()
     TRUE
   })
@@ -253,17 +313,37 @@ loadRawPercentiles <- function(input) {
 
 analyzePercentiles <- function(perc) {
   cat("Analyzing...\n")
-  perc[, list(mean = mean(value), stddev = sd(value), upper_conf = mean(value) + qnorm(.975) * sd(value) / sqrt(.N), lower_conf = mean(value) - qnorm(.975) * sd(value) / sqrt(.N)), list(distance, t.percentile, s.percentile)]
+  perc[,
+    list(
+      mean = mean(value),
+      stddev = sd(value),
+      upper_conf = mean(value) + qnorm(.975) * sd(value) / sqrt(.N),
+      lower_conf = mean(value) - qnorm(.975) * sd(value) / sqrt(.N)
+    ),
+    list(distance, t.percentile, s.percentile)
+  ]
 }
 
-filterPercentiles <- function(t.perc = c(.5, .75, .9, 1), s.perc = c(0, .01, .05, .1, .25, .5, .75, .9, .95, .99, 1)) {
+filterPercentiles <- function(
+  t.perc = c(.5, .75, .9, 1), s.perc = c(0, .01, .05, .1, .25, .5, .75, .9, .95, .99, 1)) {
   cat("Filtering percentiles\n")
   poi.t <- paste0(t.perc * 100, "%")
   poi.s <- paste0(s.perc * 100, "%")
   data <- pblapply(poi.t, function(poit) {
-    x.mean <- dcast(percentiles[t.percentile == poit & s.percentile %in% poi.s], distance ~ s.percentile, sum, value.var = "mean")
-    x.lower <- dcast(percentiles[t.percentile == poit & s.percentile %in% poi.s], distance ~ s.percentile, sum, value.var = "lower_conf")
-    x.upper <- dcast(percentiles[t.percentile == poit & s.percentile %in% poi.s], distance ~ s.percentile, sum, value.var = "upper_conf")
+    x.mean <- dcast(
+      percentiles[t.percentile == poit & s.percentile %in% poi.s], distance ~ s.percentile, sum, value.var = "mean")
+    x.lower <- dcast(
+      percentiles[t.percentile == poit & s.percentile %in% poi.s],
+      distance ~ s.percentile,
+      sum,
+      value.var = "lower_conf"
+    )
+    x.upper <- dcast(
+      percentiles[t.percentile == poit & s.percentile %in% poi.s],
+      distance ~ s.percentile,
+      sum,
+      value.var = "upper_conf"
+    )
     x.mean[, characteristic := "mean"]
     x.lower[, characteristic := "lowerConf95"]
     x.upper[, characteristic := "upperConf95"]
@@ -283,8 +363,18 @@ boxplots <- function(output, t.perc = c(.5, .75, .9, 1), s.perc = c(0, .01, .05,
   pbsapply(poi.t, function(poit) {
     for (dist in unique(perc[, distance])) {
       data <- perc[distance == dist & t.percentile == poit & s.percentile %in% poi.s]
-      png(file.path(output, paste0("QX(QT", sub("%", "", poit, fixed = TRUE), ")_", dist, ".png")), width = 1024, height = 1024)
-      boxplot(data[, value] ~ data[, as.numeric(sub("%", "", s.percentile, fixed = TRUE))], at = unique(data[, as.numeric(sub("%", "", s.percentile, fixed = TRUE))]), xlab = "Spatial percentile", ylab = params$options$dsname, main = paste0("QX(QT", poit, ") | ", dist))
+      png(
+        file.path(output, paste0("QX(QT", sub("%", "", poit, fixed = TRUE), ")_", dist, ".png")),
+        width = 1024,
+        height = 1024
+      )
+      boxplot(
+        data[, value] ~ data[, as.numeric(sub("%", "", s.percentile, fixed = TRUE))],
+        at = unique(data[, as.numeric(sub("%", "", s.percentile, fixed = TRUE))]),
+        xlab = "Spatial percentile",
+        ylab = params$options$dsname,
+        main = paste0("QX(QT", poit, ") | ", dist)
+      )
       dev.off()
     }
     TRUE

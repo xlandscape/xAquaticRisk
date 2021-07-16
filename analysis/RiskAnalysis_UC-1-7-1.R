@@ -5,8 +5,8 @@ library(directlabels)
 
 # Define script inputs
 params <- list(
-  x3df       = "F:\\Projects\\AquaticRiskLTI\\Experiments\\UC1-34-1\\mcs\\X3DHQ8ZO5OD4IMBCRI\\processing\\sim.x3df\\arr.dat",
-  outout.dir = "\\\\by0w5z\\GisData\\External1\\Projects_TS\\current\\Aquatic_Catchment\\processing\\Experiments\\test runs\\reporting_UC1-34-1"
+  x3df       = "F:\\AquaticRiskLTI\\Experiments\\UC1-34-1\\mcs\\X3DHQ8ZO5OD4IMBCRI\\processing\\sim.x3df\\arr.dat",
+  output.dir = "F:\\AquaticRiskLTI\\Experiments\\UC1-34-1\\reporting_UC1-34-1"
 )
 
 x3df <- X3DF$new(params$x3df)
@@ -41,4 +41,4 @@ ggplot(d, aes(s.percentile, t.percentile, z = value)) +
   xlab("Spatial percentile (100m segments)") +
   ylab("Temporal percentile (hours)") +
   theme(text = element_text(face = "bold"))
-ggsave(file.path(params$outout.dir, "contour plot PECsw.png"))
+ggsave(file.path(params$output.dir, "contour plot PECsw.png"))

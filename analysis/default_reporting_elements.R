@@ -4,7 +4,16 @@ suppressWarnings(library(pbapply))
 suppressWarnings(library(ggplot2))
 pboptions(type = "timer")
 
-percentiles_table <- function(experiment_dir, dataset, unit_conversion_factor, reaches, simulation_start, hydrography_ids, strahler_order, output_file) {
+percentiles_table <- function(
+  experiment_dir,
+  dataset,
+  unit_conversion_factor,
+  reaches,
+  simulation_start,
+  hydrography_ids,
+  strahler_order,
+  output_file
+) {
   # Determine MC runs
   mcs <- sapply(
     file.path(list.dirs(file.path(experiment_dir, "mcs"), recursive = FALSE)), file.path, "store", "arr.dat")
@@ -38,7 +47,10 @@ percentiles_table <- function(experiment_dir, dataset, unit_conversion_factor, r
   }))
   
   # Calculate expectancy values
-  expectancy <- perc[, .(expectancy_value = mean(pec), confidence_95_normal = qnorm(.975) * sd(pec) / sqrt(.N)), .(reach, year, percentile)]
+  expectancy <- perc[,
+    .(expectancy_value = mean(pec), confidence_95_normal = qnorm(.975) * sd(pec) / sqrt(.N)),
+    .(reach, year, percentile)
+  ]
   
   # Load and add Strahler order
   x3df <- X3DF$new(mcs[1])
@@ -50,7 +62,16 @@ percentiles_table <- function(experiment_dir, dataset, unit_conversion_factor, r
   fwrite(expectancy, output_file)
 }
 
-duration_exceedance_table <- function(experiment_dir, dataset, unit_conversion_factor, reaches, simulation_start, hydrography_ids, strahler_order, output_file) {
+duration_exceedance_table <- function(
+  experiment_dir,
+  dataset,
+  unit_conversion_factor,
+  reaches,
+  simulation_start,
+  hydrography_ids,
+  strahler_order,
+  output_file
+) {
   # Determine MC runs
   mcs <- sapply(
     file.path(list.dirs(file.path(experiment_dir, "mcs"), recursive = FALSE)), file.path, "store", "arr.dat")
@@ -77,7 +98,10 @@ duration_exceedance_table <- function(experiment_dir, dataset, unit_conversion_f
     pecs <- merge(pecs, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
   
     # Build concentration bins
-    pecs[, c("pec_0.001", "pec_0.005", "pec_0.01", "pec_0.1", "pec_1", "pec_10") := .(pec >= .001, pec >= .005, pec >= .01, pec >= .1, pec >= 1, pec >= 10)]
+    pecs[,
+      c("pec_0.001", "pec_0.005", "pec_0.01", "pec_0.1", "pec_1", "pec_10") :=
+        .(pec >= .001, pec >= .005, pec >= .01, pec >= .1, pec >= 1, pec >= 10)
+    ]
   
     # Count consecutive bins
     pecs[, duration_pec_0.001 := seq_len(.N), rleid(pec_0.001)]
@@ -96,14 +120,27 @@ duration_exceedance_table <- function(experiment_dir, dataset, unit_conversion_f
     pecs[pec_10 == FALSE, duration_pec_10 := 0]
   
     # Determine maximum durations per reach, year and bin
-    durations <- pecs[, .("0.001" = max(duration_pec_0.001), "0.005" = max(duration_pec_0.005), "0.01" = max(duration_pec_0.01), "0.1" = max(duration_pec_0.1), "1" = max(duration_pec_1), "10" = max(duration_pec_10)), .(reach, year = year(t))]
+    durations <- pecs[,
+      .(
+        "0.001" = max(duration_pec_0.001),
+        "0.005" = max(duration_pec_0.005),
+        "0.01" = max(duration_pec_0.01),
+        "0.1" = max(duration_pec_0.1),
+        "1" = max(duration_pec_1),
+        "10" = max(duration_pec_10)
+      ),
+      .(reach, year = year(t))
+    ]
   
     # Bring to long form
     melt(durations, c("reach", "year"), variable.name = "threshold", value.name = "duration")
   }))
 
   # Calculate expectancy values
-  expectancy <- durations[, .(expectancy_value = mean(duration), confidence_95_normal = qnorm(.975) * sd(duration) / sqrt(.N)), .(reach, year, threshold)]
+  expectancy <- durations[,
+    .(expectancy_value = mean(duration), confidence_95_normal = qnorm(.975) * sd(duration) / sqrt(.N)),
+    .(reach, year, threshold)
+  ]
 
   # Load and add Strahler order
   x3df <- X3DF$new(mcs[1])
@@ -115,7 +152,16 @@ duration_exceedance_table <- function(experiment_dir, dataset, unit_conversion_f
   fwrite(expectancy, output_file)
 }
 
-frequency_exceedance_table <- function(experiment_dir, dataset, unit_conversion_factor, reaches, simulation_start, hydrography_ids, strahler_order, output_file) {
+frequency_exceedance_table <- function(
+  experiment_dir,
+  dataset,
+  unit_conversion_factor,
+  reaches,
+  simulation_start,
+  hydrography_ids,
+  strahler_order,
+  output_file
+) {
   # Determine MC runs
   mcs <- sapply(
     file.path(list.dirs(file.path(experiment_dir, "mcs"), recursive = FALSE)), file.path, "store", "arr.dat")
@@ -142,7 +188,10 @@ frequency_exceedance_table <- function(experiment_dir, dataset, unit_conversion_
     pecs <- merge(pecs, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
   
     # Build concentration bins
-    pecs[, c("pec_0.001", "pec_0.005", "pec_0.01", "pec_0.1", "pec_1", "pec_10") := .(pec >= .001, pec >= .005, pec >= .01, pec >= .1, pec >= 1, pec >= 10)]
+    pecs[,
+      c("pec_0.001", "pec_0.005", "pec_0.01", "pec_0.1", "pec_1", "pec_10") :=
+        .(pec >= .001, pec >= .005, pec >= .01, pec >= .1, pec >= 1, pec >= 10)
+    ]
   
     # Count consecutive bins
     pecs[, `0.001` := c(rep(0L, .N - 1), .N), rleid(pec_0.001)]
@@ -168,7 +217,17 @@ frequency_exceedance_table <- function(experiment_dir, dataset, unit_conversion_
     durations <- durations[duration > 0]
   
     # Frequency bins
-    frequencies <- durations[, .(`1` = sum(duration >= 1), `2` = sum(duration >= 2), `6` = sum(duration >= 6), `24` = sum(duration >= 24), `48` = sum(duration >= 48), `96` = sum(duration >= 96)), .(reach, year = year(t), threshold)]
+    frequencies <- durations[,
+      .(
+        `1` = sum(duration >= 1),
+        `2` = sum(duration >= 2),
+        `6` = sum(duration >= 6),
+        `24` = sum(duration >= 24),
+        `48` = sum(duration >= 48),
+        `96` = sum(duration >= 96)
+      ),
+      .(reach, year = year(t), threshold)
+    ]
     rm(durations)
   
     # Bring to long form
@@ -176,7 +235,10 @@ frequency_exceedance_table <- function(experiment_dir, dataset, unit_conversion_
   }))
 
   # Calculate expectancy values
-  expectancy <- frequencies[, .(expectancy_value = mean(frequency), confidence_95_normal = qnorm(.975) * sd(frequency) / sqrt(.N)), .(reach, year, threshold, duration)]
+  expectancy <- frequencies[,
+    .(expectancy_value = mean(frequency), confidence_95_normal = qnorm(.975) * sd(frequency) / sqrt(.N)),
+    .(reach, year, threshold, duration)
+  ]
 
   # Load and add Strahler order
   x3df <- X3DF$new(mcs[1])
@@ -188,7 +250,8 @@ frequency_exceedance_table <- function(experiment_dir, dataset, unit_conversion_
   fwrite(expectancy, output_file)
 }
 
-load_values_first_mc <- function(experiment_dir, dataset, unit_conversion_factor, reaches, simulation_start, hydrography_ids, strahler_order) {
+load_values_first_mc <- function(
+  experiment_dir, dataset, unit_conversion_factor, reaches, simulation_start, hydrography_ids, strahler_order) {
   # Determine MC runs
   mcs <- sapply(
     file.path(list.dirs(file.path(experiment_dir, "mcs"), recursive = FALSE)), file.path, "store", "arr.dat")
@@ -237,17 +300,28 @@ boxplot_global <- function(data, value, y_axis_label, output_file) {
 }
 
 boxplot_reaches <- function(data, value, reaches, y_axis_label, output_file) {
-  ggplot(data[get(value) > 0 & reach %in% reaches, .(year = as.factor(year), val = get(value), reach = as.factor(reach))], aes(year, log10(val), fill = reach)) +
+  ggplot(
+    data[get(value) > 0 & reach %in% reaches, .(year = as.factor(year), val = get(value), reach = as.factor(reach))],
+    aes(year, log10(val), fill = reach)
+  ) +
     geom_boxplot() +
     xlab("year") +
     ylab(y_axis_label) +
-    scale_y_continuous(breaks = data[get(value) > 0, floor(log10(min(get(value))))]:data[, ceiling(log10(max(get(value))))]) +
+    scale_y_continuous(
+      breaks = data[get(value) > 0, floor(log10(min(get(value))))]:data[, ceiling(log10(max(get(value))))]
+    ) +
     theme_bw()
   ggsave(output_file)
 }
 
 lineplot_reaches <- function(data, value, reaches, from_day_of_year, to_day_of_year, y_axis_label, output_file) {
-  ggplot(data[get(value) > 0 & reach %in% reaches & yday >= from_day_of_year & yday <= to_day_of_year, .(year = as.factor(year), val = get(value), reach = as.factor(reach), hour = (yday - 1) * 24 + hour(t))], aes(hour, log10(val), col = reach)) +
+  ggplot(
+    data[
+      get(value) > 0 & reach %in% reaches & yday >= from_day_of_year & yday <= to_day_of_year,
+      .(year = as.factor(year), val = get(value), reach = as.factor(reach), hour = (yday - 1) * 24 + hour(t))
+    ],
+    aes(hour, log10(val), col = reach)
+  ) +
     geom_line() +
     scale_y_continuous(breaks=-10:0) +
     coord_cartesian(ylim=c(-10, 0)) +
@@ -259,7 +333,18 @@ lineplot_reaches <- function(data, value, reaches, from_day_of_year, to_day_of_y
 }
 
 cdf <- function(data, value) {
-  durations <- data[, .(reach, year, x_0 = get(value) < .001, x_0.001 = get(value) >= .001 & get(value) < .005, x_0.005 = get(value) >= .005 & get(value) < .01, x_0.01 = get(value) >= .01 & get(value) < .1, x_0.1 = get(value) >= .1 & get(value) < 1, x_1 = get(value) >= 1 & get(value) < 10, x_10 = get(value) >= 10)]
+  durations <- data[,
+    .(
+      reach,
+      year,
+      x_0 = get(value) < .001,
+      x_0.001 = get(value) >= .001 & get(value) < .005,
+      x_0.005 = get(value) >= .005 & get(value) < .01,
+      x_0.01 = get(value) >= .01 & get(value) < .1,
+      x_0.1 = get(value) >= .1 & get(value) < 1,
+      x_1 = get(value) >= 1 & get(value) < 10,
+      x_10 = get(value) >= 10
+    )]
   durations[, `< 0.001` := c(rep(0L, .N - 1), .N), rleid(x_0)]
   durations[, `0.001-0.005` := c(rep(0L, .N - 1), .N), rleid(x_0.001)]
   durations[, `0.005-0.01` := c(rep(0L, .N - 1), .N), rleid(x_0.005)]
@@ -274,13 +359,31 @@ cdf <- function(data, value) {
   durations[x_0.1 == FALSE, `0.1-1` := 0]
   durations[x_1 == FALSE, `1-10` := 0]
   durations[x_10 == FALSE, `>= 10` := 0]
-  durations <- melt(durations, c("reach", "year"), c("< 0.001", "0.001-0.005", "0.005-0.01", "0.01-0.1", "0.1-1", "1-10", ">= 10"), "threshold", "duration")
-  durations <- durations[, .(`1` = sum(duration == 1), `2-6` = sum(duration >= 2 & duration < 6), `6-24` = sum(duration >= 6 & duration < 24), `24-48` = sum(duration >= 24 & duration < 48), `48-96` = sum(duration >= 48 & duration < 96), `>= 96` = sum(duration >= 96)), .(reach, year, threshold)]
+  durations <- melt(
+    durations,
+    c("reach", "year"),
+    c("< 0.001", "0.001-0.005", "0.005-0.01", "0.01-0.1", "0.1-1", "1-10", ">= 10"),
+    "threshold",
+    "duration"
+  )
+  durations <- durations[,
+    .(
+      `1` = sum(duration == 1),
+      `2-6` = sum(duration >= 2 & duration < 6),
+      `6-24` = sum(duration >= 6 & duration < 24),
+      `24-48` = sum(duration >= 24 & duration < 48),
+      `48-96` = sum(duration >= 48 & duration < 96),
+      `>= 96` = sum(duration >= 96)),
+    .(reach, year, threshold)
+  ]
   melt(durations, c("reach", "year", "threshold"), variable.name = "duration", value.name = "frequency")
 }
 
 cdf_plot_absolute <- function(frequencies, x_axis_label, output_file) {
-  ggplot(frequencies[, .(frequency = sum(frequency)), .(threshold, duration)], aes(threshold, duration, fill = log10(frequency))) +
+  ggplot(
+    frequencies[, .(frequency = sum(frequency)), .(threshold, duration)],
+    aes(threshold, duration, fill = log10(frequency))
+  ) +
     geom_tile() +
     geom_text(aes(label = frequency), col = "white") +
     xlab(x_axis_label) +
@@ -290,7 +393,10 @@ cdf_plot_absolute <- function(frequencies, x_axis_label, output_file) {
 }
 
 cdf_plot_relative <- function(frequencies, x_axis_label, output_file) {
-  ggplot(frequencies[, .(frequency = sum(frequency) / frequencies[, sum(frequency)]), .(threshold, duration)], aes(threshold, duration, fill = log10(frequency))) +
+  ggplot(
+    frequencies[, .(frequency = sum(frequency) / frequencies[, sum(frequency)]), .(threshold, duration)],
+    aes(threshold, duration, fill = log10(frequency))
+  ) +
     geom_tile() +
     geom_text(aes(label = paste(round(frequency * 100, 2), "%")), col = "white") +
     xlab(x_axis_label) +
@@ -328,7 +434,17 @@ cumulative_plot_strahler <- function(data, value, y_axis_label, output_file) {
   ggsave(output_file)
 }
 
-survival_probability_table <- function(experiment_dir, datasets_prefix, datasets_suffix, reaches, simulation_start, species_names, hydrography_ids, strahler_order, output_file) {
+survival_probability_table <- function(
+  experiment_dir,
+  datasets_prefix,
+  datasets_suffix,
+  reaches,
+  simulation_start,
+  species_names,
+  hydrography_ids,
+  strahler_order,
+  output_file
+) {
   # Determine MC runs
   mcs <- sapply(
     file.path(list.dirs(file.path(experiment_dir, "mcs"), recursive = FALSE)), file.path, "store", "arr.dat")
@@ -338,7 +454,8 @@ survival_probability_table <- function(experiment_dir, datasets_prefix, datasets
 
     # Load data
     x3df <- X3DF$new(mc)
-    datasets <- names(x3df$datasets)[startsWith(names(x3df$datasets), datasets_prefix) & endsWith(names(x3df$datasets), datasets_suffix)]
+    datasets <- names(x3df$datasets)[
+      startsWith(names(x3df$datasets), datasets_prefix) & endsWith(names(x3df$datasets), datasets_suffix)]
 
     survival <- rbindlist(pblapply(datasets, function(x) {
       x3df$datasets[[x]]$extract(c(NA, NA, 11))
@@ -347,7 +464,8 @@ survival_probability_table <- function(experiment_dir, datasets_prefix, datasets
     start_year <- year(as.POSIXct(paste(x3df$datasets[[simulation_start]]$data, "00:00")))
 
     # Add model and species
-    survival[, c("model", "species") := .(substr(datasets[dataset], 26, 27), as.integer(substr(datasets[dataset], 36, 36)))]
+    survival[,
+      c("model", "species") := .(substr(datasets[dataset], 26, 27), as.integer(substr(datasets[dataset], 36, 36)))]
   
     # Reference species
     survival[, species := species_names[species]]
@@ -363,7 +481,10 @@ survival_probability_table <- function(experiment_dir, datasets_prefix, datasets
   }))
   
   # Calculate expectancy values
-  expectancy <- probabilities[, .(expectancy_value = mean(probability), confidence_95_normal = qnorm(.975) * sd(probability) / sqrt(.N)), .(reach, year, species, model)]
+  expectancy <- probabilities[,
+    .(expectancy_value = mean(probability), confidence_95_normal = qnorm(.975) * sd(probability) / sqrt(.N)),
+    .(reach, year, species, model)
+  ]
   
   # Load and add Strahler order
   x3df <- X3DF$new(mcs[1])
@@ -375,7 +496,17 @@ survival_probability_table <- function(experiment_dir, datasets_prefix, datasets
   fwrite(expectancy, output_file)
 }
 
-lp50_table <- function(experiment_dir, datasets_prefix, datasets_suffix, reaches, simulation_start, species_names, hydrography_ids, strahler_order, output_file) {
+lp50_table <- function(
+  experiment_dir,
+  datasets_prefix,
+  datasets_suffix,
+  reaches,
+  simulation_start,
+  species_names,
+  hydrography_ids,
+  strahler_order,
+  output_file
+) {
   # Determine MC runs
   mcs <- sapply(
     file.path(list.dirs(file.path(experiment_dir, "mcs"), recursive = FALSE)), file.path, "store", "arr.dat")
@@ -386,7 +517,8 @@ lp50_table <- function(experiment_dir, datasets_prefix, datasets_suffix, reaches
     # Load data
     x3df <- X3DF$new(mc)
     start_year <- year(as.POSIXct(paste(x3df$datasets[[simulation_start]]$data, "00:00")))
-    datasets <- names(x3df$datasets)[startsWith(names(x3df$datasets), datasets_prefix) & endsWith(names(x3df$datasets), datasets_suffix)]
+    datasets <- names(x3df$datasets)[
+      startsWith(names(x3df$datasets), datasets_prefix) & endsWith(names(x3df$datasets), datasets_suffix)]
     lp50 <- rbindlist(pblapply(datasets, function(x) {
       lp50 <- data.table(x3df$datasets[[x]]$data)
       lp50[, year := .I + start_year]
@@ -411,7 +543,10 @@ lp50_table <- function(experiment_dir, datasets_prefix, datasets_suffix, reaches
   }))
   
   # Calculate expectancy values
-  expectancy <- lp50[, .(expectancy_value = mean(lp50), confidence_95_normal = qnorm(.975) * sd(lp50) / sqrt(.N)), .(reach, year, species, model)]
+  expectancy <- lp50[,
+    .(expectancy_value = mean(lp50), confidence_95_normal = qnorm(.975) * sd(lp50) / sqrt(.N)),
+    .(reach, year, species, model)
+  ]
   
   # Load and add Strahler order
   x3df <- X3DF$new(mcs[1])

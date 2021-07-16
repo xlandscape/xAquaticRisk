@@ -6,7 +6,7 @@ library(directlabels)
 # Define script inputs
 params <- list(
   x3df       = "F:\\dev\\Test_Run_aqRisk Rummen Cascade\\mcs\\X328FFKLGYFRTNS2OW\\processing\\sim.x3df\\arr.dat",
-  outout.dir = "\\\\by0w5z\\GisData\\External1\\Projects_TS\\current\\Aquatic_Catchment\\processing\\Experiments\\test runs\\reporting Rummen Cascade"
+  output.dir = "F:\\dev\\Test_Run_aqRisk Rummen Cascade\\reporting Rummen Cascade"
 )
 
 x3df <- X3DF$new(params$x3df)
@@ -39,7 +39,7 @@ ggplot(d, aes(s.percentile, t.percentile, z = value)) +
   ylab("Temporal percentile (hours)") +
   theme(text = element_text(face = "bold")) +
   xlim(c(0, 1))
-ggsave(file.path(params$outout.dir, "contour plot PECsw.png"))
+ggsave(file.path(params$output.dir, "contour plot PECsw.png"))
 
 
 d <- data[reach.id %in% c(1558, 96, 1306) & time >= 3050 & time <= 3100]
@@ -49,7 +49,7 @@ ggplot(d, aes(time, value, col = reach.id)) +
   theme_bw() +
   xlab("time [hours]") +
   ylab("PEC_SW [ug/l]")
-ggsave(file.path(params$outout.dir, "PECsw 1558,96,1306.png"))
+ggsave(file.path(params$output.dir, "PECsw 1558,96,1306.png"))
 
 d <- data[reach.id %in% c(1559, 1809, 1343) & time >= 3050 & time <= 3100]
 d[, reach.id := as.factor(reach.id)]
@@ -58,7 +58,7 @@ ggplot(d, aes(time, value, col = reach.id)) +
   theme_bw() +
   xlab("time [hours]") +
   ylab("PEC_SW [ug/l]")
-ggsave(file.path(params$outout.dir, "PECsw 1559,1809,1343.png"))
+ggsave(file.path(params$output.dir, "PECsw 1559,1809,1343.png"))
 
 d <- data[reach.id %in% c(1028) & time >= 3050 & time <= 3100]
 d[, reach.id := as.factor(reach.id)]
@@ -67,7 +67,7 @@ ggplot(d, aes(time, value, col = reach.id)) +
   theme_bw() +
   xlab("time [hours]") +
   ylab("PEC_SW [ug/l]")
-ggsave(file.path(params$outout.dir, "PECsw 1028.png"))
+ggsave(file.path(params$output.dir, "PECsw 1028.png"))
 
 d <- data[reach.id %in% c(1558, 96, 1306) & time >= 3050 & time <= 10000]
 d[, reach.id := as.factor(reach.id)]
@@ -87,13 +87,13 @@ ggplot(x, aes(V1, N)) +
   geom_text(aes(label=rleid)) +
   ylab("Duration [h]") +
   xlab("Concentration interval [ug/l]")
-ggsave(file.path(params$outout.dir, "CDF numbers.png"))
+ggsave(file.path(params$output.dir, "CDF numbers.png"))
 ggplot(x, aes(V1, N)) + 
   geom_point() +
   theme_bw() +
   ylab("Duration [h]") +
   xlab("Concentration interval [ug/l]")
-ggsave(file.path(params$outout.dir, "CDF dots.png"))
+ggsave(file.path(params$output.dir, "CDF dots.png"))
 
 d <- data
 d[, ct := cut(value, c(-Inf, 10^(-6:-2), Inf))]
@@ -107,7 +107,7 @@ ggplot(y, aes(V1, ct, z=N)) +
   xlab("Concentration interval [ug/l]") +
   scale_fill_gradient(low = "white", high = "blue") +
   geom_text(aes(label = round(N / 1735, 2)))
-ggsave(file.path(params$outout.dir, "CDF all reaches.png"))
+ggsave(file.path(params$output.dir, "CDF all reaches.png"))
 
 ggplot(y, aes(V1, ct, z=N)) + 
   geom_tile(aes(fill = N)) +
@@ -116,7 +116,7 @@ ggplot(y, aes(V1, ct, z=N)) +
   xlab("Concentration interval [ug/l]") +
   scale_fill_gradient(low = "white", high = "blue") +
   geom_text(aes(label = N))
-ggsave(file.path(params$outout.dir, "CDF all reaches N.png"))
+ggsave(file.path(params$output.dir, "CDF all reaches N.png"))
 
 # hydro
 flow <- as.data.table(dss$`/Hydrology/Flow`$data)
@@ -132,6 +132,6 @@ ggplot(d, aes(log10(value.y), log10(value.x))) +
   theme_bw() +
   xlab("log10(Water discharge [m³/d])") +
   ylab("log10(maxPEC_SW(reach)|t [ug/l])")
-ggsave(file.path(params$outout.dir, "maxPEC and flow.png"))
+ggsave(file.path(params$output.dir, "maxPEC and flow.png"))
 
   

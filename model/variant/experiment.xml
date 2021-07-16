@@ -63,7 +63,9 @@
             <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
             <LM_Steps_Survival>/IndEffect_StepsRivernetwork_SD_Species1/GutsSurvivalReaches</LM_Steps_Survival>
             <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
-            <LM_Cmf_Continuous_Survival>/IndEffect_CmfContinuous_SD_Species1/GutsSurvivalReaches</LM_Cmf_Continuous_Survival>
+            <LM_Cmf_Continuous_Survival>
+                /IndEffect_CmfContinuous_SD_Species1/GutsSurvivalReaches
+            </LM_Cmf_Continuous_Survival>
             <LM_Cmf_Continuous_Survival_Mfs_Index>10</LM_Cmf_Continuous_Survival_Mfs_Index>
             <LM_Cascade_Survival>/IndEffect_CascadeToxswa_SD_Species1/GutsSurvivalReaches</LM_Cascade_Survival>
             <LM_Cascade_Survival_Mfs_Index>10</LM_Cascade_Survival_Mfs_Index>
@@ -122,7 +124,9 @@
             <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
             <LM_Steps_Survival>/IndEffect_StepsRivernetwork_IT_Species1/GutsSurvivalReaches</LM_Steps_Survival>
             <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
-            <LM_Cmf_Continuous_Survival>/IndEffect_CmfContinuous_IT_Species1/GutsSurvivalReaches</LM_Cmf_Continuous_Survival>
+            <LM_Cmf_Continuous_Survival>
+                /IndEffect_CmfContinuous_IT_Species1/GutsSurvivalReaches
+            </LM_Cmf_Continuous_Survival>
             <LM_Cmf_Continuous_Survival_Mfs_Index>10</LM_Cmf_Continuous_Survival_Mfs_Index>
             <LM_Cascade_Survival>/IndEffect_CascadeToxswa_IT_Species1/GutsSurvivalReaches</LM_Cascade_Survival>
             <LM_Cascade_Survival_Mfs_Index>10</LM_Cascade_Survival_Mfs_Index>

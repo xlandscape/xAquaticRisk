@@ -6,7 +6,7 @@ library(h5)
 library(data.table)
 
 # Specify some parameters
-x3df.path <- "F:\\Projects\\AquaticRiskLTI\\Experiments\\UC1-34-1\\mcs\\X3NMR8SS06K0YUYA1C\\processing\\sim.x3df\\arr.dat"
+x3df.path <- "F:\\AquaticRiskLTI\\Experiments\\UC1-34-1\\mcs\\X3NMR8SS06K0YUYA1C\\processing\\sim.x3df\\arr.dat"
 
 # Load the data
 x3df <- h5file(x3df.path, "r")
