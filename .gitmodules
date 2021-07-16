@@ -28,3 +28,6 @@
 [submodule "scenario/oudebeek-beek7-tdi"]
     path = scenario/oudebeek-beek7-tdi
     url = https://gitlab.bayer.com/aqrisk-landscape/scenario-oudebeek-beek7-tdi.git
+[submodule "model/variant/StepsRiverNetwork"]
+	path = model/variant/StepsRiverNetwork
+	url = https://gitlab.bayer.com/aqrisk-landscape/stepsrivernetwork-component.git
