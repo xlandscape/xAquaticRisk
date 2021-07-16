@@ -16,9 +16,6 @@
 [submodule "model/variant/ReportingObserver"]
     path = model/variant/ReportingObserver
     url = https://gitlab.bayer.com/aqrisk-landscape/reportingobserver.git
-[submodule "model/variant/StepsRivernetwork"]
-    path = model/variant/StepsRivernetwork
-    url = https://gitlab.bayer.com/aqrisk-landscape/stepsrivernetwork-component.git
 [submodule "model/variant/StreamCom"]
     path = model/variant/StreamCom
     url = https://gitlab.bayer.com/aqrisk-landscape/streamcom-component.git
