@@ -18,16 +18,16 @@
             <Key>$(SimID)</Key>
             <CmfCont>$(RunCmfContinuous)</CmfCont>
             <Cascade>$(RunCascadeToxswa)</Cascade>
-            <Steps>$(RunStepsRivernetwork)</Steps>
-            <Lguts>$(RunLGUTS)</Lguts>
+            <Steps>$(RunStepsRiverNetwork)</Steps>
+            <Lguts>$(RunLGuts)</Lguts>
             <T0>$(SimulationStart)T00:00</T0>
             <Tn>$(SimulationEnd)T23:00</Tn>
             <Cmf_Depth>cmf_depth</Cmf_Depth>
-            <CmfCont_PecSW>cmfcont_pecsw</CmfCont_PecSW>
-            <CmfCont_Survival>cmfcont_survival</CmfCont_Survival>
-            <Steps_PecSW>steps_pecsw</Steps_PecSW>
+            <CmfCont_PecSW>CmfCont_PecSW</CmfCont_PecSW>
+            <CmfCont_Survival>CmfCont_Survival</CmfCont_Survival>
+            <Steps_PecSW>Steps_PecSW</Steps_PecSW>
             <Steps_Survival>steps_survival</Steps_Survival>
-            <Cascade_PecSW>cascade_pecsw</Cascade_PecSW>
+            <Cascade_PecSW>Cascade_PecSW</Cascade_PecSW>
             <Cascade_Survival>cascade_survival</Cascade_Survival>
             <Reaches>$(ReportingReaches)</Reaches>
             <Pec_P1>20</Pec_P1>
@@ -53,15 +53,15 @@
             <LM_Simulation_Start>$(SimulationStart)</LM_Simulation_Start>
             <LM_Cascade_DS>/CascadeToxswa/ConLiqWatTgtAvg</LM_Cascade_DS>
             <LM_Cmf_Continuous_DS>/CmfContinuous/PEC_SW</LM_Cmf_Continuous_DS>
-            <LM_Steps_RiverNetwork_DS>/StepsRivernetwork/PEC_SW</LM_Steps_RiverNetwork_DS>
+            <LM_Steps_River_Network_DS>/StepsRiverNetwork/PEC_SW</LM_Steps_River_Network_DS>
             <LM_Hydrography_DS>/LandscapeScenario/hydrography</LM_Hydrography_DS>
             <LM_Cascade_Reaches>/CascadeToxswa/Reaches</LM_Cascade_Reaches>
             <LM_Cmf_Continuous_Reaches>/CmfContinuous/Reaches</LM_Cmf_Continuous_Reaches>
-            <LM_Steps_Rivernetwork_reaches>/StepsRivernetwork/Reaches</LM_Steps_Rivernetwork_reaches>
+            <LM_Steps_River_Network_reaches>/StepsRiverNetwork/Reaches</LM_Steps_River_Network_reaches>
             <LM_Catchment>$(:Catchment)</LM_Catchment>
             <LM_Cmf_Depth_DS>/Hydrology/Depth</LM_Cmf_Depth_DS>
             <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
-            <LM_Steps_Survival>/IndEffect_StepsRivernetwork_SD_Species1/GutsSurvivalReaches</LM_Steps_Survival>
+            <LM_Steps_Survival>/IndEffect_StepsRiverNetwork_SD_Species1/GutsSurvivalReaches</LM_Steps_Survival>
             <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
             <LM_Cmf_Continuous_Survival>
                 /IndEffect_CmfContinuous_SD_Species1/GutsSurvivalReaches
@@ -79,16 +79,16 @@
             <Key>$(SimID)</Key>
             <CmfCont>$(RunCmfContinuous)</CmfCont>
             <Cascade>$(RunCascadeToxswa)</Cascade>
-            <Steps>$(RunStepsRivernetwork)</Steps>
-            <Lguts>$(RunLGUTS)</Lguts>
+            <Steps>$(RunStepsRiverNetwork)</Steps>
+            <Lguts>$(RunLGuts)</Lguts>
             <T0>$(SimulationStart)T00:00</T0>
             <Tn>$(SimulationEnd)T23:00</Tn>
             <Cmf_Depth>cmf_depth</Cmf_Depth>
-            <CmfCont_PecSW>cmfcont_pecsw</CmfCont_PecSW>
-            <CmfCont_Survival>cmfcont_survival</CmfCont_Survival>
-            <Steps_PecSW>steps_pecsw</Steps_PecSW>
+            <CmfCont_PecSW>CmfCont_PecSW</CmfCont_PecSW>
+            <CmfCont_Survival>CmfCont_Survival</CmfCont_Survival>
+            <Steps_PecSW>Steps_PecSW</Steps_PecSW>
             <Steps_Survival>steps_survival</Steps_Survival>
-            <Cascade_PecSW>cascade_pecsw</Cascade_PecSW>
+            <Cascade_PecSW>Cascade_PecSW</Cascade_PecSW>
             <Cascade_Survival>cascade_survival</Cascade_Survival>
             <Reaches>$(ReportingReaches)</Reaches>
             <Pec_P1>20</Pec_P1>
@@ -114,15 +114,15 @@
             <LM_Simulation_Start>$(SimulationStart)</LM_Simulation_Start>
             <LM_Cascade_DS>/CascadeToxswa/ConLiqWatTgtAvg</LM_Cascade_DS>
             <LM_Cmf_Continuous_DS>/CmfContinuous/PEC_SW</LM_Cmf_Continuous_DS>
-            <LM_Steps_RiverNetwork_DS>/StepsRivernetwork/PEC_SW</LM_Steps_RiverNetwork_DS>
+            <LM_Steps_River_Network_DS>/StepsRiverNetwork/PEC_SW</LM_Steps_River_Network_DS>
             <LM_Hydrography_DS>/LandscapeScenario/hydrography</LM_Hydrography_DS>
             <LM_Cascade_Reaches>/CascadeToxswa/Reaches</LM_Cascade_Reaches>
             <LM_Cmf_Continuous_Reaches>/CmfContinuous/Reaches</LM_Cmf_Continuous_Reaches>
-            <LM_Steps_Rivernetwork_reaches>/StepsRivernetwork/Reaches</LM_Steps_Rivernetwork_reaches>
+            <LM_Steps_River_Network_reaches>/StepsRiverNetwork/Reaches</LM_Steps_River_Network_reaches>
             <LM_Catchment>$(:Catchment)</LM_Catchment>
             <LM_Cmf_Depth_DS>/Hydrology/Depth</LM_Cmf_Depth_DS>
             <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
-            <LM_Steps_Survival>/IndEffect_StepsRivernetwork_IT_Species1/GutsSurvivalReaches</LM_Steps_Survival>
+            <LM_Steps_Survival>/IndEffect_StepsRiverNetwork_IT_Species1/GutsSurvivalReaches</LM_Steps_Survival>
             <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
             <LM_Cmf_Continuous_Survival>
                 /IndEffect_CmfContinuous_IT_Species1/GutsSurvivalReaches
@@ -138,11 +138,11 @@
     <Parts>
         <AnalysisObserver module="AnalysisObserver" class="AnalysisObserver"/>
         <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa"/>
-        <CmfContinuous module="CmfContinuous" class="CmfContinuousEfate"/>
+        <CmfContinuous module="CmfContinuous" class="CmfContinuous"/>
         <LEffectModel module="LEffectModel" class="LEffectModel"/>
         <LP50 module="LP50" class="LP50"/>
         <ReportingObserver module="ReportingObserver" class="ReportingObserver"/>
-        <StepsRivernetwork module="StepsRivernetwork" class="StepsRivernetwork"/>
+        <StepsRiverNetwork module="StepsRiverNetwork" class="StepsRiverNetwork"/>
         <StreamCom module="StreamCom" class="StreamCom"/>
         <XSprayDrift module="XSprayDrift" class="SprayDrift"/>
     </Parts>

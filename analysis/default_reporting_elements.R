@@ -104,28 +104,28 @@ duration_exceedance_table <- function(
     ]
   
     # Count consecutive bins
-    pecs[, duration_pec_0.001 := seq_len(.N), rleid(pec_0.001)]
-    pecs[, duration_pec_0.005 := seq_len(.N), rleid(pec_0.005)]
-    pecs[, duration_pec_0.01 := seq_len(.N), rleid(pec_0.01)]
-    pecs[, duration_pec_0.1 := seq_len(.N), rleid(pec_0.1)]
+    pecs[, duration_pec_0_001 := seq_len(.N), rleid(pec_0.001)]
+    pecs[, duration_pec_0_005 := seq_len(.N), rleid(pec_0.005)]
+    pecs[, duration_pec_0_01 := seq_len(.N), rleid(pec_0.01)]
+    pecs[, duration_pec_0_1 := seq_len(.N), rleid(pec_0.1)]
     pecs[, duration_pec_1 := seq_len(.N), rleid(pec_1)]
     pecs[, duration_pec_10 := seq_len(.N), rleid(pec_10)]
  
     # Set durations outside bins to 0
-    pecs[pec_0.001 == FALSE, duration_pec_0.001 := 0]
-    pecs[pec_0.005 == FALSE, duration_pec_0.005 := 0]
-    pecs[pec_0.01 == FALSE, duration_pec_0.01 := 0]
-    pecs[pec_0.1 == FALSE, duration_pec_0.1 := 0]
+    pecs[pec_0.001 == FALSE, duration_pec_0_001 := 0]
+    pecs[pec_0.005 == FALSE, duration_pec_0_005 := 0]
+    pecs[pec_0.01 == FALSE, duration_pec_0_01 := 0]
+    pecs[pec_0.1 == FALSE, duration_pec_0_1 := 0]
     pecs[pec_1 == FALSE, duration_pec_1 := 0]
     pecs[pec_10 == FALSE, duration_pec_10 := 0]
   
     # Determine maximum durations per reach, year and bin
     durations <- pecs[,
       .(
-        "0.001" = max(duration_pec_0.001),
-        "0.005" = max(duration_pec_0.005),
-        "0.01" = max(duration_pec_0.01),
-        "0.1" = max(duration_pec_0.1),
+        "0.001" = max(duration_pec_0_001),
+        "0.005" = max(duration_pec_0_005),
+        "0.01" = max(duration_pec_0_01),
+        "0.1" = max(duration_pec_0_1),
         "1" = max(duration_pec_1),
         "10" = max(duration_pec_10)
       ),
@@ -194,20 +194,20 @@ frequency_exceedance_table <- function(
     ]
   
     # Count consecutive bins
-    pecs[, `0.001` := c(rep(0L, .N - 1), .N), rleid(pec_0.001)]
-    pecs[, `0.005` := c(rep(0L, .N - 1), .N), rleid(pec_0.005)]
-    pecs[, `0.01` := c(rep(0L, .N - 1), .N), rleid(pec_0.01)]
-    pecs[, `0.1` := c(rep(0L, .N - 1), .N), rleid(pec_0.1)]
-    pecs[, `1` := c(rep(0L, .N - 1), .N), rleid(pec_1)]
-    pecs[, `10` := c(rep(0L, .N - 1), .N), rleid(pec_10)]
+    pecs[, "0.001" := c(rep(0L, .N - 1), .N), rleid(pec_0.001)]
+    pecs[, "0.005" := c(rep(0L, .N - 1), .N), rleid(pec_0.005)]
+    pecs[, "0.01" := c(rep(0L, .N - 1), .N), rleid(pec_0.01)]
+    pecs[, "0.1" := c(rep(0L, .N - 1), .N), rleid(pec_0.1)]
+    pecs[, "1" := c(rep(0L, .N - 1), .N), rleid(pec_1)]
+    pecs[, "10" := c(rep(0L, .N - 1), .N), rleid(pec_10)]
 
     # Set durations ouside bins to 0
-    pecs[pec_0.001 == FALSE, `0.001` := 0]
-    pecs[pec_0.005 == FALSE, `0.005` := 0]
-    pecs[pec_0.01 == FALSE, `0.01` := 0]
-    pecs[pec_0.1 == FALSE, `0.1` := 0]
-    pecs[pec_1 == FALSE, `1` := 0]
-    pecs[pec_10 == FALSE, `10` := 0]
+    pecs[pec_0.001 == FALSE, "0.001" := 0]
+    pecs[pec_0.005 == FALSE, "0.005" := 0]
+    pecs[pec_0.01 == FALSE, "0.01" := 0]
+    pecs[pec_0.1 == FALSE, "0.1" := 0]
+    pecs[pec_1 == FALSE, "1" := 0]
+    pecs[pec_10 == FALSE, "10" := 0]
   
     # Bring to long form
     durations <- melt(pecs, c("reach", "t"), c("0.001", "0.005", "0.01", "0.1", "1", "10"), "threshold", "duration")
@@ -301,7 +301,8 @@ boxplot_global <- function(data, value, y_axis_label, output_file) {
 
 boxplot_reaches <- function(data, value, reaches, y_axis_label, output_file) {
   ggplot(
-    data[get(value) > 0 & reach %in% reaches, .(year = as.factor(year), val = get(value), reach = as.factor(reach))],
+    data[
+      get(value) > 0 & `%in%`(reach, reaches), .(year = as.factor(year), val = get(value), reach = as.factor(reach))],
     aes(year, log10(val), fill = reach)
   ) +
     geom_boxplot() +
@@ -314,10 +315,10 @@ boxplot_reaches <- function(data, value, reaches, y_axis_label, output_file) {
   ggsave(output_file)
 }
 
-lineplot_reaches <- function(data, value, reaches, from_day_of_year, to_day_of_year, y_axis_label, output_file) {
+line_plot_reaches <- function(data, value, reaches, from_day_of_year, to_day_of_year, y_axis_label, output_file) {
   ggplot(
     data[
-      get(value) > 0 & reach %in% reaches & yday >= from_day_of_year & yday <= to_day_of_year,
+      get(value) > 0 & `%in%`(reach, reaches) & yday >= from_day_of_year & yday <= to_day_of_year,
       .(year = as.factor(year), val = get(value), reach = as.factor(reach), hour = (yday - 1) * 24 + hour(t))
     ],
     aes(hour, log10(val), col = reach)
@@ -345,20 +346,20 @@ cdf <- function(data, value) {
       x_1 = get(value) >= 1 & get(value) < 10,
       x_10 = get(value) >= 10
     )]
-  durations[, `< 0.001` := c(rep(0L, .N - 1), .N), rleid(x_0)]
-  durations[, `0.001-0.005` := c(rep(0L, .N - 1), .N), rleid(x_0.001)]
-  durations[, `0.005-0.01` := c(rep(0L, .N - 1), .N), rleid(x_0.005)]
-  durations[, `0.01-0.1` := c(rep(0L, .N - 1), .N), rleid(x_0.01)]
-  durations[, `0.1-1` := c(rep(0L, .N - 1), .N), rleid(x_0.1)]
-  durations[, `1-10` := c(rep(0L, .N - 1), .N), rleid(x_1)]
-  durations[, `>= 10` := c(rep(0L, .N - 1), .N), rleid(x_10)]
-  durations[x_0 == FALSE, `< 0.001` := 0]
-  durations[x_0.001 == FALSE, `0.001-0.005` := 0]
-  durations[x_0.005 == FALSE, `0.005-0.01` := 0]
-  durations[x_0.01 == FALSE, `0.01-0.1` := 0]
-  durations[x_0.1 == FALSE, `0.1-1` := 0]
-  durations[x_1 == FALSE, `1-10` := 0]
-  durations[x_10 == FALSE, `>= 10` := 0]
+  durations[, "< 0.001" := c(rep(0L, .N - 1), .N), rleid(x_0)]
+  durations[, "0.001-0.005" := c(rep(0L, .N - 1), .N), rleid(x_0.001)]
+  durations[, "0.005-0.01" := c(rep(0L, .N - 1), .N), rleid(x_0.005)]
+  durations[, "0.01-0.1" := c(rep(0L, .N - 1), .N), rleid(x_0.01)]
+  durations[, "0.1-1" := c(rep(0L, .N - 1), .N), rleid(x_0.1)]
+  durations[, "1-10" := c(rep(0L, .N - 1), .N), rleid(x_1)]
+  durations[, ">= 10" := c(rep(0L, .N - 1), .N), rleid(x_10)]
+  durations[x_0 == FALSE, "< 0.001" := 0]
+  durations[x_0.001 == FALSE, "0.001-0.005" := 0]
+  durations[x_0.005 == FALSE, "0.005-0.01" := 0]
+  durations[x_0.01 == FALSE, "0.01-0.1" := 0]
+  durations[x_0.1 == FALSE, "0.1-1" := 0]
+  durations[x_1 == FALSE, "1-10" := 0]
+  durations[x_10 == FALSE, ">= 10" := 0]
   durations <- melt(
     durations,
     c("reach", "year"),

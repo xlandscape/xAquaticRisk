@@ -22,7 +22,7 @@
         <Temp0>20</Temp0>
         <Q10>2.2</Q10>
         <PlantUptake>0</PlantUptake>
-        <QFAC>-9999</QFAC>
+        <QFac>-9999</QFac>
         <LGUTS_BackgroundHazardRate>0</LGUTS_BackgroundHazardRate>
         <UseSubLethalToxEffects>True</UseSubLethalToxEffects>
         <ThresholdPopulationSizeForSuperIndividuals>10</ThresholdPopulationSizeForSuperIndividuals>
@@ -65,7 +65,7 @@
             <TimeSeries>$(:Hydrology)</TimeSeries>
             <FromTime type="date">$(SimulationStart)</FromTime>
             <ToTime type="date">$(SimulationEnd)</ToTime>
-            <InflowTimeSeriesPath>$(:Timeseries)</InflowTimeSeriesPath>
+            <InflowTimeSeriesPath>$(:TimeSeries)</InflowTimeSeriesPath>
             <ImportInflows type="bool">$(RunCmfContinuous)</ImportInflows>
         </Hydrology>
         <PPM module="components" class="PpmCalendar">
@@ -155,8 +155,8 @@
                 <FromOutput component="LandscapeScenario" output="reach_id"/>
             </Mapping>
         </DepositionToReach>
-        <StepsRivernetwork module="StepsRivernetwork" class="StepsRivernetwork" enabled="$(RunStepsRivernetwork)">
-            <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\steps</ProcessingPath>
+        <StepsRiverNetwork module="StepsRiverNetwork" class="StepsRiverNetwork" enabled="$(RunStepsRiverNetwork)">
+            <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\steps</ProcessingPath>
             <Hydrography>
                 <FromOutput component="LandscapeScenario" output="hydrography"/>
             </Hydrography>
@@ -164,9 +164,9 @@
             <WaterDischarge>
                 <FromOutput component="Hydrology" output="Flow"/>
             </WaterDischarge>
-            <TimeseriesStart>
+            <TimeSeriesStart>
                 <FromOutput component="Hydrology" output="TimeSeriesStart"/>
-            </TimeseriesStart>
+            </TimeSeriesStart>
             <ReachesHydrology>
                 <FromOutput component="Hydrology" output="Reaches"/>
             </ReachesHydrology>
@@ -189,34 +189,34 @@
             <Temp0 type="float" unit="°C">$(Temp0)</Temp0>
             <Q10 type="float" unit="1">$(Q10)</Q10>
             <PlantUptake type="float" unit="1">$(PlantUptake)</PlantUptake>
-            <QFAC type="float" unit="1">$(QFAC)</QFAC>
+            <QFac type="float" unit="1">$(QFac)</QFac>
             <ThresholdSW type="float" unit="mg/m³">$(ThresholdSW)</ThresholdSW>
             <ThresholdSediment type="float" unit="mg/kg">$(ThresholdSediment)</ThresholdSediment>
-        </StepsRivernetwork>
-        <ExportStepsRivernetworkReaches
+        </StepsRiverNetwork>
+        <ExportStepsRiverNetworkReaches
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(ExportToSqlite)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </Values>
             <Create type="bool">true</Create>
-        </ExportStepsRivernetworkReaches>
-        <ExportStepsRivernetworkPecs
+        </ExportStepsRiverNetworkReaches>
+        <ExportStepsRiverNetworkPecs
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(ExportToSqlite)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Values>
             <Create type="bool">false</Create>
-            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRiverNetworkReaches/Reaches`)</ForeignKey>
             <Sql>
                 CREATE VIEW IF NOT EXISTS pec AS
                     SELECT
@@ -258,15 +258,15 @@
                             datetime('$(SimulationStart)', `time/hour, space/base_geometry`.i || ' hours', '1 hours')
                         ) AS INTEGER
                     ) AS hour,
-                    CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER) AS reach,
-                    CAST(`ExportStepsRivernetworkPecs/PEC_SW` AS REAL) AS pec,
+                    CAST(`space/reach`.`ExportStepsRiverNetworkReaches/Reaches` AS INTEGER) AS reach,
+                    CAST(`ExportStepsRiverNetworkPecs/PEC_SW` AS REAL) AS pec,
                     CAST('ug/l' AS TEXT) AS unit
                   FROM `time/hour, space/base_geometry`
                   JOIN `space/reach` ON `time/hour, space/base_geometry`.j = `space/reach`.i
             </Sql>
-        </ExportStepsRivernetworkPecs>
-        <CmfContinuous module="CmfContinuous" class="CmfContinuousEfate" enabled="$(RunCmfContinuous)">
-            <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\cmfcont</ProcessingPath>
+        </ExportStepsRiverNetworkPecs>
+        <CmfContinuous module="CmfContinuous" class="CmfContinuous" enabled="$(RunCmfContinuous)">
+            <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\CmfCont</ProcessingPath>
             <Begin type="date">$(SimulationStart)</Begin>
             <End type="date">$(SimulationEnd)</End>
             <Threads type="int">1</Threads>
@@ -281,14 +281,14 @@
             <Temp0 type="float" unit="°C">$(Temp0)</Temp0>
             <Q10 type="float" unit="1">$(Q10)</Q10>
             <PlantUptake type="float" unit="1">$(PlantUptake)</PlantUptake>
-            <QFAC type="float" unit="1">$(QFAC)</QFAC>
+            <QFac type="float" unit="1">$(QFac)</QFac>
             <Catchment>$(:Catchment)</Catchment>
             <DriftDeposition>
                 <FromOutput component="DepositionToReach" output="Deposition"/>
             </DriftDeposition>
-            <Timeseries>
+            <TimeSeries>
                 <FromOutput component="Hydrology" output="Inflow"/>
-            </Timeseries>
+            </TimeSeries>
             <ReachesDrift>
                 <FromOutput component="DepositionToReach" output="Reaches"/>
             </ReachesDrift>
@@ -320,12 +320,6 @@
             </Values>
             <Create type="bool">false</Create>
             <ForeignKey type="list[str]">|`space/each`(`CmfContinuous/Reaches`)</ForeignKey>
-            <Sql>
-                CAST(`space/reach`.`ExportCmfContinuousReaches/Reaches` AS INTEGER) AS reach,
-                CAST(`ExportCmfContinuousPecs/PEC_SW` AS REAL) AS pec, CAST('ug/l' AS TEXT) AS unit
-                FROM `time/hour, space/base_geometry`
-                JOIN `space/reach` ON `time/hour, space/base_geometry`.j = `space/reach`.i
-            </Sql>
             <Sql>
                 CREATE VIEW IF NOT EXISTS pec AS
                     SELECT
@@ -375,7 +369,7 @@
             </Sql>
         </ExportCmfContinuousPecs>
         <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa" enabled="$(RunCascadeToxswa)">
-            <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\cascade</ProcessingPath>
+            <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\cascade</ProcessingPath>
             <Hydrography>
                 <FromOutput component="LandscapeScenario" output="hydrography"/>
             </Hydrography>
@@ -383,9 +377,9 @@
             <Reaches>
                 <FromOutput component="DepositionToReach" output="Reaches"/>
             </Reaches>
-            <TimeseriesStart>
+            <TimeSeriesStart>
                 <FromOutput component="Hydrology" output="TimeSeriesStart"/>
-            </TimeseriesStart>
+            </TimeSeriesStart>
             <WaterDischarge>
                 <FromOutput component="Hydrology" output="Flow"/>
             </WaterDischarge>
@@ -429,27 +423,27 @@
             <MolarActivationEnthalpyOfTransformationInSediment type="float" unit="kJ/mol">
                 $(MolarActivationEnthalpyOfTransformationInSediment)
             </MolarActivationEnthalpyOfTransformationInSediment>
-            <CoefficientForEquilibriumSorptionInSediment type="float" unit="l/kg" eval="true">
+            <CoefficientForEquilibriumAdsorptionInSediment type="float" unit="l/kg" eval="true">
                 $(KOC) / 1.742
-            </CoefficientForEquilibriumSorptionInSediment>
+            </CoefficientForEquilibriumAdsorptionInSediment>
             <ReferenceConcentrationInLiquidPhaseInSediment type="float" unit="mg/l">
                 $(ReferenceConcentrationForKOC)
             </ReferenceConcentrationInLiquidPhaseInSediment>
             <FreundlichExponentInSediment type="float" unit="1">
                 $(FreundlichExponentInSedimentAndSuspendedParticles)
             </FreundlichExponentInSediment>
-            <CoefficientForEquilibriumSorptionOfSuspendedSoils type="float" unit="l/kg" eval="true">
+            <CoefficientForEquilibriumAdsorptionOfSuspendedSoils type="float" unit="l/kg" eval="true">
                 $(KOC) / 1.742
-            </CoefficientForEquilibriumSorptionOfSuspendedSoils>
+            </CoefficientForEquilibriumAdsorptionOfSuspendedSoils>
             <ReferenceConcentrationForSuspendedSoils type="float" unit="mg/l">
                 $(ReferenceConcentrationForKOC)
             </ReferenceConcentrationForSuspendedSoils>
             <FreundlichExponentForSuspendedSoils type="float" unit="1">
                 $(FreundlichExponentInSedimentAndSuspendedParticles)
             </FreundlichExponentForSuspendedSoils>
-            <CoefficientForLinearSorptionOnMacrophytes type="float" unit="l/kg">
+            <CoefficientForLinearAdsorptionOnMacrophytes type="float" unit="l/kg">
                 0
-            </CoefficientForLinearSorptionOnMacrophytes>
+            </CoefficientForLinearAdsorptionOnMacrophytes>
             <NumberWorkers type="int">$(CascadeToxswaWorkers)</NumberWorkers>
         </CascadeToxswa>
         <ExportCascadeToxswaReaches
@@ -524,10 +518,10 @@
                   JOIN `space/reach` ON `time/hour, space/base_geometry`.j = `space/reach`.i
             </Sql>
         </ExportCascadeToxswaPecs>
-        <IndEffect_StepsRivernetwork_SD_Species1
+        <IndEffect_StepsRiverNetwork_SD_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_sd_$(Species1)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -556,19 +550,19 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
-        </IndEffect_StepsRivernetwork_SD_Species1>
-        <IndEffect_StepsRivernetwork_SD_Species2
+        </IndEffect_StepsRiverNetwork_SD_Species1>
+        <IndEffect_StepsRiverNetwork_SD_Species2
                 module="LEffectModel" class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_sd_$(Species2)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -597,20 +591,20 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
-        </IndEffect_StepsRivernetwork_SD_Species2>
-        <IndEffect_StepsRivernetwork_SD_Species3
+        </IndEffect_StepsRiverNetwork_SD_Species2>
+        <IndEffect_StepsRiverNetwork_SD_Species3
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_sd_$(Species3)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -641,89 +635,89 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
-        </IndEffect_StepsRivernetwork_SD_Species3>
-        <IndEffect_LP50_StepsRivernetwork_SD_Species1
+        </IndEffect_StepsRiverNetwork_SD_Species3>
+        <IndEffect_LP50_StepsRiverNetwork_SD_Species1
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_sd_$(Species1)
             </ProcessingPath>
             <Values>
-                <FromOutput component="IndEffect_StepsRivernetwork_SD_Species1" output="GutsSurvivalReaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_SD_Species1" output="GutsSurvivalReaches" />
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches" />
+                <FromOutput component="StepsRiverNetwork" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
             <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
             <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
-        </IndEffect_LP50_StepsRivernetwork_SD_Species1>
-        <ExportStepsRivernetworkLP50Species1SD
+        </IndEffect_LP50_StepsRiverNetwork_SD_Species1>
+        <ExportStepsRiverNetworkLP50Species1SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="IndEffect_LP50_StepsRivernetwork_SD_Species1" output="LP50"/>
+                <FromOutput component="IndEffect_LP50_StepsRiverNetwork_SD_Species1" output="LP50"/>
             </Values>
             <Create type="bool">false</Create>
-            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRiverNetworkReaches/Reaches`)</ForeignKey>
             <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_SD` AS
                 SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
-                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
-                AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species1SD/LP50` &lt; 0 THEN NULL ELSE
-                `ExportStepsRivernetworkLP50Species1SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRiverNetworkReaches/Reaches` AS INTEGER)
+                AS reach, CAST(CASE WHEN `ExportStepsRiverNetworkLP50Species1SD/LP50` &lt; 0 THEN NULL ELSE
+                `ExportStepsRiverNetworkLP50Species1SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
                 JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
-        </ExportStepsRivernetworkLP50Species1SD>
-        <IndEffect_LP50_StepsRivernetwork_SD_Species2
+        </ExportStepsRiverNetworkLP50Species1SD>
+        <IndEffect_LP50_StepsRiverNetwork_SD_Species2
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_sd_$(Species2)
             </ProcessingPath>
             <Values>
-                <FromOutput component="IndEffect_StepsRivernetwork_SD_Species2" output="GutsSurvivalReaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_SD_Species2" output="GutsSurvivalReaches" />
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches" />
+                <FromOutput component="StepsRiverNetwork" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
             <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
             <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
-        </IndEffect_LP50_StepsRivernetwork_SD_Species2>
-        <ExportStepsRivernetworkLP50Species2SD
+        </IndEffect_LP50_StepsRiverNetwork_SD_Species2>
+        <ExportStepsRiverNetworkLP50Species2SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="IndEffect_LP50_StepsRivernetwork_SD_Species2" output="LP50"/>
+                <FromOutput component="IndEffect_LP50_StepsRiverNetwork_SD_Species2" output="LP50"/>
             </Values>
             <Create type="bool">false</Create>
-            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRiverNetworkReaches/Reaches`)</ForeignKey>
             <Sql>
                 CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_SD` AS
                     SELECT
@@ -733,62 +727,62 @@
                                 datetime('$(SimulationStart)', `time/year, space/base_geometry`.i || ' years')
                             ) AS INTEGER
                         ) AS year,
-                        CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER) AS reach,
+                        CAST(`space/reach`.`ExportStepsRiverNetworkReaches/Reaches` AS INTEGER) AS reach,
                         CAST(
                             CASE
-                                WHEN `ExportStepsRivernetworkLP50Species2SD/LP50` &lt; 0
+                                WHEN `ExportStepsRiverNetworkLP50Species2SD/LP50` &lt; 0
                                 THEN NULL
-                                ELSE `ExportStepsRivernetworkLP50Species2SD/LP50`
+                                ELSE `ExportStepsRiverNetworkLP50Species2SD/LP50`
                             END AS REAL
                         ) AS lp50
                     FROM `time/year, space/base_geometry`
                     JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i
             </Sql>
-        </ExportStepsRivernetworkLP50Species2SD>
-        <IndEffect_LP50_StepsRivernetwork_SD_Species3
+        </ExportStepsRiverNetworkLP50Species2SD>
+        <IndEffect_LP50_StepsRiverNetwork_SD_Species3
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_sd_$(Species3)
             </ProcessingPath>
             <Values>
-                <FromOutput component="IndEffect_StepsRivernetwork_SD_Species3" output="GutsSurvivalReaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_SD_Species3" output="GutsSurvivalReaches" />
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches" />
+                <FromOutput component="StepsRiverNetwork" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
             <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
             <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
-        </IndEffect_LP50_StepsRivernetwork_SD_Species3>
-        <ExportStepsRivernetworkLP50Species3SD
+        </IndEffect_LP50_StepsRiverNetwork_SD_Species3>
+        <ExportStepsRiverNetworkLP50Species3SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="IndEffect_LP50_StepsRivernetwork_SD_Species3" output="LP50"/>
+                <FromOutput component="IndEffect_LP50_StepsRiverNetwork_SD_Species3" output="LP50"/>
             </Values>
             <Create type="bool">false</Create>
-            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRiverNetworkReaches/Reaches`)</ForeignKey>
             <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_SD` AS
                 SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
-                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
-                AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species3SD/LP50` &lt; 0 THEN NULL ELSE
-                `ExportStepsRivernetworkLP50Species3SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRiverNetworkReaches/Reaches` AS INTEGER)
+                AS reach, CAST(CASE WHEN `ExportStepsRiverNetworkLP50Species3SD/LP50` &lt; 0 THEN NULL ELSE
+                `ExportStepsRiverNetworkLP50Species3SD/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
                 JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
-        </ExportStepsRivernetworkLP50Species3SD>
-        <IndEffect_StepsRivernetwork_IT_Species1
+        </ExportStepsRiverNetworkLP50Species3SD>
+        <IndEffect_StepsRiverNetwork_IT_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_it_$(Species1)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -819,20 +813,20 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
-        </IndEffect_StepsRivernetwork_IT_Species1>
-        <IndEffect_StepsRivernetwork_IT_Species2
+        </IndEffect_StepsRiverNetwork_IT_Species1>
+        <IndEffect_StepsRiverNetwork_IT_Species2
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_it_$(Species2)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -863,20 +857,20 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
-        </IndEffect_StepsRivernetwork_IT_Species2>
-        <IndEffect_StepsRivernetwork_IT_Species3
+        </IndEffect_StepsRiverNetwork_IT_Species2>
+        <IndEffect_StepsRiverNetwork_IT_Species3
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_steps_it_$(Species3)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -905,140 +899,140 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
-        </IndEffect_StepsRivernetwork_IT_Species3>
-        <IndEffect_LP50_StepsRivernetwork_IT_Species1
+        </IndEffect_StepsRiverNetwork_IT_Species3>
+        <IndEffect_LP50_StepsRiverNetwork_IT_Species1
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_it_$(Species1)
             </ProcessingPath>
             <Values>
-                <FromOutput component="IndEffect_StepsRivernetwork_IT_Species1" output="GutsSurvivalReaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_IT_Species1" output="GutsSurvivalReaches" />
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches" />
+                <FromOutput component="StepsRiverNetwork" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
             <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
             <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
-        </IndEffect_LP50_StepsRivernetwork_IT_Species1>
-        <ExportStepsRivernetworkLP50Species1IT
+        </IndEffect_LP50_StepsRiverNetwork_IT_Species1>
+        <ExportStepsRiverNetworkLP50Species1IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="IndEffect_LP50_StepsRivernetwork_IT_Species1" output="LP50"/>
+                <FromOutput component="IndEffect_LP50_StepsRiverNetwork_IT_Species1" output="LP50"/>
             </Values>
             <Create type="bool">false</Create>
-            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRiverNetworkReaches/Reaches`)</ForeignKey>
             <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species1)_IT` AS
                 SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
-                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
-                AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species1IT/LP50` &lt; 0 THEN NULL ELSE
-                `ExportStepsRivernetworkLP50Species1IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRiverNetworkReaches/Reaches` AS INTEGER)
+                AS reach, CAST(CASE WHEN `ExportStepsRiverNetworkLP50Species1IT/LP50` &lt; 0 THEN NULL ELSE
+                `ExportStepsRiverNetworkLP50Species1IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
                 JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
-        </ExportStepsRivernetworkLP50Species1IT>
-        <IndEffect_LP50_StepsRivernetwork_IT_Species2
+        </ExportStepsRiverNetworkLP50Species1IT>
+        <IndEffect_LP50_StepsRiverNetwork_IT_Species2
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_it_$(Species2)
             </ProcessingPath>
             <Values>
-                <FromOutput component="IndEffect_StepsRivernetwork_IT_Species2" output="GutsSurvivalReaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_IT_Species2" output="GutsSurvivalReaches" />
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches" />
+                <FromOutput component="StepsRiverNetwork" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
             <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
             <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
-        </IndEffect_LP50_StepsRivernetwork_IT_Species2>
-        <ExportStepsRivernetworkLP50Species2IT
+        </IndEffect_LP50_StepsRiverNetwork_IT_Species2>
+        <ExportStepsRiverNetworkLP50Species2IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true' and
                  '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="IndEffect_LP50_StepsRivernetwork_IT_Species2" output="LP50"/>
+                <FromOutput component="IndEffect_LP50_StepsRiverNetwork_IT_Species2" output="LP50"/>
             </Values>
             <Create type="bool">false</Create>
-            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRiverNetworkReaches/Reaches`)</ForeignKey>
             <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species2)_IT` AS
                 SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
-                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
-                AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species2IT/LP50` &lt; 0 THEN NULL ELSE
-                `ExportStepsRivernetworkLP50Species2IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRiverNetworkReaches/Reaches` AS INTEGER)
+                AS reach, CAST(CASE WHEN `ExportStepsRiverNetworkLP50Species2IT/LP50` &lt; 0 THEN NULL ELSE
+                `ExportStepsRiverNetworkLP50Species2IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
                 JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
-        </ExportStepsRivernetworkLP50Species2IT>
-        <IndEffect_LP50_StepsRivernetwork_IT_Species3
+        </ExportStepsRiverNetworkLP50Species2IT>
+        <IndEffect_LP50_StepsRiverNetwork_IT_Species3
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_steps_it_$(Species3)
             </ProcessingPath>
             <Values>
-                <FromOutput component="IndEffect_StepsRivernetwork_IT_Species3" output="GutsSurvivalReaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_IT_Species3" output="GutsSurvivalReaches" />
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches" />
+                <FromOutput component="StepsRiverNetwork" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
             <MaximumReportValue type="float" unit="1">100</MaximumReportValue>
             <ErrorReportValue type="float" unit="1">-99</ErrorReportValue>
-        </IndEffect_LP50_StepsRivernetwork_IT_Species3>
-        <ExportStepsRivernetworkLP50Species3IT
+        </IndEffect_LP50_StepsRiverNetwork_IT_Species3>
+        <ExportStepsRiverNetworkLP50Species3IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLGuts)' == 'true' and
                  '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
-            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRivernetwork.sqlite</FilePath>
+            <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\StepsRiverNetwork.sqlite</FilePath>
             <Values>
-                <FromOutput component="IndEffect_LP50_StepsRivernetwork_IT_Species3" output="LP50"/>
+                <FromOutput component="IndEffect_LP50_StepsRiverNetwork_IT_Species3" output="LP50"/>
             </Values>
             <Create type="bool">false</Create>
-            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRivernetworkReaches/Reaches`)</ForeignKey>
+            <ForeignKey type="list[str]">|`space/each`(`ExportStepsRiverNetworkReaches/Reaches`)</ForeignKey>
             <Sql>CREATE VIEW IF NOT EXISTS `lp50_$(Species3)_IT` AS
                 SELECT CAST(strftime('%Y', datetime('$(SimulationStart)', `time/year, space/base_geometry`.i ||
-                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRivernetworkReaches/Reaches` AS INTEGER)
-                AS reach, CAST(CASE WHEN `ExportStepsRivernetworkLP50Species3IT/LP50` &lt; 0 THEN NULL ELSE
-                `ExportStepsRivernetworkLP50Species3IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
+                ' years')) AS INTEGER) AS year, CAST(`space/reach`.`ExportStepsRiverNetworkReaches/Reaches` AS INTEGER)
+                AS reach, CAST(CASE WHEN `ExportStepsRiverNetworkLP50Species3IT/LP50` &lt; 0 THEN NULL ELSE
+                `ExportStepsRiverNetworkLP50Species3IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
                 JOIN `space/reach` ON `time/year, space/base_geometry`.j = `space/reach`.i</Sql>
-        </ExportStepsRivernetworkLP50Species3IT>
+        </ExportStepsRiverNetworkLP50Species3IT>
         <IndEffect_CmfContinuous_SD_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_sd_$(Species1)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -1082,7 +1076,7 @@
         <IndEffect_CmfContinuous_SD_Species2
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_sd_$(Species2)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -1126,7 +1120,7 @@
         <IndEffect_CmfContinuous_SD_Species3
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_sd_$(Species3)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -1168,7 +1162,7 @@
         <IndEffect_LP50_CmfContinuous_SD_Species1
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_sd_$(Species1)
@@ -1188,7 +1182,7 @@
         <ExportCmfContinuousLP50Species1SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1222,7 +1216,7 @@
         <IndEffect_LP50_CmfContinuous_SD_Species2
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_sd_$(Species2)
@@ -1242,7 +1236,7 @@
         <ExportCmfContinuousLP50Species2SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1276,7 +1270,7 @@
         <IndEffect_LP50_CmfContinuous_SD_Species3
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_sd_$(Species3)
@@ -1296,7 +1290,7 @@
         <ExportCmfContinuousLP50Species3SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1330,7 +1324,7 @@
         <IndEffect_CmfContinuous_IT_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_it_$(Species1)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -1372,7 +1366,7 @@
         <IndEffect_CmfContinuous_IT_Species2
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_it_$(Species2)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -1414,7 +1408,7 @@
         <IndEffect_CmfContinuous_IT_Species3
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cmf_it_$(Species3)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -1456,7 +1450,7 @@
         <IndEffect_LP50_CmfContinuous_IT_Species1
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_it_$(Species1)
@@ -1476,7 +1470,7 @@
         <ExportCmfContinuousLP50Species1IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1510,7 +1504,7 @@
         <IndEffect_LP50_CmfContinuous_IT_Species2
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_it_$(Species2)
@@ -1530,7 +1524,7 @@
         <ExportCmfContinuousLP50Species2IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1563,7 +1557,7 @@
         </ExportCmfContinuousLP50Species2IT>
         <IndEffect_LP50_CmfContinuous_IT_Species3
                 module="LP50" class="LP50"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cmf_it_$(Species3)
@@ -1583,7 +1577,7 @@
         <ExportCmfContinuousLP50Species3IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCmfContinuous)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1617,7 +1611,7 @@
         <IndEffect_CascadeToxswa_SD_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_sd_$(Species1)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -1659,7 +1653,7 @@
         <IndEffect_CascadeToxswa_SD_Species2
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_sd_$(Species2)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -1701,7 +1695,7 @@
         <IndEffect_CascadeToxswa_SD_Species3
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_sd_$(Species3)</ProcessingPath>
             <Model>CatchmentGUTSSD</Model>
@@ -1743,7 +1737,7 @@
         <IndEffect_LP50_CascadeToxswa_SD_Species1
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_sd_$(Species1)
@@ -1763,7 +1757,7 @@
         <ExportCascadeToxswaLP50Species1SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1783,7 +1777,7 @@
         <IndEffect_LP50_CascadeToxswa_SD_Species2
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_sd_$(Species2)
@@ -1803,7 +1797,7 @@
         <ExportCascadeToxswaLP50Species2SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1823,7 +1817,7 @@
         <IndEffect_LP50_CascadeToxswa_SD_Species3
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_sd_$(Species3)
@@ -1843,7 +1837,7 @@
         <ExportCascadeToxswaLP50Species3SD
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -1863,7 +1857,7 @@
         <IndEffect_CascadeToxswa_IT_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_it_$(Species1)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -1905,7 +1899,7 @@
         <IndEffect_CascadeToxswa_IT_Species2
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_it_$(Species2)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -1947,7 +1941,7 @@
         <IndEffect_CascadeToxswa_IT_Species3
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_cascade_it_$(Species3)</ProcessingPath>
             <Model>CatchmentGUTSIT</Model>
@@ -1989,7 +1983,7 @@
         <IndEffect_LP50_CascadeToxswa_IT_Species1
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_it_$(Species1)
@@ -2009,7 +2003,7 @@
         <ExportCascadeToxswaLP50Species1IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -2029,7 +2023,7 @@
         <IndEffect_LP50_CascadeToxswa_IT_Species2
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_it_$(Species2)</ProcessingPath
@@ -2049,7 +2043,7 @@
         <ExportCascadeToxswaLP50Species2IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -2069,7 +2063,7 @@
         <IndEffect_LP50_CascadeToxswa_IT_Species3
                 module="LP50"
                 class="LP50"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true'"
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true'"
         >
             <ProcessingPath>
                 $(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\ind_lp50_cascade_it_$(Species3)
@@ -2089,7 +2083,7 @@
         <ExportCascadeToxswaLP50Species3IT
                 module="components"
                 class="ExportData"
-                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGUTS)' == 'true' and
+                enabled_expression="'$(RunCascadeToxswa)' == 'true' and '$(RunLGuts)' == 'true' and
                 '$(ExportToSqlite)' == 'true'"
         >
             <TargetStoreType>SqlLite</TargetStoreType>
@@ -2106,10 +2100,10 @@
                 `ExportCascadeToxswaLP50Species3IT/LP50` END AS REAL) AS lp50 FROM `time/year, space/base_geometry`
                 JOIN `space/base_geometry` ON `time/year, space/base_geometry`.j = `space/base_geometry`.i</Sql>
         </ExportCascadeToxswaLP50Species3IT>
-        <PopEffect_StepsRivernetwork_SD_Species1
+        <PopEffect_StepsRiverNetwork_SD_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLPop)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLPop)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_steps_sd_$(Species1)</ProcessingPath>
             <Model>LPopSD</Model>
@@ -2138,15 +2132,15 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
-        </PopEffect_StepsRivernetwork_SD_Species1>
+        </PopEffect_StepsRiverNetwork_SD_Species1>
         <PopEffect_CmfContinuous_SD_Species1
                 module="LEffectModel"
                 class="LEffectModel"
@@ -2229,10 +2223,10 @@
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
         </PopEffect_CascadeToxswa_SD_Species1>
-        <PopEffect_StepsRivernetwork_IT_Species1
+        <PopEffect_StepsRiverNetwork_IT_Species1
                 module="LEffectModel"
                 class="LEffectModel"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunLPop)' == 'true'"
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunLPop)' == 'true'"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\pop_steps_it_$(Species1)</ProcessingPath>
             <Model>LPopIT</Model>
@@ -2261,15 +2255,15 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <ReachListConcentrations>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
-        </PopEffect_StepsRivernetwork_IT_Species1>
+        </PopEffect_StepsRiverNetwork_IT_Species1>
         <PopEffect_CmfContinuous_IT_Species1
                 module="LEffectModel"
                 class="LEffectModel"
@@ -2354,19 +2348,19 @@
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
         </PopEffect_CascadeToxswa_IT_Species1>
-        <StreamCom1_StepsRivernetwork
+        <StreamCom1_StepsRiverNetwork
                 module="StreamCom"
                 class="StreamCom"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
                 '$(StreamComReach1)' != ''"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_1</ProcessingPath>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </Reaches>
             <Reach type="int">$(StreamComReach1)</Reach>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
@@ -2424,7 +2418,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
-        </StreamCom1_StepsRivernetwork>
+        </StreamCom1_StepsRiverNetwork>
         <StreamCom1_CmfContinuous
                 module="StreamCom"
                 class="StreamCom"
@@ -2567,19 +2561,19 @@
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
         </StreamCom1_CascadeToxswa>
-        <StreamCom2_StepsRivernetwork
+        <StreamCom2_StepsRiverNetwork
                 module="StreamCom"
                 class="StreamCom"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
                 '$(StreamComReach2)' != ''"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_2</ProcessingPath>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </Reaches>
             <Reach type="int">$(StreamComReach2)</Reach>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
@@ -2637,7 +2631,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
-        </StreamCom2_StepsRivernetwork>
+        </StreamCom2_StepsRiverNetwork>
         <StreamCom2_CmfContinuous
                 module="StreamCom"
                 class="StreamCom"
@@ -2780,19 +2774,19 @@
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
         </StreamCom2_CascadeToxswa>
-        <StreamCom3_StepsRivernetwork
+        <StreamCom3_StepsRiverNetwork
                 module="StreamCom"
                 class="StreamCom"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
                 '$(StreamComReach3)' != ''"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_3</ProcessingPath>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </Reaches>
             <Reach type="int">$(StreamComReach3)</Reach>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
@@ -2850,7 +2844,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
-        </StreamCom3_StepsRivernetwork>
+        </StreamCom3_StepsRiverNetwork>
         <StreamCom3_CmfContinuous
                 module="StreamCom"
                 class="StreamCom"
@@ -2993,19 +2987,19 @@
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
         </StreamCom3_CascadeToxswa>
-        <StreamCom4_StepsRivernetwork
+        <StreamCom4_StepsRiverNetwork
                 module="StreamCom"
                 class="StreamCom"
-                enabled_expression="'$(RunStepsRivernetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
+                enabled_expression="'$(RunStepsRiverNetwork)' == 'true' and '$(RunStreamCom)' == 'true' and
                 '$(StreamComReach4)' != ''"
         >
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\effect\com_steps_4</ProcessingPath>
             <Reaches>
-                <FromOutput component="StepsRivernetwork" output="Reaches"/>
+                <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </Reaches>
             <Reach type="int">$(StreamComReach4)</Reach>
             <Concentrations>
-                <FromOutput component="StepsRivernetwork" output="PEC_SW"/>
+                <FromOutput component="StepsRiverNetwork" output="PEC_SW"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
@@ -3063,7 +3057,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
-        </StreamCom4_StepsRivernetwork>
+        </StreamCom4_StepsRiverNetwork>
         <StreamCom4_CmfContinuous
                 module="StreamCom"
                 class="StreamCom"
