@@ -6,8 +6,7 @@
   <!--
   Parameter     :  Project
   Description   :  The scenario used by the simulation
-  Values        :  scenario/Rummen_subCatch_Stream1North, scenario/Rummen_subCatch_20reaches,
-                   scenario/Rummen_subCatch_East, scenario/Rummen_subCatch_Velm, scenario/Rummen
+  Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
   Remark        :  Make sure that the scenario is present in the scenario sub-folder.
   -->
   <Project>scenario/oudebeek-beek7-tdi</Project>
@@ -17,13 +16,7 @@
   Description   :  The first date that is simulated
   Values        :  A date of format YYYY-MM-DD within the valid range of dates
   Remark        :  The valid range of start dates is mainly determined by the input data for the selected scenario. The
-                   currently available ranges are (actual limitation is intersect of weather and hydrology):
-                   weather                :  01.01.1975 - 31.12.2018
-                   hydrology Rummen       :  01.01.1992 - 30.12.2017
-                   hydrology Rummen East  :  01.01.1992 - 30.12.2016
-                   hydrology Rummen Velm  :  01.01.2006 - 30.12.2016
-                   hydrology Stream1North :  01.01.1992 - 30.12.2016
-                   hydrology 20reaches    :  01.01.2007 - 01.01.2017
+                   available ranges can be obtained from the scenario documentation.
   -->
   <SimulationStart>2015-05-01</SimulationStart>
 
@@ -103,42 +96,42 @@
   <!-- ######## -->
 
 
-  <!-- EFATE MODEL -->
+  <!-- ENVIRONMENTAL FATE MODEL -->
 
   <!--
-  Parameter     :  RunStepsRivernetwork
-  Description   :  Controls whether efate is calculated by the StepsRivernetwork component
+  Parameter     :  RunStepsRiverNetwork
+  Description   :  Controls whether environmental fate is calculated by the StepsRiverNetwork component
   Values        :  true or false
     -->
-  <RunStepsRivernetwork>true</RunStepsRivernetwork>
+  <RunStepsRiverNetwork>true</RunStepsRiverNetwork>
 
   <!--
   Parameter     :  RunCascadeToxswa
-  Description   :  Controls whether efate is calculated by the CascadeToxswa component
+  Description   :  Controls whether environmental fate is calculated by the CascadeToxswa component
   Values        :  true or false
     -->
   <RunCascadeToxswa>true</RunCascadeToxswa>
 
   <!--
   Parameter     :  RunCmfContinuous
-  Description   :  Controls whether efate is calculated by the CmfContinuous component
+  Description   :  Controls whether environmental fate is calculated by the CmfContinuous component
   Values        :  true or false
     -->
-  <RunCmfContinuous>false</RunCmfContinuous>
+  <RunCmfContinuous>true</RunCmfContinuous>
 
   <!--
   Parameter     :  ThresholdSW
-  Description   :  The surface water value precision used by StepsRivernetwork
+  Description   :  The surface water value precision used by StepsRiverNetwork
   Values        :  A positive number
-  Remark        :  Only applies if RunStepsRivernetwork is true.
+  Remark        :  Only applies if RunStepsRiverNetwork is true.
   -->
   <ThresholdSW>0.001</ThresholdSW>
 
   <!--
   Parameter     :  ThresholdSediment
-  Description   :  The sediment value precision used by StepsRivernetwork
+  Description   :  The sediment value precision used by StepsRiverNetwork
   Values        :  A positive number
-  Remark        :  Only applies if RunStepsRivernetwork is true.
+  Remark        :  Only applies if RunStepsRiverNetwork is true.
   -->
   <ThresholdSediment>0.1</ThresholdSediment>
 
@@ -235,11 +228,11 @@
   <FreundlichExponentInSedimentAndSuspendedParticles>0.93</FreundlichExponentInSedimentAndSuspendedParticles>
 
   <!--
-  Parameter     :  CoefficientForLinearSorptionOnMacrophytes
-  Description   :  The coefficient for linear sorption on macrophytes of the applied substance
+  Parameter     :  CoefficientForLinearAdsorptionOnMacrophytes
+  Description   :  The coefficient for linear adsorption on macrophytes of the applied substance
   Values        :  A value in l/kg
   -->
-  <CoefficientForLinearSorptionOnMacrophytes>0</CoefficientForLinearSorptionOnMacrophytes>
+  <CoefficientForLinearAdsorptionOnMacrophytes>0</CoefficientForLinearAdsorptionOnMacrophytes>
 
   <!-- ######## -->
 
@@ -247,25 +240,26 @@
   <!-- EFFECT MODEL -->
 
   <!--
-  Parameter     :  RunLGUTS
-  Description   :  Specifies whether effects are simulated by LGUTS for the switched-on efate components
+  Parameter     :  RunLGuts
+  Description   :  Specifies whether effects are simulated by LGuts for the switched-on environmental fate components
   Values        :  true or false
   -->
-  <RunLGUTS>true</RunLGUTS>
+  <RunLGuts>true</RunLGuts>
 
   <!--
   Parameter     :  RunLPop
-  Description   :  Specifies whether effects are simulated by LPop for the switched-on efate components
+  Description   :  Specifies whether effects are simulated by LPop for the switched-on environmental fate components
   Values        :  true or false
   -->
-  <RunLPop>false</RunLPop>
+  <RunLPop>true</RunLPop>
 
   <!--
   Parameter     :  RunStreamCom
-  Description   :  Specifies whether effects are simulated by StreamCom for the switched-on efate components
+  Description   :  Specifies whether effects are simulated by StreamCom for the switched-on environmental fate
+                   components
   Values        :  true or false
   -->
-  <RunStreamCom>false</RunStreamCom>
+  <RunStreamCom>true</RunStreamCom>
 
   <!--
   Parameter     :  MultiplicationFactors_LPop
@@ -282,7 +276,7 @@
   Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
   Remark        :  Leave empty to skip StreamCom simulation
   -->
-  <StreamComReach1>10</StreamComReach1>
+  <StreamComReach1>567</StreamComReach1>
 
   <!--
   Parameter     :  StreamComReach2
@@ -306,13 +300,13 @@
   Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
   Remark        :  Leave empty to skip StreamCom simulation
   -->
-  <StreamComReach4>1807</StreamComReach4>
+  <StreamComReach4>584</StreamComReach4>
 
   <!--
   Parameter     :  Species1
   Description   :  The name of the first species to calculate effects for
   Values        :  Any characters that are valid in file system identifiers
-  Remark        :  Individual effects for the species are calculated in LGUTS. The species will also be part of the
+  Remark        :  Individual effects for the species are calculated in LGuts. The species will also be part of the
                    StreamCom simulation if it is from the following list: Asellus aquaticus, Baetis rhodani,
                    Dikerogammarus villosus, Ecdyonurus dispar, Epeorus assimilis, Gammarus fossarum, Gammarus pulex,
                    Gammarus roeselii, Habrophlebia lauta, Lymnaea stagnalis, Planorbis planorbis,
@@ -489,7 +483,7 @@
   Values        :  true or false
   Best practice :  The export feature is experimental and should be set to false for longer simulation runs.
   -->
-  <ExportToSqlite>false</ExportToSqlite>
+  <ExportToSqlite>true</ExportToSqlite>
 
   <!-- ######## -->
 
@@ -500,14 +494,14 @@
   Parameter     :  ReportingReaches
   Description   :  Pre-selection of reaches for which detailed reports are generated
   Values        :  Comma-separated reach identifiers in the format rXYZ (no spaces)
-  Remark        :  Only in effect if a report is generated, i.e., if at least one efate module is switched on and
-                   RunEffects is true.
+  Remark        :  Only in effect if a report is generated, i.e., if at least one environmental fate module is switched
+                   on and RunEffects is true.
   -->
   <ReportingReaches>r577</ReportingReaches>
 
   <!--
   Parameter     :  PecDisplayedTime
-  Description   :  The PEC value that is plotted for each enabled efate component
+  Description   :  The PEC value that is plotted for each enabled environmental fate component
   Values        :  A date and time of format YYYY-MM-DD HH:MM within the valid range of dates
   -->
   <PecDisplayedTime>2015-05-02 12:00</PecDisplayedTime>
@@ -536,7 +530,7 @@
                    If the pattern yields more than one file, a single file will be sampled per Monte Carlo run.
   Best practice :  Only fill out the parent run if you like to test the feature.
   -->
-  <ParentRun></ParentRun>
+  <ParentRun/>
 
   <!--
   Parameter     :  NumberParallelProcesses

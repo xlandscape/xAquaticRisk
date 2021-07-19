@@ -1,5 +1,12 @@
 {
-  "argv": ["model/variant/AnalysisObserver/R-3.5.1/bin/x64/R", "--slave", "-e", "IRkernel::main()", "--args", "{connection_file}"],
+  "argv": [
+    "model/variant/AnalysisObserver/R-3.5.1/bin/x64/R",
+    "--slave",
+    "-e",
+    "IRkernel::main()",
+    "--args",
+    "{connection_file}"
+  ],
   "display_name": "R",
   "language": "R"
 }
