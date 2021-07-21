@@ -51,6 +51,7 @@
             0.0009765625 0.001953125 0.00390625 0.0078125 0.015625 0.03125 0.0625 0.125 0.25 0.5
             1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768
         </MultiplicationFactors>
+        <NumberLPopRuns>3</NumberLPopRuns>
     </Global>
     <Composition>
         <LandscapeScenario module="components" class="Lulc">
@@ -2140,6 +2141,7 @@
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+            <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
         </PopEffect_StepsRiverNetwork_SD_Species1>
         <PopEffect_CmfContinuous_SD_Species1
                 module="LEffectModel"
@@ -2181,6 +2183,7 @@
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+            <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
         </PopEffect_CmfContinuous_SD_Species1>
         <PopEffect_CascadeToxswa_SD_Species1
                 module="LEffectModel"
@@ -2222,6 +2225,7 @@
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+            <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
         </PopEffect_CascadeToxswa_SD_Species1>
         <PopEffect_StepsRiverNetwork_IT_Species1
                 module="LEffectModel"
@@ -2263,6 +2267,7 @@
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+            <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
         </PopEffect_StepsRiverNetwork_IT_Species1>
         <PopEffect_CmfContinuous_IT_Species1
                 module="LEffectModel"
@@ -2304,6 +2309,7 @@
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+            <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
         </PopEffect_CmfContinuous_IT_Species1>
         <PopEffect_CascadeToxswa_IT_Species1
                 module="LEffectModel"
@@ -2347,6 +2353,7 @@
             <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
+            <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
         </PopEffect_CascadeToxswa_IT_Species1>
         <StreamCom1_StepsRiverNetwork
                 module="StreamCom"
