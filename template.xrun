@@ -24,7 +24,7 @@
   Parameter     :  SimulationEnd
   Description   :  The last date that is simulated
   Values        :  A date of format YYYY-MM-DD within the valid range of dates
-  Remark        :  Must be later tha the simulation start (or the same date). For limitations of allowed dates, see
+  Remark        :  Must be later than the simulation start (or the same date). For limitations of allowed dates, see
                    remark for SimulationStart.
   -->
   <SimulationEnd>2015-05-07</SimulationEnd>

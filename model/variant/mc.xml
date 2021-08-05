@@ -30,19 +30,19 @@
         <InitialBiomassForMacroinvertebrates>1</InitialBiomassForMacroinvertebrates>
         <InitialBiomassForFish>0.1</InitialBiomassForFish>
         <MaximumPeriphytonGrowthRate>3.05</MaximumPeriphytonGrowthRate>
-        <PeriphytonCarryingCapacity>17</PeriphytonCarryingCapacity>
+        <PeriphytonCarryingCapacity>10</PeriphytonCarryingCapacity>
         <PeriphytonArrheniusTemperature>5500</PeriphytonArrheniusTemperature>
-        <InitialLeafLitterDensity>9</InitialLeafLitterDensity>
-        <LeafLitterEnergyDensity>7227.5</LeafLitterEnergyDensity>
+        <InitialLeafLitterDensity>0.00001</InitialLeafLitterDensity>
+        <LeafLitterEnergyDensity>72.275</LeafLitterEnergyDensity>
         <DayOfYearForLitterAddition>270</DayOfYearForLitterAddition>
-        <C-PomSettlementRate>0.1</C-PomSettlementRate>
-        <MaximumVelocityClassForC-PomAddition>4</MaximumVelocityClassForC-PomAddition>
-        <SettlementRateForF-PomAndAnimalRemains>0.3</SettlementRateForF-PomAndAnimalRemains>
-        <InitialF-PomDensity>80000</InitialF-PomDensity>
+        <C-PomSettlementRate>0.00001</C-PomSettlementRate>
+        <MaximumVelocityClassForC-PomAddition>2</MaximumVelocityClassForC-PomAddition>
+        <SettlementRateForF-PomAndAnimalRemains>0.07</SettlementRateForF-PomAndAnimalRemains>
+        <InitialF-PomDensity>4000</InitialF-PomDensity>
         <InitialS-PomDensity>500</InitialS-PomDensity>
         <FractionOfS-PomAvailableToFilterFeeders>0.0001</FractionOfS-PomAvailableToFilterFeeders>
         <PeriphytonEnergyDensity>4623</PeriphytonEnergyDensity>
-        <UsePopulationDensity>FALSE</UsePopulationDensity>
+        <UsePopulationDensity>TRUE</UsePopulationDensity>
         <SavePopulationSize>TRUE</SavePopulationSize>
         <SaveTraitSize>TRUE</SaveTraitSize>
         <SavePopulationDistribution>TRUE</SavePopulationDistribution>
@@ -52,6 +52,7 @@
             1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768
         </MultiplicationFactors>
         <NumberLPopRuns>3</NumberLPopRuns>
+        <NumberStreamComRuns>3</NumberStreamComRuns>
     </Global>
     <Composition>
         <LandscapeScenario module="components" class="Lulc">
@@ -659,7 +660,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRiverNetwork" output="Reaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_SD_Species1" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -699,7 +700,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRiverNetwork" output="Reaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_SD_Species2" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -753,7 +754,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRiverNetwork" output="Reaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_SD_Species3" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -923,7 +924,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRiverNetwork" output="Reaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_IT_Species1" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -963,7 +964,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRiverNetwork" output="Reaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_IT_Species2" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1003,7 +1004,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="StepsRiverNetwork" output="Reaches" />
+                <FromOutput component="IndEffect_StepsRiverNetwork_IT_Species3" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1173,7 +1174,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CmfContinuous" output="Reaches" />
+                <FromOutput component="IndEffect_CmfContinuous_SD_Species1" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1227,7 +1228,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CmfContinuous" output="Reaches" />
+                <FromOutput component="IndEffect_CmfContinuous_SD_Species2" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1281,7 +1282,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CmfContinuous" output="Reaches" />
+                <FromOutput component="IndEffect_CmfContinuous_SD_Species3" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1461,7 +1462,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CmfContinuous" output="Reaches" />
+                <FromOutput component="IndEffect_CmfContinuous_IT_Species1" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1515,7 +1516,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CmfContinuous" output="Reaches" />
+                <FromOutput component="IndEffect_CmfContinuous_IT_Species2" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1568,7 +1569,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CmfContinuous" output="Reaches" />
+                <FromOutput component="IndEffect_CmfContinuous_IT_Species3" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1748,7 +1749,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CascadeToxswa" output="Reaches" />
+                <FromOutput component="IndEffect_CascadeToxswa_SD_Species1" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1788,7 +1789,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CascadeToxswa" output="Reaches" />
+                <FromOutput component="IndEffect_CascadeToxswa_SD_Species2" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1828,7 +1829,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CascadeToxswa" output="Reaches" />
+                <FromOutput component="IndEffect_CascadeToxswa_SD_Species3" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -1994,7 +1995,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CascadeToxswa" output="Reaches" />
+                <FromOutput component="IndEffect_CascadeToxswa_IT_Species1" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -2034,7 +2035,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CascadeToxswa" output="Reaches" />
+                <FromOutput component="IndEffect_CascadeToxswa_IT_Species2" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -2074,7 +2075,7 @@
             </Values>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Reaches>
-                <FromOutput component="CascadeToxswa" output="Reaches" />
+                <FromOutput component="IndEffect_CascadeToxswa_IT_Species3" output="Reaches" />
             </Reaches>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1">0</MinimumReportValue>
@@ -2425,6 +2426,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom1_StepsRiverNetwork>
         <StreamCom1_CmfContinuous
                 module="StreamCom"
@@ -2496,6 +2498,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom1_CmfContinuous>
         <StreamCom1_CascadeToxswa
                 module="StreamCom"
@@ -2567,6 +2570,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom1_CascadeToxswa>
         <StreamCom2_StepsRiverNetwork
                 module="StreamCom"
@@ -2638,6 +2642,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom2_StepsRiverNetwork>
         <StreamCom2_CmfContinuous
                 module="StreamCom"
@@ -2709,6 +2714,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom2_CmfContinuous>
         <StreamCom2_CascadeToxswa
                 module="StreamCom"
@@ -2780,6 +2786,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom2_CascadeToxswa>
         <StreamCom3_StepsRiverNetwork
                 module="StreamCom"
@@ -2851,6 +2858,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom3_StepsRiverNetwork>
         <StreamCom3_CmfContinuous
                 module="StreamCom"
@@ -2922,6 +2930,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom3_CmfContinuous>
         <StreamCom3_CascadeToxswa
                 module="StreamCom"
@@ -2993,6 +3002,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom3_CascadeToxswa>
         <StreamCom4_StepsRiverNetwork
                 module="StreamCom"
@@ -3064,6 +3074,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom4_StepsRiverNetwork>
         <StreamCom4_CmfContinuous
                 module="StreamCom"
@@ -3135,6 +3146,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom4_CmfContinuous>
         <StreamCom4_CascadeToxswa
                 module="StreamCom"
@@ -3206,6 +3218,7 @@
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
             <BiomassIndividual type="bool">true</BiomassIndividual>
+            <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom4_CascadeToxswa>
         <DeleteFolder module="components" class="DeleteFolder">
             <Path>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing</Path>
