@@ -53,6 +53,7 @@
         </MultiplicationFactors>
         <NumberLPopRuns>3</NumberLPopRuns>
         <NumberStreamComRuns>3</NumberStreamComRuns>
+        <StreamComStartBiomass>Ind/m^2</StreamComStartBiomass>
     </Global>
     <Composition>
         <LandscapeScenario module="components" class="Lulc">
@@ -2425,7 +2426,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom1_StepsRiverNetwork>
         <StreamCom1_CmfContinuous
@@ -2497,7 +2498,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom1_CmfContinuous>
         <StreamCom1_CascadeToxswa
@@ -2569,7 +2570,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom1_CascadeToxswa>
         <StreamCom2_StepsRiverNetwork
@@ -2641,7 +2642,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom2_StepsRiverNetwork>
         <StreamCom2_CmfContinuous
@@ -2713,7 +2714,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom2_CmfContinuous>
         <StreamCom2_CascadeToxswa
@@ -2785,7 +2786,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom2_CascadeToxswa>
         <StreamCom3_StepsRiverNetwork
@@ -2857,7 +2858,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom3_StepsRiverNetwork>
         <StreamCom3_CmfContinuous
@@ -2929,7 +2930,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom3_CmfContinuous>
         <StreamCom3_CascadeToxswa
@@ -3001,7 +3002,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom3_CascadeToxswa>
         <StreamCom4_StepsRiverNetwork
@@ -3073,7 +3074,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom4_StepsRiverNetwork>
         <StreamCom4_CmfContinuous
@@ -3145,7 +3146,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom4_CmfContinuous>
         <StreamCom4_CascadeToxswa
@@ -3217,7 +3218,7 @@
             <SavePopulationDistribution type="bool">$(SavePopulationDistribution)</SavePopulationDistribution>
             <SaveTraitDistribution type="bool">$(SaveTraitDistribution)</SaveTraitDistribution>
             <Biomass>$(:Biomass)</Biomass>
-            <BiomassIndividual type="bool">true</BiomassIndividual>
+            <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom4_CascadeToxswa>
         <DeleteFolder module="components" class="DeleteFolder">
