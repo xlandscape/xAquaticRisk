@@ -469,7 +469,7 @@
             <TargetStoreType>SqlLite</TargetStoreType>
             <FilePath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\CascadeToxswa.sqlite</FilePath>
             <Values>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Values>
             <Create type="bool">false</Create>
             <ForeignKey type="list[str]">|`space/base_geometry`(`CascadeToxswa/hydrography_id`)</ForeignKey>
@@ -515,7 +515,7 @@
                         ) AS INTEGER
                     ) AS hour,
                     CAST(`space/reach`.`ExportCascadeToxswaReaches/hydrography_id` AS INTEGER) AS reach,
-                    CAST(`ExportCascadeToxswaPecs/ConLiqWatTgtAvg` AS REAL) AS pec,
+                    CAST(`ExportCascadeToxswaPecs/ConLiqWatTgtAvgHrAvg` AS REAL) AS pec,
                     CAST('ug/l' AS TEXT) AS unit
                   FROM `time/hour, space/base_geometry`
                   JOIN `space/reach` ON `time/hour, space/base_geometry`.j = `space/reach`.i
@@ -1655,7 +1655,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -1698,7 +1698,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -1741,7 +1741,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -1904,7 +1904,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -1947,7 +1947,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -1990,7 +1990,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -2239,7 +2239,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -2370,7 +2370,7 @@
             </ReachListHydrography>
             <SimulationStart type="date">$(SimulationStart)</SimulationStart>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
@@ -2537,7 +2537,7 @@
             </Reaches>
             <Reach type="int">$(StreamComReach1)</Reach>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
@@ -2753,7 +2753,7 @@
             </Reaches>
             <Reach type="int">$(StreamComReach2)</Reach>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
@@ -2969,7 +2969,7 @@
             </Reaches>
             <Reach type="int">$(StreamComReach3)</Reach>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
@@ -3185,7 +3185,7 @@
             </Reaches>
             <Reach type="int">$(StreamComReach4)</Reach>
             <Concentrations>
-                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvg"/>
+                <FromOutput component="CascadeToxswa" output="ConLiqWatTgtAvgHrAvg"/>
             </Concentrations>
             <Species type="list[str]" scales="other/species">$(Species1)|$(Species2)|$(Species3)</Species>
             <DominantRateConstantsForLm type="list[float]" scales="other/species" unit="1/d">
