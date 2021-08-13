@@ -268,8 +268,25 @@
   Remark        :  Use a multiplication factor of 1 if no further investigation of the effect space is
                    required; every additional multiplication factor increases processing time
   -->
-  <MultiplicationFactors_LPop>1</MultiplicationFactors_LPop>
+  <MultiplicationFactors_LPop>0 1 10</MultiplicationFactors_LPop>
 
+  <!--
+  Parameter     : NumberOfWarmupYears
+  Description   : Number of years to run LPop in order to get stable population cycles
+  Values        : Integer value
+  Remark        : Under default settings a value of 3 will be sufficient; may change depending on additional model
+                  settings
+  -->
+<NumberOfWarmUpYears>1</NumberOfWarmUpYears>
+
+<!--
+  Parameter     : RecoveryPeriodYears
+  Description   : Number of years to run LPop after last year of application to allow for recovery
+  Values        : Integer value
+  Remark        : Under default settings a value of 5 is used; may change depending on additional model settings and
+                  substance
+  -->
+<RecoveryPeriodYears>1</RecoveryPeriodYears>
   <!--
   Parameter     :  StreamComReach1
   Description   :  The first reach that is used for StreamCom simulations
@@ -553,7 +570,16 @@
   Best practice :  To best use the available hardware, apply this rule of thumb:
                    min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
   -->
-  <CascadeToxswaWorkers>2</CascadeToxswaWorkers>
+  <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
+
+  <!--
+    Parameter     :   DeleteFoldersAtFinish
+    Description   :   Specifies whether processing folders should be deleted after the model run is finished
+    Values        :   true or false
+    Best practice :   Should be set to true for a complete 26 year run to save memory, but can be set to false when
+                      testing
+  -->
+  <DeleteFoldersAtFinish>false</DeleteFoldersAtFinish>
 
   <!-- ######## -->
 </Parameters>
