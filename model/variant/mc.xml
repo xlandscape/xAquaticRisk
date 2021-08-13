@@ -558,7 +558,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -599,7 +599,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -643,7 +643,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -821,7 +821,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -865,7 +865,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -907,7 +907,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1071,7 +1071,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1115,7 +1115,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1157,7 +1157,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1361,7 +1361,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1403,7 +1403,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1445,7 +1445,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1648,7 +1648,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1690,7 +1690,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1732,7 +1732,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1894,7 +1894,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1936,7 +1936,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -1978,7 +1978,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors)</MultiplicationFactors>
             <Verbosity type="int">0</Verbosity>
@@ -2140,7 +2140,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
             <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
@@ -2182,7 +2182,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
             <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
@@ -2224,7 +2224,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
             <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
@@ -2266,7 +2266,7 @@
             <ReachListConcentrations>
                 <FromOutput component="StepsRiverNetwork" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
             <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
@@ -2308,7 +2308,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CmfContinuous" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
             <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
@@ -2352,7 +2352,7 @@
             <ReachListConcentrations>
                 <FromOutput component="CascadeToxswa" output="Reaches"/>
             </ReachListConcentrations>
-            <NumberOfWarmUpYears type="int" unit="y">1</NumberOfWarmUpYears>
+            <NumberOfWarmUpYears type="int" unit="y">$(NumberOfWarmUpYears)</NumberOfWarmUpYears>
             <NumberOfStepsWithinOneHour type="int" unit="1">2</NumberOfStepsWithinOneHour>
             <MultiplicationFactors type="list[float]" unit="1">$(MultiplicationFactors_LPop)</MultiplicationFactors>
             <NumberRuns type="int">$(NumberLPopRuns)</NumberRuns>
@@ -3221,7 +3221,7 @@
             <StartBiomass>$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1">$(NumberStreamComRuns)</NumberRuns>
         </StreamCom4_CascadeToxswa>
-        <DeleteFolder module="components" class="DeleteFolder">
+        <DeleteFolder module="components" class="DeleteFolder" enabled="$(DeleteFoldersAtFinish)">
             <Path>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing</Path>
         </DeleteFolder>
     </Composition>
