@@ -37,7 +37,7 @@
         <DayOfYearForLitterAddition>270</DayOfYearForLitterAddition>
         <C-PomSettlementRate>0.00001</C-PomSettlementRate>
         <MaximumVelocityClassForC-PomAddition>2</MaximumVelocityClassForC-PomAddition>
-        <SettlementRateForF-PomAndAnimalRemains>0.07</SettlementRateForF-PomAndAnimalRemains>
+        <SettlementRateForFPomAndAnimalRemains>0.07</SettlementRateForFPomAndAnimalRemains>
         <InitialF-PomDensity>4000</InitialF-PomDensity>
         <InitialS-PomDensity>500</InitialS-PomDensity>
         <FractionOfS-PomAvailableToFilterFeeders>0.0001</FractionOfS-PomAvailableToFilterFeeders>
@@ -2435,9 +2435,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -2507,9 +2507,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -2579,9 +2579,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -2651,9 +2651,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -2723,9 +2723,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -2795,9 +2795,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -2867,9 +2867,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -2939,9 +2939,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -3011,9 +3011,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -3083,9 +3083,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -3155,9 +3155,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
@@ -3227,9 +3227,9 @@
             <MaximumVelocityClassForC-PomAddition type="int">
                 $(MaximumVelocityClassForC-PomAddition)
             </MaximumVelocityClassForC-PomAddition>
-            <SettlementRateForF-PomAndAnimalRemains type="float" unit="1/d">
-                $(SettlementRateForF-PomAndAnimalRemains)
-            </SettlementRateForF-PomAndAnimalRemains>
+            <SettlementRateForFPomAndAnimalRemains type="float" unit="1/d">
+                $(SettlementRateForFPomAndAnimalRemains)
+            </SettlementRateForFPomAndAnimalRemains>
             <InitialF-PomDensity type="float" unit="J/m²">$(InitialF-PomDensity)</InitialF-PomDensity>
             <InitialS-PomDensity type="float" unit="J/m²">$(InitialS-PomDensity)</InitialS-PomDensity>
             <FractionOfS-PomAvailableToFilterFeeders type="float" unit="1">
