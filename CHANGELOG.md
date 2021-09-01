@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.33] - 2021-09-01
+### Added
+- base documentation
+### Changed
+### Fixed
+
 ## [2.32] - 2021-08-31
 ### Added
 ### Changed
