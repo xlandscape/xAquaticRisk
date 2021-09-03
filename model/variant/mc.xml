@@ -56,7 +56,7 @@
         <StreamComStartBiomass>Ind/m^2</StreamComStartBiomass>
     </Global>
     <Composition>
-        <LandscapeScenario module="components" class="Lulc">
+        <LandscapeScenario module="components" class="LandscapeScenario">
             <BaseLandscapeGeometries>$(:LandscapeScenario)</BaseLandscapeGeometries>
         </LandscapeScenario>
         <Weather module="components" class="MarsWeather">
@@ -78,12 +78,12 @@
             <Fields>
                 <FromOutput component="LandscapeScenario" output="FeatureIds"/>
             </Fields>
-            <Lulc>
-                <FromOutput component="LandscapeScenario" output="LulcTypeIds"/>
-            </Lulc>
-            <TargetLulcType>
-                <FromOutput component="LandscapeScenario" output="target_lulc_type"/>
-            </TargetLulcType>
+            <LandUseLandCoverTypes>
+                <FromOutput component="LandscapeScenario" output="FeatureTypeIds"/>
+            </LandUseLandCoverTypes>
+            <TargetLandUseLandCoverType>
+                <FromOutput component="LandscapeScenario" output="target_type"/>
+            </TargetLandUseLandCoverType>
             <ApplicationRate type="float" unit="g/ha">$(ApplicationRate)</ApplicationRate>
             <TechnologyDriftReduction type="float" unit="1">$(TechnologyDriftReduction)</TechnologyDriftReduction>
             <InCropBuffer type="float" unit="m">$(InCropBuffer)</InCropBuffer>
@@ -108,16 +108,16 @@
             <Extent>
                 <FromOutput component="LandscapeScenario" output="Extent"/>
             </Extent>
-            <HabitatLulcTypes>
-                <FromOutput component="LandscapeScenario" output="habitat_lulc_types"/>
-            </HabitatLulcTypes>
+            <HabitatTypes>
+                <FromOutput component="LandscapeScenario" output="habitat_types"/>
+            </HabitatTypes>
             <FieldDistanceSD type="float" unit="m">0</FieldDistanceSD>
             <EPDistanceSD type="float" unit="m">0</EPDistanceSD>
             <ReportingThreshold type="float" unit="g/ha">0</ReportingThreshold>
             <ApplySimpleDriftFiltering type="bool">false</ApplySimpleDriftFiltering>
-            <LulcTypes>
-                <FromOutput component="LandscapeScenario" output="LulcTypeIds"/>
-            </LulcTypes>
+            <LandUseLandCoverTypes>
+                <FromOutput component="LandscapeScenario" output="FeatureTypeIds"/>
+            </LandUseLandCoverTypes>
             <WindDirection type="int" unit="deg">-1</WindDirection>
             <SprayDriftModel>XSprayDrift</SprayDriftModel>
             <SourceExposure unit="g/ha">NA</SourceExposure>
@@ -140,7 +140,7 @@
             <SpatialOutputScale>base_geometry</SpatialOutputScale>
             <RandomSeed type="int">0</RandomSeed>
             <MinimumDistanceToField type="float" unit="m">0</MinimumDistanceToField>
-            <FilteringLulcTypes type="list[int]"/>
+            <FilteringTypes type="list[int]"/>
             <FilteringMinWidth type="float" unit="m">999</FilteringMinWidth>
             <FilteringFraction type="float" unit="1">0</FilteringFraction>
             <AgDriftBoomHeight>n/a</AgDriftBoomHeight>
