@@ -34,3 +34,6 @@
 [submodule "model/variant/focusmacro-component"]
 	path = model/variant/focusmacro-component
 	url = https://gitlab.bayer.com/aqrisk-landscape/focusmacro-component.git
+[submodule "model/variant/FocusMacro"]
+	path = model/variant/FocusMacro
+	url = https://gitlab.bayer.com/aqrisk-landscape/focusmacro-component.git
