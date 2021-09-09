@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.38] - 2021-09-09
+### Added
+### Changed
+- updated LP50 to version 2.1.0
+### Fixed##
+
 ## [2.37] - 2021-09-09
 ### Added
 ### Changed
