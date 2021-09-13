@@ -373,9 +373,6 @@
         </ExportCmfContinuousPecs>
         <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa" enabled="$(RunCascadeToxswa)">
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\cascade</ProcessingPath>
-            <Hydrography>
-                <FromOutput component="LandscapeScenario" output="hydrography"/>
-            </Hydrography>
             <SuspendedSolids type="float" unit="g/m³">15</SuspendedSolids>
             <Reaches>
                 <FromOutput component="DepositionToReach" output="Reaches"/>
@@ -448,6 +445,30 @@
                 0
             </CoefficientForLinearAdsorptionOnMacrophytes>
             <NumberWorkers type="int">$(CascadeToxswaWorkers)</NumberWorkers>
+            <HydrographyReaches>
+                <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+            </HydrographyReaches>
+            <HydrographyGeometries>
+                <FromOutput component="LandscapeScenario" output="hydrography_geom"/>
+            </HydrographyGeometries>
+            <DownstreamReach>
+                <FromOutput component="LandscapeScenario" output="hydrography_downstream"/>
+            </DownstreamReach>
+            <BottomWidth>
+                <FromOutput component="LandscapeScenario" output="hydrography_bottom_width"/>
+            </BottomWidth>
+            <BankSlope>
+                <FromOutput component="LandscapeScenario" output="hydrography_bank_slope"/>
+            </BankSlope>
+            <OrganicContent>
+                <FromOutput component="LandscapeScenario" output="hydrography_organic_content"/>
+            </OrganicContent>
+            <BulkDensity>
+                <FromOutput component="LandscapeScenario" output="hydrography_bulk_density"/>
+            </BulkDensity>
+            <Porosity>
+                <FromOutput component="LandscapeScenario" output="hydrography_porosity"/>
+            </Porosity>
         </CascadeToxswa>
         <ExportCascadeToxswaReaches
                 module="components"
