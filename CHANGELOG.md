@@ -1,17 +1,25 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.40] - 2021-09-10
+### Added
+### Changed
+- updated Landscape Model core to version 1.6.4
+- updated CascadeToxswa to version 2.1.0 
+- updated sample scenario oudebeek-beek7-tdi to version 3.10
+### Fixed
+
 ## [2.39] - 2021-09-10
 ### Added
 ### Changed
 - updated sample scenario oudebeek-beek7-tdi to version 3.9
-### Fixed#
+### Fixed
 
 ### [2.38] - 2021-09-09
 ### Added
 ### Changed
 - updated LP50 to version 2.1.0
-### Fixed##
+### Fixed
 
 ## [2.37] - 2021-09-09
 ### Added
@@ -19,13 +27,13 @@ This list contains all additions, changes and fixes for xAquaticRisk.
 - updated Landscape Model core to version 1.6.3
 - updated AnalysisObserver to version 2.1.0
 - updated XSprayDrift to version 2.1.1
-### Fixed##
+### Fixed
 
 ## [2.36] - 2021-09-06
 ### Added
 ### Changed
 - updated XSprayDrift to version 2.1.0
-### Fixed##
+### Fixed
 
 ## [2.35] - 2021-09-03
 ### Added
@@ -33,7 +41,7 @@ This list contains all additions, changes and fixes for xAquaticRisk.
 - updated Landscape Model core to version 1.6.1 (updated runtime environment)
 - updated XSprayDrift to version 2.0.9
 - updated sample scenario oudebeek-beek7-tdi to version 3.8
-### Fixed##
+### Fixed
 
 ## [2.34] - 2021-09-02
 ### Added
@@ -43,9 +51,9 @@ This list contains all additions, changes and fixes for xAquaticRisk.
 - updated ReportingObserver to version 2.0.7
 - updated StepsRiverNetwork to version 2.0.4 
 - updated XSprayDrift to version 2.0.8
-### Fixed##
+### Fixed
 
-[2.33] - 2021-09-01
+##[2.33] - 2021-09-01
 ### Added
 - base documentation
 ### Changed
