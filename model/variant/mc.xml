@@ -374,9 +374,9 @@
         <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa" enabled="$(RunCascadeToxswa)">
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\cascade</ProcessingPath>
             <SuspendedSolids type="float" unit="g/m³">15</SuspendedSolids>
-            <Reaches>
+            <HydrographyReachIds>
                 <FromOutput component="DepositionToReach" output="Reaches"/>
-            </Reaches>
+            </HydrographyReachIds>
             <TimeSeriesStart>
                 <FromOutput component="Hydrology" output="TimeSeriesStart"/>
             </TimeSeriesStart>

@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.41] - 2021-09-14
+### Added
+### Changed
+- updated CascadeToxswa to version 2.1.1 
+### Fixed
+
 ## [2.40] - 2021-09-10
 ### Added
 ### Changed
