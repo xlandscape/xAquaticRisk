@@ -18,7 +18,7 @@
   Remark        :  The valid range of start dates is mainly determined by the input data for the selected scenario. The
                    available ranges can be obtained from the scenario documentation.
   -->
-  <SimulationStart>2015-05-01</SimulationStart>
+  <SimulationStart>1998-05-01</SimulationStart>
 
   <!--
   Parameter     :  SimulationEnd
@@ -27,7 +27,7 @@
   Remark        :  Must be later than the simulation start (or the same date). For limitations of allowed dates, see
                    remark for SimulationStart.
   -->
-  <SimulationEnd>2015-05-07</SimulationEnd>
+  <SimulationEnd>1998-05-05</SimulationEnd>
 
   <!-- ######## -->
 
@@ -40,7 +40,7 @@
   Values        :  Any positive number (or zero)
   Remark        :  The application rate applies to all applications within application sequences.
   -->
-  <ApplicationRate>12.5</ApplicationRate>
+  <ApplicationRate>1000</ApplicationRate>
 
   <!--
   Parameter     :  ApplicationTimeWindow
@@ -55,7 +55,7 @@
                                                     and year) between 7th and 21st of April and on a random date (per
                                                     field and year) between 2nd and 16th of May.
   -->
-  <ApplicationTimeWindow>05-02 to 05-02</ApplicationTimeWindow>
+  <ApplicationTimeWindow>05-02 to 05-02, 05-03 to 05-03, 05-04 to 05-04</ApplicationTimeWindow>
 
   <!-- ######## -->
 
@@ -98,6 +98,16 @@
 
   <!-- ENVIRONMENTAL FATE MODEL -->
 
+
+<!--
+  Parameter     :  FocusMacro
+  Description   :  Controls whether soil efate is calculated by the FocusMacro component
+  Values        :  true or false
+    -->
+  <FocusMacro>true</FocusMacro>
+  <NCORES>3</NCORES>
+  <DT50soil>1000</DT50soil>
+  
   <!--
   Parameter     :  RunStepsRiverNetwork
   Description   :  Controls whether environmental fate is calculated by the StepsRiverNetwork component
@@ -110,14 +120,14 @@
   Description   :  Controls whether environmental fate is calculated by the CascadeToxswa component
   Values        :  true or false
     -->
-  <RunCascadeToxswa>true</RunCascadeToxswa>
+  <RunCascadeToxswa>false</RunCascadeToxswa>
 
   <!--
   Parameter     :  RunCmfContinuous
   Description   :  Controls whether environmental fate is calculated by the CmfContinuous component
   Values        :  true or false
     -->
-  <RunCmfContinuous>true</RunCmfContinuous>
+  <RunCmfContinuous>false</RunCmfContinuous>
 
   <!--
   Parameter     :  ThresholdSW
@@ -211,7 +221,7 @@
   Values        :  A value in l/kg
   Remark        :  The KOM used by some modules is automatically derived from the KOC by dividing it by 1.742
   -->
-  <KOC>460000</KOC>
+  <KOC>1</KOC>
 
   <!--
   Parameter     :  ReferenceConcentrationForKOC
