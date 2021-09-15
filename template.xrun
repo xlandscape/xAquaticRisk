@@ -9,7 +9,7 @@
   Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
   Remark        :  Make sure that the scenario is present in the scenario sub-folder.
   -->
-  <Project>scenario/oudebeek-beek7-tdi</Project>
+  <Project>scenario/scenario-oudebeek-beek7-tdi</Project>
 
   <!--
   Parameter     :  SimulationStart
@@ -235,7 +235,7 @@
   Description   :  The Freundlich exponent in sediment and suspended particles of the applied substance
   Values        :  A value without unit
   -->
-  <FreundlichExponentInSedimentAndSuspendedParticles>0.93</FreundlichExponentInSedimentAndSuspendedParticles>
+  <FreundlichExponentInSedimentAndSuspendedParticles>1.0</FreundlichExponentInSedimentAndSuspendedParticles>
 
   <!--
   Parameter     :  CoefficientForLinearAdsorptionOnMacrophytes
@@ -254,14 +254,14 @@
   Description   :  Specifies whether effects are simulated by LGuts for the switched-on environmental fate components
   Values        :  true or false
   -->
-  <RunLGuts>true</RunLGuts>
+  <RunLGuts>false</RunLGuts>
 
   <!--
   Parameter     :  RunLPop
   Description   :  Specifies whether effects are simulated by LPop for the switched-on environmental fate components
   Values        :  true or false
   -->
-  <RunLPop>true</RunLPop>
+  <RunLPop>false</RunLPop>
 
   <!--
   Parameter     :  RunStreamCom
@@ -269,7 +269,7 @@
                    components
   Values        :  true or false
   -->
-  <RunStreamCom>true</RunStreamCom>
+  <RunStreamCom>false</RunStreamCom>
 
   <!--
   Parameter     :  MultiplicationFactors_LPop
@@ -510,7 +510,7 @@
   Values        :  true or false
   Best practice :  The export feature is experimental and should be set to false for longer simulation runs.
   -->
-  <ExportToSqlite>true</ExportToSqlite>
+  <ExportToSqlite>false</ExportToSqlite>
 
   <!-- ######## -->
 
@@ -547,7 +547,7 @@
                    clearly in the identifier. If conducting a run from the experiment table, register it there and use
                    the naming scheme <experiment id>-<n> where n is the number of the run.
   -->
-  <SimID>Test_Run_aqRisk</SimID>
+  <SimID>s1</SimID>
 
   <!--
   Parameter     :  ParentRun
@@ -569,7 +569,7 @@
                    if RunCascadeToxswa is false, else
                    min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
   -->
-  <NumberParallelProcesses>10</NumberParallelProcesses>
+  <NumberParallelProcesses>1</NumberParallelProcesses>
 
   <!--
   Parameter     :  CascadeToxswaWorkers
@@ -580,7 +580,7 @@
   Best practice :  To best use the available hardware, apply this rule of thumb:
                    min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
   -->
-  <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
+  <CascadeToxswaWorkers>1</CascadeToxswaWorkers>
 
   <!--
     Parameter     :   DeleteFoldersAtFinish
