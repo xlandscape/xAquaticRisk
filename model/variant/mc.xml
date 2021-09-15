@@ -158,6 +158,72 @@
                 <FromOutput component="LandscapeScenario" output="reach_id"/>
             </Mapping>
         </DepositionToReach>
+    <FocusMacro module="FocusMacro" class="FocusMacro" enabled="$(FocusMacro)">
+      <OutputPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\macro</OutputPath>
+      <InputPath>$(:FocusMacroData)</InputPath>
+      <NCORES type="int" >$(NCORES)</NCORES>
+      <SimulationStart>$(SimulationStart)</SimulationStart>
+      <SimulationEnd>$(SimulationEnd)</SimulationEnd>
+      <AppliedFields>
+        <FromOutput component="PPM" output="AppliedFields"/>
+      </AppliedFields>
+      <ApplicationDates>
+        <FromOutput component="PPM" output="ApplicationDates"/>
+      </ApplicationDates>
+      <ApplicationRates>
+        <FromOutput component="PPM" output="ApplicationRates"/>
+      </ApplicationRates>
+      <PARFILE>
+        <FromOutput component="LandscapeScenario" output="PARFILE"/>
+      </PARFILE>
+      <RAINFALLFILE>
+        <FromOutput component="LandscapeScenario" output="RAINFALLFILE"/>
+      </RAINFALLFILE>
+      <METFILE>
+        <FromOutput component="LandscapeScenario" output="METFILE"/>
+      </METFILE>
+      <LulcTypes>
+        <FromOutput component="LandscapeScenario" output="LulcTypeIds"/>
+      </LulcTypes>
+      <TargetLulcType>
+        <FromOutput component="LandscapeScenario" output="target_lulc_type"/>
+      </TargetLulcType>
+      <KOC type="float" unit="l/kg">$(KOC)</KOC>
+      <DT50soil type="float" unit="l/kg">$(DT50soil)</DT50soil>
+      <nf type="float" unit="1">$(FreundlichExponentInSedimentAndSuspendedParticles)</nf>
+    </FocusMacro>
+   <DrainageToReach module="components" class="DrainageToReach">
+      <FeatureIds>
+        <FromOutput component="LandscapeScenario" output="FeatureIds"/>
+      </FeatureIds>
+      <DrainageLoad>
+        <FromOutput component="FocusMacro" output="Solutes drainage [mg_m2_h]"/>
+      </DrainageLoad>
+      <DrainageLoad2nd>
+        <FromOutput component="FocusMacro" output="Solutes sec drainage [mg_m2_h]"/>
+      </DrainageLoad2nd>
+      <FocusMacroUniqueID>
+        <FromOutput component="FocusMacro" output="FocusMacroUniqueID"/>
+      </FocusMacroUniqueID>
+      <FocusMacroFieldID>
+        <FromOutput component="FocusMacro" output="FocusMacroFieldID"/>
+      </FocusMacroFieldID>
+       <Reaches>
+        <FromOutput component="Hydrology" output="Reaches"/>
+      </Reaches>
+      <DRAINCON>
+        <FromOutput component="LandscapeScenario" output="DRAINCON"/>
+      </DRAINCON>
+     <AppliedFields>
+        <FromOutput component="PPM" output="AppliedFields"/>
+      </AppliedFields>
+      <Geometries>
+        <FromOutput component="LandscapeScenario" output="Geometries"/>
+      </Geometries>
+      <GeometryCrs>
+        <FromOutput component="LandscapeScenario" output="Crs"/>
+      </GeometryCrs>
+    </DrainageToReach>
         <StepsRiverNetwork module="StepsRiverNetwork" class="StepsRiverNetwork" enabled="$(RunStepsRiverNetwork)">
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\steps</ProcessingPath>
             <Hydrography>
