@@ -19,6 +19,7 @@
             <CmfCont>$(RunCmfContinuous)</CmfCont>
             <Cascade>$(RunCascadeToxswa)</Cascade>
             <Steps>$(RunStepsRiverNetwork)</Steps>
+            <FocusMacro>$(FocusMacro)</FocusMacro>
             <Lguts>$(RunLGuts)</Lguts>
             <T0>$(SimulationStart)T00:00</T0>
             <Tn>$(SimulationEnd)T23:00</Tn>
@@ -72,6 +73,12 @@
             <LM_Cmf_Survival_Offset>true</LM_Cmf_Survival_Offset>
             <LM_Steps_Survival_Offset>true</LM_Steps_Survival_Offset>
             <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
+            <LM_Drainage_load>FocusMacro/Solutes drainage [mg_m2_h]</LM_Drainage_load>
+            <LM_Groundwater_load>FocusMacro/Solutes gw losses [mg_m2_h]</LM_Groundwater_load>
+            <LM_Runoff_load>FocusMacro/Solutes runoff [mg_m2_h]</LM_Runoff_load>
+            <LM_Drainage_flow>FocusMacro/Drainage [mm_h]</LM_Drainage_flow>
+            <LM_Groundwater_flow>FocusMacro/Perc [mm_h]</LM_Groundwater_flow>
+            <LM_Runoff_flow>FocusMacro/Runoff [mm_h]</LM_Runoff_flow>
         </Observer>
         <Observer module="ReportingObserver" class="ReportingObserver">
             <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>
@@ -80,6 +87,7 @@
             <CmfCont>$(RunCmfContinuous)</CmfCont>
             <Cascade>$(RunCascadeToxswa)</Cascade>
             <Steps>$(RunStepsRiverNetwork)</Steps>
+            <FocusMacro>$(FocusMacro)</FocusMacro>
             <Lguts>$(RunLGuts)</Lguts>
             <T0>$(SimulationStart)T00:00</T0>
             <Tn>$(SimulationEnd)T23:00</Tn>
@@ -133,12 +141,19 @@
             <LM_Cmf_Survival_Offset>true</LM_Cmf_Survival_Offset>
             <LM_Steps_Survival_Offset>true</LM_Steps_Survival_Offset>
             <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
+            <LM_Drainage_load>FocusMacro/Solutes drainage [mg_m2_h]</LM_Drainage_load>
+            <LM_Groundwater_load>FocusMacro/Solutes gw losses [mg_m2_h]</LM_Groundwater_load>
+            <LM_Runoff_load>FocusMacro/Solutes runoff [mg_m2_h]</LM_Runoff_load>
+            <LM_Drainage_flow>FocusMacro/Drainage [mm_h]</LM_Drainage_flow>
+            <LM_Groundwater_flow>FocusMacro/Perc [mm_h]</LM_Groundwater_flow>
+            <LM_Runoff_flow>FocusMacro/Runoff [mm_h]</LM_Runoff_flow>
         </Observer>
     </Observers>
     <Parts>
         <AnalysisObserver module="AnalysisObserver" class="AnalysisObserver"/>
         <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa"/>
         <CmfContinuous module="CmfContinuous" class="CmfContinuous"/>
+        <FocusMacro module="FocusMacro" class="FocusMacro"/>
         <LEffectModel module="LEffectModel" class="LEffectModel"/>
         <LP50 module="LP50" class="LP50"/>
         <ReportingObserver module="ReportingObserver" class="ReportingObserver"/>
