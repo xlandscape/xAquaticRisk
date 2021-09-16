@@ -159,7 +159,7 @@
             </Mapping>
         </DepositionToReach>
     <FocusMacro module="FocusMacro" class="FocusMacro" enabled="$(FocusMacro)">
-      <OutputPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\efate\macro</OutputPath>
+      <OutputPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\macro</OutputPath>
       <InputPath>$(:FocusMacroData)</InputPath>
       <NCORES type="int" >$(NCORES)</NCORES>
       <SimulationStart>$(SimulationStart)</SimulationStart>
@@ -183,10 +183,10 @@
         <FromOutput component="LandscapeScenario" output="METFILE"/>
       </METFILE>
       <LulcTypes>
-        <FromOutput component="LandscapeScenario" output="LulcTypeIds"/>
+        <FromOutput component="LandscapeScenario" output="FeatureTypeIds"/>
       </LulcTypes>
       <TargetLulcType>
-        <FromOutput component="LandscapeScenario" output="target_lulc_type"/>
+        <FromOutput component="LandscapeScenario" output="target_type"/>
       </TargetLulcType>
       <KOC type="float" unit="l/kg">$(KOC)</KOC>
       <DT50soil type="float" unit="l/kg">$(DT50soil)</DT50soil>
@@ -226,6 +226,9 @@
     </DrainageToReach>
         <StepsRiverNetwork module="StepsRiverNetwork" class="StepsRiverNetwork" enabled="$(RunStepsRiverNetwork)">
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\steps</ProcessingPath>
+            <DrainageLoad>
+                 <FromOutput component="DrainageToReach" output="DrainageLoad"/>
+            </DrainageLoad>
             <Hydrography>
                 <FromOutput component="LandscapeScenario" output="hydrography"/>
             </Hydrography>
