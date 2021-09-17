@@ -1,6 +1,18 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.43] - 2021-09-17
+### Added
+### Changed
+- updated Landscape Model core to version 1.7.0
+- updated CascadeToxswa to version 2.1.2
+- updated CmfContinuous to version 2.0.8
+- updated LEffectModel to version 2.0.10
+- updated LP50 to version 2.1.1
+- updated StreamCom to version 2.1.3 
+- updated XSprayDrift to version 2.1.2
+### Fixed
+
 ## [2.42] - 2021-09-14
 ### Added
 ### Changed
