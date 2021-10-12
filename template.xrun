@@ -49,11 +49,9 @@
   Remark        :  For each target field, year and application within an application sequence, a random date within the
                    specified time window is selected. Example values:
                    04-15 to 04-15 : All fields are applied on 15th of April every year
-                   04-07 to 04-21 : All fields are applied each year on a random date (per field and year) between 7th
-                                    and 21st of April
-                   04-07 to 04-21, 05-02 to 05-16 : All fields are applied twice each year; on a random date (per field
-                                                    and year) between 7th and 21st of April and on a random date (per
-                                                    field and year) between 2nd and 16th of May.
+                   04-07 to 04-21 : Every field is applied each year on a random date between 7th and 21st of April
+                   04-07 to 04-21, 05-02 to 05-16 : Each field is applied twice each year; on a random date between 7th
+                                                    and 21st of April and on a random date  between 2nd and 16th of May.
   -->
   <ApplicationTimeWindow>05-02 to 05-02</ApplicationTimeWindow>
 
@@ -158,8 +156,8 @@
 
   <!--
   Parameter     :  SolubilityInWater
-  Description   :  The solubility in water of the applied substance at 20°C
-  Values        :  A value in mg/l
+  Description   :  The solubility in water of the applied substance at 20 °C
+  Values        :  A concentration (mg/l).
   -->
   <SolubilityInWater>0.001</SolubilityInWater>
 
@@ -172,14 +170,14 @@
 
   <!--
   Parameter     :  DiffusionCoefficient
-  Description   :  The diffusion coefficient of the applied substance at 20°C
+  Description   :  The diffusion coefficient of the applied substance at 20 °C
   Values        :  A value in m²/d
   -->
   <DiffusionCoefficient>4.30E-05</DiffusionCoefficient>
 
   <!--
   Parameter     :  DT50sw
-  Description   :  The half-life transformation time in water of the applied substance at 20°C
+  Description   :  The half-life transformation time in water of the applied substance at 20 °C
   Values        :  A value in d
   -->
   <DT50sw>1000</DT50sw>
@@ -193,7 +191,7 @@
 
   <!--
   Parameter     :  DT50sed
-  Description   :  The half-life transformation time in sediment of the applied substance at 20°C
+  Description   :  The half-life transformation time in sediment of the applied substance at 20 °C
   Values        :  A value in d
   -->
   <DT50sed>43.9</DT50sed>
@@ -216,7 +214,7 @@
   <!--
   Parameter     :  ReferenceConcentrationForKOC
   Description   :  The reference concentration for the KOC of the applied substance
-  Values        :  A value in mg/l
+  Values        :  A concentration (mg/l)
   -->
   <ReferenceConcentrationForKOC>1</ReferenceConcentrationForKOC>
 
@@ -323,12 +321,9 @@
   Parameter     :  Species1
   Description   :  The name of the first species to calculate effects for
   Values        :  Any characters that are valid in file system identifiers
-  Remark        :  Individual effects for the species are calculated in LGuts. The species will also be part of the
-                   StreamCom simulation if it is from the following list: Asellus aquaticus, Baetis rhodani,
-                   Dikerogammarus villosus, Ecdyonurus dispar, Epeorus assimilis, Gammarus fossarum, Gammarus pulex,
-                   Gammarus roeselii, Habrophlebia lauta, Lymnaea stagnalis, Planorbis planorbis,
-                   Potamopyrgus antipodarum, Rhithrogena semicolorata, Sphaerium corneum, Stagnicola palustris,
-                   Gasterosteus aculeatus, Perca fluviatilis or Salmo trutta
+  Remark        :  Individual effects for the species are calculated with the LEffectModel. The species will also be
+                   part of the StreamCom simulation if it is included in the StreamCom species parameter database
+                   provided with the landscape scenario.
   Best practice :  Species 1 should be parameterized as Asellus aquaticus, because its GUTS parametrization is used by
                    the LEffectModel population which is implemented for Asellus aquaticus. Parameterizing a different
                    species as species 1 makes the results of the population model harder to interpret: still, Asellus
@@ -489,7 +484,7 @@
   Description   :  The number of Monte Carlo runs
   Values        :  Any positive integer
   Remark        :  MC runs are conducted (partly) in parallel according to the NumberParallelProcesses parameter.
-  Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long running simulations,
+  Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long-running simulations,
                    30 for small simulations and 10 for anything in between.
   -->
   <NumberMC>1</NumberMC>
@@ -530,7 +525,7 @@
 
   <!--
   Parameter     :  SimID
-  Description   :  Unique identifier of a simulation run
+  Description   :  A unique identifier of a simulation run
   Values        :  Any characters that are valid in file system identifiers
   Remark        :  Running a simulation with the same name as an existing simulation run results in an error.
   Best practice :  Change this parameter with every simulation run. When doing test runs, indicate the test character of
@@ -576,7 +571,7 @@
     Parameter     :   DeleteFoldersAtFinish
     Description   :   Specifies whether processing folders should be deleted after the model run is finished
     Values        :   true or false
-    Best practice :   Should be set to true for a complete 26 year run to save memory, but can be set to false when
+    Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when
                       testing
   -->
   <DeleteFoldersAtFinish>false</DeleteFoldersAtFinish>

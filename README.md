@@ -66,7 +66,7 @@ xAquaticRisk requires a 64-bit Windows to run.
 
 ## Usage
 1. Open the `template.xrun` in any text editor and modify the parameters for the simulation to your needs. The 
-   `template.xrun` contains in-line documentation to assist you in deciding for valid parameter values.
+   `template.xrun` contains an in-line documentation to assist you in deciding for valid parameter values.
 2. Save the modified `template.xrun` under a different name in the same directory, using a `.xrun` extension.
 3. Drag and drop the saved parameterization file onto the `__start__.bat`.
 4. Check the console window occasionally for successful conclusion of the simulation or for errors. Logfiles can be
