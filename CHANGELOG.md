@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.48] - 2021-10-14
+### Added
+### Changed
+- updated StreamCom to version 2.2.1
+### Fixed
+
 ## [2.47] - 2021-10-13
 ### Added
 ### Changed
