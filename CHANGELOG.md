@@ -1,6 +1,20 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.49] - 2021-10-19
+### Added
+### Changed
+- updated Landscape Model core to version 1.9.3
+- updated AnalysisObserver to version 2.2.0
+- updated CmfContinuous to version 2.0.11
+- updated LP50 to version 2.2.2
+- updated ReportingObserver to version 2.0.10
+- updated StepsRiverNetwork to version 2.0.7
+- updated StreamCom to version 2.2.2
+- updated XSprayDrift to version 2.2.1
+- updated sample scenario oudebeek-beek7-tdi to version 3.12
+### Fixed
+
 ## [2.48] - 2021-10-14
 ### Added
 ### Changed
