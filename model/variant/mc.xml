@@ -160,9 +160,6 @@
         </DepositionToReach>
         <StepsRiverNetwork module="StepsRiverNetwork" class="StepsRiverNetwork" enabled="$(RunStepsRiverNetwork)">
             <ProcessingPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\steps</ProcessingPath>
-            <Hydrography>
-                <FromOutput component="LandscapeScenario" output="hydrography"/>
-            </Hydrography>
             <Catchment>$(:Catchment)</Catchment>
             <WaterDischarge>
                 <FromOutput component="Hydrology" output="Flow"/>
@@ -195,6 +192,45 @@
             <QFac type="float" unit="1">$(QFac)</QFac>
             <ThresholdSW type="float" unit="mg/m³">$(ThresholdSW)</ThresholdSW>
             <ThresholdSediment type="float" unit="mg/kg">$(ThresholdSediment)</ThresholdSediment>
+            <HydrographyReaches>
+                <FromOutput component="LandscapeScenario" output="hydrography_id"/>
+            </HydrographyReaches>
+            <HydrographyGeometries>
+                <FromOutput component="LandscapeScenario" output="hydrography_geom"/>
+            </HydrographyGeometries>
+            <DownstreamReach>
+                <FromOutput component="LandscapeScenario" output="hydrography_downstream"/>
+            </DownstreamReach>
+            <InitialDepth>
+                <FromOutput component="LandscapeScenario" output="hydrography_initial_depth"/>
+            </InitialDepth>
+            <Manning>
+                <FromOutput component="LandscapeScenario" output="hydrography_manning"/>
+            </Manning>
+            <BankSlope>
+                <FromOutput component="LandscapeScenario" output="hydrography_bank_slope"/>
+            </BankSlope>
+            <Width>
+                <FromOutput component="LandscapeScenario" output="hydrography_width"/>
+            </Width>
+            <Shape>
+                <FromOutput component="LandscapeScenario" output="hydrography_shape"/>
+            </Shape>
+            <BulkDensity>
+                <FromOutput component="LandscapeScenario" output="hydrography_bulk_density"/>
+            </BulkDensity>
+            <Porosity>
+                <FromOutput component="LandscapeScenario" output="hydrography_porosity"/>
+            </Porosity>
+            <OrganicContent>
+                <FromOutput component="LandscapeScenario" output="hydrography_organic_content"/>
+            </OrganicContent>
+            <SedimentDepth1stLayer>
+                <FromOutput component="LandscapeScenario" output="hydrography_sediment_layer_1_depth"/>
+            </SedimentDepth1stLayer>
+            <SedimentDepth2ndLayer>
+                <FromOutput component="LandscapeScenario" output="hydrography_sediment_layer_2_depth"/>
+            </SedimentDepth2ndLayer>
         </StepsRiverNetwork>
         <ExportStepsRiverNetworkReaches
                 module="components"
