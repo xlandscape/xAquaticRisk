@@ -1,6 +1,14 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.50] - 2021-10-20
+### Added
+### Changed
+- updated Landscape Model core to version 1.9.4fix
+- updated StepsRiverNetwork to version 2.1.0 
+- updated sample scenario oudebeek-beek7-tdi to version 3.13
+### Fixed
+
 ## [2.49] - 2021-10-19
 ### Added
 ### Changed
