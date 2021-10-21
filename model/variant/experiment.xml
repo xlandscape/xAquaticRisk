@@ -8,9 +8,12 @@
         <ExperimentDir>$(_EXP_BASE_DIR_)\$(SimID)</ExperimentDir>
     </General>
     <Observers>
-        <Observer module="observer" class="ConsoleObserver"/>
+        <Observer module="observer" class="ConsoleObserver">
+            <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
+        </Observer>
         <Observer module="observer" class="LogFileObserver">
             <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\experiment.log</LogFile>
+            <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
         </Observer>
         <Observer module="ReportingObserver" class="ReportingObserver">
             <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>

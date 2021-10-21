@@ -576,5 +576,14 @@
   -->
   <DeleteFoldersAtFinish>false</DeleteFoldersAtFinish>
 
+  <!--
+    Parameter     :   VerboseLogging
+    Description   :   Specifies whether verbose logging is used
+    Values        :   true or false
+    Best practice :   Should be set to false when using the model in production environments and only to false if there
+                      is need for debugging or during development
+  -->
+  <VerboseLogging>false</VerboseLogging>
+
   <!-- ######## -->
 </Parameters>

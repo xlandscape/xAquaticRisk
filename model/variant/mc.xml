@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MCRun>
     <Observers>
-        <Observer module="observer" class="ConsoleObserver"/>
+        <Observer module="observer" class="ConsoleObserver">
+            <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
+        </Observer>
         <Observer module="observer" class="GraphMLObserver">
             <Output_File>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\composition.graphml</Output_File>
             <Include_Modules>true</Include_Modules>
         </Observer>
         <Observer module="observer" class="LogFileObserver">
             <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\mc_$(_MC_NAME_).log</LogFile>
+            <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
         </Observer>
     </Observers>
     <Store module="stores" class="X3dfStore">
