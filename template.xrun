@@ -9,7 +9,7 @@
   Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
   Remark        :  Make sure that the scenario is present in the scenario sub-folder.
   -->
-  <Project>scenario/oudebeek-beek7-tdi</Project>
+  <Project>scenario/rummen-tdi</Project>
 
   <!--
   Parameter     :  SimulationStart

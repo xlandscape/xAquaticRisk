@@ -2,3 +2,4 @@
 analysis/.ipynb_checkpoints/
 *.xrun
 !template.xrun
+scenario/
