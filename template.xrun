@@ -9,7 +9,7 @@
   Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
   Remark        :  Make sure that the scenario is present in the scenario sub-folder.
   -->
-  <Project>scenario/rummen-tdi</Project>
+  <Project>scenario/oudebeek-beek7-tdi</Project>
 
   <!--
   Parameter     :  SimulationStart
@@ -487,7 +487,7 @@
   Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long-running simulations,
                    30 for small simulations and 10 for anything in between.
   -->
-  <NumberMC>1</NumberMC>
+  <NumberMC>2</NumberMC>
 
   <!--
   Parameter     :  ExportToSqlite
@@ -554,7 +554,7 @@
                    if RunCascadeToxswa is false, else
                    min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
   -->
-  <NumberParallelProcesses>10</NumberParallelProcesses>
+  <NumberParallelProcesses>2</NumberParallelProcesses>
 
   <!--
   Parameter     :  CascadeToxswaWorkers
@@ -584,6 +584,24 @@
                       is need for debugging or during development
   -->
   <VerboseLogging>false</VerboseLogging>
+
+  <!--
+    Parameter     :   EnableProfiling
+    Description   :   Specifies whether the performance of the simulation run is profiled
+    Values        :   true or false
+    Remark        :   Profiling comes with a little overhead and makes observer outputs less verbose
+  -->
+  <EnableProfiling>true</EnableProfiling>
+
+  <!--
+    Parameter     :   ProfilingWaitingTime
+    Description   :   The time interval in seconds between to profiling rounds
+    Values        :   Any positive integer
+    Remark        :   Only in effect if profiling is enabled
+    Best practice :   Choose an interval that does not produce an overly large amount of output but that still results
+                       in a sufficient temporal resolution
+  -->
+  <ProfilingWaitingTime>5</ProfilingWaitingTime>
 
   <!-- ######## -->
 </Parameters>
