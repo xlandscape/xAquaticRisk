@@ -6,6 +6,9 @@
         <NumberMC>$(NumberMC)</NumberMC>
         <NumberParallelProcesses>$(NumberParallelProcesses)</NumberParallelProcesses>
         <ExperimentDir>$(_EXP_BASE_DIR_)\$(SimID)</ExperimentDir>
+        <EnableProfiling>$(EnableProfiling)</EnableProfiling>
+        <ProfilingWaitingTime>$(ProfilingWaitingTime)</ProfilingWaitingTime>
+        <ProfilingPollingDuration>1</ProfilingPollingDuration>
     </General>
     <Observers>
         <Observer module="observer" class="ConsoleObserver">
