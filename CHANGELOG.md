@@ -1,6 +1,14 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.54] - 2021-11-05
+### Added
+### Changed
+- Landscape Model core updated to version 1.9.10
+- Updated AnalysisObserver to version 2.2.1
+### Fixed
+- Jupyter notebook R kernel reference
+
 ## [2.53] - 2021-11-02
 ### Added
 - Profiling in configuration and user parameterization
