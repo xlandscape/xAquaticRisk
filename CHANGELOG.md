@@ -1,6 +1,13 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.56] - 2021-11-16
+### Added
+### Changed
+- Updated Landscape Model core to version 1.9.12
+- Python runtime environment is started in unbuffered mode
+### Fixed
+
 ## [2.55] - 2021-11-08
 ### Added
 ### Changed
