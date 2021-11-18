@@ -1,6 +1,24 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.57] - 2021-11-18
+### Added
+- Added global scale to Monte Carlo run configuration to be more explicit
+### Changed
+- Updated Landscape Model core to version 1.10.0
+- Updated CascadeToxswa to version 2.1.6
+- Updated CmfContinuous to version 2.0.12
+- Updated LEffectModel to version 2.0.13
+- Updated LP50 to version 2.2.3
+- Updated ReportingObserver to version 2.0.11
+- Updated StepsRiverNetwork to version 2.1.1
+- Updated StreamCom to version 2.2.3
+- Updated XSprayDrift to version 2.2.2
+- Updated oudebeek-beek7-tdi sample scenario to version 3.14
+- Updated experiment configuration to reflect requirements of updated ReportingObserver
+- Updated Monte Carlo run configuration to reflect requirements of updated components
+### Fixed
+
 ## [2.56] - 2021-11-16
 ### Added
 ### Changed
