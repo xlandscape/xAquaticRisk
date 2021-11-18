@@ -54,19 +54,14 @@
             <Lguts_L>Survival rate</Lguts_L>
             <Lguts_Func>np.min</Lguts_Func>
             <LM_Spray_Drift_DS>/DepositionToReach/Deposition</LM_Spray_Drift_DS>
-            <LM_Spray_Drift_Reaches_DS>/DepositionToReach/Reaches</LM_Spray_Drift_Reaches_DS>
             <LM_Compound_Name>CMP_A</LM_Compound_Name>
             <LM_Simulation_Start>$(SimulationStart)</LM_Simulation_Start>
             <LM_Cascade_DS>/CascadeToxswa/ConLiqWatTgtAvg</LM_Cascade_DS>
             <LM_Cmf_Continuous_DS>/CmfContinuous/PEC_SW</LM_Cmf_Continuous_DS>
             <LM_Steps_River_Network_DS>/StepsRiverNetwork/PEC_SW</LM_Steps_River_Network_DS>
             <LM_Hydrography_DS>/LandscapeScenario/hydrography</LM_Hydrography_DS>
-            <LM_Cascade_Reaches>/CascadeToxswa/Reaches</LM_Cascade_Reaches>
-            <LM_Cmf_Continuous_Reaches>/CmfContinuous/Reaches</LM_Cmf_Continuous_Reaches>
-            <LM_Steps_River_Network_reaches>/StepsRiverNetwork/Reaches</LM_Steps_River_Network_reaches>
             <LM_Catchment>$(:Catchment)</LM_Catchment>
             <LM_Cmf_Depth_DS>/Hydrology/Depth</LM_Cmf_Depth_DS>
-            <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
             <LM_Steps_Survival>/IndEffect_StepsRiverNetwork_SD_Species1/GutsSurvivalReaches</LM_Steps_Survival>
             <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
             <LM_Cmf_Continuous_Survival>
@@ -115,19 +110,14 @@
             <Lguts_L>Survival rate</Lguts_L>
             <Lguts_Func>np.min</Lguts_Func>
             <LM_Spray_Drift_DS>/DepositionToReach/Deposition</LM_Spray_Drift_DS>
-            <LM_Spray_Drift_Reaches_DS>/DepositionToReach/Reaches</LM_Spray_Drift_Reaches_DS>
             <LM_Compound_Name>CMP_A</LM_Compound_Name>
             <LM_Simulation_Start>$(SimulationStart)</LM_Simulation_Start>
             <LM_Cascade_DS>/CascadeToxswa/ConLiqWatTgtAvg</LM_Cascade_DS>
             <LM_Cmf_Continuous_DS>/CmfContinuous/PEC_SW</LM_Cmf_Continuous_DS>
             <LM_Steps_River_Network_DS>/StepsRiverNetwork/PEC_SW</LM_Steps_River_Network_DS>
             <LM_Hydrography_DS>/LandscapeScenario/hydrography</LM_Hydrography_DS>
-            <LM_Cascade_Reaches>/CascadeToxswa/Reaches</LM_Cascade_Reaches>
-            <LM_Cmf_Continuous_Reaches>/CmfContinuous/Reaches</LM_Cmf_Continuous_Reaches>
-            <LM_Steps_River_Network_reaches>/StepsRiverNetwork/Reaches</LM_Steps_River_Network_reaches>
             <LM_Catchment>$(:Catchment)</LM_Catchment>
             <LM_Cmf_Depth_DS>/Hydrology/Depth</LM_Cmf_Depth_DS>
-            <LM_Cmf_Reaches_DS>/Hydrology/Reaches</LM_Cmf_Reaches_DS>
             <LM_Steps_Survival>/IndEffect_StepsRiverNetwork_IT_Species1/GutsSurvivalReaches</LM_Steps_Survival>
             <LM_Steps_Survival_Mfs_Index>10</LM_Steps_Survival_Mfs_Index>
             <LM_Cmf_Continuous_Survival>
