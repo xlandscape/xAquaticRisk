@@ -231,7 +231,7 @@ createLP50byStrahlerPlot <- function(LP50,reach.info,medLP50){
                                     vpos$x[3]-(vpos$width[3]/2),vpos$x[3],
                                     vpos$x[4]-(vpos$width[4]/2),vpos$x[4]),
                          labels = c("","100","","100","","100","","100"),
-                         limits = c(0,1708),
+                         limits = c(0,vpos$x[4]),
                          expand = c(0,50)) +
       coord_cartesian(ylim = c(5,-2)) +
       ggtitle(paste0("Species: ",model.versions$Species[j],"\nModel type: ",model.versions$Model_type[j])) +
