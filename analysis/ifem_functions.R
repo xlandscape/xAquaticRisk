@@ -114,7 +114,7 @@ createPECbyStrahlerPlot <- function(max.pec,reach.info,medPEC){
     ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
     theme_bw() +
     theme(text = element_text(size = 12),axis.text = element_text(size = 12),plot.title = element_text(size = 6,hjust = 1)) +
-    geom_text(data = data.frame(x = c(0,vpos$x[1:length(vpos$x)-1]),y = c(-2,-2,-2,-2),
+    geom_text(data = data.frame(x = vpos$x,y = c(-2,-2,-2,-2),
                                 labels = paste0(c("Strahler order 1",as.character(vpos$strahler[!vpos$strahler==1])))),
               aes(x = x, y = y, label = labels), size = 6, hjust = "inward") +
   return(PEC.plots)
@@ -237,7 +237,7 @@ createLP50byStrahlerPlot <- function(LP50,reach.info,medLP50){
       coord_cartesian(ylim = c(5,-2)) +
       ggtitle(paste0("Species: ",model.versions$Species[j],"\nModel type: ",model.versions$Model_type[j])) +
       theme_bw() +
-      geom_text(data = data.frame(x = c(0,vpos$x[1:length(vpos$x)-1]),y = c(-2,-2,-2,-2),
+      geom_text(data = data.frame(x = vpos$x,y = c(-2,-2,-2,-2),
                                   labels = paste0(c("Strahler order 1",as.character(vpos$strahler[!vpos$strahler==1])))),
                 aes(x = x, y = y, label = labels), size = 6, hjust = "inward") +
       theme(text = element_text(size = 20),plot.title = element_text(size = 12))
