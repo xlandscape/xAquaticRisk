@@ -315,7 +315,7 @@ readLoadingDriftFromStore <- function(data.store.fpath,reach.info, first.year,la
   time.period$Month <- format(time.period$Tstamp,"%m") %>% as.numeric()
   time.period$Day <- format(time.period$Tstamp,"%d") %>% as.numeric()
   time.period$Date <- format(time.period$Tstamp,"%d-%m-%Y") %>% as.character()
-  load.period <- unique(time.period[,c("Year","Month","Day","Date")])
+  load.period <- unique(time.period[,c("Year","Month","Day","Date")]) # OK to remove hardcoded subsetting with fix in L313 above.
 
   # Get loading drift information
   t.L <- df[["DepositionToReach/Deposition"]][,(load.period$Day>=first.app.day & load.period$Day <= last.app.day &
