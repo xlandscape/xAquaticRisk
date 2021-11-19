@@ -132,8 +132,8 @@ readLP50DataFromStore <- function(data.store.fpath,first.year,last.year,reach.in
   model.versions <- lapply(ls.spec,function(x){
     # get species name and model type from hdf5
     t1 <- df[[paste0(x,"/ProcessingPath")]]$read() %>% strsplit(.,"\\\\") %>% unlist()
-    t2 <- strsplit(t1[11],"_") %>% unlist()  # todo
-    t3 <- data.frame(Group = x,Model_type = t2[4],Species = gsub(" ","_",t2[5]))
+    t2 <- strsplit(t1[grepl("ind_lp50_",t1)],"_") %>% unlist()  # todo
+    t3 <- data.frame(Group = x,Model_type = t2[grepl("it|sd",t2)],Species = gsub(" ","_",t2[grepl("Asellus|Cloeon|Gammarus",t2)]))
     t3
   }) %>% do.call(rbind,.)
 
