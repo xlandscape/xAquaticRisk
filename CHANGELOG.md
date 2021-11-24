@@ -1,6 +1,13 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.58] - 2021-11-24
+### Added
+### Changed
+- Updated XSprayDrift to version 2.3.0
+- Adapted .gitignore
+### Fixed
+
 ## [2.57] - 2021-11-18
 ### Added
 - Added global scale to Monte Carlo run configuration to be more explicit
