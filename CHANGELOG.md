@@ -1,6 +1,13 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.59] - 2021-11-24
+### Added
+### Changed
+- Updated CascadeToxswa to version 2.2.0
+- Updated XSprayDrift to version 2.3.1
+### Fixed
+
 ## [2.58] - 2021-11-24
 ### Added
 ### Changed
