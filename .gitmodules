@@ -7,6 +7,7 @@
 [submodule "model/variant/CmfContinuous"]
     path = model/variant/CmfContinuous
     url = https://gitlab.bayer.com/aqrisk-landscape/cmfcontinuous-component.git
+    branch = integration_drainage
 [submodule "model/variant/LEffectModel"]
     path = model/variant/LEffectModel
     url = https://gitlab.bayer.com/aqrisk-landscape/leffectmodel-component.git
@@ -25,6 +26,7 @@
 [submodule "model/core"]
     path = model/core
     url = https://gitlab.bayer.com/aqrisk-landscape/landscapemodel-core.git
+    branch = integration_drainage
 [submodule "scenario/oudebeek-beek7-tdi"]
     path = scenario/oudebeek-beek7-tdi
     url = https://gitlab.bayer.com/aqrisk-landscape/scenario-oudebeek-beek7-tdi.git
@@ -32,6 +34,7 @@
 [submodule "model/variant/StepsRiverNetwork"]
     path = model/variant/StepsRiverNetwork
     url = https://gitlab.bayer.com/aqrisk-landscape/stepsrivernetwork-component.git
+    branch = integration_drainage
 [submodule "model/variant/FocusMacro"]
-	path = model/variant/FocusMacro
-	url = https://gitlab.bayer.com/aqrisk-landscape/focusmacro-component.git
+    path = model/variant/FocusMacro
+    url = https://gitlab.bayer.com/aqrisk-landscape/focusmacro-component.git
