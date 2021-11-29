@@ -1,6 +1,13 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.60] - 2021-11-29
+### Added
+### Changed
+- Updated Landscape Model core to version 1.10.2
+- Updated XSprayDrift to version 2.3.
+### Fixed
+
 ## [2.59] - 2021-11-24
 ### Added
 ### Changed
