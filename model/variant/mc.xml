@@ -211,7 +211,7 @@
        <Reaches>
         <FromOutput component="Hydrology" output="Reaches"/>
       </Reaches>
-      <DRAINCON>
+        <DRAINCON>
         <FromOutput component="LandscapeScenario" output="DRAINCON"/>
       </DRAINCON>
      <AppliedFields>
@@ -346,6 +346,15 @@
             <Hydrography>
                 <FromOutput component="LandscapeScenario" output="hydrography"/>
             </Hydrography>
+            <WaterDischarge>
+                <FromOutput component="Hydrology" output="Flow"/>
+            </WaterDischarge>
+           <ReachesHydrology>
+                <FromOutput component="Hydrology" output="Reaches"/>
+            </ReachesHydrology>
+            <DrainageLoad>
+                 <FromOutput component="DrainageToReach" output="DrainageLoad"/>
+            </DrainageLoad>
             <MolarMass type="float" unit="g/mol">$(MolarMass)</MolarMass>
             <DT50sw type="float" unit="d">$(DT50sw)</DT50sw>
             <DT50sed type="float" unit="d">$(DT50sed)</DT50sed>

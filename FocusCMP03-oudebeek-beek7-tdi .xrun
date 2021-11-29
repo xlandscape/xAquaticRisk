@@ -18,7 +18,7 @@
   Remark        :  The valid range of start dates is mainly determined by the input data for the selected scenario. The
                    available ranges can be obtained from the scenario documentation.
   -->
-  <SimulationStart>1998-05-01</SimulationStart>
+  <SimulationStart>1998-09-01</SimulationStart>
 
   <!--
   Parameter     :  SimulationEnd
@@ -27,7 +27,8 @@
   Remark        :  Must be later than the simulation start (or the same date). For limitations of allowed dates, see
                    remark for SimulationStart.
   -->
-  <SimulationEnd>1998-05-05</SimulationEnd>
+  <SimulationEnd>1999-09-01</SimulationEnd>
+
 
   <!-- ######## -->
 
@@ -55,7 +56,7 @@
                                                     and year) between 7th and 21st of April and on a random date (per
                                                     field and year) between 2nd and 16th of May.
   -->
-  <ApplicationTimeWindow>05-02 to 05-02, 05-03 to 05-03, 05-04 to 05-04</ApplicationTimeWindow>
+  <ApplicationTimeWindow>09-10 to 09-10</ApplicationTimeWindow>
 
   <!-- ######## -->
 
@@ -105,8 +106,18 @@
   Values        :  true or false
     -->
   <FocusMacro>true</FocusMacro>
+<!--
+  Parameter     :  NCORES
+  Description   :  Number of parallel processes to run FocusMacro simulations.
+  Values        :  integer
+    -->
   <NCORES>3</NCORES>
-  <DT50soil>1000</DT50soil>
+<!--
+  Parameter     :  DT50soil
+  Description   :  Degradation of active substance in soil
+  Values        :  float
+    -->
+  <DT50soil>4</DT50soil>
   
   <!--
   Parameter     :  RunStepsRiverNetwork
@@ -150,14 +161,14 @@
   Description   :  The molar mass of the applied substance
   Values        :  A value in g/mol
   -->
-  <MolarMass>505.2</MolarMass>
+  <MolarMass>221.0</MolarMass>
 
   <!--
   Parameter     :  SaturatedVapourPressure
   Description   :  The saturated vapour pressure of the applied substance at 20°C
   Values        :  A value in Pa
   -->
-  <SaturatedVapourPressure>1.10E-06</SaturatedVapourPressure>
+  <SaturatedVapourPressure>1.00E-05</SaturatedVapourPressure>
 
   <!--
   Parameter     :  MolarEnthalpyOfVaporization
@@ -171,7 +182,7 @@
   Description   :  The solubility in water of the applied substance at 20°C
   Values        :  A value in mg/l
   -->
-  <SolubilityInWater>0.001</SolubilityInWater>
+  <SolubilityInWater>620</SolubilityInWater>
 
   <!--
   Parameter     :  MolarEnthalpyOfDissolution
@@ -192,7 +203,7 @@
   Description   :  The half-life transformation time in water of the applied substance at 20°C
   Values        :  A value in d
   -->
-  <DT50sw>1000</DT50sw>
+  <DT50sw>1.5</DT50sw>
 
   <!--
   Parameter     :  MolarActivationEnthalpyOfTransformationInWater
@@ -206,7 +217,7 @@
   Description   :  The half-life transformation time in sediment of the applied substance at 20°C
   Values        :  A value in d
   -->
-  <DT50sed>43.9</DT50sed>
+  <DT50sed>1.5</DT50sed>
 
   <!--
   Parameter     :  MolarActivationEnthalpyOfTransformationInSediment
@@ -524,14 +535,14 @@
   Remark        :  Only in effect if a report is generated, i.e., if at least one environmental fate module is switched
                    on and RunEffects is true.
   -->
-  <ReportingReaches>r577</ReportingReaches>
+  <ReportingReaches>r570</ReportingReaches>
 
   <!--
   Parameter     :  PecDisplayedTime
   Description   :  The PEC value that is plotted for each enabled environmental fate component
   Values        :  A date and time of format YYYY-MM-DD HH:MM within the valid range of dates
   -->
-  <PecDisplayedTime>2015-05-02 12:00</PecDisplayedTime>
+  <PecDisplayedTime>1998-11-28 16:00</PecDisplayedTime>
 
   <!-- ######## -->
 

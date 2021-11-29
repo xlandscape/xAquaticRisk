@@ -1,4 +1,12 @@
 .idea/
 analysis/.ipynb_checkpoints/
-*.xrun
 !template.xrun
+model/core - Copy/
+model/variant - Copy/
+model/core.bat
+model/variant/CmfContinuous.bat
+model/variant/StepsRiverNetwork.bat
+scenario/scenario-oudebeek-tdi.bat
+scenario/scenario-oudebeek-tdi/
+scenario/scenario-rummen-tdi/
+/run/
