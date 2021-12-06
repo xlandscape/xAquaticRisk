@@ -116,7 +116,7 @@ createPECbyStrahlerPlot <- function(max.pec,reach.info,medPEC){
     theme(text = element_text(size = 12),axis.text = element_text(size = 12),plot.title = element_text(size = 6,hjust = 1)) +
     geom_text(data = data.frame(x = vpos$x,y = c(-2,-2,-2,-2),
                                 labels = paste0(c("Strahler order 1",as.character(vpos$strahler[!vpos$strahler==1])))),
-              aes(x = x, y = y, label = labels), size = 6, hjust = "inward") +
+              aes(x = x, y = y, label = labels), size = 6, hjust = "inward")
   return(PEC.plots)
 }
 
