@@ -205,7 +205,7 @@
 
   <!--
   Parameter     :  KOC
-  Description   :  The organic carbon-water partition co-efficient of the applied substance
+  Description   :  The organic carbon-water partition coefficient of the applied substance
   Values        :  A value in l/kg
   Remark        :  The KOM used by some modules is automatically derived from the KOC by dividing it by 1.742
   -->
