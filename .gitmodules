@@ -33,7 +33,3 @@
 [submodule "model/variant/DrainageToReach"]
 	path = model/variant/DrainageToReach
 	url = https://gitlab.bayer.com/aqrisk-landscape/draingetoreach-component.git
-[submodule "scenario/oudebeek-beek7-tdi"]
-    path = scenario/oudebeek-beek7-tdi
-    url = https://gitlab.bayer.com/aqrisk-landscape/scenario-oudebeek-beek7-tdi.git
-    branch = integration_drainage
