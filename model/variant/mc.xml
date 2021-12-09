@@ -192,7 +192,7 @@
       <DT50soil type="float" unit="l/kg">$(DT50soil)</DT50soil>
       <nf type="float" unit="1">$(FreundlichExponentInSedimentAndSuspendedParticles)</nf>
     </FocusMacro>
-   <DrainageToReach module="components" class="DrainageToReach">
+   <DrainageToReach module="DrainageToReach" class="DrainageToReach">
       <FeatureIds>
         <FromOutput component="LandscapeScenario" output="FeatureIds"/>
       </FeatureIds>
