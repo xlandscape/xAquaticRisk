@@ -1,6 +1,19 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.63] - 2021-12-10
+### Added
+- Option to use for predefined depositions
+### Changed
+- Updated Landscape Model core to version 1.10.1
+- Updated CascadeToxswa to version 2.2.2
+- Updated CmfContinuous to version 2.0.14
+- Updated LEffectModel to version 2.0.14
+- Updated LP50 to version 2.2.4
+- Updated StepsRiverNetwork to version 2.1.4
+- Updated XSprayDrift to version 2.3.5
+### Fixed
+
 ## [2.62] - 2021-12-09
 ### Added
 ### Changed
