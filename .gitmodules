@@ -37,3 +37,7 @@
 	path = scenario/scenario-oudebeek-beek7-tdi
 	url = https://gitlab.bayer.com/aqrisk-landscape/scenario-oudebeek-beek7-tdi.git
 	branch = integration_drainage
+[submodule "model/core"]
+	path = model/core
+	url = https://gitlab.bayer.com/aqrisk-landscape/landscapemodel-core.git
+	branch = integration_drainage2
