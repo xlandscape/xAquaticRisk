@@ -91,6 +91,17 @@
   -->
   <CropStage>early</CropStage>
 
+  <!--
+  Parameter     :  DepositionInputFile
+  Description   :  File path to a CSV file containing predefined spray-drift depositions per reach and day in g/ha
+  Values        :  A valid file path or left empty
+  Remark        :  Setting this parameter to a file path will use depositions as specified in the file. The SprayDrift
+                   component is not run in this case. This is especially useful if actual depositions are known and for
+                   testing the distribution of individual depositions by the environmental fate components.
+                   Use a path relative to this parameterization file, e.g., samples/predefined_depositions.csv!
+  -->
+  <DepositionInputFile/e>
+
   <!-- ######## -->
 
 
