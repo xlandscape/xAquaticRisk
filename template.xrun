@@ -100,7 +100,7 @@
                    testing the distribution of individual depositions by the environmental fate components.
                    Use a path relative to this parameterization file, e.g., samples/predefined_depositions.csv!
   -->
-  <DepositionInputFile/e>
+  <DepositionInputFile/>
 
   <!-- ######## -->
 
