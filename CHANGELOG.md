@@ -1,6 +1,13 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.64] - 2021-12-13
+### Added
+### Changed
+- Updated CascadeToxswa to version 2.3.0
+### Fixed
+- Typo in template.xrun
+
 ## [2.63] - 2021-12-10
 ### Added
 - Option to use for predefined depositions
