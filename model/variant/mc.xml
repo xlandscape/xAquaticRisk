@@ -170,6 +170,40 @@
             </DepositionInputSource>
             <DepositionInputFile scales="global">$(_PARAM_DIR_)/$(DepositionInputFile)</DepositionInputFile>
         </DepositionToReach>
+    <FocusMacro module="FocusMacro" class="FocusMacro" enabled="$(FocusMacro)">
+      <OutputPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\macro</OutputPath>
+      <InputPath>$(:FocusMacroData)</InputPath>
+      <NCORES type="int" >$(NCORES)</NCORES>
+      <SimulationStart>$(SimulationStart)</SimulationStart>
+      <SimulationEnd>$(SimulationEnd)</SimulationEnd>
+      <AppliedFields>
+        <FromOutput component="PPM" output="AppliedFields"/>
+      </AppliedFields>
+      <ApplicationDates>
+        <FromOutput component="PPM" output="ApplicationDates"/>
+      </ApplicationDates>
+      <ApplicationRates>
+        <FromOutput component="PPM" output="ApplicationRates"/>
+      </ApplicationRates>
+      <PARFILE>
+        <FromOutput component="LandscapeScenario" output="PARFILE"/>
+      </PARFILE>
+      <RAINFALLFILE>
+        <FromOutput component="LandscapeScenario" output="RAINFALLFILE"/>
+      </RAINFALLFILE>
+      <METFILE>
+        <FromOutput component="LandscapeScenario" output="METFILE"/>
+      </METFILE>
+      <LulcTypes>
+        <FromOutput component="LandscapeScenario" output="FeatureTypeIds"/>
+      </LulcTypes>
+      <TargetLulcType>
+        <FromOutput component="LandscapeScenario" output="target_type"/>
+      </TargetLulcType>
+      <KOC type="float" unit="l/kg">$(KOC)</KOC>
+      <DT50soil type="float" unit="l/kg">$(DT50soil)</DT50soil>
+      <nf type="float" unit="1">$(FreundlichExponentInSedimentAndSuspendedParticles)</nf>
+    </FocusMacro>
         <StepsRiverNetwork module="StepsRiverNetwork" class="StepsRiverNetwork" enabled="$(RunStepsRiverNetwork)">
             <ProcessingPath scales="global">$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\steps</ProcessingPath>
             <Catchment scales="global">$(:Catchment)</Catchment>

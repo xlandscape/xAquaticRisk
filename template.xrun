@@ -107,6 +107,25 @@
 
   <!-- ENVIRONMENTAL FATE MODEL -->
 
+<!--
+  Parameter     :  FocusMacro
+  Description   :  Controls whether soil efate is calculated by the FocusMacro component
+  Values        :  true or false
+    -->
+  <FocusMacro>true</FocusMacro>
+<!--
+  Parameter     :  NCORES
+  Description   :  Number of parallel processes to run FocusMacro simulations.
+  Values        :  integer
+    -->
+  <NCORES>3</NCORES>
+<!--
+  Parameter     :  DT50soil
+  Description   :  Degradation of active substance in soil
+  Values        :  float
+    -->
+  <DT50soil>4</DT50soil>
+
   <!--
   Parameter     :  RunStepsRiverNetwork
   Description   :  Controls whether environmental fate is calculated by the StepsRiverNetwork component
@@ -119,14 +138,14 @@
   Description   :  Controls whether environmental fate is calculated by the CascadeToxswa component
   Values        :  true or false
     -->
-  <RunCascadeToxswa>true</RunCascadeToxswa>
+  <RunCascadeToxswa>false</RunCascadeToxswa>
 
   <!--
   Parameter     :  RunCmfContinuous
   Description   :  Controls whether environmental fate is calculated by the CmfContinuous component
   Values        :  true or false
     -->
-  <RunCmfContinuous>true</RunCmfContinuous>
+  <RunCmfContinuous>false</RunCmfContinuous>
 
   <!--
   Parameter     :  ThresholdSW

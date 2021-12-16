@@ -31,3 +31,6 @@
 [submodule "model/variant/StepsRiverNetwork"]
     path = model/variant/StepsRiverNetwork
     url = https://gitlab.bayer.com/aqrisk-landscape/stepsrivernetwork-component.git
+[submodule "model/variant/FocusMacro"]
+	path = model/variant/FocusMacro
+	url = https://gitlab.bayer.com/aqrisk-landscape/focusmacro-component.git
