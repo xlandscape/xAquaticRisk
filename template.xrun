@@ -18,7 +18,7 @@
   Remark        :  The valid range of start dates is mainly determined by the input data for the selected scenario. The
                    available ranges can be obtained from the scenario documentation.
   -->
-  <SimulationStart>2015-05-01</SimulationStart>
+  <SimulationStart>2015-09-01</SimulationStart>
 
   <!--
   Parameter     :  SimulationEnd
@@ -27,7 +27,7 @@
   Remark        :  Must be later than the simulation start (or the same date). For limitations of allowed dates, see
                    remark for SimulationStart.
   -->
-  <SimulationEnd>2015-05-07</SimulationEnd>
+  <SimulationEnd>2015-09-20</SimulationEnd>
 
   <!-- ######## -->
 
@@ -40,7 +40,7 @@
   Values        :  Any positive number (or zero)
   Remark        :  The application rate applies to all applications within application sequences.
   -->
-  <ApplicationRate>12.5</ApplicationRate>
+  <ApplicationRate>1000</ApplicationRate>
 
   <!--
   Parameter     :  ApplicationTimeWindow
@@ -53,7 +53,7 @@
                    04-07 to 04-21, 05-02 to 05-16 : Each field is applied twice each year; on a random date between 7th
                                                     and 21st of April and on a random date  between 2nd and 16th of May.
   -->
-  <ApplicationTimeWindow>05-02 to 05-02</ApplicationTimeWindow>
+  <ApplicationTimeWindow>09-10 to 09-10</ApplicationTimeWindow>
 
   <!-- ######## -->
 
@@ -124,8 +124,15 @@
   Description   :  Degradation of active substance in soil
   Values        :  float
     -->
-  <DT50soil>4</DT50soil>
+  <DT50soil>1000</DT50soil>
 
+<!--
+  Parameter     :  TemporaryOutputPath
+  Description   :  Degradation of active substance in soil
+  Values        :  float
+    -->
+  <Options_TemporaryOutputPath>d:/macro/</Options_TemporaryOutputPath>
+  
   <!--
   Parameter     :  RunStepsRiverNetwork
   Description   :  Controls whether environmental fate is calculated by the StepsRiverNetwork component
@@ -239,7 +246,7 @@
   Values        :  A value in l/kg
   Remark        :  The KOM used by some modules is automatically derived from the KOC by dividing it by 1.742
   -->
-  <KOC>460000</KOC>
+  <KOC>1</KOC>
 
   <!--
   Parameter     :  ReferenceConcentrationForKOC
@@ -272,14 +279,14 @@
   Description   :  Specifies whether effects are simulated by LGuts for the switched-on environmental fate components
   Values        :  true or false
   -->
-  <RunLGuts>true</RunLGuts>
+  <RunLGuts>false</RunLGuts>
 
   <!--
   Parameter     :  RunLPop
   Description   :  Specifies whether effects are simulated by LPop for the switched-on environmental fate components
   Values        :  true or false
   -->
-  <RunLPop>true</RunLPop>
+  <RunLPop>false</RunLPop>
 
   <!--
   Parameter     :  RunStreamCom
@@ -287,7 +294,7 @@
                    components
   Values        :  true or false
   -->
-  <RunStreamCom>true</RunStreamCom>
+  <RunStreamCom>false</RunStreamCom>
 
   <!--
   Parameter     :  MultiplicationFactors_LPop
@@ -562,7 +569,7 @@
                    clearly in the identifier. If conducting a run from the experiment table, register it there and use
                    the naming scheme <experiment id>-<n> where n is the number of the run.
   -->
-  <SimID>Test_Run_aqRisk</SimID>
+  <SimID>s1</SimID>
 
   <!--
   Parameter     :  ParentRun

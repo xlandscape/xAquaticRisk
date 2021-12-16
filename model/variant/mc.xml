@@ -173,6 +173,7 @@
     <FocusMacro module="FocusMacro" class="FocusMacro" enabled="$(FocusMacro)">
       <OutputPath>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\macro</OutputPath>
       <InputPath>$(:FocusMacroData)</InputPath>
+      <Options_TemporaryOutputPath>$(Options_TemporaryOutputPath)</Options_TemporaryOutputPath>
       <NCORES type="int" >$(NCORES)</NCORES>
       <SimulationStart>$(SimulationStart)</SimulationStart>
       <SimulationEnd>$(SimulationEnd)</SimulationEnd>
