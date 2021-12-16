@@ -152,7 +152,7 @@
   Description   :  Controls whether environmental fate is calculated by the CmfContinuous component
   Values        :  true or false
     -->
-  <RunCmfContinuous>false</RunCmfContinuous>
+  <RunCmfContinuous>true</RunCmfContinuous>
 
   <!--
   Parameter     :  ThresholdSW
