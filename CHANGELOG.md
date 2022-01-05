@@ -1,6 +1,15 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.66] - 2022-01-04
+### Added
+- XML schema for user parameterization
+### Changed
+- Updated Landscape Model core to version 1.12.3
+- Updated XSprayDrift to version 2.4.0
+- Organized user parameterization in sections
+### Fixed
+
 ## [2.65] - 2022-01-04
 ### Added
 ### Changed

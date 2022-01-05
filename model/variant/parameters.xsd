@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="urn:xAquaticRisk" 
+        xmlns="urn:xAquaticRisk"
+        elementFormDefault="qualified"
+>
+    <xsd:element name="Parameters">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Scenario">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Project">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:anyURI">
+                                        <xsd:minLength value="3"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="SimulationStart" type="xsd:date"/>
+                            <xsd:element name="SimulationEnd" type="xsd:date"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="PppUse">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ApplicationRate">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="ApplicationTimeWindow">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:pattern value="(
+)?[01]\d-[0-3]\d to [01]\d-[0-3]\d?(, [01]\d-[0-3]\d to [01]\d-[0-3]\d)*"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Mitigation">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="InCropBuffer">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minInclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="TechnologyDriftReduction">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minInclusive value="0"/>
+                                        <xsd:maxInclusive value="1"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Exposure">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="CropStage">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="early"/>
+                                        <xsd:enumeration value="late"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="DepositionInputFile" type="xsd:anyURI"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="EnvironmentalFate">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="RunStepsRiverNetwork" type="xsd:boolean"/>
+                            <xsd:element name="RunCascadeToxswa" type="xsd:boolean"/>
+                            <xsd:element name="RunCmfContinuous" type="xsd:boolean"/>
+                            <xsd:element name="ThresholdSW">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="ThresholdSediment">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="MolarMass">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="SaturatedVapourPressure">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="MolarEnthalpyOfVaporization">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="SolubilityInWater">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="MolarEnthalpyOfDissolution">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="DiffusionCoefficient">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="DT50sw">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="MolarActivationEnthalpyOfTransformationInWater">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="DT50sed">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="MolarActivationEnthalpyOfTransformationInSediment">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="KOC">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="ReferenceConcentrationForKOC">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="FreundlichExponentInSedimentAndSuspendedParticles">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="CoefficientForLinearAdsorptionOnMacrophytes">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minInclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Effects">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="RunLGuts" type="xsd:boolean"/>
+                            <xsd:element name="RunLPop" type="xsd:boolean"/>
+                            <xsd:element name="RunStreamCom" type="xsd:boolean"/>
+                            <xsd:element name="MultiplicationFactors_LPop">
+                                <xsd:simpleType>
+                                    <xsd:list itemType="xsd:float"/>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="NumberOfWarmUpYears" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="RecoveryPeriodYears" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="StreamComReach1" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="StreamComReach2" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="StreamComReach3" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="StreamComReach4" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="Species1">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:pattern value="[A-Z][a-z]+ [a-z]+"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species1DominantRateConstantSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species1ThresholdConcentrationSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species1KillingRateSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species1DominantRateConstantIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species1ThresholdDistributionIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species1WidthOfThresholdDistributionIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species2">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:pattern value="[A-Z][a-z]+ [a-z]+"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species2DominantRateConstantSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species2ThresholdConcentrationSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species2KillingRateSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species2DominantRateConstantIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species2ThresholdDistributionIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species2WidthOfThresholdDistributionIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species3">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:pattern value="[A-Z][a-z]+ [a-z]+"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species3DominantRateConstantSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species3ThresholdConcentrationSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species3KillingRateSD">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species3DominantRateConstantIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species3ThresholdDistributionIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="Species3WidthOfThresholdDistributionIT">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Settings">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="NumberMC" type="xsd:positiveInteger"/>
+                            <xsd:element name="ExportToSqlite" type="xsd:boolean"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Analysis">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ReportingReaches" type="xsd:string"/>
+                            <xsd:element name="PecDisplayedTime">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:pattern value="[12]\d{3}-[0-2]\d-[0-3]\d [01]\d:[0-5]\d"/>
+                                </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="SimulationInfo">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="SimID">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:minLength value="3"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="ParentRun" type="xsd:anyURI"/>
+                            <xsd:element name="NumberParallelProcesses" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="CascadeToxswaWorkers" type="xsd:nonNegativeInteger"/>
+                            <xsd:element name="DeleteFoldersAtFinish" type="xsd:boolean"/>
+                            <xsd:element name="VerboseLogging" type="xsd:boolean"/>
+                            <xsd:element name="EnableProfiling" type="xsd:boolean"/>
+                            <xsd:element name="ProfilingWaitingTime">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:float">
+                                        <xsd:minExclusive value="0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
