@@ -61,6 +61,7 @@
     <Composition>
         <LandscapeScenario module="components" class="LandscapeScenario">
             <BaseLandscapeGeometries scales="global">$(:LandscapeScenario)</BaseLandscapeGeometries>
+            <GeoPackageNamespace scales="global">urn:xAquaticRiskLandscapeScenarioPackageInfo</GeoPackageNamespace>
         </LandscapeScenario>
         <Weather module="components" class="MarsWeather">
             <FilePath scales="global">$(:Temperature)</FilePath>
