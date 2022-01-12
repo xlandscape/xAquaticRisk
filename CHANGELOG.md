@@ -1,11 +1,73 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.67] - 2022-01-12
+### Added
+- XML schema for scenario geo-data
+### Changed
+- Updated Landscape Model core to version 1.12.5
+- Updated AnalysisObserver to version 2.2.3
+- Updated sample scenario oudebeek-beek7-tdi to version 3.17
+### Fixed
+
+## [2.66] - 2022-01-04
+### Added
+- XML schema for user parameterization
+### Changed
+- Updated Landscape Model core to version 1.12.3
+- Updated XSprayDrift to version 2.4.0
+- Organized user parameterization in sections
+### Fixed
+
+## [2.65] - 2022-01-04
+### Added
+### Changed
+- Updated Landscape Model core to version 1.12.1
+### Fixed
+
+## [2.64] - 2021-12-13
+### Added
+### Changed
+- Updated CascadeToxswa to version 2.3.0
+### Fixed
+- Typo in template.xrun
+
+## [2.63] - 2021-12-10
+### Added
+- Option to use for predefined depositions
+### Changed
+- Updated Landscape Model core to version 1.10.1
+- Updated CascadeToxswa to version 2.2.2
+- Updated CmfContinuous to version 2.0.14
+- Updated LEffectModel to version 2.0.14
+- Updated LP50 to version 2.2.4
+- Updated StepsRiverNetwork to version 2.1.4
+- Updated XSprayDrift to version 2.3.5
+### Fixed
+
+## [2.62] - 2021-12-09
+### Added
+### Changed
+- Updated Landscape Model core to version 1.10.5
+- Updated sample scenario oudebeek-beek7-tdi to version 3.16
+### Fixed
+
+## [2.61] - 2021-12-07
+### Added
+### Changed
+- Updated Landscape Model core to version 1.10.3
+- Updated AnalysisObserver to version 2.2.2
+- Updated CmfContinuous to version 2.0.13
+- Updated CascadeToxswa to version 2.2.1
+- Updated sample scenario oudebeek-beek7-tdi to version 3.15
+- Spell checking
+### Fixed
+
 ## [2.60] - 2021-11-29
 ### Added
 ### Changed
 - Updated Landscape Model core to version 1.10.2
-- Updated XSprayDrift to version 2.3.
+- Updated XSprayDrift to version 2.3.2
 ### Fixed
 
 ## [2.59] - 2021-11-24

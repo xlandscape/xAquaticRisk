@@ -72,6 +72,7 @@
     <Composition>
         <LandscapeScenario module="components" class="LandscapeScenario">
             <BaseLandscapeGeometries scales="global">$(:LandscapeScenario)</BaseLandscapeGeometries>
+            <GeoPackageNamespace scales="global">urn:xAquaticRiskLandscapeScenarioPackageInfo</GeoPackageNamespace>
         </LandscapeScenario>
         <Weather module="components" class="MarsWeather">
             <FilePath scales="global">$(:Temperature)</FilePath>
@@ -111,7 +112,7 @@
             <RandomSeed type="int" scales="global">0</RandomSeed>
             <ProbabilityFieldApplied type="float" unit="1" scales="global">1</ProbabilityFieldApplied>
         </PPM>
-        <SprayDrift module="XSprayDrift" class="SprayDrift">
+        <SprayDrift  module="XSprayDrift" class="SprayDrift">
             <ProcessingPath scales="global">$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\sd</ProcessingPath>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <SimulationEnd type="date" scales="global">$(SimulationEnd)</SimulationEnd>
@@ -173,6 +174,13 @@
             <Mapping>
                 <FromOutput component="LandscapeScenario" output="reach_id"/>
             </Mapping>
+            <SprayDriftCoverage>
+                <FromOutput component="LandscapeScenario" output="hydrography_spray_drift_coverage"/>
+            </SprayDriftCoverage>
+            <DepositionInputSource scales="global" eval="true">
+                'DepositionInputFile' if '$(DepositionInputFile)' else 'DepositionInput'
+            </DepositionInputSource>
+            <DepositionInputFile scales="global">$(_PARAM_DIR_)/$(DepositionInputFile)</DepositionInputFile>
         </DepositionToReach>
         <StepsRiverNetwork module="StepsRiverNetwork" class="StepsRiverNetwork" enabled="$(RunStepsRiverNetwork)">
             <ProcessingPath scales="global">$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\steps</ProcessingPath>
