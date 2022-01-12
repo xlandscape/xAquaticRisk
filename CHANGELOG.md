@@ -1,6 +1,15 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.67] - 2022-01-12
+### Added
+- XML schema for scenario geo-data
+### Changed
+- Updated Landscape Model core to version 1.12.5
+- Updated AnalysisObserver to version 2.2.3
+- Updated sample scenario oudebeek-beek7-tdi to version 3.17
+### Fixed
+
 ## [2.66] - 2022-01-04
 ### Added
 - XML schema for user parameterization
