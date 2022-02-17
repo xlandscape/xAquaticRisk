@@ -778,7 +778,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_StepsRiverNetwork_SD_Species1>
         <ExportStepsRiverNetworkLP50Species1SD
@@ -816,7 +816,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_StepsRiverNetwork_SD_Species2>
         <ExportStepsRiverNetworkLP50Species2SD
@@ -868,7 +868,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_StepsRiverNetwork_SD_Species3>
         <ExportStepsRiverNetworkLP50Species3SD
@@ -1086,7 +1086,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_StepsRiverNetwork_IT_Species1>
         <ExportStepsRiverNetworkLP50Species1IT
@@ -1124,7 +1124,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_StepsRiverNetwork_IT_Species2>
         <ExportStepsRiverNetworkLP50Species2IT
@@ -1162,7 +1162,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_StepsRiverNetwork_IT_Species3>
         <ExportStepsRiverNetworkLP50Species3IT
@@ -1376,7 +1376,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CmfContinuous_SD_Species1>
         <ExportCmfContinuousLP50Species1SD
@@ -1428,7 +1428,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CmfContinuous_SD_Species2>
         <ExportCmfContinuousLP50Species2SD
@@ -1480,7 +1480,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CmfContinuous_SD_Species3>
         <ExportCmfContinuousLP50Species3SD
@@ -1706,7 +1706,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CmfContinuous_IT_Species1>
         <ExportCmfContinuousLP50Species1IT
@@ -1758,7 +1758,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CmfContinuous_IT_Species2>
         <ExportCmfContinuousLP50Species2IT
@@ -1809,7 +1809,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CmfContinuous_IT_Species3>
         <ExportCmfContinuousLP50Species3IT
@@ -2035,7 +2035,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CascadeToxswa_SD_Species1>
         <ExportCascadeToxswaLP50Species1SD
@@ -2073,7 +2073,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CascadeToxswa_SD_Species2>
         <ExportCascadeToxswaLP50Species2SD
@@ -2111,7 +2111,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CascadeToxswa_SD_Species3>
         <ExportCascadeToxswaLP50Species3SD
@@ -2325,7 +2325,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CascadeToxswa_IT_Species1>
         <ExportCascadeToxswaLP50Species1IT
@@ -2363,7 +2363,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CascadeToxswa_IT_Species2>
         <ExportCascadeToxswaLP50Species2IT
@@ -2401,7 +2401,7 @@
             </Values>
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
             <MinimumReportValue type="float" unit="1" scales="global">0</MinimumReportValue>
-            <MaximumReportValue type="float" unit="1" scales="global">100</MaximumReportValue>
+            <MaximumReportValue type="float" unit="1" scales="global">-111</MaximumReportValue>
             <ErrorReportValue type="float" unit="1" scales="global">-99</ErrorReportValue>
         </IndEffect_LP50_CascadeToxswa_IT_Species3>
         <ExportCascadeToxswaLP50Species3IT
