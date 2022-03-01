@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.68] - 2022-03-01
+### Added
+- Profiling analysis script as AnalysisObserver
+### Changed
+### Fixed
+
 ## [2.67] - 2022-01-12
 ### Added
 - XML schema for scenario geo-data
