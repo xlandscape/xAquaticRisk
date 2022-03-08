@@ -469,6 +469,14 @@
     Values        :  Any positive number
     -->
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
+
+    <!--
+    Parameter     :  UseEmpiricalWaterTemperatures
+    Description   :  Specifies, whether water temperatures for the LPop model are calculated from air temperatures
+                     (=true) or if they are calculated using a forcing function (=false)
+    Values        :  true or false
+    -->
+    <UseEmpiricalWaterTemperatures>true</UseEmpiricalWaterTemperatures>
   </Effects>
   <Settings>
     <!--

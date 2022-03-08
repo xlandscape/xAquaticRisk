@@ -65,9 +65,16 @@
         </LandscapeScenario>
         <Weather module="components" class="MarsWeather">
             <FilePath scales="global">$(:Temperature)</FilePath>
-            <FirstDate type="date" scales="global">$(SimulationStart)</FirstDate>
-            <LastDate type="date" scales="global">$(SimulationEnd)</LastDate>
         </Weather>
+        <WaterTemperature
+            module="components"
+            class="WaterTemperatureFromAirTemperature"
+            enabled="$(UseEmpiricalWaterTemperatures)"
+        >
+            <AirTemperature>
+                <FromOutput component="Weather" output="TEMPERATURE_AVG"/>
+            </AirTemperature>
+        </WaterTemperature>
         <Hydrology module="components" class="HydrologyFromTimeSeries">
             <TimeSeries scales="global">$(:Hydrology)</TimeSeries>
             <FromTime type="date" scales="global">$(SimulationStart)</FromTime>
@@ -2483,6 +2490,14 @@
                 $(MultiplicationFactors_LPop)
             </MultiplicationFactors>
             <NumberRuns type="int" scales="global">$(NumberLPopRuns)</NumberRuns>
+            <UseTemperatureInput type="bool" scales="global">$(UseEmpiricalWaterTemperatures)</UseTemperatureInput>
+            <WaterTemperature>
+                <FromOutput
+                    component="WaterTemperature"
+                    output="WaterTemperature"
+                    enabled="$(UseEmpiricalWaterTemperatures)"
+                />
+            </WaterTemperature>
         </PopEffect_StepsRiverNetwork_SD_Species1>
         <PopEffect_CmfContinuous_SD_Species1
                 module="LEffectModel"
@@ -2541,6 +2556,14 @@
                 $(MultiplicationFactors_LPop)
             </MultiplicationFactors>
             <NumberRuns type="int" scales="global">$(NumberLPopRuns)</NumberRuns>
+            <UseTemperatureInput type="bool" scales="global">$(UseEmpiricalWaterTemperatures)</UseTemperatureInput>
+            <WaterTemperature>
+                <FromOutput
+                    component="WaterTemperature"
+                    output="WaterTemperature"
+                    enabled="$(UseEmpiricalWaterTemperatures)"
+                />
+            </WaterTemperature>
         </PopEffect_CmfContinuous_SD_Species1>
         <PopEffect_CascadeToxswa_SD_Species1
                 module="LEffectModel"
@@ -2599,6 +2622,14 @@
                 $(MultiplicationFactors_LPop)
             </MultiplicationFactors>
             <NumberRuns type="int" scales="global">$(NumberLPopRuns)</NumberRuns>
+            <UseTemperatureInput type="bool" scales="global">$(UseEmpiricalWaterTemperatures)</UseTemperatureInput>
+            <WaterTemperature>
+                <FromOutput
+                    component="WaterTemperature"
+                    output="WaterTemperature"
+                    enabled="$(UseEmpiricalWaterTemperatures)"
+                />
+            </WaterTemperature>
         </PopEffect_CascadeToxswa_SD_Species1>
         <PopEffect_StepsRiverNetwork_IT_Species1
                 module="LEffectModel"
@@ -2657,6 +2688,14 @@
                 $(MultiplicationFactors_LPop)
             </MultiplicationFactors>
             <NumberRuns type="int" scales="global">$(NumberLPopRuns)</NumberRuns>
+            <UseTemperatureInput type="bool" scales="global">$(UseEmpiricalWaterTemperatures)</UseTemperatureInput>
+            <WaterTemperature>
+                <FromOutput
+                    component="WaterTemperature"
+                    output="WaterTemperature"
+                    enabled="$(UseEmpiricalWaterTemperatures)"
+                />
+            </WaterTemperature>
         </PopEffect_StepsRiverNetwork_IT_Species1>
         <PopEffect_CmfContinuous_IT_Species1
                 module="LEffectModel"
@@ -2715,6 +2754,14 @@
                 $(MultiplicationFactors_LPop)
             </MultiplicationFactors>
             <NumberRuns type="int" scales="global">$(NumberLPopRuns)</NumberRuns>
+            <UseTemperatureInput type="bool" scales="global">$(UseEmpiricalWaterTemperatures)</UseTemperatureInput>
+            <WaterTemperature>
+                <FromOutput
+                    component="WaterTemperature"
+                    output="WaterTemperature"
+                    enabled="$(UseEmpiricalWaterTemperatures)"
+                />
+            </WaterTemperature>
         </PopEffect_CmfContinuous_IT_Species1>
         <PopEffect_CascadeToxswa_IT_Species1
                 module="LEffectModel"
@@ -2773,6 +2820,14 @@
                 $(MultiplicationFactors_LPop)
             </MultiplicationFactors>
             <NumberRuns type="int" scales="global">$(NumberLPopRuns)</NumberRuns>
+            <UseTemperatureInput type="bool" scales="global">$(UseEmpiricalWaterTemperatures)</UseTemperatureInput>
+            <WaterTemperature>
+                <FromOutput
+                    component="WaterTemperature"
+                    output="WaterTemperature"
+                    enabled="$(UseEmpiricalWaterTemperatures)"
+                />
+            </WaterTemperature>
         </PopEffect_CascadeToxswa_IT_Species1>
         <StreamCom1_StepsRiverNetwork
                 module="StreamCom"

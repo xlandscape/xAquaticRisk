@@ -8,7 +8,7 @@ tmp_file <- file.path(output_path, "experiment.log")
 file.copy(logfile, tmp_file)
 logfile <- tmp_file
 
-d <- fread(logfile, sep = "\t", header = FALSE)[startsWith(V1, "INFO  profile")]
+d <- fread(logfile, sep = "\n", header = FALSE)[startsWith(V1, "INFO  profile")]
 d[, id := 1:.N]
 
 if (nrow(d) > 0) {
