@@ -1,6 +1,16 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.70] - 2022-03-08
+### Added
+- User parameter for whether to use air temperature-derived water temperatures or forcing function in LPop
+### Changed
+- Updated Landscape Model core to version 1.13.0
+- Updated CascadeToxswa to version 2.3.1
+- Updated LEffectModel to version 2.1.0
+### Fixed
+- Fixed warning in profiling.R when ReportingObserver is enabled
+
 ## [2.69] - 2022-03-03
 ### Added
 ### Changed
