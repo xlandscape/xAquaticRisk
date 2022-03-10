@@ -469,6 +469,14 @@
     Values        :  Any positive number
     -->
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
+
+    <!--
+    Parameter     :  UseEmpiricalWaterTemperatures
+    Description   :  Specifies, whether water temperatures for the LPop model are calculated from air temperatures
+                     (=true) or if they are calculated using a forcing function (=false)
+    Values        :  true or false
+    -->
+    <UseEmpiricalWaterTemperatures>true</UseEmpiricalWaterTemperatures>
   </Effects>
   <Settings>
     <!--
@@ -479,7 +487,7 @@
     Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long-running simulations,
                      30 for small simulations and 10 for anything in between.
     -->
-    <NumberMC>1</NumberMC>
+    <NumberMC>2</NumberMC>
 
     <!--
     Parameter     :  ExportToSqlite
@@ -538,7 +546,7 @@
                      if RunCascadeToxswa is false, else
                      min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
     -->
-    <NumberParallelProcesses>1</NumberParallelProcesses>
+    <NumberParallelProcesses>2</NumberParallelProcesses>
 
     <!--
     Parameter     :  CascadeToxswaWorkers

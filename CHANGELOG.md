@@ -1,6 +1,31 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.70] - 2022-03-08
+### Added
+- User parameter for whether to use air temperature-derived water temperatures or forcing function in LPop
+### Changed
+- Updated Landscape Model core to version 1.13.0
+- Updated CascadeToxswa to version 2.3.1
+- Updated LEffectModel to version 2.1.0
+### Fixed
+- Fixed warning in profiling.R when ReportingObserver is enabled
+
+## [2.69] - 2022-03-03
+### Added
+### Changed
+- Updated Landscape Model core to version 1.12.6
+- Updated CmfContinuous to version 2.0.15
+- Updated StepsRiverNetwork to version 2.1.3
+- Updated XSprayDrift to version 2.4.1
+### Fixed
+
+## [2.68] - 2022-03-01
+### Added
+- Profiling analysis script as AnalysisObserver
+### Changed
+### Fixed
+
 ## [2.67] - 2022-01-12
 ### Added
 - XML schema for scenario geo-data
