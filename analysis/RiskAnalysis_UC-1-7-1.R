@@ -16,7 +16,7 @@ data <- as.data.table(ds$data)
 data <- melt(data, variable.name = "reach", id.vars = character(0))
 data[, time := 1:ds$size[1]]
 reaches <- dss$`/CascadeToxswa/Reaches`$data
-r_ids <- data.table(reach = paste0("V", 1:length(reaches)), reach.id = reaches)
+r_ids <- data.table(reach = paste0("V", seq_along(reaches)), reach.id = reaches)
 data <- merge(data, r_ids, "reach")
 
 d <- data[reach.id == 570 & time >= 2790 & time <= 2850]

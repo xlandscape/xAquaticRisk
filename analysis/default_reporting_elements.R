@@ -37,7 +37,7 @@ percentiles_table <- function(
     pecs <- melt(pecs, "t", variable.name = "x", value.name = "pec")
 
     # Spatially referencing
-    pecs <- merge(pecs, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
+    pecs <- merge(pecs, data.table(x = paste0("V", seq_along(reaches)), reach = reaches))
 
     # Calculate percentiles
     perc <- pecs[, as.list(quantile(pec, c(.1, .25, .5, .75, .9, .95, .99, 1))), .(reach, year = year(t))]
@@ -95,7 +95,7 @@ duration_exceedance_table <- function(
     pecs <- melt(pecs, "t", variable.name = "x", value.name = "pec")
   
     # Spatially referencing
-    pecs <- merge(pecs, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
+    pecs <- merge(pecs, data.table(x = paste0("V", seq_along(reaches)), reach = reaches))
   
     # Build concentration bins
     pecs[,
@@ -185,7 +185,7 @@ frequency_exceedance_table <- function(
     pecs <- melt(pecs, "t", variable.name = "x", value.name = "pec")
   
     # Spatially referencing
-    pecs <- merge(pecs, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
+    pecs <- merge(pecs, data.table(x = paste0("V", seq_along(reaches)), reach = reaches))
   
     # Build concentration bins
     pecs[,
@@ -275,7 +275,7 @@ load_values_first_mc <- function(
   pecs <- melt(pecs, "t", variable.name = "x", value.name = "pec")
 
   # Spatially referencing
-  pecs <- merge(pecs, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
+  pecs <- merge(pecs, data.table(x = paste0("V", seq_along(reaches)), reach = reaches))
   pecs[, x := NULL]
 
   # Add year, month, day
@@ -475,7 +475,7 @@ survival_probability_table <- function(
     survival[, year := start_year + `time/year` - 1]
 
     # Spatially referencing
-    survival <- merge(survival, data.table(`space/base_geometry` = 1:length(reaches), reach = reaches))
+    survival <- merge(survival, data.table(`space/base_geometry` = seq_along(reaches), reach = reaches))
 
     # Return only required columns
     survival[, .(reach, year, species, model, probability = value)]  
@@ -523,7 +523,7 @@ lp50_table <- function(
     lp50 <- rbindlist(pblapply(datasets, function(x) {
       lp50 <- data.table(x3df$datasets[[x]]$data)
       lp50[, year := .I + start_year]
-      melt(lp50, c("year"), variable.name = "x", value.name = "lp50")
+      melt(lp50, "year", variable.name = "x", value.name = "lp50")
     }), idcol = "dataset")
     reaches <- x3df$datasets[[reaches]]$data
 
@@ -534,7 +534,7 @@ lp50_table <- function(
     lp50[, species := species_names[species]]
 
     # Spatially referencing
-    lp50 <- merge(lp50, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
+    lp50 <- merge(lp50, data.table(x = paste0("V", seq_along(reaches)), reach = reaches))
 
     # Add NA
     lp50[lp50 < 0, lp50 := NA]

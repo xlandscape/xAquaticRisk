@@ -18,7 +18,7 @@ data[, time := 1:ds$size[1]]
 reaches <- x3df$datasets$`/StepsRiverNetwork/Reaches`$data
 
 ####
-reaches <- data.table(reach = paste0("V", 1:length(reaches)), reach.id = paste0("r", reaches))
+reaches <- data.table(reach = paste0("V", seq_along(reaches)), reach.id = paste0("r", reaches))
 
 
 # Calculate the temporal percentiles
@@ -148,7 +148,7 @@ data_sed <- as.data.table(ds_sed$data)
 data_sed <- melt(data_sed, variable.name = "reach", id.vars = character(0))
 data_sed[, time := 1:ds_sed$size[1]]
 reaches <- x3df$datasets$`/StepsRiverNetwork/Reaches`$data
-reaches <- data.table(reach = paste0("V", 1:length(reaches)), reach.id = paste0("r", reaches))
+reaches <- data.table(reach = paste0("V", seq_along(reaches)), reach.id = paste0("r", reaches))
 d_sed <- data_sed[time > 3048 & time < 3120]
 d_sed <- merge(d_sed, reaches, "reach")
 d_sed <- d_sed[`%in%`(reach, d[, unique(reach)])]
@@ -166,7 +166,7 @@ data_sed <- as.data.table(ds_sed$data)
 data_sed <- melt(data_sed, variable.name = "reach", id.vars = character(0))
 data_sed[, time := 1:ds_sed$size[1]]
 reaches <- x3df$datasets$`/StepsRiverNetwork/Reaches`$data
-reaches <- data.table(reach = paste0("V", 1:length(reaches)), reach.id = paste0("r", reaches))
+reaches <- data.table(reach = paste0("V", seq_along(reaches)), reach.id = paste0("r", reaches))
 d_sed <- data_sed[time > 3048 & time < 3120]
 d_sed <- merge(d_sed, reaches, "reach")
 d_sed <- d_sed[`%in%`(reach, d[, unique(reach)])]
