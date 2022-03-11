@@ -16,7 +16,7 @@ data <- as.data.table(ds$data)
 data <- melt(data, variable.name = "reach", id.vars = character(0))
 data[, time := 1:ds$size[1]]
 reaches <- dss$`/CascadeToxswa/Reaches`$data
-r_ids <- data.table(reach = paste0("V", 1:length(reaches)), reach_id = reaches)
+r_ids <- data.table(reach = paste0("V", seq_along(reaches)), reach_id = reaches)
 data <- merge(data, r_ids, "reach")
 data[, value := value * 1000]
 
@@ -60,7 +60,7 @@ ggplot(d, aes(time, value, col = reach_id)) +
   ylab("PEC_SW [ug/l]")
 ggsave(file.path(params$output.dir, "PECsw 1559,1809,1343.png"))
 
-d <- data[`%in%`(reach_id, c(1028)) & time >= 3050 & time <= 3100]
+d <- data[reach_id == 1028 & time >= 3050 & time <= 3100]
 d[, reach_id := as.factor(reach_id)]
 ggplot(d, aes(time, value, col = reach_id)) +
   geom_line() +

@@ -7,9 +7,9 @@ lp50_strahler <- function(store, simulation_start, dataset, dataset_reaches, str
     start_year <- year(as.POSIXct(paste(x3df$datasets[[simulation_start]]$data, "00:00")))
     lp50 <- data.table(x3df$datasets[[dataset]]$data)
     lp50[, year := .I + start_year]
-    lp50 <- melt(lp50, c("year"), variable.name = "x", value.name = "lp50")
+    lp50 <- melt(lp50, "year", variable.name = "x", value.name = "lp50")
     reaches <- x3df$datasets[[dataset_reaches]]$data
-    lp50 <- merge(lp50, data.table(x = paste0("V", 1:length(reaches)), reach = reaches))
+    lp50 <- merge(lp50, data.table(x = paste0("V", seq_along(reaches)), reach = reaches))
     lp50[lp50 < 0, lp50 := NA]
     lp50[lp50 > 100, lp50 := 100]    
     strahler_order <- data.table(

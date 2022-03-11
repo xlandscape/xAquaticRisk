@@ -1,6 +1,17 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.71] - 2022-03-11
+### Added
+- R file to set up environment for inspection
+### Changed
+- Updated Landscape Model core to version 1.13.1
+- Updated XSprayDrift to version 3.5.0
+- Updated water volume R script to work with recent version
+- Code improvements of analysis R scripts
+- Removed X3RiskAnalysis.R
+### Fixed
+
 ## [2.70] - 2022-03-08
 ### Added
 - User parameter for whether to use air temperature-derived water temperatures or forcing function in LPop

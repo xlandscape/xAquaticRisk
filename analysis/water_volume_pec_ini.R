@@ -2,18 +2,18 @@
 # time of spray-applications
 
 # Load packages
-library(h5)
+library(hdf5r)
 library(data.table)
 
 # Specify some parameters
-x3df_path <- "F:\\AquaticRiskLTI\\Experiments\\UC1-34-1\\mcs\\X3NMR8SS06K0YUYA1C\\processing\\sim.x3df\\arr.dat"
+x3df_path <- "A:\\Xplicit\\dev\\xAquaticRisk\\run\\Test_Run_aqRisk\\mcs\\X3XI1P36G64AL7WX8F\\store\\arr.dat"
 
 # Load the data
 x3df <- h5file(x3df_path, "r")
-deposition <- x3df["DepositionToReach/Deposition"][]
-reaches_d <- x3df["DepositionToReach/Reaches"][]
-volume <- x3df["Hydrology/Volume"][]
-reaches_h <- x3df["Hydrology/Reaches"][]
+deposition <- t(x3df[["DepositionToReach/Deposition"]][,])
+reaches_d <- h5attr(x3df[["DepositionToReach/Deposition"]], "dim1_element_names")$dereference()[[1]][]
+volume <- t(x3df[["Hydrology/Volume"]][,])
+reaches_h <- h5attr(x3df[["Hydrology/Volume"]], "dim1_element_names")$dereference()[[1]][]
 
 # Check that reaches order is the same in both datasets
 stopifnot(all.equal(reaches_d, reaches_h))
