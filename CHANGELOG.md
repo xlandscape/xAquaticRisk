@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.72] - 2022-03-11
+### Added
+### Changed
+### Fixed
+- Incorrect IT model parameters for species 2 and 3
+
 ## [2.71] - 2022-03-11
 ### Added
 - R file to set up environment for inspection

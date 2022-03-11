@@ -998,10 +998,10 @@
                 $(LGUTS_BackgroundHazardRate)
             </BackgroundHazardRate>
             <ThresholdOfITModel type="float" unit="ng/l" scales="global">
-                $(Species1ThresholdDistributionIT)
+                $(Species2ThresholdDistributionIT)
             </ThresholdOfITModel>
             <BetaOfITModel type="float" unit="1" scales="global">
-                $(Species1WidthOfThresholdDistributionIT)
+                $(Species2WidthOfThresholdDistributionIT)
             </BetaOfITModel>
             <AverageTemperatureParameterOfForcingFunction type="float" unit="°C" scales="global">
                 10
@@ -1058,10 +1058,10 @@
                 $(LGUTS_BackgroundHazardRate)
             </BackgroundHazardRate>
             <ThresholdOfITModel type="float" unit="ng/l" scales="global">
-                $(Species1ThresholdDistributionIT)
+                $(Species3ThresholdDistributionIT)
             </ThresholdOfITModel>
             <BetaOfITModel type="float" unit="1" scales="global">
-                $(Species1WidthOfThresholdDistributionIT)
+                $(Species3WidthOfThresholdDistributionIT)
             </BetaOfITModel>
             <AverageTemperatureParameterOfForcingFunction type="float" unit="°C" scales="global">
                 10
@@ -1620,10 +1620,10 @@
                 $(LGUTS_BackgroundHazardRate)
             </BackgroundHazardRate>
             <ThresholdOfITModel type="float" unit="ng/l" scales="global">
-                $(Species1ThresholdDistributionIT)
+                $(Species2ThresholdDistributionIT)
             </ThresholdOfITModel>
             <BetaOfITModel type="float" unit="1" scales="global">
-                $(Species1WidthOfThresholdDistributionIT)
+                $(Species2WidthOfThresholdDistributionIT)
             </BetaOfITModel>
             <AverageTemperatureParameterOfForcingFunction type="float" unit="°C" scales="global">
                 10
@@ -1678,10 +1678,10 @@
                 $(LGUTS_BackgroundHazardRate)
             </BackgroundHazardRate>
             <ThresholdOfITModel type="float" unit="ng/l" scales="global">
-                $(Species1ThresholdDistributionIT)
+                $(Species3ThresholdDistributionIT)
             </ThresholdOfITModel>
             <BetaOfITModel type="float" unit="1" scales="global">
-                $(Species1WidthOfThresholdDistributionIT)
+                $(Species3WidthOfThresholdDistributionIT)
             </BetaOfITModel>
             <AverageTemperatureParameterOfForcingFunction type="float" unit="°C" scales="global">
                 10
@@ -2239,10 +2239,10 @@
                 $(LGUTS_BackgroundHazardRate)
             </BackgroundHazardRate>
             <ThresholdOfITModel type="float" unit="ng/l" scales="global">
-                $(Species1ThresholdDistributionIT)
+                $(Species2ThresholdDistributionIT)
             </ThresholdOfITModel>
             <BetaOfITModel type="float" unit="1" scales="global">
-                $(Species1WidthOfThresholdDistributionIT)
+                $(Species2WidthOfThresholdDistributionIT)
             </BetaOfITModel>
             <AverageTemperatureParameterOfForcingFunction type="float" unit="°C" scales="global">
                 10
@@ -2297,10 +2297,10 @@
                 $(LGUTS_BackgroundHazardRate)
             </BackgroundHazardRate>
             <ThresholdOfITModel type="float" unit="ng/l" scales="global">
-                $(Species1ThresholdDistributionIT)
+                $(Species3ThresholdDistributionIT)
             </ThresholdOfITModel>
             <BetaOfITModel type="float" unit="1" scales="global">
-                $(Species1WidthOfThresholdDistributionIT)
+                $(Species3WidthOfThresholdDistributionIT)
             </BetaOfITModel>
             <AverageTemperatureParameterOfForcingFunction type="float" unit="°C" scales="global">
                 10
