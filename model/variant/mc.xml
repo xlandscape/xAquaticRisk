@@ -80,6 +80,8 @@
         </LandscapeScenario>
         <Weather module="components" class="MarsWeather">
             <FilePath scales="global">$(:Temperature)</FilePath>
+            <FromTime type="date" scales="global">$(SimulationStart)</FromTime>
+            <ToTime type="date" scales="global">$(SimulationEnd)</ToTime>
         </Weather>
         <WaterTemperature
             module="components"
