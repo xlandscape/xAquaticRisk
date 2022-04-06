@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.73] - 2022-04-06
+### Added
+### Changed
+- Updated XSprayDrift to version 2.5.1
+### Fixed
+
 ## [2.72] - 2022-03-11
 ### Added
 ### Changed
