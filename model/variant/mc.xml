@@ -668,6 +668,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_StepsRiverNetwork_SD_Species1>
         <IndEffect_StepsRiverNetwork_SD_Species2
@@ -725,6 +726,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_StepsRiverNetwork_SD_Species2>
         <IndEffect_StepsRiverNetwork_SD_Species3
@@ -785,6 +787,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_StepsRiverNetwork_SD_Species3>
         <IndEffect_LP50_StepsRiverNetwork_SD_Species1
@@ -973,6 +976,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_StepsRiverNetwork_IT_Species1>
         <IndEffect_StepsRiverNetwork_IT_Species2
@@ -1033,6 +1037,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_StepsRiverNetwork_IT_Species2>
         <IndEffect_StepsRiverNetwork_IT_Species3
@@ -1093,6 +1098,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_StepsRiverNetwork_IT_Species3>
         <IndEffect_LP50_StepsRiverNetwork_IT_Species1
@@ -1267,6 +1273,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CmfContinuous_SD_Species1>
         <IndEffect_CmfContinuous_SD_Species2
@@ -1325,6 +1332,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CmfContinuous_SD_Species2>
         <IndEffect_CmfContinuous_SD_Species3
@@ -1383,6 +1391,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CmfContinuous_SD_Species3>
         <IndEffect_LP50_CmfContinuous_SD_Species1
@@ -1597,6 +1606,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CmfContinuous_IT_Species1>
         <IndEffect_CmfContinuous_IT_Species2
@@ -1655,6 +1665,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CmfContinuous_IT_Species2>
         <IndEffect_CmfContinuous_IT_Species3
@@ -1713,6 +1724,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CmfContinuous_IT_Species3>
         <IndEffect_LP50_CmfContinuous_IT_Species1
@@ -1926,6 +1938,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CascadeToxswa_SD_Species1>
         <IndEffect_CascadeToxswa_SD_Species2
@@ -1984,6 +1997,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CascadeToxswa_SD_Species2>
         <IndEffect_CascadeToxswa_SD_Species3
@@ -2042,6 +2056,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CascadeToxswa_SD_Species3>
         <IndEffect_LP50_CascadeToxswa_SD_Species1
@@ -2216,6 +2231,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CascadeToxswa_IT_Species1>
         <IndEffect_CascadeToxswa_IT_Species2
@@ -2274,6 +2290,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CascadeToxswa_IT_Species2>
         <IndEffect_CascadeToxswa_IT_Species3
@@ -2332,6 +2349,7 @@
             >
                 $(MultiplicationFactors)
             </MultiplicationFactors>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
             <Verbosity type="int" scales="global">0</Verbosity>
         </IndEffect_CascadeToxswa_IT_Species3>
         <IndEffect_LP50_CascadeToxswa_IT_Species1
@@ -2513,6 +2531,7 @@
                     enabled="$(UseEmpiricalWaterTemperatures)"
                 />
             </WaterTemperature>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
         </PopEffect_StepsRiverNetwork_SD_Species1>
         <PopEffect_CmfContinuous_SD_Species1
                 module="LEffectModel"
@@ -2579,6 +2598,7 @@
                     enabled="$(UseEmpiricalWaterTemperatures)"
                 />
             </WaterTemperature>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
         </PopEffect_CmfContinuous_SD_Species1>
         <PopEffect_CascadeToxswa_SD_Species1
                 module="LEffectModel"
@@ -2645,6 +2665,7 @@
                     enabled="$(UseEmpiricalWaterTemperatures)"
                 />
             </WaterTemperature>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
         </PopEffect_CascadeToxswa_SD_Species1>
         <PopEffect_StepsRiverNetwork_IT_Species1
                 module="LEffectModel"
@@ -2711,6 +2732,7 @@
                     enabled="$(UseEmpiricalWaterTemperatures)"
                 />
             </WaterTemperature>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
         </PopEffect_StepsRiverNetwork_IT_Species1>
         <PopEffect_CmfContinuous_IT_Species1
                 module="LEffectModel"
@@ -2777,6 +2799,7 @@
                     enabled="$(UseEmpiricalWaterTemperatures)"
                 />
             </WaterTemperature>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
         </PopEffect_CmfContinuous_IT_Species1>
         <PopEffect_CascadeToxswa_IT_Species1
                 module="LEffectModel"
@@ -2843,6 +2866,7 @@
                     enabled="$(UseEmpiricalWaterTemperatures)"
                 />
             </WaterTemperature>
+            <ReachSelection type="list[int]" scales="global">$(ReachSelection)</ReachSelection>
         </PopEffect_CascadeToxswa_IT_Species1>
         <StreamCom1_StepsRiverNetwork
                 module="StreamCom"

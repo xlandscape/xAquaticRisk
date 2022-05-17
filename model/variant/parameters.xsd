@@ -207,6 +207,11 @@
               <xsd:element name="RunLGuts" type="xsd:boolean"/>
               <xsd:element name="RunLPop" type="xsd:boolean"/>
               <xsd:element name="RunStreamCom" type="xsd:boolean"/>
+              <xsd:element name="ReachSelection">
+                <xsd:simpleType>
+                  <xsd:list itemType="xsd:positiveInteger"/>
+                </xsd:simpleType>
+              </xsd:element>
               <xsd:element name="MultiplicationFactors_LPop">
                 <xsd:simpleType>
                   <xsd:list itemType="xsd:float"/>
