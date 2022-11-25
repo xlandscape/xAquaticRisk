@@ -1,20 +1,25 @@
 # Functions for analysing Landscape model run data
-checkAndLoadPackages <- function(packages = installed.packages(),
-                                 required.packages = c("devtools","tidyverse","scales", "gridExtra","patchwork","hdf5r","pbapply",
-                                                       "sp","raster","rgeos","rgdal")){
+checkAndLoadPackages <- function(required.packages = c("devtools","tidyverse","drc","scales", "gridExtra","patchwork","hdf5r","parallel","snow",
+                                                       "sp","Rcpp","raster","rgeos","rgdal","ggspatial","ggridges","usdm","gstat","openxlsx",
+                                                       "gstat","maptools","plotKML","terra","igraph","colorspace","mgcv"),library.loc){
+  if(length(installed.packages(lib.loc = library.loc))==0){
+    packages <- installed.packages(lib.loc = paste0(R.home(),"/library"))
+  }else{packages <- rbind(installed.packages(lib.loc = library.loc),installed.packages(lib.loc = paste0(R.home(),"/library")))}
+  
   required.packages <- required.packages
   not.installed <- required.packages[!required.packages %in% packages[,"Package"]]
   if(length(not.installed)==0){
-    print("Required packages already installed, onwards and upwards!")
-    print("Ignore any further warnings, these are known and of no consequence!")
-    lapply(required.packages,require, character.only = T)}else{
+    print("R environment ready!")
+    res <- lapply(required.packages,function(x){require(x, character.only = T,lib.loc = library.loc)})} else{
       print("You need some additional packages, installing now.")
       print("Choose Yes to update packages if already loaded")
       print("Ignore any further warnings, these are known and of no consequence!")
       for (j in not.installed){
-        if(j == "devtools"){install.packages(j)}else{require("devtools",character.only = T);install.packages(j)}
+        if(j == "devtools"){install.packages(j,lib = library.loc,dependencies = T)}else{
+          install.packages(j,lib =  library.loc, dependencies = T)
+        }
       }
-      lapply(required.packages,require, character.only = T)
+      res <- lapply(required.packages,function(x){require(x, character.only = T,lib.loc = library.loc)})
     }
 }
 ######################## GIS related functions #################################
