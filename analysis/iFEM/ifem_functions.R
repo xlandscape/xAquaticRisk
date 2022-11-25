@@ -1149,85 +1149,33 @@ createLP50AggregationPlots <- function(lp50,output.folder){
 
 }
 
-createSpatialTemporalLP50Plots <- function(lp50,reach.info,output.folder,temporal.conditioning.percentile){
-  lp50.mat <- lp50[grepl("Cascade", lp50$Group),c("LP50","Year","RchID","Species","Model_type")] %>% pivot_wider(.,names_from = "RchID",values_from = "LP50") %>% as.data.frame()  # todo
-  lp50 <- left_join(lp50,reach.info,by = "RchID")
-
-  combinations <- unique(lp50.mat[,c("Species","Model_type")])
-
-  for (i in 1:nrow(combinations)){
-    lp50.rank <- lp50.mat[lp50.mat$Species==combinations$Species[i]&lp50.mat$Model_type==combinations$Model_type[i],-c(2,3)]
-    rownames(lp50.rank) <- lp50.rank$Year
-    lp50.rank <- lp50.rank[,-1] %>% as.matrix()
-    # give unexposed reaches NA and exclude from analysis
-    lp50.rank[lp50.rank==Inf]<-NA
-    no.exposure <- apply(lp50.rank,2,function(x) sum(is.na(x))==length(x))
-    lp50.rank <- lp50.rank[,!no.exposure, drop = FALSE]
-
-    # Matrix of reach weights
-    col.weights <- lp50[,c("RchID","lenght")] %>% unique()
-    col.weights <- col.weights[!no.exposure,]
-    wg.mat <- matrix(rep(col.weights$lenght,nrow(lp50.rank)),nrow = nrow(lp50.rank), byrow = T)
-    wg.mat[,] <- 1
-
-    SG <- sum(col.weights$lenght) * nrow(lp50.rank)
-    # matrix of ranks
-    rank.a <- lp50.rank
-    rank.a[]<- rank(rank.a,na.last = T)
-
-    #matrix of cumsums weights
-    sg <- as.data.frame(rank.a)
-    sg$Year <- rownames(sg)
-    sg <- pivot_longer(sg,cols = starts_with("R"),names_to = "RchID",values_to = "Rank") %>%
-      as.data.frame() %>% left_join(.,col.weights) %>% .[order(.$Rank,decreasing = F,na.last = T),]
-    sg$cumsum <- cumsum(sg$lenght)
-    sg.mat <- apply(rank.a,2,FUN = function(x) sg$cumsum[x])
-    if (!is.matrix(sg.mat)) sg.mat <- t(as.matrix(sg.mat))
-    rownames(sg.mat) <- rownames(rank.a)
-
-    for (j in temporal.conditioning.percentile){
-      # matrix of ranked percentiles
-      pg <- (100/SG)*(sg.mat - (wg.mat/2))
-      # sort pg by years (within column)
-      pg <- apply(pg,2,FUN = function(x) x[order(x,decreasing = F,na.last = T)])
-      if (!is.matrix(pg)) pg <- t(as.matrix(pg))
-      # then sort pg by location (within row) using a specific temporal percentile for conditioning
-      pg <- pg[,order(pg[j,],decreasing = F,na.last = T)]
-      if (!is.matrix(pg)) pg <- t(as.matrix(pg))
-
-
-      # Now create plot
-      spatial.perc <- data.frame(RchID = colnames(pg))
-      spatial.perc <- left_join(spatial.perc,unique(lp50[,c("RchID","lenght")]))
-      spatial.perc$lenght <- 1
-      spatial.perc$cumsum <- cumsum(spatial.perc$lenght)
-      spatial.perc$x <- (100/sum(spatial.perc$lenght))*(spatial.perc$cumsum - (spatial.perc$lenght/2))
-      spatial.perc <- spatial.perc[,c(1,4)]
-
-      temp.perc <- data.frame(Yr = 1:nrow(pg))
-      temp.perc$y <- (100/nrow(pg))*(temp.perc$Yr - (1/2))
-      temp.perc$Yr <- as.character(temp.perc$Yr)
-
-      plot.df <- as.data.frame(pg)
-      plot.df$Yr <- rownames(plot.df)
-      plot.df <- plot.df %>% pivot_longer(.,cols = starts_with("R"),names_to = "RchID",values_to = "STLP50") %>% as.data.frame()
-      plot.df <- left_join(plot.df,temp.perc)
-      plot.df <- left_join(plot.df,spatial.perc)
-
-      p<-ggplot(plot.df,aes(as.factor(round(x)),as.factor(round(y)))) + geom_tile(aes(fill = STLP50)) +
-        scale_x_discrete("Spatial percentile",breaks = seq(0,100,by=10), labels = as.character(seq(0,100,by=10))) +
-        scale_y_discrete("Temporal percentile") +
-        scale_fill_binned("Spatiotemporal\npercentile (LP50)",
-                          breaks = seq(10,90,by=10),
-                          label = paste0(seq(10,90,by=10)," (",
-                                         quantile(x = lp50.rank,probs = seq(0.1,0.9,0.1),na.rm = T) %>% signif(.,digits = 2) %>% round(.,1),
-                                         ")"),
-                          type = "viridis") +
-        ggtitle(paste0("Temporal conditioning percentile = ",round(temp.perc$y[j]),"%-ile","\nSpecies = ",gsub("_"," ",combinations$Species[i]),
-                       ", Model type = ",switch(combinations$Model_type[i],it="Individual threshold",
-                                                sd = "Stochastic death"))) + theme(text = element_text(size = 12))
-      ggsave(plot = p,paste0(output.folder,combinations$Species[i],"_",combinations$Model_type[i],"_conditioningPercentile",temp.perc$y[j],".png"),
-             width = 20, height = 15,units = "cm",dpi = 200)
-    }
-  }
+printLoadingVsTransferTable <- function(reach.info, max.pec, loading.drift){
+  
+  max.pec <- left_join(max.pec,reach.info[,c("RchID","strahler")])
+  reach.infos <- left_join(reach.info, aggregate(.~RchID, loading.drift[,c("RchID","Loading")],FUN = max))
+  
+  zz <- cbind(aggregate(.~strahler, data = reach.infos[,c("strahler","Loading")],FUN = length),
+              aggregate(.~strahler, data = reach.infos[,c("strahler","Loading")],FUN = function(x) sum(x>0)))
+  
+  zzz <- aggregate(.~strahler*RchID, data = max.pec[,c("strahler","Max_PEC_Avg","RchID")],FUN = function(x) min(x))
+  zzz <- cbind(aggregate(.~strahler, data = zzz[,c("strahler","Max_PEC_Avg")],FUN = length),
+               aggregate(.~strahler, data = zzz[,c("strahler","Max_PEC_Avg")],FUN = function(x) sum(x>0)))
+  zzz <- cbind(zzz,zz)
+  zzz <- zzz[,c(1,2,4,8)]
+  names(zzz) <- c("strahler","N","Conc_above_0","Loading_drift_input")
+  
+  zzz$Transfer_input_only <- zzz$Conc_above_0 - zzz$Loading_drift_input
+  zzz$perc_trans_loading <- round((zzz$Conc_above_0/zzz$N)*100,1)
+  
+  zzz$perc_trans_only <- round((zzz$Transfer_input_only/zzz$N)*100,1)
+  zzz$perc_no_substance <- 100 - zzz$perc_trans_loading
+  
+  zzz <- zzz[,c(1,2,6,7,8)]
+  
+  print(patchwork::wrap_elements(gridExtra::tableGrob(zzz,
+                                                      cols = c("Strahler order", "Number of reaches", 
+                                                               "Percentage receiving\nloading drift and transfer",
+                                                               "Percentage receiving\ntransfer only", 
+                                                               "Percentage receiving\nno substance"))))
+  
 }
