@@ -535,6 +535,191 @@ createSpatialTemporalLP50Plots <- function(lp50,reach.info,output.folder,tempora
   return(list(plots = ls.output, dfs = sorted.dfs))
 }
 
+######################### LPOP functions ###########################
+readLPOPExtentNetworkDataFromStore <- function(data.store.fpath,
+                                               model.type = "IT",
+                                               first.application.year = 1992,
+                                               last.application.year = 2017,
+                                               reach.info = getReachInfoFromScenario(scenario.path = "D:/PesticideModel_BigDrive/scenario-rummen-tdi/geo/Reachlist_shp.shp")){
+  
+  # initiate data store
+  df <- H5File$new(filename = data.store.fpath,
+                   mode = "r+")
+  # name of model run of interest
+  ls.model.run <- names(df)[grepl("PopEffect",x = names(df))&grepl(model.type,x = names(df))]
+  # create daily time series
+  warmup <- df[[paste0(ls.model.run,"/NumberOfWarmUpYears")]]$read()
+  recov <- df[[paste0(ls.model.run,"/RecoveryPeriodYears")]]$read()
+  
+  start.time <- df[["Hydrology/TimeSeriesStart"]]$read() %>% strptime(.,format = "%Y-%m-%d",tz = "GMT")
+  start.time$year <- start.time$year - warmup
+  start.time <- start.time - 24 * 3600
+  end.time <- df[["Hydrology/TimeSeriesEnd"]]$read() %>% strptime(.,format = "%Y-%m-%d",tz = "GMT")
+  end.time$year <- end.time$year + (recov )
+  
+  time.period <- data.frame(Tstamp = seq(start.time,end.time,by=(24 * 3600)))
+  time.period$AppYear <- format(time.period$Tstamp,"%Y") >= first.application.year & format(time.period$Tstamp,"%Y") <= last.application.year
+  
+  # Get reach IDs
+  rch <- df[["Hydrology/Reaches"]]$read() %>% paste0("R",.)
+  
+  # get dimensions of juvenile and adult pops for looping, 1st dim = replicates; 2nd dim = conc mult.facs; 3rd dim = num reaches; 4th dim = time.days
+  dims <- df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]]$dims
+  # Loop index and values of concentration multiplication factors
+  loop.idx <- 1:dims[2]
+  cmfs <- df[[paste0(ls.model.run,"/MultiplicationFactors")]]$read()
+  
+  getExt <- function(loop.idx){
+    # initiate data store for each core
+    df <- hdf5r::H5File$new(filename = data.store.fpath,
+                            mode = "r+")
+    out <- lapply(1:length(rch), function(j) {
+      # Calculate if the 90%ile is smaller than 1 (i.e., pop in a reach is smaller than 1 for at least 90% of the time)
+      t1 <- apply(df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]][,loop.idx,j,][,time.period$AppYear],1,function(x) quantile(x,0.9)<1)
+      t4 <- apply(df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]][,loop.idx,j,][,time.period$AppYear],1,function(x) sum(x>1)/length(x))
+      t3 <- mean(df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]][,loop.idx,j,][,time.period$AppYear],na.rm = T)
+      # using a majority rule (based on three replicates): a local population is extant if in at least cases the 10th %-ile is larger than 1
+      t2 <- data.frame(RchID = rch[j],ModelType = ls.model.run, ConcMF = cmfs[loop.idx], 
+                       meanAbundance = t3, meanFractionOccupied = mean(t4), 
+                       extantPop = sum(t1)<=1)
+      t2
+    })
+    out <- data.table::rbindlist(out)
+    
+    # exclude extinct reaches and attach reach info on downstream connections to df to get edge list
+    t1 <- out[out$extantPop,]
+    t1 <- dplyr::left_join(t1,reach.info[,c("downstream","RchID")], by = "RchID")
+    t1$downstream <- paste0("R",t1$downstream)
+    
+    clusters <- igraph::clusters(igraph::graph.data.frame(t1[,c("RchID","downstream")]))
+    
+    cluster.membership <- with(clusters, 
+                               data.frame(
+                                 RchID = names(membership), 
+                                 subNetworkID = membership, 
+                                 sizeSubnetwork = csize[membership]))
+    cluster.membership <- dplyr::arrange(cluster.membership,subNetworkID)
+    
+    # Link network membership back to original dataframe
+    out <- dplyr::left_join(out,cluster.membership, by = "RchID")
+    
+    return(out)
+  }
+  cl <- makeCluster(getOption("cl.cores",detectCores()))
+  clusterExport(cl, c("data.store.fpath","ls.model.run","rch","loop.idx","cmfs","time.period","getExt", "reach.info"),
+                envir=environment())
+  df.1 <- parLapply(cl = cl, x = loop.idx, fun = getExt)
+  stopCluster(cl)
+  
+  return(df.1)
+}
+
+plotLpopExtentNetworks <- function(scenario.path.shp = "D:/PesticideModel_BigDrive/scenario-rummen-tdi/geo/Reachlist_shp.shp",
+                                   extent.population.list.data = df,
+                                   rows, output.folder){
+  # prevent plotting scientific notation
+  options(scipen = 999)
+  df <- extent.population.list.data
+  
+  # get model type for naming output plot
+  model.type <- unlist(strsplit(df[[1]]$ModelType[1],"_"))[3]
+  
+  out.plot.list <- lapply(df,function(z){
+    
+    riv.rummen <- suppressWarnings(readDRNFromScenario(scenario.path = scenario.path.shp))
+    riv.rummen@data$RchID <- paste0("R",as.character(riv.rummen@data$key))
+    
+    # Add residence time data for date of application
+    riv.rummen@data <- dplyr::left_join(riv.rummen@data, z, by = "RchID")
+    
+    ## Plot of river network
+    Rivs_f <- fortify(riv.rummen)
+    riv_df <- data.frame(id = as.character(as.numeric(lapply(riv.rummen@lines, function(x) x@ID) %>% do.call(rbind,.))),riv.rummen@data)
+    Rivs_f <- left_join(Rivs_f, riv_df,by = "id")
+    
+    R.catchment.plot <-ggplot() + # define variables
+      geom_path(data = Rivs_f,
+                aes(x = long, y = lat, group = group,colour = as.factor(subNetworkID)),size = 1.25) + # plot rivers
+      colorspace::scale_colour_discrete_sequential(palette = "Terrain",rev = F) + 
+      coord_equal() + guides(colour = "none") +
+      labs(x = "X (m)", y = "Y (m)")+
+      ggtitle(paste0("CMF = ",unique(z$ConcMF))) +
+      theme_linedraw() + theme_light() + theme(title = element_text(size = 10),
+                                               legend.title = element_text(size = 10),
+                                               axis.text = element_text(size = 10),
+                                               axis.title = element_text(size = 10))
+    R.catchment.plot
+  })
+  
+  p <- patchwork::wrap_plots(out.plot.list,nrow = rows)
+  
+  suppressWarnings(ggsave(plot = p,
+                          paste0(output.folder,"NetworkFragmentation_",model.type,".png"),
+                          width = 90, height = 45,units = "cm",dpi = 300, limitsize = F))
+  suppressWarnings(print(p))
+  
+}
+
+plotFI90 <- function(scenario.path.shp = "D:/PesticideModel_BigDrive/scenario-rummen-tdi/geo/Reachlist_shp.shp",
+                     extent.population.list.data = df,
+                     rows, output.folder){
+  
+  # prevent plotting scientific notation
+  options(scipen = 999)
+  df <- extent.population.list.data
+  
+  # get model type for naming output plot
+  model.type <- unlist(strsplit(df[[1]]$ModelType[1],"_"))[3]
+  
+  # get, for each CMF, the number of reaches that are part of a network
+  p.df <- lapply(df, function(x){
+    data.frame(N_connected = sum(x$extantPop),CMF = unique(x$ConcMF))
+  }) %>% do.call(rbind,.)
+  
+  p.df$Relative_N <- (p.df$N_connected / p.df$N_connected[p.df$CMF==0]) * 100
+  p.df$logCMF <- log(p.df$CMF)
+  
+  # fit a curve through the data to predict along a range of CMF values
+  fit <- drm(Relative_N~CMF,data = p.df,fct = LL.4())
+  m2 <- predict(object = fit,newdata = data.frame(CMF = seq(0,100000,1)),se.fit = T)
+  pred <- data.frame(CMF = seq(0,100000,1),Fit = m2[,1],SE.fit = m2[,2])
+  
+  # find CMF where number of connected patches falls below 90% of control
+  FI90 <- pred$CMF[min(which(pred$Fit <= 90))]
+  
+  p.raw <- ggplot() +
+    geom_line(data = pred,aes(x = log10(CMF), y = Fit),colour = "black",show.legend = F) +
+    geom_ribbon(data = pred,aes(x = log10(CMF), ymin = Fit - SE.fit, ymax = Fit + SE.fit),alpha = 0.25) +
+    geom_point(data = p.df, aes(x = log10(CMF), y = Relative_N), colour = "blue",size = 2,show.legend = F) +
+    scale_y_continuous("Fragmentation index", breaks = seq(0,100,10)) +
+    scale_x_continuous("Concentration multiplication factor",
+                       breaks = log10(p.df$CMF), 
+                       labels = as.character(p.df$CMF))+
+    theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust=1),
+          text = element_text(size = 10))
+  suppressWarnings(ggsave(plot = p.raw,
+                          paste0(output.folder,"FI90_raw",model.type,".png"),
+                          width = 20, height = 12,units = "cm",dpi = 300, limitsize = F))
+  
+  p.ann <- ggplot() +
+    geom_line(data = pred,aes(x = log10(CMF), y = Fit),colour = "black",show.legend = F) +
+    geom_ribbon(data = pred,aes(x = log10(CMF), ymin = Fit - SE.fit, ymax = Fit + SE.fit),alpha = 0.25) +
+    geom_point(data = p.df, aes(x = log10(CMF), y = Relative_N), colour = "blue",size = 2,show.legend = F) +
+    scale_y_continuous("Fragmentation index", breaks = seq(0,100,10)) +
+    scale_x_continuous("Concentration multiplication factor",
+                       breaks = log10(p.df$CMF), 
+                       labels = as.character(p.df$CMF)) +
+    geom_hline(yintercept = 90, lty = "dashed",lwd = 1, colour = "red") + 
+    geom_vline(xintercept = log10(FI90),lty = "dashed",lwd = 1, colour = "red") +
+    geom_label(aes(x = log10(FI90 + 1500), y = 92.5, label = paste0("FI90 = ", FI90))) +
+    theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust=1),
+          text = element_text(size = 10))
+  p.ann
+  suppressWarnings(ggsave(plot = p.ann,
+                          paste0(output.folder,"FI90_annotated",model.type,".png"),
+                          width = 20, height = 12,units = "cm",dpi = 300, limitsize = F))
+}
+
 ######################### Residence time functions #############################
 # Mean daily residence time (hours) during application window
 readResidenceTimeFromStore <- function(data.store.fpath,reach.info, first.year,last.year,
