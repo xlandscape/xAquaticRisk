@@ -22,6 +22,59 @@ checkAndLoadPackages <- function(required.packages = c("devtools","tidyverse","d
       res <- lapply(required.packages,function(x){require(x, character.only = T,lib.loc = library.loc)})
     }
 }
+
+# Functions to prepare notebook workenvironments
+prepareEnvironmentR <- function(){
+  params <- parse_args(
+    OptionParser(
+      option_list = list(
+        make_option("--source", type = "character", help = "The path to the source file containing predefined functions"),
+        make_option("--hydrography", type = "character", help = "The path to the shapefile containing the hydrography"),
+        make_option("--start", type = "character", help = "The first day of the simulation period"),
+        make_option("--end", type = "character", help = "The last day of the simulation period"),
+        make_option("--application_window", type = "character", help = "The application period"),
+        make_option("--lib", type = "character", help = "Additional library path for R packages")
+      )
+    ),
+    positional_arguments = TRUE
+  )
+  .libPaths(c(params$options$lib, .libPaths()))
+  params$first_year <- as.integer(substr(params$options$start, 1, 4))
+  params$last_year <- as.integer(substr(params$options$end, 1, 4))
+  params$first_app_month <- as.integer(substr(params$options$application_window, 1, 2))
+  params$first_app_day <- as.integer(substr(params$options$application_window, 4, 5))
+  params$last_app_month <- as.integer(substr(params$options$application_window, 10, 11))
+  params$last_app_day <- as.integer(substr(params$options$application_window, 13, 14))
+  
+  options(scipen = 999)
+  suppressWarnings(suppressMessages(checkAndLoadPackages(library.loc = libPath)))
+  options(repr.plot.width=30, repr.plot.height=15)
+}
+
+prepareLP50Data <- function(params,run.name){
+  reach.info <- suppressWarnings(suppressMessages(getReachInfoFromScenario(scenario.path = params$options$hydrography)))
+  
+  mc.folder <- list.dirs(paste0("./run/",run.name,"/mcs"),recursive = F)
+  lp50 <- suppressWarnings(suppressMessages(readLP50DataFromStore(data.store.fpath = paste0(mc.folder,"/store/arr.dat"),
+                                                                  first.year = params$first_year, last.year = params$last_year, 
+                                                                  reach.info = reach.info)))
+  # Calculate median values
+  medLP50 <- suppressWarnings(suppressMessages(medianLP50Values(lp50 = lp50,reach.info = reach.info)))
+  
+  return(list(reach.info = reach.info,lp50 = lp50,medLP50 = medLP50))
+}
+
+preparePECData <- function(params, run.name){
+  reach.info <- suppressWarnings(suppressMessages(getReachInfoFromScenario(scenario.path = params$options$hydrography)))
+  
+  mc.folder <- list.dirs(paste0("./run/",run.name,"/mcs"),recursive = F)
+  PEC <- suppressWarnings(suppressMessages(readPECDataFromStore(data.store.fpath = paste0(mc.folder,"/store/arr.dat"), 
+                                                                first.year = params$first_year, last.year = params$last_year)))
+  # Calculate median values
+  medPEC <- suppressWarnings(suppressMessages(medianPECValues(max.pec= PEC,reach.info = reach.info)))
+  
+  return(list(reach.info = reach.info,PEC = PEC,medPEC = medPEC))
+}
 ######################## GIS related functions #################################
 readDRNFromScenario <- function(scenario.path){
   drn <- readOGR(scenario.path)
