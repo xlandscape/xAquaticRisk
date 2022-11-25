@@ -88,6 +88,73 @@ getReachInfoFromScenario <- function(scenario.path){
   return(drn)
 }
 
+createCatchmentPlotSTLP50 <- function(scenario.path, plot.output.location,plot.name,stlp50.data.frame){
+  drn <- readDRNFromScenario(scenario.path = paste0(scenario.path,"ReachList_shp.shp"))
+  drn@data$RchID <- paste0("R",drn@data$key)
+  ctm <- readDRNFromScenario(scenario.path = paste0(scenario.path,"LULC.shp"))
+  
+  # Attach colour info to reaches in drn
+  drn@data <- left_join(drn@data, stlp50.data.frame, by = "RchID")
+  ## Fortify data sets
+  drn_f <- fortify(drn)
+  drn_df <- data.frame(id = as.character(as.numeric(lapply(drn@lines, function(x) x@ID) %>% do.call(rbind,.))),drn@data)
+  drn_f <- left_join(drn_f, drn_df,by = "id")
+  ctm_f <- fortify(ctm)
+  ctm_df <- data.frame(id = as.character(as.numeric(lapply(ctm@polygons, function(x) x@ID) %>% do.call(rbind,.))),ctm@data)
+  ctm_f <- left_join(ctm_f, ctm_df,by = "id")
+  
+  p <- ggplot() +
+    geom_polygon(data = ctm_f, aes(x = long, y = lat, group = group),colour = "NA",fill = "forestgreen",alpha = 0.4) +
+    geom_path(data = drn_f, aes(x = long, y = lat, group = group,colour = as.factor(STLP50)), size = 1) +
+    scale_colour_manual("LP50", values = c("1" = "red","2" = "orange","3" = "yellow","4" = "forestgreen","5" = "lightskyblue1"),
+                        label = c("LP50 < 1", "1 < LP50 < 10", "10 < LP50 < 100","LP50 > 100","Effect free year","No effect"),
+                        drop = F,na.value = "lightsteelblue3") +
+    annotation_north_arrow(which_north = "grid", location = "br",height = unit(1.5,"cm"),width = unit(0.75,"cm")) +
+    annotation_scale(width_hint = 0.25,plot_unit = "m",unit_category = "metric", style = "bar", location = "br", 
+                     pad_x = unit(1.25,units = "cm"), text_cex = 1.5) +
+    # labs(x = "X (m)", y = "Y (m)") +
+    coord_fixed() + theme_light() + theme(text = element_text(size = 20),
+                                          legend.text = element_text(size = 20),
+                                          axis.text = element_blank())
+  ggsave(plot = p, filename = paste0(plot.output.location,plot.name,".png"),width = 25,height = 25,units = "cm",dpi = 600)
+}
+
+createCatchmentPlotSTPEC <- function(scenario.path, plot.output.location,plot.name,stPEC.data.frame, min.concentration,max.concentration,
+                                     log.steps.concentration.range){
+  drn <- readDRNFromScenario(scenario.path = paste0(scenario.path,"ReachList_shp.shp"))
+  drn@data$RchID <- paste0("R",drn@data$key)
+  ctm <- readDRNFromScenario(scenario.path = paste0(scenario.path,"LULC.shp"))
+  
+  # Attach colour info to reaches in drn
+  drn@data <- left_join(drn@data, stPEC.data.frame, by = "RchID")
+  ## Fortify data sets
+  drn_f <- fortify(drn)
+  drn_df <- data.frame(id = as.character(as.numeric(lapply(drn@lines, function(x) x@ID) %>% do.call(rbind,.))),drn@data)
+  drn_f <- left_join(drn_f, drn_df,by = "id")
+  ctm_f <- fortify(ctm)
+  ctm_df <- data.frame(id = as.character(as.numeric(lapply(ctm@polygons, function(x) x@ID) %>% do.call(rbind,.))),ctm@data)
+  ctm_f <- left_join(ctm_f, ctm_df,by = "id")
+  
+  # now bin data in user defined bins, first get bin values then cut PEC values
+  bn1 <- c(-Inf,seq(log10(min.concentration), log10(max.concentration), 
+                    by = log.steps.concentration.range))
+  
+  p <- ggplot() +
+    geom_polygon(data = ctm_f, aes(x = long, y = lat, group = group),colour = "NA",fill = "forestgreen",alpha = 0.4) +
+    geom_path(data = drn_f, aes(x = long, y = lat, group = group,colour = STPEC), size = 1) +
+    scale_colour_brewer(paste0("Concentration (","\u00B5","g/L)"), na.value = "lightsteelblue3",
+                        palette = "Spectral", direction = -1,labels = c(paste0("<",as.character(signif(10^(bn1[-1]),3))), "No Exposure")) +
+    annotation_north_arrow(which_north = "grid", location = "br",height = unit(1.5,"cm"),width = unit(0.75,"cm")) +
+    annotation_scale(width_hint = 0.25,plot_unit = "m",unit_category = "metric", style = "bar", location = "br", 
+                     pad_x = unit(1.25,units = "cm"), text_cex = 1.5) +
+    # labs(x = "X (m)", y = "") +
+    coord_fixed() + theme_light() + theme(text = element_text(size = 20),
+                                          legend.text = element_text(size = 20),
+                                          axis.text = element_blank(),
+                                          axis.title = element_blank())
+  ggsave(plot = p, filename = paste0(plot.output.location,plot.name,".png"),width = 25,height = 25,units = "cm",dpi = 600)
+}
+
 ######################### PEC functions ########################################
 readPECDataFromStore <- function(data.store.fpath,first.year,last.year){
   # initiate data store
