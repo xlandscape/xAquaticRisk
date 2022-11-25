@@ -23,7 +23,7 @@ checkAndLoadPackages <- function(required.packages = c("devtools","tidyverse","d
     }
 }
 
-# Functions to prepare notebook workenvironments
+# Wrapper functions to prepare notebook work environments
 prepareEnvironmentR <- function(){
   params <- parse_args(
     OptionParser(
@@ -394,17 +394,28 @@ medianLP50Values <- function(lp50,reach.info){
   return(medLP50)
 }
 
-createLP50byStrahlerPlot <- function(LP50,reach.info,medLP50){
+createLP50byStrahlerPlot <- function(lp50,
+                                     reach.info,
+                                     medLP50, 
+                                     breaks_y = c(-2,-1,0,1,2,3,4,5),
+                                     labels_y = c("0.01","0.1","1","10","100","1000","10000","100000"),
+                                     point_colour = "red",
+                                     linewidth = 0.75,
+                                     LP50_category_colours = c("red","orange","yellow"),
+                                     output.folder){
   vpos <- aggregate(.~strahler,data = reach.info[,c("strahler","width")],FUN = length)
   vpos <- vpos[order(vpos$strahler),]
   row.names(vpos) <- NULL
   vpos$x <- cumsum(vpos$width)
-
+  breaks <- c(vpos$x[1]/2,vpos$x[1],
+              lapply(2:nrow(vpos), function(x) c(vpos$x[x] - (vpos$width[x]/2),vpos$x[x])) %>% do.call(c,.))
+  labs <- rep(c("","100"), length(breaks)/2)
+  
   lp50 <- left_join(lp50,medLP50[,c("Reach","Model_type","Species","rowID","strahler")],by = c("RchID"="Reach","Model_type","Species"))
   lp50 <- lp50[order(lp50$Year),]
   row.names(lp50) <- NULL
   lp50$LP50 <- ifelse(lp50$LP50==Inf,NA,lp50$LP50)
-
+  
   model.versions <- unique(lp50[,c("Model_type","Species")])
   LP50.plot <- list()
   for (j in 1:nrow(model.versions)){
@@ -413,52 +424,115 @@ createLP50byStrahlerPlot <- function(LP50,reach.info,medLP50){
       geom_point(data = lp50[lp50$Species==model.versions$Species[j]&lp50$Model_type==model.versions$Model_type[j],],
                  aes(x = rowID,y = log10(LP50),
                      group = interaction(as.factor(strahler),as.factor(Year))),
-                 colour = "red",alpha = 0.05, lwd = 0.75) +
+                 colour = point_colour,alpha = 0.05, lwd = 0.75) +
       geom_line(data = medLP50[medLP50$Species==model.versions$Species[j]&medLP50$Model_type==model.versions$Model_type[j],],
                 aes(x = rowID,y = log10(LP50),
-                    group = as.factor(strahler)),lwd = 0.75) +
-      guides(colour = F) +
+                    group = as.factor(strahler)),lwd = linewidth) +
+      guides(colour = "none") +
       scale_y_reverse("LP50",
-                      breaks = c(-2,-1,0,1,2,3,4,5),
-                      labels = c("0.01","0.1","1","10","100","1000","10000","100000")) +
+                      breaks = breaks_y,
+                      labels = labels_y) +
       # Add horizontal lines for LP50 factors 1, 10, and 100
       geom_hline(data = data.frame(intercept = 0),
                  aes(yintercept = intercept),
-                 colour = "red",
+                 colour = LP50_category_colours[1],
                  linetype = "dashed",
-                 lwd = 0.75) +
+                 lwd = linewidth) +
       geom_hline(data = data.frame(intercept = 1),
                  aes(yintercept = intercept),
-                 colour = "orange",
+                 colour = LP50_category_colours[2],
                  linetype = "dashed",
-                 lwd = 0.75) +
+                 lwd = linewidth) +
       geom_hline(data = data.frame(intercept = 2),
                  aes(yintercept = intercept),
-                 colour = "yellow",
+                 colour = LP50_category_colours[3],
                  linetype = "dashed",
-                 lwd = 0.75) +
+                 lwd = linewidth) +
       # Add vertical lines to delineate Strahler order
       geom_vline(data = vpos[,1:3],
                  aes(xintercept = x),
                  colour = "black",
                  linetype = "dashed") +
       scale_x_continuous("Number of reaches (0 - 100% per Strahler order)",
-                         breaks = c(vpos$x[1]/2,vpos$x[1],
-                                    vpos$x[2]-(vpos$width[2]/2),vpos$x[2],
-                                    vpos$x[3]-(vpos$width[3]/2),vpos$x[3],
-                                    vpos$x[4]-(vpos$width[4]/2),vpos$x[4]),
-                         labels = c("","100","","100","","100","","100"),
+                         breaks = breaks,
+                         labels = labs,
                          limits = c(0,max(vpos$x)),
                          expand = c(0,50)) +
       coord_cartesian(ylim = c(5,-2)) +
       ggtitle(paste0("Species: ",model.versions$Species[j],"\nModel type: ",model.versions$Model_type[j])) +
       theme_bw() +
-      geom_text(data = data.frame(x = vpos$x,y = c(-2,-2,-2,-2),
+      geom_text(data = data.frame(x = vpos$x,y = rep(-2,nrow(vpos)),
                                   labels = paste0(c("Strahler order 1",as.character(vpos$strahler[!vpos$strahler==1])))),
                 aes(x = x, y = y, label = labels), size = 6, hjust = "inward") +
       theme(text = element_text(size = 20),plot.title = element_text(size = 12))
+    ggsave(plot = LP50.plot[[j]],paste0(output.folder,"./LP50_",model.versions$Model_type[j],"_",model.versions$Species[j],".png"),
+           width = 20, height = 15,units = "cm",dpi = 200)
   }
+  
   return(LP50.plot)
+}
+
+createSpatialTemporalLP50Plots <- function(lp50,reach.info,output.folder,temporal.conditioning.year){
+  
+  lp50.mat <- lp50[,c("LP50","Year","RchID","Species","Model_type")] %>% pivot_wider(.,names_from = "RchID",values_from = "LP50") %>% as.data.frame()
+  lp50 <- left_join(lp50,reach.info,by = "RchID")
+  
+  combinations <- unique(lp50.mat[,c("Species","Model_type")])
+  ls.output <- list()
+  sorted.dfs <- list()
+  for (j in temporal.conditioning.year){
+    for (i in 1:nrow(combinations)){
+      lp50.rank <- lp50.mat[lp50.mat$Species==combinations$Species[i]&lp50.mat$Model_type==combinations$Model_type[i],-c(2,3)]
+      rownames(lp50.rank) <- lp50.rank$Year
+      lp50.rank <- lp50.rank[,-1] %>% as.matrix()
+      # give unexposed reaches NA
+      no.exposure <- apply(lp50.rank,2,function(x) sum(is.infinite(x))==length(x))
+      lp50.rank[,no.exposure]<-NA
+      
+      # Rank LP50 values
+      lp50.rank <- apply(lp50.rank,2,FUN = function(x) x[order(x,decreasing = F,na.last = T)]) %>% 
+        .[,order(.[j,],decreasing = F,na.last = T)]
+      
+      # Now create plot
+      spatial.perc <- data.frame(RchID = colnames(lp50.rank))
+      spatial.perc <- left_join(spatial.perc,unique(lp50[,c("RchID","lenght")]))
+      spatial.perc$lenght <- 1
+      spatial.perc$cumsum <- cumsum(spatial.perc$lenght)
+      spatial.perc$x <- (100/sum(spatial.perc$lenght))*(spatial.perc$cumsum - (spatial.perc$lenght/2))
+      spatial.perc <- spatial.perc[,c(1,4)]
+      
+      temp.perc <- data.frame(Yr = 1:nrow(lp50.rank))
+      temp.perc$y <- (100/nrow(lp50.rank))*(temp.perc$Yr - (1/2))
+      temp.perc$Yr <- as.character(temp.perc$Yr)
+      
+      plot.df <- as.data.frame(lp50.rank) 
+      plot.df$Yr <- rownames(plot.df)
+      plot.df <- plot.df %>% pivot_longer(.,cols = starts_with("R"),names_to = "RchID",values_to = "STLP50") %>% as.data.frame()
+      plot.df <- left_join(plot.df,temp.perc)
+      plot.df <- left_join(plot.df,spatial.perc)
+      plot.df$STLP50 <- factor(with(plot.df, ifelse(STLP50 < 1,1,
+                                                    ifelse(STLP50 > 1 & STLP50 < 10,2,
+                                                           ifelse(STLP50 > 10 & STLP50 < 100,3,
+                                                                  ifelse(STLP50 > 100 & !(STLP50 ==Inf), 4,
+                                                                         ifelse(STLP50 == Inf,5,STLP50)))))),levels = c("1","2","3","4","5"))
+      
+      sorted.dfs[[paste0("CondP_",j,"_",combinations$Species[i],"_",combinations$Model_type[i])]] <- plot.df[plot.df$y==min(plot.df$y),]
+      
+      p<-ggplot(plot.df,aes(as.factor(x),as.factor(y))) + geom_tile(aes(fill = STLP50)) +
+        scale_x_discrete(paste0("Spatial percentile (n = ",nrow(spatial.perc),")"),breaks = as.factor(plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))]),
+                         labels = plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))] %>% round() %>% as.character()) +
+        scale_y_discrete(paste0("Temporal percentile (n = ",nrow(temp.perc),")")) +
+        scale_fill_manual("LP50", values = c("1" = "red","2" = "orange","3" = "yellow","4" = "forestgreen","5" = "lightskyblue1"),
+                          label = c("LP50 < 1", "1 < LP50 < 10", "10 < LP50 < 100","LP50 > 100","Effect free year","No effect"),
+                          drop = F,na.value = "lightsteelblue3") +
+        ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape") + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
+      ggsave(plot = p,paste0(output.folder,"ALL_",combinations$Species[i],"_",combinations$Model_type[i],"_conditioningPercentile",temp.perc$y[j],".png"),
+             width = 20, height = 15,units = "cm",dpi = 200)
+      
+      ls.output[[paste0("CondP_",j,"_",combinations$Species[i],"_",combinations$Model_type[i])]] <- p
+    }
+  }
+  return(list(plots = ls.output, dfs = sorted.dfs))
 }
 
 ######################### Residence time functions #############################
