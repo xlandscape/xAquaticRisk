@@ -158,28 +158,41 @@ createCatchmentPlotSTPEC <- function(scenario.path, plot.output.location,plot.na
 ######################### PEC functions ########################################
 readPECDataFromStore <- function(data.store.fpath,first.year,last.year){
   # initiate data store
-  df <- H5File$new(filename = data.store.fpath,
-                   mode = "r+")
+  df <- hdf5r::H5File$new(filename = data.store.fpath,
+                          mode = "r+")
   # create hourly time series
   start.time <- df[["Hydrology/TimeSeriesStart"]]$read() %>% strptime(.,format = "%Y-%m-%d %H:%M:%S",tz = "GMT")
   end.time <- df[["Hydrology/TimeSeriesEnd"]]$read() %>% strptime(.,format = "%Y-%m-%d %H:%M:%S",tz = "GMT")
   time.period <- data.frame(Tstamp = seq(start.time,(end.time+(3600)*24),by=3600))
   time.period$Year <- format(time.period$Tstamp,"%Y") %>% as.numeric()
   time.period$Month <- format(time.period$Tstamp,"%m") %>% as.numeric()
-
+  
   # Get reach IDs
   rch <- df[["Hydrology/Reaches"]]$read() %>% paste0("R",.)
-
-  df.1 <- pblapply(unique(time.period$Year) %>% .[.>=first.year&.<=last.year], function(yr){
+  yrs <- unique(time.period$Year) %>% .[.>=first.year&.<=last.year]
+  
+  maxPECs <- function(yrs){
     # initiate data store for each core
-    df <- H5File$new(filename = data.store.fpath,
-                     mode = "r+")
-    t1 <- df[["CascadeToxswa/ConLiqWatTgtAvgHrAvg"]][,(time.period$Year==yr & time.period$Month %in% c(4,5) & time.period$Year>=first.year & time.period$Year <= last.year)]
-    t2 <- data.frame(Year = yr, RchID = rch, Max_PEC_Avg = apply(t1,1,function(x) max(x)))
+    df <- hdf5r::H5File$new(filename = data.store.fpath,
+                            mode = "r+")
+    # t1 <- df[["CascadeToxswa/ConLiqWatTgtAvgHrAvg"]][,(time.period$Year==yrs & time.period$Month %in% c(4,5) & time.period$Year>=first.year & time.period$Year <= last.year)]
+    t1 <- df[["CascadeToxswa/ConLiqWatTgtAvgHrAvg"]][,(time.period$Year==yrs & time.period$Year>=first.year & time.period$Year <= last.year)]
+    if(is.null(nrow(t1))){
+      t2 <- data.frame(Year = yrs, RchID = rch, Max_PEC_Avg =  max(t1))
+    }else{
+      t2 <- data.frame(Year = yrs, RchID = rch, Max_PEC_Avg = apply(t1,1,function(x) max(x)))
+    }
+    
     # convert g/m3 to ug/L
     t2$Max_PEC_Avg <- (t2$Max_PEC_Avg * 1000)
     t2
-  }) %>% do.call(rbind,.)
+  }
+  cl <- makeCluster(getOption("cl.cores",detectCores()))
+  clusterExport(cl, c("data.store.fpath","rch","yrs","maxPECs","time.period","first.year","last.year"),
+                envir=environment())
+  df.1 <- parLapply(cl = cl, x = yrs, fun = maxPECs)
+  df.1 <- data.table::rbindlist(df.1)
+  
   return(df.1)
 }
 
@@ -197,34 +210,39 @@ medianPECValues <- function(max.pec,reach.info){
   return(medPEC)
 }
 
-createPECbyStrahlerPlot <- function(max.pec,reach.info,medPEC){
+createPECbyStrahlerPlot <- function(max.pec,
+                                    reach.info,
+                                    medPEC,
+                                    breaks_y = c(-5,-4,-3.-2.-1,0),
+                                    labels_y = c("0.000001","0.00001","0.0001","0.001","0.01","0.1"),
+                                    point_colour = "red",
+                                    linewidth = 0.75,
+                                    output.folder){
   vpos <- aggregate(.~strahler,data = reach.info[,c("strahler","width")],FUN = length)
   vpos <- vpos[order(vpos$strahler),]
   row.names(vpos) <- NULL
   vpos$x <- cumsum(vpos$width)
-
-  max.pec <- max.pec[,c("RchID","Year","strahler","Max_PEC_Avg")]
-  colnames(max.pec) <- c("Reach","Year","Strahler","Max_PEC")
-  max.pec <- max.pec[order(as.numeric(max.pec$Strahler),max.pec$Max_PEC),]
-  max.pec <- left_join(max.pec,unique(medPEC[,c("Reach", "rowID")]))
+  
+  max.pec <- left_join(max.pec,unique(medPEC[,c("Reach", "rowID","strahler")]),by = c("RchID"="Reach"))
+  max.pec <- max.pec[,c("rowID","RchID","Year","strahler","Max_PEC_Avg")]
+  colnames(max.pec) <- c("rowID","Reach","Year","strahler","Max_PEC")
+  max.pec <- max.pec[order(as.numeric(max.pec$strahler),max.pec$Max_PEC),]
   max.pec$Max_PEC <- ifelse(max.pec$Max_PEC==0,NA,max.pec$Max_PEC)
-
+  
   PEC.plots <- ggplot() +
     # Basic line plot
     geom_point(data = max.pec,
                aes(x = rowID,y = log10(Max_PEC),
-                   group = as.factor(Strahler)),
-               colour = "red",
-               lwd = 0.75,alpha = 0.05) +
+                   group = as.factor(strahler)),
+               colour = "red", #pointcolour,
+               alpha = 0.5,lwd = 0.75) +#
     geom_line(data = medPEC,
               aes(x = rowID,y = log10(Max_PEC),
-                  group = as.factor(strahler)),colour = "black",lwd = 0.75) +
-    guides(colour = F) +
+                  group = as.factor(strahler)),colour = "black",lwd = 0.75) +  #lwd = linewidth
+    guides(colour = "none") +
     scale_y_continuous(paste0("Concentration (","\u00B5","g/L)"),
-                       # breaks = trans_breaks("log10", function(x) 10^x,n = 8),
-                       # labels = trans_format("log10", label_math(10^.x)),
-                       breaks = c(-6,-5,-4,-3,-2,-1),
-                       labels = c("0.000001","0.00001","0.0001","0.001","0.01","0.1")) +
+                       breaks = c(-6,-5,-4,-3,-2,-1), # breaks_y
+                       labels = c("0.000001","0.00001","0.0001","0.001","0.01","0.1")) + #labels_y
     # Add vertical lines to delineate Strahler order
     geom_vline(data = vpos[,1:3],
                aes(xintercept = x),
@@ -236,12 +254,14 @@ createPECbyStrahlerPlot <- function(max.pec,reach.info,medPEC){
                        limits = c(0,max(vpos$x)),
                        expand = c(0,20)) +
     coord_cartesian(ylim = c(-6.5, 0)) +
-    ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
+    ggtitle("Model: xAquatic v2.73\nHydrology: diffusive wave, T-shape") +
     theme_bw() +
     theme(text = element_text(size = 12),axis.text = element_text(size = 12),plot.title = element_text(size = 6,hjust = 1)) +
-    geom_text(data = data.frame(x = vpos$x,y = c(-2,-2,-2,-2),
+    geom_text(data = data.frame(x = vpos$x,y = rep(-1,nrow(vpos)),
                                 labels = paste0(c("Strahler order 1",as.character(vpos$strahler[!vpos$strahler==1])))),
               aes(x = x, y = y, label = labels), size = 6, hjust = "inward")
+  ggsave(plot = PEC.plots,paste0(output.folder,"./PEC_",".png"),
+         width = 20, height = 15,units = "cm",dpi = 200)
   return(PEC.plots)
 }
 
