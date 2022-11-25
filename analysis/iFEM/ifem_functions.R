@@ -265,6 +265,77 @@ createPECbyStrahlerPlot <- function(max.pec,
   return(PEC.plots)
 }
 
+createSpatialTemporalPECPlots <- function(max.pec,assessment.period,reach.info,output.folder,temporal.conditioning.year,min.concentration, max.concentration,log.steps.concentration.range){
+  
+  PEC <- max.pec
+  PEC <- PEC[PEC$Year %in% assessment.period,]
+  pec.mat <- PEC[,c("Max_PEC_Avg","Year","RchID")] %>% pivot_wider(.,names_from = "RchID",values_from = "Max_PEC_Avg") %>% as.data.frame()
+  PEC <- left_join(PEC,reach.info,by = "RchID")
+  
+  ls.output <- list()
+  sorted.dfs <- list()
+  for (j in temporal.conditioning.year){
+    pec.rank <- pec.mat
+    rownames(pec.rank) <- pec.rank$Year
+    pec.rank <- pec.rank[,-1] %>% as.matrix()
+    # give unexposed reaches NA
+    no.exposure <- apply(pec.rank,2,function(x) sum(x)==0)
+    pec.rank[,no.exposure]<-NA
+    
+    # Rank pec values
+    pec.rank <- apply(pec.rank,2,FUN = function(x) x[order(x,decreasing = T,na.last = T)]) %>% 
+      .[,order(.[j,],decreasing = T,na.last = T)]
+    
+    # Now create plot
+    spatial.perc <- data.frame(RchID = colnames(pec.rank))
+    spatial.perc <- left_join(spatial.perc,unique(PEC[,c("RchID","lenght")]))
+    spatial.perc$lenght <- 1
+    spatial.perc$cumsum <- cumsum(spatial.perc$lenght)
+    spatial.perc$x <- (100/sum(spatial.perc$lenght))*(spatial.perc$cumsum - (spatial.perc$lenght/2))
+    spatial.perc <- spatial.perc[,c(1,4)]
+    
+    temp.perc <- data.frame(Yr = 1:nrow(pec.rank))
+    temp.perc$y <- (100/nrow(pec.rank))*(temp.perc$Yr - (1/2))
+    temp.perc$Yr <- as.character(temp.perc$Yr)
+    
+    plot.df <- as.data.frame(pec.rank) 
+    plot.df$Yr <- rownames(plot.df)
+    plot.df <- plot.df %>% pivot_longer(.,cols = starts_with("R"),names_to = "RchID",values_to = "STPEC") %>% as.data.frame()
+    plot.df <- left_join(plot.df,temp.perc)
+    plot.df <- left_join(plot.df,spatial.perc)
+    plot.df$y <- round(plot.df$y)
+    # plot.df$STPEC[is.na(plot.df$STPEC)] <- 0
+    
+    # now bin data in user defined bins, first get bin values then cut PEC values
+    bn1 <- c(-Inf,seq(log10(min.concentration), log10(max.concentration), 
+                      by = log.steps.concentration.range))
+    
+    plot.df$STPEC <- cut(log10(plot.df$STPEC),breaks = bn1)
+    # plot.df$STPEC <- ifelse(plot.df$STPEC == 1,NA,plot.df$STPEC)
+    
+    sorted.dfs[[paste0("sorted_pecs")]] <- plot.df[plot.df$y==min(plot.df$y),]
+    
+    p<-ggplot(plot.df,aes(as.factor(x),as.factor(y))) + geom_tile(aes(fill = as.factor(STPEC))) +
+      
+      scale_x_discrete (paste0("Spatial percentile (n = ",nrow(spatial.perc),")"),breaks = as.factor(plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))]),
+                        labels = plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))] %>% round() %>% as.character()) +
+      scale_y_discrete(paste0("Temporal percentile (n = ",nrow(temp.perc),")")) +
+      scale_fill_brewer(paste0("Concentration (","\u00B5","g/L)"), na.value = "lightsteelblue3",
+                        palette = "Spectral", direction = -1,labels = c(paste0("<",as.character(signif(10^(bn1[-1]),3))), "No Exposure")) +
+      # breaks = trans_breaks("log10", function(x) 10^x,n = 8),
+      # labels = trans_format("log10", label_math(10^.x)),
+      # breaks = c(-6,-5,-4,-3,-2,-1),
+      # labels = c("0.000001","0.00001","0.0001","0.001","0.01","0.1")) +
+      ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape") + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
+    ggsave(plot = p,paste0(output.folder,"/PEC_plot_conditioningPercentile_",temp.perc$y[j],".png"),
+           width = 20, height = 15,units = "cm",dpi = 200)
+    
+    ls.output[[paste0("PEC_plot")]] <- p
+  }
+  return(list(plots = ls.output, dfs = sorted.dfs))
+}
+
+
 ####################### Lp50 functions ###########################
 readLP50DataFromStore <- function(data.store.fpath,first.year,last.year,reach.info){
   # initiate data store
