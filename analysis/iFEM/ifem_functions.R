@@ -24,27 +24,19 @@ checkAndLoadPackages <- function(required.packages = c("devtools","tidyverse","d
 }
 
 # Wrapper functions to prepare notebook work environments
-prepareEnvironmentR <- function(){
-  params <- parse_args(
-    OptionParser(
-      option_list = list(
-        make_option("--source", type = "character", help = "The path to the source file containing predefined functions"),
-        make_option("--hydrography", type = "character", help = "The path to the shapefile containing the hydrography"),
-        make_option("--start", type = "character", help = "The first day of the simulation period"),
-        make_option("--end", type = "character", help = "The last day of the simulation period"),
-        make_option("--application_window", type = "character", help = "The application period"),
-        make_option("--lib", type = "character", help = "Additional library path for R packages")
-      )
-    ),
-    positional_arguments = TRUE
-  )
-  .libPaths(c(params$options$lib, .libPaths()))
-  params$first_year <- as.integer(substr(params$options$start, 1, 4))
-  params$last_year <- as.integer(substr(params$options$end, 1, 4))
-  params$first_app_month <- as.integer(substr(params$options$application_window, 1, 2))
-  params$first_app_day <- as.integer(substr(params$options$application_window, 4, 5))
-  params$last_app_month <- as.integer(substr(params$options$application_window, 10, 11))
-  params$last_app_day <- as.integer(substr(params$options$application_window, 13, 14))
+prepareEnvironmentR <- function(first.year, last.year,
+                                first.application.day,
+                                last.application.day,
+                                first.application.month,
+                                last.application.month,libPath){
+  .libPaths(c(libPath, .libPaths()))
+  params <- NULL
+  params$first_year <- as.integer(first.year)
+  params$last_year <- as.integer(last.year)
+  params$first_app_month <- as.integer(first.application.month)
+  params$first_app_day <- as.integer(first.application.day)
+  params$last_app_month <- as.integer(last.application.month)
+  params$last_app_day <- as.integer(last.application.day)
   
   options(scipen = 999)
   suppressWarnings(suppressMessages(checkAndLoadPackages(library.loc = libPath)))
