@@ -18,9 +18,9 @@
             enabled_expression="'$(RunCascadeToxswa)'.lower() == 'true' and '$(RunLGuts)'.lower() == 'true'"
         >
             <Data>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\arr.dat</Data>
-            <Script>$(_PARAM_DIR_)\analysis\iFEM\iFEM_analysis.R</Script>
+            <Script>$(_PARAM_DIR_)\analysis\iFEM\ifem_analysis.R</Script>
             <Output_Folder>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\analysis</Output_Folder>
-            <Source>$(_PARAM_DIR_)\analysis\iFEM\iFEM_functions.R</Source>
+            <Source>$(_PARAM_DIR_)\analysis\iFEM\ifem_functions.R</Source>
             <Hydrography>$(_SCENARIO_DIR_)\geo\ReachList_shp.shp</Hydrography>
             <Start>$(SimulationStart)</Start>
             <End>$(SimulationEnd)</End>
