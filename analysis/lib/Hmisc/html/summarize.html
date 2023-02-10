@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Summarize Scalars or Matrices by Cross-Classification</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for summarize {Hmisc}"><tr><td>summarize {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Summarize Scalars or Matrices by Cross-Classification</h2>
+
+<h3>Description</h3>
+
+<p><code>summarize</code> is a fast version of <code>summary.formula(formula,
+method="cross",overall=FALSE)</code> for producing stratified summary statistics
+and storing them in a data frame for plotting (especially with trellis
+<code>xyplot</code> and <code>dotplot</code> and Hmisc <code>xYplot</code>).  Unlike
+<code>aggregate</code>, <code>summarize</code> accepts a matrix as its first
+argument and a multi-valued <code>FUN</code>
+argument and <code>summarize</code> also labels the variables in the new data
+frame using their original names.  Unlike methods based on
+<code>tapply</code>, <code>summarize</code> stores the values of the stratification
+variables using their original types, e.g., a numeric <code>by</code> variable
+will remain a numeric variable in the collapsed data frame.
+<code>summarize</code> also retains <code>"label"</code> attributes for variables.
+<code>summarize</code> works especially well with the Hmisc <code>xYplot</code>
+function for displaying multiple summaries of a single variable on each
+panel, such as means and upper and lower confidence limits.
+</p>
+<p><code>asNumericMatrix</code> converts a data frame into a numeric matrix,
+saving attributes to reverse the process by <code>matrix2dataframe</code>.
+It saves attributes that are commonly preserved across row
+subsetting (i.e., it does not save <code>dim</code>, <code>dimnames</code>, or
+<code>names</code> attributes).
+</p>
+<p><code>matrix2dataFrame</code> converts a numeric matrix back into a data
+frame if it was created by <code>asNumericMatrix</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+summarize(X, by, FUN, ..., 
+          stat.name=deparse(substitute(X)),
+          type=c('variables','matrix'), subset=TRUE,
+          keepcolnames=FALSE)
+
+asNumericMatrix(x)
+
+matrix2dataFrame(x, at=attr(x, 'origAttributes'), restoreAll=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>X</code></td>
+<td>
+
+<p>a vector or matrix capable of being operated on by the
+function specified as the <code>FUN</code> argument
+</p>
+</td></tr>
+<tr valign="top"><td><code>by</code></td>
+<td>
+
+<p>one or more stratification variables.  If a single
+variable, <code>by</code> may be a vector, otherwise it should be a list.
+Using the Hmisc <code>llist</code> function instead of <code>list</code> will result
+in individual variable names being accessible to <code>summarize</code>.  For
+example, you can specify <code>llist(age.group,sex)</code> or
+<code>llist(Age=age.group,sex)</code>.  The latter gives <code>age.group</code> a
+new temporary name, <code>Age</code>. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>FUN</code></td>
+<td>
+
+<p>a function of a single vector argument, used to create the statistical
+summaries for <code>summarize</code>.  <code>FUN</code> may compute any number of
+statistics. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>extra arguments are passed to <code>FUN</code></p>
+</td></tr>
+<tr valign="top"><td><code>stat.name</code></td>
+<td>
+
+<p>the name to use when creating the main summary variable.  By default,
+the name of the <code>X</code> argument is used.  Set <code>stat.name</code> to
+<code>NULL</code> to suppress this name replacement.
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>Specify <code>type="matrix"</code> to store the summary variables (if there are
+more than one) in a matrix.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>a logical vector or integer vector of subscripts used to specify the
+subset of data to use in the analysis.  The default is to use all
+observations in the data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>keepcolnames</code></td>
+<td>
+<p>by default when <code>type="matrix"</code>, the first
+column of the computed matrix is the name of the first argument to
+<code>summarize</code>.  Set <code>keepcolnames=TRUE</code> to retain the name of
+the first column created by <code>FUN</code></p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a data frame (for <code>asNumericMatrix</code>) or a numeric matrix (for
+<code>matrix2dataFrame</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>at</code></td>
+<td>
+<p>List containing attributes of original data frame that survive
+subsetting. Defaults to attribute <code>"origAttributes"</code> of the
+object <code>x</code>, created by the call to <code>asNumericMatrix</code></p>
+</td></tr>
+<tr valign="top"><td><code>restoreAll</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to only restore attributes <code>label</code>,
+<code>units</code>, and <code>levels</code> instead of all attributes
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>For <code>summarize</code>, a data frame containing the <code>by</code> variables and the
+statistical summaries (the first of which is named the same as the <code>X</code>
+variable unless <code>stat.name</code> is given).  If <code>type="matrix"</code>, the
+summaries are stored in a single variable in the data frame, and this
+variable is a matrix.
+</p>
+<p><code>asNumericMatrix</code> returns a numeric matrix and stores an object
+<code>origAttributes</code> as an attribute of the returned object, with original
+attributes of component variables, the <code>storage.mode</code>. 
+</p>
+<p><code>matrix2dataFrame</code> returns a data frame.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../Hmisc/help/cut2.html">cut2</a></code>, <code><a href="../../Hmisc/help/llist.html">llist</a></code>, <code><a href="../../base/html/by.html">by</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+s &lt;- summarize(ap&gt;1, llist(size=cut2(sz, g=4), bone), mean,
+               stat.name='Proportion')
+dotplot(Proportion ~ size | bone, data=s7)
+
+## End(Not run)
+
+set.seed(1)
+temperature &lt;- rnorm(300, 70, 10)
+month &lt;- sample(1:12, 300, TRUE)
+year  &lt;- sample(2000:2001, 300, TRUE)
+g &lt;- function(x)c(Mean=mean(x,na.rm=TRUE),Median=median(x,na.rm=TRUE))
+summarize(temperature, month, g)
+mApply(temperature, month, g)
+
+mApply(temperature, month, mean, na.rm=TRUE)
+w &lt;- summarize(temperature, month, mean, na.rm=TRUE)
+library(lattice)
+xyplot(temperature ~ month, data=w) # plot mean temperature by month
+
+w &lt;- summarize(temperature, llist(year,month), 
+               quantile, probs=c(.5,.25,.75), na.rm=TRUE, type='matrix')
+xYplot(Cbind(temperature[,1],temperature[,-1]) ~ month | year, data=w)
+mApply(temperature, llist(year,month),
+       quantile, probs=c(.5,.25,.75), na.rm=TRUE)
+
+# Compute the median and outer quartiles.  The outer quartiles are
+# displayed using "error bars"
+set.seed(111)
+dfr &lt;- expand.grid(month=1:12, year=c(1997,1998), reps=1:100)
+attach(dfr)
+y &lt;- abs(month-6.5) + 2*runif(length(month)) + year-1997
+s &lt;- summarize(y, llist(month,year), smedian.hilow, conf.int=.5)
+s
+mApply(y, llist(month,year), smedian.hilow, conf.int=.5)
+
+xYplot(Cbind(y,Lower,Upper) ~ month, groups=year, data=s, 
+       keys='lines', method='alt')
+# Can also do:
+s &lt;- summarize(y, llist(month,year), quantile, probs=c(.5,.25,.75),
+               stat.name=c('y','Q1','Q3'))
+xYplot(Cbind(y, Q1, Q3) ~ month, groups=year, data=s, keys='lines')
+# To display means and bootstrapped nonparametric confidence intervals
+# use for example:
+s &lt;- summarize(y, llist(month,year), smean.cl.boot)
+xYplot(Cbind(y, Lower, Upper) ~ month | year, data=s)
+
+# For each subject use the trapezoidal rule to compute the area under
+# the (time,response) curve using the Hmisc trap.rule function
+x &lt;- cbind(time=c(1,2,4,7, 1,3,5,10),response=c(1,3,2,4, 1,3,2,4))
+subject &lt;- c(rep(1,4),rep(2,4))
+trap.rule(x[1:4,1],x[1:4,2])
+summarize(x, subject, function(y) trap.rule(y[,1],y[,2]))
+
+## Not run: 
+# Another approach would be to properly re-shape the mm array below
+# This assumes no missing cells.  There are many other approaches.
+# mApply will do this well while allowing for missing cells.
+m &lt;- tapply(y, list(year,month), quantile, probs=c(.25,.5,.75))
+mm &lt;- array(unlist(m), dim=c(3,2,12), 
+            dimnames=list(c('lower','median','upper'),c('1997','1998'),
+                          as.character(1:12)))
+# aggregate will help but it only allows you to compute one quantile
+# at a time; see also the Hmisc mApply function
+dframe &lt;- aggregate(y, list(Year=year,Month=month), quantile, probs=.5)
+
+# Compute expected life length by race assuming an exponential
+# distribution - can also use summarize
+g &lt;- function(y) { # computations for one race group
+  futime &lt;- y[,1]; event &lt;- y[,2]
+  sum(futime)/sum(event)  # assume event=1 for death, 0=alive
+}
+mApply(cbind(followup.time, death), race, g)
+
+# To run mApply on a data frame:
+xn &lt;- asNumericMatrix(x)
+m &lt;- mApply(xn, race, h)
+# Here assume h is a function that returns a matrix similar to x
+matrix2dataFrame(m)
+
+
+# Get stratified weighted means
+g &lt;- function(y) wtd.mean(y[,1],y[,2])
+summarize(cbind(y, wts), llist(sex,race), g, stat.name='y')
+mApply(cbind(y,wts), llist(sex,race), g)
+
+# Compare speed of mApply vs. by for computing 
+d &lt;- data.frame(sex=sample(c('female','male'),100000,TRUE),
+                country=sample(letters,100000,TRUE),
+                y1=runif(100000), y2=runif(100000))
+g &lt;- function(x) {
+  y &lt;- c(median(x[,'y1']-x[,'y2']),
+         med.sum =median(x[,'y1']+x[,'y2']))
+  names(y) &lt;- c('med.diff','med.sum')
+  y
+}
+
+system.time(by(d, llist(sex=d$sex,country=d$country), g))
+system.time({
+             x &lt;- asNumericMatrix(d)
+             a &lt;- subsAttr(d)
+             m &lt;- mApply(x, llist(sex=d$sex,country=d$country), g)
+            })
+system.time({
+             x &lt;- asNumericMatrix(d)
+             summarize(x, llist(sex=d$sex, country=d$country), g)
+            })
+
+# An example where each subject has one record per diagnosis but sex of
+# subject is duplicated for all the rows a subject has.  Get the cross-
+# classified frequencies of diagnosis (dx) by sex and plot the results
+# with a dot plot
+
+count &lt;- rep(1,length(dx))
+d &lt;- summarize(count, llist(dx,sex), sum)
+Dotplot(dx ~ count | sex, data=d)
+
+## End(Not run)
+d &lt;- list(x=1:10, a=factor(rep(c('a','b'), 5)),
+          b=structure(letters[1:10], label='label for b'),
+          d=c(rep(TRUE,9), FALSE), f=pi*(1 : 10))
+x &lt;- asNumericMatrix(d)
+attr(x, 'origAttributes')
+matrix2dataFrame(x)
+
+detach('dfr')
+
+# Run summarize on a matrix to get column means
+x &lt;- c(1:19,NA)
+y &lt;- 101:120
+z &lt;- cbind(x, y)
+g &lt;- c(rep(1, 10), rep(2, 10))
+summarize(z, g, colMeans, na.rm=TRUE, stat.name='x')
+# Also works on an all numeric data frame
+summarize(as.data.frame(z), g, colMeans, na.rm=TRUE, stat.name='x')
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

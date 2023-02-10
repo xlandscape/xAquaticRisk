@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Merge Multiple Data Frames or Data Tables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for Merge {Hmisc}"><tr><td>Merge {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Merge Multiple Data Frames or Data Tables</h2>
+
+<h3>Description</h3>
+
+<p>Merges an arbitrarily large series of data frames or data tables containing common <code>id</code> variables.  Information about number of observations and number of unique <code>id</code>s in individual and final merged datasets is printed.  The first data frame/table has special meaning in that all of its observations are kept whether they match <code>id</code>s in other data frames or not.  For all other data frames, by default non-matching observations are dropped.  The first data frame is also the one against which counts of unique <code>id</code>s are compared.  Sometimes <code>merge</code> drops variable attributes such as <code>labels</code> and <code>units</code>.  These are restored by <code>Merge</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Merge(..., id = NULL, all = TRUE, verbose = TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>two or more dataframes or data tables</p>
+</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+<p>a formula containing all the identification variables such that the combination of these variables uniquely identifies subjects or records of interest.  May be omitted for data tables; in that case the <code>key</code> function retrieves the id variables.</p>
+</td></tr>
+<tr valign="top"><td><code>all</code></td>
+<td>
+<p>set to <code>FALSE</code> to drop observations not found in second and later data frames (only applies if not using <code>data.table</code>)</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p>set to <code>FALSE</code> to not print information about observations</p>
+</td></tr>
+</table>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+a &lt;- data.frame(sid=1:3, age=c(20,30,40))
+b &lt;- data.frame(sid=c(1,2,2), bp=c(120,130,140))
+d &lt;- data.frame(sid=c(1,3,4), wt=c(170,180,190))
+all &lt;- Merge(a, b, d, id = ~ sid)
+# First file should be the master file and must
+# contain all ids that ever occur.  ids not in the master will
+# not be merged from other datasets.
+a &lt;- data.table(a); setkey(a, sid)
+# data.table also does not allow duplicates without allow.cartesian=TRUE
+b &lt;- data.table(sid=1:2, bp=c(120,130)); setkey(b, sid)
+d &lt;- data.table(d); setkey(d, sid)
+all &lt;- Merge(a, b, d)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

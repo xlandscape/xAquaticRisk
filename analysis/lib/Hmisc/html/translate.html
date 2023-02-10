@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Translate Vector or Matrix of Text Strings</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for translate {Hmisc}"><tr><td>translate {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Translate Vector or Matrix of Text Strings
+</h2>
+
+<h3>Description</h3>
+
+<p>Uses the UNIX tr command to translate any character in <code>old</code> in
+<code>text</code> to the corresponding character in <code>new</code>.  If multichar=T
+or <code>old</code> and <code>new</code> have more than one element, or each have one element
+but they have different numbers of characters,
+uses the UNIX <code>sed</code> command to translate the series of characters in
+<code>old</code> to the series in <code>new</code> when these characters occur in <code>text</code>.
+If <code>old</code> or <code>new</code> contain a backslash, you sometimes have to quadruple
+it to make the UNIX command work. If they contain a forward slash,
+preceed it by two backslashes.  Invokes the builtin chartr function if
+<code>multichar=FALSE</code>. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+translate(text, old, new, multichar=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>text</code></td>
+<td>
+
+<p>scalar, vector, or matrix of character strings to translate.
+</p>
+</td></tr>
+<tr valign="top"><td><code>old</code></td>
+<td>
+
+<p>vector old characters
+</p>
+</td></tr>
+<tr valign="top"><td><code>new</code></td>
+<td>
+
+<p>corresponding vector of new characters
+</p>
+</td></tr>
+<tr valign="top"><td><code>multichar</code></td>
+<td>
+<p>See above.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>an object like text but with characters translated
+</p>
+
+
+<h3>See Also</h3>
+
+<p>grep</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+translate(c("ABC","DEF"),"ABCDEFG", "abcdefg")
+translate("23.12","[.]","\\cdot ") # change . to \cdot
+translate(c("dog","cat","tiger"),c("dog","cat"),c("DOG","CAT"))
+# S-Plus gives  [1] "DOG"   "CAT"   "tiger" - check discrepency
+translate(c("dog","cat2","snake"),c("dog","cat"),"animal")
+# S-Plus gives  [1] "animal"  "animal2" "snake" 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

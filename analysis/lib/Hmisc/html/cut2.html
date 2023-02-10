@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Cut a Numeric Variable into Intervals</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for cut2 {Hmisc}"><tr><td>cut2 {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Cut a Numeric Variable into Intervals</h2>
+
+<h3>Description</h3>
+
+<p>Function like cut but left endpoints are inclusive and labels are of
+the form <code>[lower, upper)</code>, except that last interval is <code>[lower,upper]</code>.  
+If cuts are given, will by default make sure that cuts include entire
+range of <code>x</code>.
+Also, if cuts are not given, will cut <code>x</code> into quantile groups 
+(<code>g</code> given) or groups
+with a given minimum number of observations (<code>m</code>).  Whereas cut creates a
+category object, <code>cut2</code> creates a factor object.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+cut2(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
+oneval=TRUE, onlycuts=FALSE, formatfun=format, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>numeric vector to classify into intervals
+</p>
+</td></tr>
+<tr valign="top"><td><code>cuts</code></td>
+<td>
+
+<p>cut points
+</p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+
+<p>desired minimum number of observations in a group.  The algorithm does
+not guarantee that all groups will have at least <code>m</code> observations.
+</p>
+</td></tr>
+<tr valign="top"><td><code>g</code></td>
+<td>
+
+<p>number of quantile groups
+</p>
+</td></tr>
+<tr valign="top"><td><code>levels.mean</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to make the new categorical vector have levels attribute that is
+the group means of <code>x</code> instead of interval endpoint labels
+</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>number of significant digits to use in constructing levels.  Default is 3
+(5 if <code>levels.mean=TRUE</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>minmax</code></td>
+<td>
+
+<p>if cuts is specified but <code>min(x)&lt;min(cuts)</code> or <code>max(x)&gt;max(cuts)</code>, augments
+cuts to include min and max <code>x</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>oneval</code></td>
+<td>
+
+<p>if an interval contains only one unique value, the interval will be
+labeled with the formatted version of that value instead of the
+interval endpoints, unless <code>oneval=FALSE</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>onlycuts</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to only return the vector of computed cuts.  This
+consists of the interior values plus outer ranges.
+</p>
+</td></tr>
+<tr valign="top"><td><code>formatfun</code></td>
+<td>
+
+<p>formatting function, supports formula notation (if <code>rlang</code> is installed)
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>additional arguments passed to <code>formatfun</code>
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a factor variable with levels of the form <code>[a,b)</code> or formatted means
+(character strings) unless <code>onlycuts</code> is <code>TRUE</code> in which case
+a numeric vector is returned
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/cut.html">cut</a></code>, <code><a href="../../stats/html/quantile.html">quantile</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- runif(1000, 0, 100)
+z &lt;- cut2(x, c(10,20,30))
+table(z)
+table(cut2(x, g=10))      # quantile groups
+table(cut2(x, m=50))      # group x into intevals with at least 50 obs.
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

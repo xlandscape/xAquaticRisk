@@ -1,0 +1,395 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Update a Data Frame or Cleanup a Data Frame after Importing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for upData {Hmisc}"><tr><td>upData {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Update a Data Frame or Cleanup a Data Frame after Importing
+</h2>
+
+<h3>Description</h3>
+
+<p><code>cleanup.import</code> will correct errors and shrink
+the size of data frames.  By default, double precision numeric
+variables are changed to integer when they contain no fractional components. 
+Infinite values or values greater than 1e20 in absolute value are set
+to NA.  This solves problems of importing Excel spreadsheets that
+contain occasional character values for numeric columns, as S
+converts these to <code>Inf</code> without warning.  There is also an option to
+convert variable names to lower case and to add labels to variables.
+The latter can be made easier by importing a CNTLOUT dataset created
+by SAS PROC FORMAT and using the <code>sasdict</code> option as shown in the
+example below.  <code>cleanup.import</code> can also transform character or
+factor variables to dates.
+</p>
+<p><code>upData</code> is a function facilitating the updating of a data frame
+without attaching it in search position one.  New variables can be
+added, old variables can be modified, variables can be removed or renamed, and
+<code>"labels"</code> and <code>"units"</code> attributes can be provided.
+Observations can be subsetted.  Various checks
+are made for errors and inconsistencies, with warnings issued to help
+the user.  Levels of factor variables can be replaced, especially
+using the <code>list</code> notation of the standard <code>merge.levels</code>
+function.  Unless <code>force.single</code> is set to <code>FALSE</code>, 
+<code>upData</code> also converts double precision vectors to integer if no
+fractional values are present in 
+a vector.  <code>upData</code> is also used to process R workspace objects
+created by StatTransfer, which puts variable and value labels as attributes on
+the data frame rather than on each variable. If such attributes are
+present, they are used to define all the labels and value labels
+(through conversion to factor variables) before any label changes
+take place, and <code>force.single</code> is set to a default of
+<code>FALSE</code>, as StatTransfer already does conversion to integer.
+</p>
+<p>Variables having labels but not classed <code>"labelled"</code> (e.g., data
+imported using the <code>haven</code> package) have that class added to them
+by <code>upData</code>.
+</p>
+<p>The <code>dataframeReduce</code> function removes variables from a data frame
+that are problematic for certain analyses.  Variables can be removed
+because the fraction of missing values exceeds a threshold, because they
+are character or categorical variables having too many levels, or
+because they are binary and have too small a prevalence in one of the
+two values.  Categorical variables can also have their levels combined
+when a level is of low prevalence.  A data frame listing actions take
+is return as attribute <code>"info"</code> to the main returned data frame.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+cleanup.import(obj, labels, lowernames=FALSE, 
+               force.single=TRUE, force.numeric=TRUE, rmnames=TRUE,
+               big=1e20, sasdict, print, datevars=NULL, datetimevars=NULL,
+               dateformat='%F',
+               fixdates=c('none','year'),
+               autodate=FALSE, autonum=FALSE, fracnn=0.3,
+               considerNA=NULL, charfactor=FALSE)
+
+upData(object, ..., 
+       subset, rename, drop, keep, labels, units, levels, force.single=TRUE,
+       lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE,
+       charfactor=FALSE, print=TRUE, html=FALSE)
+
+dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>a data frame or list</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>a data frame or list</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a data frame</p>
+</td></tr>
+<tr valign="top"><td><code>force.single</code></td>
+<td>
+
+<p>By default, double precision variables are converted to single precision
+(in S-Plus only) unless <code>force.single=FALSE</code>.
+<code>force.single=TRUE</code> will also convert vectors having only integer
+values to have a storage mode of integer, in R or S-Plus.
+</p>
+</td></tr>
+<tr valign="top"><td><code>force.numeric</code></td>
+<td>
+
+<p>Sometimes importing will cause a numeric variable to be
+changed to a factor vector.  By default, <code>cleanup.import</code> will check
+each factor variable to see if the levels contain only numeric values
+and <code>""</code>.  In that case, the variable will be converted to numeric,
+with <code>""</code> converted to NA.  Set <code>force.numeric=FALSE</code> to prevent
+this behavior. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>rmnames</code></td>
+<td>
+
+<p>set to &lsquo;F&rsquo; to not have &lsquo;cleanup.import&rsquo; remove &lsquo;names&rsquo; or &lsquo;.Names&rsquo;
+attributes from variables
+</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+
+<p>a character vector the same length as the number of variables in
+<code>obj</code>.  These character values are taken to be variable labels in the
+same order of variables in <code>obj</code>.
+For <code>upData</code>, <code>labels</code> is a named list or named vector
+with variables in no specific order.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lowernames</code></td>
+<td>
+
+<p>set this to <code>TRUE</code> to change variable names to lower case.
+<code>upData</code> does this before applying any other changes, so variable
+names given inside arguments to <code>upData</code> need to be lower case if
+<code>lowernames==TRUE</code>. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>big</code></td>
+<td>
+
+<p>a value such that values larger than this in absolute value are set to
+missing by <code>cleanup.import</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>sasdict</code></td>
+<td>
+
+<p>the name of a data frame containing a raw imported SAS PROC CONTENTS
+CNTLOUT= dataset.  This is used to define variable names and to add
+attributes to the new data frame specifying the original SAS dataset
+name and label.
+</p>
+</td></tr>
+<tr valign="top"><td><code>print</code></td>
+<td>
+
+<p>set to <code>TRUE</code> or <code>FALSE</code> to force or prevent printing of the current
+variable number being processed.  By default, such messages are printed if the
+product of the number of variables and number of observations in <code>obj</code>
+exceeds 500,000.  For <code>dataframeReduce</code> set <code>print</code> to
+<code>FALSE</code> to suppress printing information about dropped or
+modified variables.  Similar for <code>upData</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>datevars</code></td>
+<td>
+<p>character vector of names (after <code>lowernames</code> is
+applied) of variables to consider as a factor or character vector
+containing dates in a format matching <code>dateformat</code>.  The
+default is <code>"%F"</code> which uses the yyyy-mm-dd format.</p>
+</td></tr>
+<tr valign="top"><td><code>datetimevars</code></td>
+<td>
+<p>character vector of names (after <code>lowernames</code>
+is applied) of variables to consider to be date-time variables, with
+date formats as described under <code>datevars</code> followed by a space
+followed by time in hh:mm:ss format.  <code>chron</code> is used to store
+date-time variables.  If all times in the variable
+are 00:00:00 the variable will be converted to an ordinary date variable.</p>
+</td></tr>
+<tr valign="top"><td><code>dateformat</code></td>
+<td>
+<p>for <code>cleanup.import</code> is the input format (see
+<code><a href="../../base/html/strptime.html">strptime</a></code>)</p>
+</td></tr>
+<tr valign="top"><td><code>fixdates</code></td>
+<td>
+<p>for any of the variables listed in <code>datevars</code>
+that have a <code>dateformat</code> that <code>cleanup.import</code> understands,
+specifying <code>fixdates</code> allows corrections of certain formatting
+inconsistencies before the fields are attempted to be converted to
+dates (the default is to assume that the <code>dateformat</code> is followed
+for all observation for <code>datevars</code>).  Currently
+<code>fixdates='year'</code> is implemented, which will cause 2-digit or
+4-digit years to be shifted to the alternate number of digits when
+<code>dateform</code> is the default <code>"%F"</code> or is <code>"%y-%m-%d"</code>,
+<code>"%m/%d/%y"</code>, or <code>"%m/%d/%Y"</code>.  Two-digits years are padded with <code>20</code>
+on the left.  Set <code>dateformat</code> to the desired format, not the
+exceptional format.
+</p>
+</td></tr>
+<tr valign="top"><td><code>autodate</code></td>
+<td>
+<p>set to <code>TRUE</code> to have <code>cleanup.import</code>
+determine and automatically handle factor or character 
+vectors that mainly contain dates of the form YYYY-mm-dd,
+mm/dd/YYYY, YYYY, or mm/YYYY, where the later two are imputed to,
+respectively, July 3 and the 15th of the month.  Takes effect when
+the fraction of non-dates (of non-missing values) is less than
+<code>fracnn</code> to allow for some free text such as <code>"unknown"</code>.
+Attributes 
+<code>special.miss</code> and <code>imputed</code> are created for the vector so
+that <code>describe()</code> will inform the user.  Illegal values are
+converted to <code>NA</code>s and stored in the <code>special.miss</code> attribute.</p>
+</td></tr>
+<tr valign="top"><td><code>autonum</code></td>
+<td>
+<p>set to <code>TRUE</code> to have <code>cleanup.import</code>
+examine (after <code>autodate</code>) character and factor variables to
+see if they are legal numerics exact for at most a fraction of
+<code>fracnn</code> of non-missing non-numeric values.  Qualifying variables are
+converted to numeric, and illegal values set to <code>NA</code> and stored in
+the <code>special.miss</code> attribute to enhance <code>describe</code> output.</p>
+</td></tr>
+<tr valign="top"><td><code>fracnn</code></td>
+<td>
+<p>see <code>autodate</code> and <code>autonum</code></p>
+</td></tr>
+<tr valign="top"><td><code>considerNA</code></td>
+<td>
+<p>for <code>autodate</code> and <code>autonum</code>, considers
+character values in the vector <code>considerNA</code> to be the same as
+<code>NA</code>.  Leading and trailing white space and upper/lower case
+are ignored.</p>
+</td></tr> 
+<tr valign="top"><td><code>charfactor</code></td>
+<td>
+<p>set to <code>TRUE</code> to change character variables to
+factors if they have fewer than n/2 unique values.  Null strings and
+blanks are converted to <code>NA</code>s.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>for <code>upData</code>, one or more expressions of the form
+<code>variable=expression</code>, to derive new variables or change old ones.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>an expression that evaluates to a logical vector
+specifying which rows of <code>object</code> should be retained.  The
+expressions should use the original variable names, i.e., before any
+variables are renamed but after <code>lowernames</code> takes effect.</p>
+</td></tr>
+<tr valign="top"><td><code>rename</code></td>
+<td>
+
+<p>list or named vector specifying old and new names for variables.  Variables are
+renamed before any other operations are done.  For example, to rename
+variables <code>age</code> and <code>sex</code> to respectively <code>Age</code> and
+<code>gender</code>, specify <code>rename=list(age="Age", sex="gender")</code> or
+<code>rename=c(age=...)</code>. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>drop</code></td>
+<td>
+<p>a vector of variable names to remove from the data frame</p>
+</td></tr>
+<tr valign="top"><td><code>keep</code></td>
+<td>
+<p>a vector of variable names to keep, with all other
+variables dropped</p>
+</td></tr>
+<tr valign="top"><td><code>units</code></td>
+<td>
+
+<p>a named vector or list defining <code>"units"</code> attributes of
+variables, in no specific order
+</p>
+</td></tr>
+<tr valign="top"><td><code>levels</code></td>
+<td>
+
+<p>a named list defining <code>"levels"</code> attributes for factor variables, in
+no specific order.  The values in this list may be character vectors
+redefining <code>levels</code> (in order) or another list (see
+<code>merge.levels</code> if using S-Plus).
+</p>
+</td></tr>
+<tr valign="top"><td><code>caplabels</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to capitalize the first letter of each word in
+each variable label
+</p>
+</td></tr>
+<tr valign="top"><td><code>moveUnits</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to look for units of measurements in variable
+labels and move them to a <code>"units"</code> attribute.  If an expression
+in a label is enclosed in parentheses or brackets it is assumed to be
+units if <code>moveUnits=TRUE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>html</code></td>
+<td>
+<p>set to <code>TRUE</code> to print conversion information as html
+vertabim at 0.6 size.  The user will need to put
+<code>results='asis'</code> in a <code>knitr</code> chunk header to properly
+render this output.</p>
+</td></tr>
+<tr valign="top"><td><code>fracmiss</code></td>
+<td>
+<p>the maximum permissable proportion of <code>NA</code>s for a
+variable to be kept.  Default is to keep all variables no matter how
+many <code>NA</code>s are present.</p>
+</td></tr>
+<tr valign="top"><td><code>maxlevels</code></td>
+<td>
+<p>the maximum number of levels of a character or
+categorical or factor variable before the variable is dropped</p>
+</td></tr>
+<tr valign="top"><td><code>minprev</code></td>
+<td>
+<p>the minimum proportion of non-missing observations in a
+category for a binary variable to be retained, and the minimum
+relative frequency of a category before it will be combined with other
+small categories</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a new data frame</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell, Vanderbilt University
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/sas.get.html">sas.get</a></code>, <code><a href="../../base/html/data.frame.html">data.frame</a></code>, <code><a href="../../Hmisc/help/describe.html">describe</a></code>,
+<code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../utils/html/read.table.html">read.csv</a></code>, <code><a href="../../base/html/strptime.html">strptime</a></code>,
+<code><a href="../../base/html/DateTimeClasses.html">POSIXct</a></code>,<code><a href="../../base/html/Dates.html">Date</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+dat &lt;- read.table('myfile.asc')
+dat &lt;- cleanup.import(dat)
+
+## End(Not run)
+dat &lt;- data.frame(a=1:3, d=c('01/02/2004',' 1/3/04',''))
+cleanup.import(dat, datevars='d', dateformat='%m/%d/%y', fixdates='year')
+
+dat &lt;- data.frame(a=(1:3)/7, y=c('a','b1','b2'), z=1:3)
+dat2 &lt;- upData(dat, x=x^2, x=x-5, m=x/10, 
+               rename=c(a='x'), drop='z',
+               labels=c(x='X', y='test'),
+               levels=list(y=list(a='a',b=c('b1','b2'))))
+dat2
+describe(dat2)
+dat &lt;- dat2    # copy to original name and delete dat2 if OK
+rm(dat2)
+dat3 &lt;- upData(dat, X=X^2, subset = x &lt; (3/7)^2 - 5, rename=c(x='X'))
+
+# Remove hard to analyze variables from a redundancy analysis of all
+# variables in the data frame
+d &lt;- dataframeReduce(dat, fracmiss=.1, minprev=.05, maxlevels=5)
+# Could run redun(~., data=d) at this point or include dataframeReduce
+# arguments in the call to redun
+
+# If you import a SAS dataset created by PROC CONTENTS CNTLOUT=x.datadict,
+# the LABELs from this dataset can be added to the data.  Let's also
+# convert names to lower case for the main data file
+## Not run: 
+mydata2 &lt;- cleanup.import(mydata2, lowernames=TRUE, sasdict=datadict)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

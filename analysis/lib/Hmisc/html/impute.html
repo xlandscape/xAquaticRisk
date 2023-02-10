@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Generic Functions and Methods for Imputation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for impute {Hmisc}"><tr><td>impute {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Generic Functions and Methods for Imputation
+</h2>
+
+<h3>Description</h3>
+
+<p>These functions do simple and <code>transcan</code> 
+imputation and print, summarize, and subscript
+variables that have NAs filled-in with imputed values.  The simple
+imputation method involves filling in NAs with constants,
+with a specified single-valued function of the non-NAs, or from
+a sample (with replacement) from the non-NA values (this is useful
+in multiple imputation).
+More complex imputations can be done
+with the <code>transcan</code> function, which also works with the generic methods
+shown here, i.e., <code>impute</code> can take a <code>transcan</code> object and use  the
+imputed values created by <code>transcan</code> (with <code>imputed=TRUE</code>)  to fill-in NAs.
+The <code>print</code> method places * after variable values that were imputed.
+The <code>summary</code> method summarizes all imputed values and then uses
+the next <code>summary</code> method available for the variable.
+The subscript method preserves attributes of the variable and subsets
+the list of imputed values corresponding with how the variable was
+subsetted.  The <code>is.imputed</code> function is for checking if observations
+are imputed.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+impute(x, ...)
+
+## Default S3 method:
+impute(x, fun=median, ...)
+
+## S3 method for class 'impute'
+print(x, ...)
+
+## S3 method for class 'impute'
+summary(object, ...)
+
+is.imputed(x)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a vector or an object created by <code>transcan</code>, or a vector needing
+basic unconditional imputation.  If there are no <code>NA</code>s and <code>x</code>
+is a vector, it is returned unchanged.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>the name of a function to use in computing the (single) 
+imputed value from the non-NAs.  The default is <code>median</code>.
+If instead of specifying a function as <code>fun</code>, a single value or vector
+(numeric, or character if <code>object</code> is a factor) is specified,
+those values are used for insertion.  <code>fun</code> can also be the character
+string <code>"random"</code> to draw random values for imputation, with the random
+values not forced to be the same if there are multiple NAs.
+For a vector of constants, the vector must be of length one
+(indicating the same value replaces all NAs) or must be as long as
+the number of NAs, in which case the values correspond to consecutive NAs
+to replace.  For a factor <code>object</code>, constants for imputation may include
+character values not in the current levels of <code>object</code>.  In that
+case new levels are added.
+If <code>object</code> is of class <code>"factor"</code>, <code>fun</code> is ignored and the
+most frequent category is used for imputation.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>an object of class <code>"impute"</code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>ignored</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a vector with class <code>"impute"</code> placed in front of existing classes.
+For <code>is.imputed</code>, a vector of logical values is returned (all
+<code>TRUE</code> if <code>object</code> is not of class <code>impute</code>).
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/transcan.html">transcan</a></code>, <code><a href="../../Hmisc/help/impute.transcan.html">impute.transcan</a></code>, <code><a href="../../Hmisc/help/describe.html">describe</a></code>, <code><a href="../../Hmisc/help/na.include.html">na.include</a></code>, <code><a href="../../base/html/sample.html">sample</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+age &lt;- c(1,2,NA,4)
+age.i &lt;- impute(age)
+# Could have used impute(age,2.5), impute(age,mean), impute(age,"random")
+age.i
+summary(age.i)
+is.imputed(age.i)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Compute Summary Statistics on a Vector</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for smean.sd {Hmisc}"><tr><td>smean.sd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Compute Summary Statistics on a Vector
+</h2>
+
+<h3>Description</h3>
+
+<p>A number of statistical summary functions is provided for use
+with <code>summary.formula</code> and <code>summarize</code> (as well as
+<code>tapply</code> and by themselves).
+<code>smean.cl.normal</code> computes 3 summary variables: the sample mean and
+lower and upper Gaussian confidence limits based on the t-distribution.
+<code>smean.sd</code> computes the mean and standard deviation.
+<code>smean.sdl</code> computes the mean plus or minus a constant times the
+standard deviation.
+<code>smean.cl.boot</code> is a very fast implementation of the basic
+nonparametric bootstrap for obtaining confidence limits for the
+population mean without assuming normality.
+These functions all delete NAs automatically.
+<code>smedian.hilow</code> computes the sample median and a selected pair of
+outer quantiles having equal tail areas.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+smean.cl.normal(x, mult=qt((1+conf.int)/2,n-1), conf.int=.95, na.rm=TRUE)
+
+smean.sd(x, na.rm=TRUE)
+
+smean.sdl(x, mult=2, na.rm=TRUE)
+
+smean.cl.boot(x, conf.int=.95, B=1000, na.rm=TRUE, reps=FALSE)
+
+smedian.hilow(x, conf.int=.95, na.rm=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>for summary functions <code>smean.*</code>, <code>smedian.hilow</code>, a numeric vector
+from which NAs will be removed automatically
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+
+<p>defaults to <code>TRUE</code> unlike built-in functions, so that by
+default <code>NA</code>s are automatically removed
+</p>
+</td></tr>
+<tr valign="top"><td><code>mult</code></td>
+<td>
+
+<p>for <code>smean.cl.normal</code> is the multiplier of the standard error of the
+mean to use in obtaining confidence limits of the population mean
+(default is appropriate quantile of the t distribution).  For
+<code>smean.sdl</code>, <code>mult</code> is the multiplier of the standard deviation used
+in obtaining a coverage interval about the sample mean.  The default
+is <code>mult=2</code> to use plus or minus 2 standard deviations.
+</p>
+</td></tr>
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+
+<p>for <code>smean.cl.normal</code> and <code>smean.cl.boot</code> specifies the confidence
+level (0-1) for interval estimation of the population mean.  For
+<code>smedian.hilow</code>, <code>conf.int</code> is the coverage probability the outer
+quantiles should target.  When the default, 0.95, is used, the lower
+and upper quantiles computed are 0.025 and 0.975.
+</p>
+</td></tr>
+<tr valign="top"><td><code>B</code></td>
+<td>
+
+<p>number of bootstrap resamples for <code>smean.cl.boot</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>reps</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have <code>smean.cl.boot</code> return the vector of bootstrapped
+means as the <code>reps</code> attribute of the returned object
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a vector of summary statistics
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/summarize.html">summarize</a></code>, <code><a href="../../Hmisc/help/summary.formula.html">summary.formula</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- rnorm(100)
+smean.sd(x)
+smean.sdl(x)
+smean.cl.normal(x)
+smean.cl.boot(x)
+smedian.hilow(x, conf.int=.5)  # 25th and 75th percentiles
+
+# Function to compute 0.95 confidence interval for the difference in two means
+# g is grouping variable
+bootdif &lt;- function(y, g) {
+ g &lt;- as.factor(g)
+ a &lt;- attr(smean.cl.boot(y[g==levels(g)[1]], B=2000, reps=TRUE),'reps')
+ b &lt;- attr(smean.cl.boot(y[g==levels(g)[2]], B=2000, reps=TRUE),'reps')
+ meandif &lt;- diff(tapply(y, g, mean, na.rm=TRUE))
+ a.b &lt;- quantile(b-a, c(.025,.975))
+ res &lt;- c(meandif, a.b)
+ names(res) &lt;- c('Mean Difference','.025','.975')
+ res
+}
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

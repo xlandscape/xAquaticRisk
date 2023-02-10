@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: gbayesSeqSim</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for gbayesSeqSim {Hmisc}"><tr><td>gbayesSeqSim {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>gbayesSeqSim</h2>
+
+<h3>Description</h3>
+
+<p>Simulate Bayesian Sequential Treatment Comparisons Using a Gaussian Model
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+gbayesSeqSim(est, asserts)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>est</code></td>
+<td>
+<p>data frame created by <code>estSeqSim()</code></p>
+</td></tr>
+<tr valign="top"><td><code>asserts</code></td>
+<td>
+<p>list of lists.  The first element of each list is the user-specified name for each assertion/prior combination, e.g., <code>"efficacy"</code>.  The other elements are, in order, a character string equal to &quot;&lt;&quot;, &quot;&gt;&quot;, or &quot;in&quot;, a parameter value <code>cutoff</code> (for &quot;&lt;&quot; and &quot;&gt;&quot;) or a 2-vector specifying an interval for &quot;in&quot;, and either a prior distribution mean and standard deviation named <code>mu</code> and <code>sigma</code> respectively, or a parameter value (<code>"cutprior"</code>) and tail area <code>"tailprob"</code>.  If the latter is used, <code>mu</code> is assumed to be zero and <code>sigma</code> is solved for such that P(parameter &gt; 'cutprior') = P(parameter &lt; - 'cutprior') = <code>tailprob</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Simulate a sequential trial under a Gaussian model for parameter estimates, and Gaussian priors using simulated estimates and variances returned by <code>estSeqSim</code>.  For each row of the data frame <code>est</code> and for each prior/assertion combination, computes the posterior probability of the assertion.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a data frame with number of rows equal to that of <code>est</code> with a number of new columns equal to the number of assertions added.  The new columns are named <code>p1</code>, <code>p2</code>, <code>p3</code>, ... (posterior probabilities), <code>mean1</code>, <code>mean2</code>, ... (posterior means), and <code>sd1</code>, <code>sd2</code>, ... (posterior standard deviations).  The returned data frame also has an attribute <code>asserts</code> added which is the original <code>asserts</code> augmented with any derived <code>mu</code> and <code>sigma</code> and converted to a data frame, and another attribute <code>alabels</code> which is a named vector used to map <code>p1</code>, <code>p2</code>, ... to the user-provided labels in <code>asserts</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code>gbayes()</code>, <code>estSeqSim()</code>, <code>simMarkovOrd()</code>, <code>estSeqMarkovOrd()</code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+# Simulate Bayesian operating characteristics for an unadjusted
+# proportional odds comparison (Wilcoxon test)
+# For 100 simulations, 5 looks, 2 true parameter values, and
+# 2 assertion/prior combinations, compute the posterior probability
+# Use a low-level logistic regression call to speed up simuluations
+# Use data.table to compute various summary measures
+# Total simulation time: 2s
+lfit &lt;- function(x, y) {
+f &lt;- rms::lrm.fit(x, y)
+  k &lt;- length(coef(f))
+  c(coef(f)[k], vcov(f)[k, k])
+}
+gdat &lt;- function(beta, n1, n2) {
+  # Cell probabilities for a 7-category ordinal outcome for the control group
+  p &lt;- c(2, 1, 2, 7, 8, 38, 42) / 100
+
+  # Compute cell probabilities for the treated group
+  p2 &lt;- pomodm(p=p, odds.ratio=exp(beta))
+  y1 &lt;- sample(1 : 7, n1, p,  replace=TRUE)
+  y2 &lt;- sample(1 : 7, n2, p2, replace=TRUE)
+  list(y1=y1, y2=y2)
+}
+
+# Assertion 1: log(OR) &lt; 0 under prior with prior mean 0.1 and sigma 1 on log OR scale
+# Assertion 2: OR between 0.9 and 1/0.9 with prior mean 0 and sigma computed so that
+# P(OR &gt; 2) = 0.05
+asserts &lt;- list(list('Efficacy', '&lt;', 0, mu=0.1, sigma=1),
+                list('Similarity', 'in', log(c(0.9, 1/0.9)),
+                     cutprior=log(2), tailprob=0.05))
+
+set.seed(1)
+est &lt;- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
+                   gendat=gdat,
+                   fitter=lfit, nsim=100)
+z &lt;- gbayesSeqSim(est, asserts)
+head(z)
+attr(z, 'asserts')
+
+# Compute the proportion of simulations that hit targets (different target posterior
+# probabilities for efficacy vs. similarity)
+
+# For the efficacy assessment compute the first look at which the target
+# was hit (set to infinity if never hit)
+require(data.table)
+z &lt;- data.table(z)
+u &lt;- z[, .(first=min(p1 &gt; 0.95])), by=.(parameter, sim)]
+# Compute the proportion of simulations that ever hit the target and
+# that hit it by the 100th subject
+u[, .(ever=mean(first &lt; Inf)),  by=.(parameter)]
+u[, .(by75=mean(first &lt;= 100)), by=.(parameter)]
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

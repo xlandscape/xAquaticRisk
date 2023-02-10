@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Return the floor, ceiling, or rounded value of date or time...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for trunc.POSIXt {Hmisc}"><tr><td>trunc.POSIXt {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Return the floor, ceiling, or rounded value of date or time to
+specified unit.</h2>
+
+<h3>Description</h3>
+
+<p><code>truncPOSIXt</code> returns the date truncated to the specified unit.
+<code>ceil.POSIXt</code> returns next ceiling of the date at the unit selected in
+<code>units</code>.
+<code>roundPOSIXt</code> returns the date or time value rounded to nearest
+specified unit selected in <code>digits</code>.
+</p>
+<p><code>truncPOSIXt</code> and <code>roundPOSIXt</code> have been extended from
+the <code>base</code> package functions <code>trunc.POSIXt</code> and
+<code>round.POSIXt</code> which in the future will add the other time units
+we need.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ceil(x, units,...)
+## Default S3 method:
+ceil(x, units, ...)
+truncPOSIXt(x, units = c("secs", "mins", "hours", "days",
+"months", "years"), ...)
+## S3 method for class 'POSIXt'
+ceil(x, units = c("secs", "mins", "hours", "days",
+"months", "years"), ...)
+roundPOSIXt(x, digits = c("secs", "mins", "hours", "days", "months", "years"))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p> date to be ceilinged, truncated, or rounded </p>
+</td></tr>
+<tr valign="top"><td><code>units</code></td>
+<td>
+<p> unit to that is is rounded up or down to. </p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>same as <code>units</code> but different name to be compatible
+with <code><a href="../../base/html/Round.html">round</a></code> generic.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>further arguments to be passed to or from other methods.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>An object of class <code>POSIXlt</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Charles Dupont </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="../../base/html/Dates.html">Date</a></code> <code><a href="../../base/html/DateTimeClasses.html">POSIXt</a></code> <code><a href="../../base/html/DateTimeClasses.html">POSIXlt</a></code> <code><a href="../../base/html/DateTimeClasses.html">DateTimeClasses</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+date &lt;- ISOdate(1832, 7, 12)
+ceil(date, units='months')  # '1832-8-1'
+truncPOSIXt(date, units='years')     # '1832-1-1'
+roundPOSIXt(date, digits='months')    # '1832-7-1'
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

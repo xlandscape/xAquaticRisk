@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Matrix of Hoeffding's D Statistics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for hoeffd {Hmisc}"><tr><td>hoeffd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Matrix of Hoeffding's D Statistics
+</h2>
+
+<h3>Description</h3>
+
+<p>Computes a matrix of Hoeffding's (1948) <code>D</code> statistics for all
+possible pairs of columns of a matrix.  <code>D</code> is a measure of the
+distance between <code>F(x,y)</code> and <code>G(x)H(y)</code>, where <code>F(x,y)</code>
+is the joint CDF of <code>X</code> and <code>Y</code>, and <code>G</code> and <code>H</code> are
+marginal CDFs. Missing values are deleted in pairs rather than deleting
+all rows of <code>x</code> having any missing variables.  The <code>D</code>
+statistic is robust against a wide variety of alternatives to
+independence, such as non-monotonic relationships.  The larger the value
+of <code>D</code>, the more dependent are <code>X</code> and <code>Y</code> (for many
+types of dependencies).  <code>D</code> used here is 30 times Hoeffding's
+original <code>D</code>, and ranges from -0.5 to 1.0 if there are no ties in
+the data.  <code>print.hoeffd</code> prints the information derived by
+<code>hoeffd</code>.  The higher the value of <code>D</code>, the more dependent are
+<code>x</code> and <code>y</code>.  <code>hoeffd</code> also computes the mean and maximum
+absolute values of the difference between the joint empirical CDF and
+the product of the marginal empirical CDFs.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+hoeffd(x, y)
+## S3 method for class 'hoeffd'
+print(x, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a numeric matrix with at least 5 rows and at least 2 columns (if
+<code>y</code> is absent), or an object created by <code>hoeffd</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a numeric vector or matrix which will be concatenated to <code>x</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>ignored</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Uses midranks in case of ties, as described by Hollander and Wolfe.
+P-values are approximated by linear interpolation on the table
+in Hollander and Wolfe, which uses the asymptotically equivalent
+Blum-Kiefer-Rosenblatt statistic.  For <code>P&lt;.0001</code> or <code>&gt;0.5</code>, <code>P</code> values are
+computed using a well-fitting linear regression function in <code>log P</code> vs.
+the test statistic.
+Ranks (but not bivariate ranks) are computed using efficient
+algorithms (see reference 3).
+</p>
+
+
+<h3>Value</h3>
+
+<p>a list with elements <code>D</code>, the
+matrix of D statistics, <code>n</code> the
+matrix of number of observations used in analyzing each pair of variables,
+and <code>P</code>, the asymptotic P-values.
+Pairs with fewer than 5 non-missing values have the D statistic set to NA.
+The diagonals of <code>n</code> are the number of non-NAs for the single variable
+corresponding to that row and column.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Hoeffding W. (1948): A non-parametric test of independence.  Ann Math Stat
+19:546&ndash;57.
+</p>
+<p>Hollander M. and Wolfe D.A. (1973).  Nonparametric Statistical Methods,
+pp. 228&ndash;235, 423. New York: Wiley.
+</p>
+<p>Press WH, Flannery BP, Teukolsky SA, Vetterling, WT (1988): Numerical
+Recipes in C.  Cambridge: Cambridge University Press.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/rcorr.html">rcorr</a></code>, <code><a href="../../Hmisc/help/varclus.html">varclus</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- c(-2, -1, 0, 1, 2)
+y &lt;- c(4,   1, 0, 1, 4)
+z &lt;- c(1,   2, 3, 4, NA)
+q &lt;- c(1,   2, 3, 4, 5)
+hoeffd(cbind(x,y,z,q))
+
+
+# Hoeffding's test can detect even one-to-many dependency
+set.seed(1)
+x &lt;- seq(-10,10,length=200)
+y &lt;- x*sign(runif(200,-1,1))
+plot(x,y)
+hoeffd(x,y)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Add Marginal Observations</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for addMarginal {Hmisc}"><tr><td>addMarginal {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Add Marginal Observations</h2>
+
+<h3>Description</h3>
+
+<p>Given a data frame and the names of variable, doubles the
+data frame for each variable with a new category
+<code>"All"</code> by default, or by the value of <code>label</code>.
+A new variable <code>.marginal.</code> is added to the resulting data frame,
+with value <code>""</code> if the observation is an original one, and with
+value equal to the names of the variable being marginalized (separated
+by commas) otherwise.  If there is another stratification variable
+besides the one in ..., and that variable is nested inside the
+variable in ..., specify <code>nested=variable name</code> to have the value
+of that variable set fo <code>label</code> whenever marginal observations are
+created for ....  See the state-city example below.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+addMarginal(data, ..., label = "All", margloc=c('last', 'first'), nested)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a data frame</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>a list of names of variables to marginalize</p>
+</td></tr>
+<tr valign="top"><td><code>label</code></td>
+<td>
+<p>category name for added marginal observations</p>
+</td></tr>
+<tr valign="top"><td><code>margloc</code></td>
+<td>
+<p>location for marginal category within factor variable
+specifying categories.  Set to <code>"first"</code> to override the
+default - to put a category with value <code>label</code> as the first
+category.</p>
+</td></tr>
+<tr valign="top"><td><code>nested</code></td>
+<td>
+<p>a single unquoted variable name if used</p>
+</td></tr>
+</table>
+
+
+<h3>Examples</h3>
+
+<pre>
+d &lt;- expand.grid(sex=c('female', 'male'), country=c('US', 'Romania'),
+                 reps=1:2)
+addMarginal(d, sex, country)
+
+# Example of nested variables
+d &lt;- data.frame(state=c('AL', 'AL', 'GA', 'GA', 'GA'),
+                city=c('Mobile', 'Montgomery', 'Valdosto',
+                       'Augusta', 'Atlanta'),
+                x=1:5, stringsAsFactors=TRUE)
+addMarginal(d, state, nested=city) # cite set to 'All' when state is
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

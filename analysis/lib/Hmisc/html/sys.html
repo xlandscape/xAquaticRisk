@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Run Unix or Dos Depending on System</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for sys {Hmisc}"><tr><td>sys {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Run Unix or Dos Depending on System
+</h2>
+
+<h3>Description</h3>
+
+<p>Runs <code>unix</code> or <code>dos</code> depending on the current operating system.  For
+<span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, just runs <code>system</code> with optional concatenation of first two
+arguments which are assumed named <code>command</code> and <code>text</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sys(command, text=NULL, output=TRUE)
+# S-Plus: sys(\dots, minimized=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>command</code></td>
+<td>
+
+<p>system command to execute
+</p>
+</td></tr>
+<tr valign="top"><td><code>text</code></td>
+<td>
+
+<p>text to concatenate to system command, if any (typically options or file
+names or both)
+</p>
+</td></tr>
+<tr valign="top"><td><code>output</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to not return output of command as a character
+vector
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>see <code>unix</code> or <code>dos</code>
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>executes system commands
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/base-defunct.html">unix</a></code>, <code><a href="../../base/html/system.html">system</a></code>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Read Tables in a Microsoft Access Database</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for mdb.get {Hmisc}"><tr><td>mdb.get {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Read Tables in a Microsoft Access Database</h2>
+
+<h3>Description</h3>
+
+<p>Assuming the <code>mdbtools</code> package has been installed on your
+system and is in the system path, <code>mdb.get</code> imports
+one or more tables in a Microsoft Access database.  Date-time
+variables are converted to dates or <code>chron</code> package date-time
+variables.  The <code>csv.get</code> function is used to import
+automatically exported csv files.  If <code>tables</code> 
+is unspecified all tables in the database are retrieved.  If more than
+one table is imported, the result is a list of data frames.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL,
+        dateformat='%m/%d/%y', mdbexportArgs='-b strip', ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>the file name containing the Access database</p>
+</td></tr>
+<tr valign="top"><td><code>tables</code></td>
+<td>
+<p>character vector specifying the names of tables to
+import.  Default is to import all tables.  Specify
+<code>tables=TRUE</code> to return the list of available tables.</p>
+</td></tr>
+<tr valign="top"><td><code>lowernames</code></td>
+<td>
+<p>set this to <code>TRUE</code> to change variable names to
+lower case</p>
+</td></tr>
+<tr valign="top"><td><code>allow</code></td>
+<td>
+<p>a vector of characters allowed by <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> that should not be
+converted to periods in variable names.  By default, underscores in
+variable names are converted to periods as with <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> before version
+1.9.</p>
+</td></tr>
+<tr valign="top"><td><code>dateformat</code></td>
+<td>
+<p>see <code><a href="../../Hmisc/help/cleanup.import.html">cleanup.import</a></code>.  Default is the
+usual Access format used in the U.S.</p>
+</td></tr>
+<tr valign="top"><td><code>mdbexportArgs</code></td>
+<td>
+<p>command line arguments to issue to mdb-export.
+Set to <code>''</code> to omit <code>'-b strip'</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments to pass to <code>csv.get</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Uses the <code>mdbtools</code> package executables <code>mdb-tables</code>,
+<code>mdb-schema</code>, and <code>mdb-export</code> (with by default option
+<code>-b strip</code> to drop any binary output).  In Debian/Ubuntu Linux run
+<code>apt get install mdbtools</code>.
+<code>cleanup.import</code> is invoked by <code>csv.get</code> to transform
+variables and store them as efficiently as possible.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a new data frame or a list of data frames</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell, Vanderbilt University</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/data.frame.html">data.frame</a></code>,
+<code><a href="../../Hmisc/help/cleanup.import.html">cleanup.import</a></code>, <code><a href="../../Hmisc/help/csv.get.html">csv.get</a></code>,
+<code><a href="../../base/html/Dates.html">Date</a></code>, <code><a href="../../chron/help/chron.html">chron</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+# Read all tables in the Microsoft Access database Nwind.mdb
+d &lt;- mdb.get('Nwind.mdb')
+contents(d)
+for(z in d) print(contents(z))
+# Just print the names of tables in the database
+mdb.get('Nwind.mdb', tables=TRUE)
+# Import one table
+Orders &lt;- mdb.get('Nwind.mdb', tables='Orders')
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

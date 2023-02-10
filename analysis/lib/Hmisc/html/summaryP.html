@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Multi-way Summary of Proportions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for summaryP {Hmisc}"><tr><td>summaryP {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Multi-way Summary of Proportions</h2>
+
+<h3>Description</h3>
+
+<p><code>summaryP</code> produces a tall and thin data frame containing
+numerators (<code>freq</code>) and denominators (<code>denom</code>) after
+stratifying the data by a series of variables.  A special capability
+to group a series of related yes/no variables is included through the
+use of the <code><a href="../../Hmisc/help/ynbind.html">ynbind</a></code> function, for which the user specials a final
+argument <code>label</code> used to label the panel created for that group
+of related variables.
+</p>
+<p>If <code>options(grType='plotly')</code> is not in effect,
+the <code>plot</code> method for <code>summaryP</code>	displays proportions as a
+multi-panel dot chart using the <code>lattice</code> package's <code>dotplot</code>
+function with a special <code>panel</code> function.  Numerators and
+denominators of proportions are also included as text, in the same
+colors as used by an optional <code>groups</code> variable.  The
+<code>formula</code> argument used in the <code>dotplot</code> call is constructed,
+but the user can easily reorder the variables by specifying
+<code>formula</code>, with elements named <code>val</code> (category levels),
+<code>var</code> (classification variable name), <code>freq</code> (calculated
+result) plus the overall cross-classification variables excluding
+<code>groups</code>.  If <code>options(grType='plotly')</code> is in effect, the
+<code>plot</code> method makes an entirely different display using
+<code>Hmisc::dotchartpl</code> with codeplotly if <code>marginVal</code> is
+specified, whereby a stratification
+variable causes more finely stratified estimates to be shown slightly
+below the lines, with smaller and translucent symbols if <code>data</code>
+has been run through <code>addMarginal</code>.  The marginal summaries are
+shown as the main estimates and the user can turn off display of the
+stratified estimates, or view their details with hover text.
+</p>
+<p>The <code>ggplot</code> method for <code>summaryP</code> does not draw numerators
+and denominators but the chart is more compact than using the
+<code>plot</code> method with base graphics because <code>ggplot2</code>
+does not repeat category names the same way as <code>lattice</code> does.
+Variable names that are too long to fit in panel strips are renamed
+(1), (2), etc. and an attribute <code>"fnvar"</code> is added to the result;
+this attribute is a character string defining the abbreviations,
+useful in a figure caption.  The <code>ggplot2</code> object has
+<code>label</code>s for points plotted, used by <code>plotly::ggplotly</code> as
+hover text (see example).
+</p>
+<p>The <code>latex</code> method produces one or more LaTeX <code>tabular</code>s
+containing a table representation of the result, with optional
+side-by-side display if <code>groups</code> is specified.  Multiple
+<code>tabular</code>s result from the presence of non-group stratification
+factors.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+summaryP(formula, data = NULL, subset = NULL,
+         na.action = na.retain, sort=TRUE,
+         asna = c("unknown", "unspecified"), ...)
+## S3 method for class 'summaryP'
+plot(x, formula=NULL, groups=NULL,
+         marginVal=NULL, marginLabel=marginVal,
+         refgroup=NULL, exclude1=TRUE,  xlim = c(-.05, 1.05),
+         text.at=NULL, cex.values = 0.5,
+         key = list(columns = length(groupslevels), x = 0.75,
+                    y = -0.04, cex = 0.9,
+                    col = trellis.par.get('superpose.symbol')$col,
+                    corner=c(0,1)),
+         outerlabels=TRUE, autoarrange=TRUE,
+         col=colorspace::rainbow_hcl, ...)
+## S3 method for class 'summaryP'
+ggplot(data, mapping, groups=NULL, exclude1=TRUE,
+           xlim=c(0, 1), col=NULL, shape=NULL, size=function(n) n ^ (1/4),
+           sizerange=NULL, abblen=5, autoarrange=TRUE, addlayer=NULL,
+           ..., environment)
+## S3 method for class 'summaryP'
+latex(object, groups=NULL, exclude1=TRUE, file='', round=3,
+                           size=NULL, append=TRUE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula with the variables for whose levels
+proportions are computed on the left hand side, and major
+classification variables on the right.  The formula need to include
+any variable later used as <code>groups</code>, as the data summarization
+does not distinguish between superpositioning and paneling.  For the
+plot method, <code>formula</code> can provide an overall to the default
+formula for <code>dotplot()</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>an optional data frame.  For <code>ggplot.summaryP</code>
+<code>data</code> is the result of <code>summaryP</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>an optional subsetting expression or vector</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+<p>function specifying how to handle <code>NA</code>s.  The
+default is to keep all <code>NA</code>s in the analysis frame.</p>
+</td></tr>
+<tr valign="top"><td><code>sort</code></td>
+<td>
+<p>set to <code>FALSE</code> to not sort category levels in
+descending order of global proportions</p>
+</td></tr>
+<tr valign="top"><td><code>asna</code></td>
+<td>
+<p>character vector specifying level names to consider the
+same as <code>NA</code>.  Set <code>asna=NULL</code> to not consider any.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object produced by <code>summaryP</code></p>
+</td></tr>
+<tr valign="top"><td><code>groups</code></td>
+<td>
+<p>a character string containing the name of a
+superpositioning variable for obtaining 
+further stratification within a horizontal line in the dot chart.</p>
+</td></tr>
+<tr valign="top"><td><code>marginVal</code></td>
+<td>
+<p>if <code>options(grType='plotly')</code> is in effect and
+the data given to <code>summaryP</code> were run through <code>addMarginal</code>,
+specifies the category name that represents marginal summaries
+(usually <code>"All"</code>).</p>
+</td></tr>
+<tr valign="top"><td><code>marginLabel</code></td>
+<td>
+<p>specifies a different character string to use than
+the value of <code>marginVal</code>.  For example, if marginal proportions
+were computed over all <code>region</code>s, one may specify
+<code>marginVal="All", marginLabel="All Regions"</code>.  <code>marginLabel</code>
+is only used for formatting graphical output.</p>
+</td></tr>
+<tr valign="top"><td><code>refgroup</code></td>
+<td>
+<p>used when doing a <code>plotly</code> chart and a two-level
+group variable was used, resulting in the half-width confidence
+interval for the difference in two proportions to be shown, and the
+actual confidence limits and the difference added to hover text.  See
+<code>dotchartpl</code> for more details.</p>
+</td></tr>
+<tr valign="top"><td><code>exclude1</code></td>
+<td>
+<p>By default, <code>ggplot</code>, <code>plot</code>, and
+<code>latex</code> methods for <code>summaryP</code> remove redundant entries 
+from tables for variables with only two levels.  For example, if you
+print the proportion of females, you don't need to print the
+proportion of males.  To override this, set <code>exclude1=FALSE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+<p><code>x</code>-axis limits.  Default is <code>c(0,1)</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>text.at</code></td>
+<td>
+<p>specify to leave unused space to the right of each
+panel to prevent numerators and denominators from touching data
+points.  <code>text.at</code> is the upper limit for scaling panels'
+<code>x</code>-axes but tick marks are only labeled up to <code>max(xlim)</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>cex.values</code></td>
+<td>
+<p>character size to use for plotting numerators and
+denominators</p>
+</td></tr>
+<tr valign="top"><td><code>key</code></td>
+<td>
+<p>a list to pass to the <code>auto.key</code> argument of
+<code>dotplot</code>.  To place a key above the entire chart use
+<code>auto.key=list(columns=2)</code> for example.</p>
+</td></tr>
+<tr valign="top"><td><code>outerlabels</code></td>
+<td>
+<p>by default if there are two conditioning variables
+besides <code>groups</code>, the <code>latticeExtra</code> package's
+<code>useOuterStrips</code> function is used to put strip labels in the
+margins, usually resulting in a much prettier chart.  Set to
+<code>FALSE</code> to prevent usage of <code>useOuterStrips</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>autoarrange</code></td>
+<td>
+<p>If <code>TRUE</code>, the formula is re-arranged so that
+if there are two conditioning (paneling) variables, the variable with
+the most levels is taken as the vertical condition.</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>a vector of colors to use to override defaults in
+<code>ggplot</code>.  When <code>options(grType='plotly')</code>, see <code>dotchartpl</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>shape</code></td>
+<td>
+<p>a vector of plotting symbols to override <code>ggplot</code>
+defaults</p>
+</td></tr>
+<tr valign="top"><td><code>mapping, environment</code></td>
+<td>
+<p>not used; needed because of rules for generics</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+<p>for <code>ggplot</code>, a function that transforms denominators
+into metrics used for the <code>size</code> aesthetic.  Default is the
+fourth root function so that the area of symbols is proportional to
+the square root of sample size.  Specify <code>NULL</code> to not vary point
+sizes. 	<code>size=sqrt</code> is a reasonable 	alternative.  Set
+<code>size</code> to an integer to categorize the denominators into
+<code>size</code> quantile groups using <code>cut2</code>. Unless <code>size</code> is
+an integer, the legend for sizes uses the minimum and maximum
+denominators and 6-tiles using <code>quantile(..., type=1)</code> so that
+actually occurring sample sizes are used as labels.  <code>size</code> is
+overridden to <code>NULL</code> if the range in denominators is less than 10
+or the ratio of the maximum to the minimum is less than 1.2.
+For	<code>latex</code>, <code>size</code> is an optional font size such as
+<code>"small"</code></p>
+</td></tr>  
+<tr valign="top"><td><code>sizerange</code></td>
+<td>
+<p>a 2-vector specifying the <code>range</code> argument to the
+<code>ggplot2</code> <code>scale_size_...</code> function, which is the
+range of sizes allowed for the points according to the denominator.
+The default is <code>sizerange=c(.7, 3.25)</code> but the lower limit is
+increased according to the ratio of maximum to minimum sample sizes.</p>
+</td></tr>
+<tr valign="top"><td><code>abblen</code></td>
+<td>
+<p>labels of variables having only one level and having
+their name longer than <code>abblen</code> characters are 
+abbreviated and documented in <code>fnvar</code> (described elsewhere
+here).  The default <code>abblen=5</code> is good for labels plotted
+vertically.  If labels are rotated using <code>theme</code> a better value
+would be 12.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>used only for <code>plotly</code> graphics and these arguments
+are passed to <code>dotchartpl</code></p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>an object produced by <code>summaryP</code></p>
+</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>file name, defaults to writing to console</p>
+</td></tr>
+<tr valign="top"><td><code>round</code></td>
+<td>
+<p>number of digits to the right of the decimal place for
+proportions</p>
+</td></tr>
+<tr valign="top"><td><code>append</code></td>
+<td>
+<p>set to <code>FALSE</code> to start output over</p>
+</td></tr>
+<tr valign="top"><td><code>addlayer</code></td>
+<td>
+<p>a <code>ggplot</code> layer to add to the plot object</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>summaryP</code> produces a data frame of class
+<code>"summaryP"</code>.  The <code>plot</code> method produces a <code>lattice</code>
+object of class <code>"trellis"</code>.  The <code>latex</code> method produces an
+object of class <code>"latex"</code> with an additional attribute
+<code>ngrouplevels</code> specifying the number of levels of any
+<code>groups</code> variable and an attribute <code>nstrata</code> specifying the
+number of strata.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a></p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/bpplotM.html">bpplotM</a></code>, <code><a href="../../Hmisc/help/summaryM.html">summaryM</a></code>,
+<code><a href="../../Hmisc/help/ynbind.html">ynbind</a></code>, <code><a href="../../Hmisc/help/pBlock.html">pBlock</a></code>,
+<code><a href="../../ggplot2/help/ggplot.html">ggplot</a></code>, <code><a href="../../Hmisc/help/colorFacet.html">colorFacet</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+n &lt;- 100
+f &lt;- function(na=FALSE) {
+  x &lt;- sample(c('N', 'Y'), n, TRUE)
+  if(na) x[runif(100) &lt; .1] &lt;- NA
+  x
+}
+set.seed(1)
+d &lt;- data.frame(x1=f(), x2=f(), x3=f(), x4=f(), x5=f(), x6=f(), x7=f(TRUE),
+                age=rnorm(n, 50, 10),
+                race=sample(c('Asian', 'Black/AA', 'White'), n, TRUE),
+                sex=sample(c('Female', 'Male'), n, TRUE),
+                treat=sample(c('A', 'B'), n, TRUE),
+                region=sample(c('North America','Europe'), n, TRUE))
+d &lt;- upData(d, labels=c(x1='MI', x2='Stroke', x3='AKI', x4='Migraines',
+                 x5='Pregnant', x6='Other event', x7='MD withdrawal',
+                 race='Race', sex='Sex'))
+dasna &lt;- subset(d, region=='North America')
+with(dasna, table(race, treat))
+s &lt;- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7, label='Exclusions') ~
+              region + treat, data=d)
+# add exclude1=FALSE below to include female category
+plot(s, groups='treat')
+ggplot(s, groups='treat')
+
+plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
+# Much better looking if omit outerlabels=FALSE; see output at
+# https://hbiostat.org/R/Hmisc/summaryFuns.pdf
+# See more examples under bpplotM
+
+## For plotly interactive graphic that does not handle variable size
+## panels well:
+## require(plotly)
+## g &lt;- ggplot(s, groups='treat')
+## ggplotly(g, tooltip='text')
+
+## For nice plotly interactive graphic:
+## options(grType='plotly')
+## s &lt;- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7,
+##                                   label='Exclusions') ~
+##               treat, data=subset(d, region='Europe'))
+##
+## plot(s, groups='treat', refgroup='A')  # refgroup='A' does B-A differences
+
+
+# Make a chart where there is a block of variables that
+# are only analyzed for males.  Keep redundant sex in block for demo.
+# Leave extra space for numerators, denominators
+sb &lt;- summaryP(race + sex +
+               pBlock(race, sex, label='Race: Males', subset=sex=='Male') ~
+               region, data=d)
+plot(sb, text.at=1.3)
+plot(sb, groups='region', layout=c(1,3), key=list(space='top'),
+     text.at=1.15)
+ggplot(sb, groups='region')
+## Not run: 
+plot(s, groups='treat')
+# plot(s, groups='treat', outerlabels=FALSE) for standard lattice output
+plot(s, groups='region', key=list(columns=2, space='bottom'))
+colorFacet(ggplot(s))
+
+plot(summaryP(race + sex ~ region, data=d), exclude1=FALSE, col='green')
+
+# Make your own plot using data frame created by summaryP
+useOuterStrips(dotplot(val ~ freq | region * var, groups=treat, data=s,
+        xlim=c(0,1), scales=list(y='free', rot=0), xlab='Fraction',
+        panel=function(x, y, subscripts, ...) {
+          denom &lt;- s$denom[subscripts]
+          x &lt;- x / denom
+          panel.dotplot(x=x, y=y, subscripts=subscripts, ...) }))
+
+# Show marginal summary for all regions combined
+s &lt;- summaryP(race + sex ~ region, data=addMarginal(d, region))
+plot(s, groups='region', key=list(space='top'), layout=c(1,2))
+
+# Show marginal summaries for both race and sex
+s &lt;- summaryP(ynbind(x1, x2, x3, x4, label='Exclusions', sort=FALSE) ~
+              race + sex, data=addMarginal(d, race, sex))
+plot(s, val ~ freq | sex*race)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

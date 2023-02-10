@@ -1,0 +1,48 @@
+ACE                     Abundance- and Incidence-based Coverage
+                        Estimators
+aic.nest                Nestedness of samples using AIC
+bootstrap               Bootstrap Species Richness Estimator
+bray.curtis             Similarity/Dissimilarity Indices
+chao.sd                 Chao's estimation of standard error
+chao.sorenson           Chao's Jaccard and Sorenson Estimators of
+                        Shared Species
+chao1                   Chao's Species Estimators
+coi                     Cohesiveness Index for Relational Clustering
+create.lats             Creating a table of Latitudes and Longitudes
+create.matrix           Creating species locality matrices
+deg.dist                Haversine Distance Formula
+dino.mst                Calculate a Minimum Spanning Tree or Network
+earth.bear              Bearings Between Geographic Locations
+earth.dist              Calculating Geographic Distances
+earth.poly              Calculating a Minimum Convex Polygon
+earth.tri               Calculating the Surface Area Enclosed by Three
+                        Geographic Points
+ecol.dist               Creating a Distance Matrix
+euler.rot               Calculate the Euler Rotation of a Point
+fdata.list              A Sample Species Abundance Dataset
+fossil-package          fossil: Palaeoecological and Palaeogeographical
+                        Analysis Tools
+int.chao                Internal function for chao estimators
+jack1                   First- and second-order jacknife estimators
+lats2Shape              Converting a Table of Latitudes and Longitudes
+                        to a Shapefile
+loc.map                 Mapping Points on a Global Map
+localoptima             Function to Find Local Optimization for
+                        clustering
+msn.map                 Mapping a Minimum Spanning Tree
+msn2Shape               Convert a Minimum spanning Network or Tree to
+                        Shapefile
+mstlines                Display a Minimum Spanning Tree or Network
+new.lat.long            Find a New Latitude and Longitude
+nmds.mst                Creating NMDS plots with overlain Minimum
+                        Spanning Trees
+rand.index              Rand Index and Adjusted Rand Index
+rclust                  Relational Clustering
+rclust.dist             Relational Clustering
+rclust.null             Relational Clustering
+rclust.weights          Relational Clustering
+relational.clustering   Relational Clustering
+sac                     Calculate Species Area Curves
+sim.occ                 Simulated Species Occurrence data
+spp.est                 Estimating Species Diversity
+tri.ineq                Testing for the Triangle Inequality

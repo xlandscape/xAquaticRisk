@@ -1,0 +1,13 @@
+addnortharrow	addnortharrow
+addscalebar	addscalebar
+clear_geocode_cache	clear_geocode_cache
+geocode	geocode
+get_default_geocoder	get_default_geocoder
+makebbox	makebbox
+mergebbox	mergebbox
+plotscalebar	plotscalebar
+prettymap	prettymap
+scalebarparams	scalebarparams
+searchbbox	searchbbox
+set_default_geocoder	get_default_geocoder
+zoombbox	zoombbox

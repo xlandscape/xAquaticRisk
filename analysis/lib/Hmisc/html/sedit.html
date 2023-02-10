@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Character String Editing and Miscellaneous Character Handling...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for sedit {Hmisc}"><tr><td>sedit {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Character String Editing and Miscellaneous Character Handling Functions
+</h2>
+
+<h3>Description</h3>
+
+<p>This suite of functions was written to implement many of the features
+of the UNIX <code>sed</code> program entirely within S (function <code>sedit</code>).
+The <code>substring.location</code> function returns the first and last position
+numbers that a sub-string occupies in a larger string.  The <code>substring2&lt;-</code>
+function does the opposite of the builtin function <code>substring</code>.
+It is named <code>substring2</code> because for S-Plus there is a built-in
+function <code>substring</code>, but it does not handle multiple replacements in
+a single string.
+<code>replace.substring.wild</code> edits character strings in the fashion of
+&quot;change xxxxANYTHINGyyyy to aaaaANYTHINGbbbb&quot;, if the &quot;ANYTHING&quot;
+passes an optional user-specified <code>test</code> function.  Here, the
+&quot;yyyy&quot; string is searched for from right to left to handle
+balancing parentheses, etc.  <code>numeric.string</code>
+and <code>all.digits</code> are two examples of <code>test</code> functions, to check,
+respectively if each of a vector of strings is a legal numeric or if it contains only
+the digits 0-9.  For the case where <code>old="*$" or "^*"</code>, or for
+<code>replace.substring.wild</code> with the same values of <code>old</code> or with
+<code>front=TRUE</code> or <code>back=TRUE</code>, <code>sedit</code> (if <code>wild.literal=FALSE</code>) and
+<code>replace.substring.wild</code> will edit the largest substring
+satisfying <code>test</code>.
+</p>
+<p><code>substring2</code> is just a copy of <code>substring</code> so that
+<code>substring2&lt;-</code> will work.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sedit(text, from, to, test, wild.literal=FALSE)
+substring.location(text, string, restrict)
+# substring(text, first, last) &lt;- setto   # S-Plus only
+replace.substring.wild(text, old, new, test, front=FALSE, back=FALSE)
+numeric.string(string)
+all.digits(string)
+substring2(text, first, last)
+substring2(text, first, last) &lt;- value
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>text</code></td>
+<td>
+
+<p>a vector of character strings for <code>sedit, substring2, substring2&lt;-</code>
+or a single character string for <code>substring.location,
+      replace.substring.wild</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>from</code></td>
+<td>
+
+<p>a vector of character strings to translate from, for <code>sedit</code>.
+A single asterisk wild card, meaning allow any sequence of characters
+(subject to the <code>test</code> function, if any) in place of the <code>"*"</code>.
+An element of <code>from</code> may begin with <code>"^"</code> to force the match to
+begin at the beginning of <code>text</code>, and an element of <code>from</code> can end with
+<code>"$"</code> to force the match to end at the end of <code>text</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>to</code></td>
+<td>
+
+<p>a vector of character strings to translate to, for <code>sedit</code>.
+If a corresponding element in <code>from</code> had an <code>"*"</code>, the element
+in <code>to</code> may also have an <code>"*"</code>.  Only single asterisks are allowed.
+If <code>to</code> is not the same length as <code>from</code>, the <code>rep</code> function
+is used to make it the same length.
+</p>
+</td></tr>
+<tr valign="top"><td><code>string</code></td>
+<td>
+
+<p>a single character string, for <code>substring.location</code>, <code>numeric.string</code>,
+<code>all.digits</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>first</code></td>
+<td>
+
+<p>a vector of integers specifying the first position to replace for
+<code>substring2&lt;-</code>.  <code>first</code> may also be a vector of character strings
+that are passed to <code>sedit</code> to use as patterns for replacing
+substrings with <code>setto</code>.  See one of the last examples below.
+</p>
+</td></tr>
+<tr valign="top"><td><code>last</code></td>
+<td>
+
+<p>a vector of integers specifying the ending positions of the character
+substrings to be replaced.  The default is to go to the end of
+the string.  When <code>first</code> is character, <code>last</code> must be
+omitted.
+</p>
+</td></tr>
+<tr valign="top"><td><code>setto</code></td>
+<td>
+
+<p>a character string or vector of character strings used as replacements,
+in <code>substring2&lt;-</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>old</code></td>
+<td>
+
+<p>a character string to translate from for <code>replace.substring.wild</code>.
+May be <code>"*$"</code> or <code>"^*"</code> or any string containing a single <code>"*"</code> but
+not beginning with <code>"^"</code> or ending with <code>"$"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>new</code></td>
+<td>
+
+<p>a character string to translate to for <code>replace.substring.wild</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>test</code></td>
+<td>
+
+<p>a function of a vector of character strings returning a logical vector
+whose elements are <code>TRUE</code> or <code>FALSE</code> according
+to whether that string element qualifies as the wild card string for
+<code>sedit, replace.substring.wild</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>wild.literal</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to not treat asterisks as wild cards and to not look for
+<code>"^"</code> or <code>"$"</code> in <code>old</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>restrict</code></td>
+<td>
+
+<p>a vector of two integers for <code>substring.location</code> which specifies a
+range to which the search for matches should be restricted
+</p>
+</td></tr>
+<tr valign="top"><td><code>front</code></td>
+<td>
+
+<p>specifying <code>front = TRUE</code> and <code>old = "*"</code> is the same as
+specifying <code>old = "^*"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>back</code></td>
+<td>
+
+<p>specifying <code>back = TRUE</code> and <code>old = "*"</code> is the same as
+specifying <code>old = "*$"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+<p>a character vector</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>sedit</code> returns a vector of character strings the same length as <code>text</code>.
+<code>substring.location</code> returns a list with components named <code>first</code>
+and <code>last</code>, each specifying a vector of character positions corresponding
+to matches.  <code>replace.substring.wild</code> returns a single character string.
+<code>numeric.string</code> and <code>all.digits</code> return a single logical value.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p><code>substring2&lt;-</code> modifies its first argument
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/grep.html">grep</a></code>, <code><a href="../../base/html/substr.html">substring</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- 'this string'
+substring2(x, 3, 4) &lt;- 'IS'
+x
+substring2(x, 7) &lt;- ''
+x
+
+
+substring.location('abcdefgabc', 'ab')
+substring.location('abcdefgabc', 'ab', restrict=c(3,999))
+
+
+replace.substring.wild('this is a cat','this*cat','that*dog')
+replace.substring.wild('there is a cat','is a*', 'is not a*')
+replace.substring.wild('this is a cat','is a*', 'Z')
+
+
+qualify &lt;- function(x) x==' 1.5 ' | x==' 2.5 '
+replace.substring.wild('He won 1.5 million $','won*million',
+                       'lost*million', test=qualify)
+replace.substring.wild('He won 1 million $','won*million',
+                       'lost*million', test=qualify)
+replace.substring.wild('He won 1.2 million $','won*million',
+                       'lost*million', test=numeric.string)
+
+
+x &lt;- c('a = b','c &lt; d','hello')
+sedit(x, c('=','he*o'),c('==','he*'))
+
+
+sedit('x23', '*$', '[*]', test=numeric.string)
+sedit('23xx', '^*', 'Y_{*} ', test=all.digits)
+
+
+replace.substring.wild("abcdefabcdef", "d*f", "xy")
+
+
+x &lt;- "abcd"
+substring2(x, "bc") &lt;- "BCX"
+x
+substring2(x, "B*d") &lt;- "B*D"
+x
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

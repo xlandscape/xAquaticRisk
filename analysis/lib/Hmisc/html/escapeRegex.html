@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Escapes any characters that would have special meaning in a...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for escapeRegex {Hmisc}"><tr><td>escapeRegex {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Escapes any characters that would have special meaning in a reqular expression. </h2>
+
+<h3>Description</h3>
+
+<p>Escapes any characters that would have special meaning in a reqular expression.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+escapeRegex(string)
+escapeBS(string)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>string</code></td>
+<td>
+<p> string being operated on. </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>escapeRegex</code> will escape any characters that would have
+special meaning in a reqular expression. For any string
+<code>grep(regexpEscape(string), string)</code> will always be true.
+</p>
+<p><code>escapeBS</code> will escape any backslash <span class="samp">\</span> in a string.
+</p>
+
+
+<h3>Value</h3>
+
+<p>The value of the string with any characters that would have
+special meaning in a reqular expression escaped.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Charles Dupont<br />
+Department of Biostatistics<br />
+Vanderbilt University
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/help/grep.html">grep</a></code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+string &lt;- "this\\(system) {is} [full]."
+escapeRegex(string)
+
+escapeBS(string)
+
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

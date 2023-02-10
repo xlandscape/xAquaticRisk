@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Re-state Restricted Cubic Spline Function</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for rcspline.restate {Hmisc}"><tr><td>rcspline.restate {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Re-state Restricted Cubic Spline Function
+</h2>
+
+<h3>Description</h3>
+
+<p>This function re-states a restricted cubic spline function in
+the un-linearly-restricted form. Coefficients for that form are
+returned, along with an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> functional representation of this function
+and a LaTeX character representation of the function.
+<code>rcsplineFunction</code> is a fast function that creates a function to
+compute a restricted cubic spline function with given coefficients and
+knots, without reformatting the function to be pretty (i.e., into
+unrestricted form).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rcspline.restate(knots, coef,
+                 type=c("ordinary","integral"),
+                 x="X", lx=nchar(x),
+                 norm=2, columns=65, before="&amp; &amp;", after="\\",
+                 begin="", nbegin=0, digits=max(8, .Options$digits))
+
+rcsplineFunction(knots, coef, norm=2, type=c('ordinary', 'integral'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>knots</code></td>
+<td>
+
+<p>vector of knots used in the regression fit
+</p>
+</td></tr>
+<tr valign="top"><td><code>coef</code></td>
+<td>
+
+<p>vector of coefficients from the fit. If the length of <code>coef</code> is
+<i>k-1</i>, where k is equal to the <code>length(knots)</code>, the
+first coefficient must be for the linear term and remaining
+<i>k-2</i> coefficients must be for the constructed terms (e.g., from
+<code>rcspline.eval</code>). If the length of <code>coef</code> is k, an
+intercept is assumed to be in the first element (or a zero is
+prepended to <code>coef</code> for <code>rcsplineFunction</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>The default is to represent the cubic spline function corresponding
+to the coefficients and knots.  Set <code>type = "integral"</code> to
+instead represent its anti-derivative.
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a character string to use as the variable name in the LaTeX expression
+for the formula.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lx</code></td>
+<td>
+
+<p>length of <code>x</code> to count with respect to <code>columns</code>. Default
+is length of character string contained by <code>x</code>. You may want to
+set <code>lx</code> smaller than this if it includes non-printable LaTeX
+commands.
+</p>
+</td></tr>
+<tr valign="top"><td><code>norm</code></td>
+<td>
+
+<p>normalization that was used in deriving the original nonlinear terms
+used in the fit. See <code>rcspline.eval</code> for definitions.
+</p>
+</td></tr>
+<tr valign="top"><td><code>columns</code></td>
+<td>
+
+<p>maximum number of symbols in the LaTeX expression to allow before
+inserting a newline (<span class="samp">\\</span>) command. Set to a very large
+number to keep text all on one line.
+</p>
+</td></tr>
+<tr valign="top"><td><code>before</code></td>
+<td>
+
+<p>text to place before each line of LaTeX output. Use <span class="samp">"&amp; &amp;"</span>
+for an equation array environment in LaTeX where you want to have a
+left-hand prefix e.g. <span class="samp">"f(X) &amp; = &amp;"</span> or using
+<span class="samp">"\lefteqn"</span>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>after</code></td>
+<td>
+
+<p>text to place at the end of each line of output.
+</p>
+</td></tr>
+<tr valign="top"><td><code>begin</code></td>
+<td>
+
+<p>text with which to start the first line of output. Useful when
+adding LaTeX output to part of an existing formula
+</p>
+</td></tr>
+<tr valign="top"><td><code>nbegin</code></td>
+<td>
+
+<p>number of columns of printable text in <code>begin</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>number of significant digits to write for coefficients and knots
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>rcspline.restate</code> returns a vector of coefficients. The
+coefficients are un-normalized and two coefficients are added that are
+linearly dependent on the other coefficients and knots. The vector of
+coefficients has four attributes. <code>knots</code> is a vector of knots,
+<code>latex</code> is a vector of text strings with the LaTeX
+representation of the formula. <code>columns.used</code> is the number of
+columns used in the output string since the last newline command.
+<code>function</code> is an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> function, which is also return in character
+string format as the <code>text</code> attribute.  <code>rcsplineFunction</code>
+returns an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> function with arguments <code>x</code> (a user-supplied
+numeric vector at which to evaluate the function), and some
+automatically-supplied other arguments. 
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics, Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/rcspline.eval.html">rcspline.eval</a></code>, <code><a href="../../splines/html/ns.html">ns</a></code>, <code><a href="../../rms/help/rcs.html">rcs</a></code>,
+<code><a href="../../Hmisc/help/latex.html">latex</a></code>, <code><a href="../../Hmisc/help/Function.transcan.html">Function.transcan</a></code> 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- 1:100
+y &lt;- (x - 50)^2 + rnorm(100, 0, 50)
+plot(x, y)
+xx &lt;- rcspline.eval(x, inclx=TRUE, nk=4)
+knots &lt;- attr(xx, "knots")
+coef &lt;- lsfit(xx, y)$coef
+options(digits=4)
+# rcspline.restate must ignore intercept
+w &lt;- rcspline.restate(knots, coef[-1], x="{\\rm BP}")
+# could also have used coef instead of coef[-1], to include intercept
+cat(attr(w,"latex"), sep="\n")
+
+
+xtrans &lt;- eval(attr(w, "function"))
+# This is an S function of a single argument
+lines(x, coef[1] + xtrans(x), type="l")
+# Plots fitted transformation
+
+xtrans &lt;- rcsplineFunction(knots, coef)
+xtrans
+lines(x, xtrans(x), col='blue')
+
+
+#x &lt;- blood.pressure
+xx.simple &lt;- cbind(x, pmax(x-knots[1],0)^3, pmax(x-knots[2],0)^3,
+                       pmax(x-knots[3],0)^3, pmax(x-knots[4],0)^3)
+pred.value &lt;- coef[1] + xx.simple %*% w
+plot(x, pred.value, type='l')   # same as above
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

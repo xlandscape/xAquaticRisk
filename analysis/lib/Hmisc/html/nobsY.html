@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Compute Number of Observations for Left Hand Side of Formula</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for nobsY {Hmisc}"><tr><td>nobsY {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Compute Number of Observations for Left Hand Side of Formula</h2>
+
+<h3>Description</h3>
+
+<p>After removing any artificial observations added by
+<code>addMarginal</code>, computes the number of
+non-missing observations for all left-hand-side variables in
+<code>formula</code>.  If <code>formula</code> contains a term <code>id(variable)</code>
+<code>variable</code> is assumed to be a subject ID variable, and only unique
+subject IDs are counted.  If group is given and its value is the name of
+a variable in the right-hand-side of the model, an additional object
+<code>nobsg</code> is returned that is a matrix with as many columns as there
+are left-hand variables, and as many rows as there are levels to the
+<code>group</code> variable.  This matrix has the further breakdown of unique
+non-missing observations by <code>group</code>.  The concatenation of all ID
+variables, is returned in a <code>list</code> element <code>id</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+nobsY(formula, group=NULL, data = NULL, subset = NULL,
+      na.action = na.retain, matrixna=c('all', 'any'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula object</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+<p>character string containing optional name of a
+stratification variable for computing sample sizes</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a data frame</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>an optional subsetting criterion</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+<p>an optional <code>NA</code>-handling function</p>
+</td></tr>
+<tr valign="top"><td><code>matrixna</code></td>
+<td>
+<p>set to <code>"all"</code> if an observation is to be
+considered <code>NA</code> if all the columns of the variable are
+<code>NA</code>, otherwise use <code>matrixna="any"</code> to consider the row
+missing if any of the columns are missing</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>an integer, with an attribute <code>"formula"</code> containing the
+original formula but with an <code>id</code> variable (if present) removed</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+d &lt;- expand.grid(sex=c('female', 'male', NA),
+                 country=c('US', 'Romania'),
+                 reps=1:2)
+d$subject.id &lt;- c(0, 0, 3:12)
+dm &lt;- addMarginal(d, sex, country)
+dim(dm)
+nobsY(sex + country ~ 1, data=d)
+nobsY(sex + country ~ id(subject.id), data=d)
+nobsY(sex + country ~ id(subject.id) + reps, group='reps', data=d)
+nobsY(sex ~ 1, data=d)
+nobsY(sex ~ 1, data=dm)
+nobsY(sex ~ id(subject.id), data=dm)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

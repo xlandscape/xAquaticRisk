@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Sample Size for 2-sample Binomial</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for samplesize.bin {Hmisc}"><tr><td>samplesize.bin {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Sample Size for 2-sample Binomial
+</h2>
+
+<h3>Description</h3>
+
+<p>Computes sample size(s) for 2-sample binomial problem given vector or
+scalar probabilities in the two groups.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+samplesize.bin(alpha, beta, pit, pic, rho=0.5)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+
+<p>scalar ONE-SIDED test size, or two-sided size/2
+</p>
+</td></tr>
+<tr valign="top"><td><code>beta</code></td>
+<td>
+
+<p>scalar or vector of powers
+</p>
+</td></tr>
+<tr valign="top"><td><code>pit</code></td>
+<td>
+
+<p>hypothesized treatment probability of success
+</p>
+</td></tr>
+<tr valign="top"><td><code>pic</code></td>
+<td>
+
+<p>hypothesized control probability of success
+</p>
+</td></tr>
+<tr valign="top"><td><code>rho</code></td>
+<td>
+
+<p>proportion of the sample devoted to treated group (<i>0 &lt;\code{rho} &lt; 1</i>)
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>TOTAL sample size(s)
+</p>
+
+
+<h3>AUTHOR</h3>
+
+<p>Rick Chappell<br />
+Dept. of Statistics and Human Oncology<br />
+University of Wisconsin at Madison<br />
+<a href="mailto:chappell@stat.wisc.edu">chappell@stat.wisc.edu</a>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+alpha &lt;- .05
+beta &lt;- c(.70,.80,.90,.95)
+
+
+# N1 is a matrix of total sample sizes whose
+# rows vary by hypothesized treatment success probability and
+# columns vary by power
+# See Meinert's book for formulae.
+
+
+N1 &lt;- samplesize.bin(alpha, beta, pit=.55, pic=.5)
+N1 &lt;- rbind(N1, samplesize.bin(alpha, beta, pit=.60, pic=.5))
+N1 &lt;- rbind(N1, samplesize.bin(alpha, beta, pit=.65, pic=.5))
+N1 &lt;- rbind(N1, samplesize.bin(alpha, beta, pit=.70, pic=.5))
+attr(N1,"dimnames") &lt;- NULL
+
+
+#Accounting for 5% noncompliance in the treated group
+inflation &lt;- (1/.95)**2
+print(round(N1*inflation+.5,0))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

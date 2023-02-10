@@ -1,0 +1,464 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Variable Clustering</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for varclus {Hmisc}"><tr><td>varclus {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Variable Clustering
+</h2>
+
+<h3>Description</h3>
+
+<p>Does a hierarchical cluster analysis on variables, using the Hoeffding
+D statistic, squared Pearson or Spearman correlations, or proportion
+of observations for which two variables are both positive as similarity
+measures.  Variable clustering is used for assessing collinearity,
+redundancy, and for separating variables into clusters that can be
+scored as a single variable, thus resulting in data reduction.  For
+computing any of the three similarity measures, pairwise deletion of
+NAs is done.  The clustering is done by <code>hclust()</code>.  A small function
+<code>naclus</code> is also provided which depicts similarities in which
+observations are missing for variables in a data frame.  The
+similarity measure is the fraction of <code>NAs</code> in common between any two
+variables.  The diagonals of this <code>sim</code> matrix are the fraction of NAs
+in each variable by itself.  <code>naclus</code> also computes <code>na.per.obs</code>, the
+number of missing variables in each observation, and <code>mean.na</code>, a
+vector whose ith element is the mean number of missing variables other
+than variable i, for observations in which variable i is missing.  The
+<code>naplot</code> function makes several plots (see the <code>which</code> argument).
+</p>
+<p>So as to not generate too many dummy variables for multi-valued
+character or categorical predictors, <code>varclus</code> will automatically
+combine infrequent cells of such variables using an auxiliary
+function <code>combine.levels</code> that is defined here.  If all values of
+<code>x</code> are <code>NA</code>, <code>combine.levels</code> returns a numeric vector
+is returned that is all <code>NA</code>. 
+</p>
+<p><code>plotMultSim</code> plots multiple similarity matrices, with the similarity
+measure being on the x-axis of each subplot.
+</p>
+<p><code>na.pattern</code> prints a frequency table of all combinations of
+missingness for multiple variables.  If there are 3 variables, a
+frequency table entry labeled <code>110</code> corresponds to the number of
+observations for which the first and second variables were missing but
+the third variable was not missing.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+varclus(x, similarity=c("spearman","pearson","hoeffding","bothpos","ccbothpos"),
+        type=c("data.matrix","similarity.matrix"), 
+        method="complete",
+        data=NULL, subset=NULL, na.action=na.retain,
+        trans=c("square", "abs", "none"), ...)
+## S3 method for class 'varclus'
+print(x, abbrev=FALSE, ...)
+## S3 method for class 'varclus'
+plot(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen, labels, ...)
+
+naclus(df, method)
+naplot(obj, which=c('all','na per var','na per obs','mean na',
+                    'na per var vs mean na'), ...)
+
+combine.levels(x, minlev=.05)
+
+plotMultSim(s, x=1:dim(s)[3],
+            slim=range(pretty(c(0,max(s,na.rm=TRUE)))),
+            slimds=FALSE,
+            add=FALSE, lty=par('lty'), col=par('col'),
+            lwd=par('lwd'), vname=NULL, h=.5, w=.75, u=.05,
+            labelx=TRUE, xspace=.35)
+
+na.pattern(x)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a formula,
+a numeric matrix of predictors, or a similarity matrix.  If <code>x</code> is
+a formula, <code>model.matrix</code> is used to convert it to a design matrix.
+If the formula excludes an intercept (e.g., <code>~ a + b -1</code>),
+the first categorical (<code>factor</code>) variable in the formula will have
+dummy variables generated for all levels instead of omitting one for
+the first level. For <code>combine.levels</code>, <code>x</code> is a character, category,
+or factor vector (or other vector that is converted to factor).  For
+<code>plot</code> and <code>print</code>, <code>x</code> is an object created by
+<code>varclus</code>.  For <code>na.pattern</code>, <code>x</code> is a data table, data frame,
+or matrix.
+</p>
+<p>For <code>plotMultSim</code>, is a numeric vector specifying the ordered
+unique values on the x-axis, corresponding to the third dimension of
+<code>s</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>df</code></td>
+<td>
+<p>a data frame</p>
+</td></tr>
+<tr valign="top"><td><code>s</code></td>
+<td>
+
+<p>an array of similarity matrices.  The third dimension of this array
+corresponds to different computations of similarities.  The first two
+dimensions come from a single similarity matrix.  This is useful for
+displaying similarity matrices computed by <code>varclus</code>, for example.  A
+use for this might be to show pairwise similarities of variables
+across time in a longitudinal study (see the example below).  If
+<code>vname</code> is not given, <code>s</code> must have <code>dimnames</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>similarity</code></td>
+<td>
+
+<p>the default is to use squared Spearman correlation coefficients, which
+will detect monotonic but nonlinear relationships.  You can also
+specify linear correlation or Hoeffding's (1948) D statistic, which
+has the advantage of being sensitive to many types
+of dependence, including highly non-monotonic relationships.  For
+binary data, or data to be made binary, <code>similarity="bothpos"</code> uses as
+a similarity measure the proportion of observations for which two
+variables are both positive.  <code>similarity="ccbothpos"</code> uses a
+chance-corrected measure which is the proportion of observations for
+which both variables are positive minus the product of the two
+marginal proportions.  This difference is expected to be zero under
+independence.  For diagonals, <code>"ccbothpos"</code> still uses the proportion
+of positives for the single variable.  So <code>"ccbothpos"</code> is not really
+a similarity measure, and clustering is not done.  This measure is
+useful for plotting with <code>plotMultSim</code> (see the last example).
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>if <code>x</code> is not a formula, it may be a data matrix or a similarity matrix.
+By default, it is assumed to be a data matrix.
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>see <code>hclust</code>.  The default, for both <code>varclus</code> and <code>naclus</code>, is
+<code>"compact"</code> (for <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> it is <code>"complete"</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+
+<p>These may be specified if <code>x</code> is a formula.  The default
+<code>na.action</code> is <code>na.retain</code>, defined by <code>varclus</code>.  This
+causes all observations to be kept in the model frame, with later
+pairwise deletion of <code>NA</code>s.</p>
+</td></tr>
+<tr valign="top"><td><code>trans</code></td>
+<td>
+<p>By default, when the similarity measure is based on
+Pearson's or Spearman's correlation coefficients, the coefficients are
+squared.  Specify <code>trans="abs"</code> to take absolute values or
+<code>trans="none"</code> to use the coefficients as they stand.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>for <code>varclus</code> these are optional arguments to pass to
+the <code><a href="../../Hmisc/help/dataframeReduce.html">dataframeReduce</a></code> function.  Otherwise,
+passed to <code>plclust</code> (or to <code>dotchart</code> or <code>dotchart2</code> for
+<code>naplot</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>y-axis label.  Default is constructed on the basis of <code>similarity</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>legend.</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to plot a legend defining the abbreviations
+</p>
+</td></tr>
+<tr valign="top"><td><code>loc</code></td>
+<td>
+
+<p>a list with elements <code>x</code> and <code>y</code> defining coordinates of the
+upper left corner of the legend.  Default is <code>locator(1)</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>maxlen</code></td>
+<td>
+
+<p>if a legend is plotted describing abbreviations, original labels
+longer than <code>maxlen</code> characters are truncated at <code>maxlen</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+
+<p>a vector of character strings containing labels corresponding to
+columns in the similar matrix, if the column names of that matrix are
+not to be used
+</p>
+</td></tr>
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>an object created by <code>naclus</code></p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+
+<p>defaults to <code>"all"</code> meaning to have <code>naplot</code> make 4 separate
+plots.  To 
+make only one of the plots, use <code>which="na per var"</code> (dot chart of
+fraction of NAs for each variable), ,<code>"na per obs"</code> (dot chart showing
+frequency distribution of number of variables having NAs in an
+observation), <code>"mean na"</code> (dot chart showing mean number of other
+variables missing when the indicated variable is missing), or 
+<code>"na per var vs mean na"</code>, a scatterplot showing on the x-axis the
+fraction of NAs in the variable and on the y-axis the mean number of
+other variables that are NA when the indicated variable is NA.
+</p>
+</td></tr>
+<tr valign="top"><td><code>minlev</code></td>
+<td>
+
+<p>the minimum proportion of observations in a cell before that cell is
+combined with one or more cells.  If more than one cell has fewer than
+minlev*n observations, all such cells are combined into a new cell
+labeled <code>"OTHER"</code>.  Otherwise, the lowest frequency cell is combined
+with the next lowest frequency cell, and the level name is the
+combination of the two old level levels.
+</p>
+</td></tr>
+<tr valign="top"><td><code>abbrev</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to abbreviate variable names for plotting or
+printing.  Is set to <code>TRUE</code> automatically if <code>legend=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>slim</code></td>
+<td>
+
+<p>2-vector specifying the range of similarity values for scaling the
+y-axes.  By default this is the observed range over all of <code>s</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>slimds</code></td>
+<td>
+<p>set to <code>slimds</code> to <code>TRUE</code> to scale diagonals and
+off-diagonals separately</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to add similarities to an existing plot (usually
+specifying <code>lty</code> or <code>col</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+
+<p>line type, color, or line thickness for <code>plotMultSim</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>vname</code></td>
+<td>
+
+<p>optional vector of variable names, in order, used in <code>s</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>h</code></td>
+<td>
+
+<p>relative height for subplot
+</p>
+</td></tr>
+<tr valign="top"><td><code>w</code></td>
+<td>
+
+<p>relative width for subplot
+</p>
+</td></tr>
+<tr valign="top"><td><code>u</code></td>
+<td>
+
+<p>relative extra height and width to leave unused inside the subplot.
+Also used as the space between y-axis tick mark labels and graph border.
+</p>
+</td></tr>
+<tr valign="top"><td><code>labelx</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress drawing of labels in the x direction
+</p>
+</td></tr>
+<tr valign="top"><td><code>xspace</code></td>
+<td>
+
+<p>amount of space, on a scale of 1:<code>n</code> where <code>n</code> is the number
+of variables, to set aside for y-axis labels
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>options(contrasts= c("contr.treatment", "contr.poly"))</code> is issued 
+temporarily by <code>varclus</code> to make sure that ordinary dummy variables
+are generated for <code>factor</code> variables.  Pass arguments to the
+<code><a href="../../Hmisc/help/dataframeReduce.html">dataframeReduce</a></code> function to remove problematic variables
+(especially if analyzing all variables in a data frame).
+</p>
+
+
+<h3>Value</h3>
+
+<p>for <code>varclus</code> or <code>naclus</code>, a list of class <code>varclus</code> with elements
+<code>call</code> (containing the calling statement), <code>sim</code> (similarity matrix),
+<code>n</code> (sample size used if <code>x</code> was not a correlation matrix already -
+<code>n</code> is a matrix), <code>hclust</code>, the object created by <code>hclust</code>,
+<code>similarity</code>, and <code>method</code>.  <code>naclus</code> also returns the
+two vectors listed under 
+description, and <code>naplot</code> returns an invisible vector that is the
+frequency table of the number of missing variables per observation.
+<code>plotMultSim</code> invisibly returns the limits of similarities used in
+constructing the y-axes of each subplot.  For <code>similarity="ccbothpos"</code>
+the <code>hclust</code> object is <code>NULL</code>.
+</p>
+<p><code>na.pattern</code> creates an integer vector of frequencies.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>plots
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics, Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Sarle, WS: The VARCLUS Procedure.  SAS/STAT User's Guide, 4th Edition,
+1990.  Cary NC: SAS Institute, Inc.
+</p>
+<p>Hoeffding W. (1948): A non-parametric test of independence.  Ann Math Stat
+19:546&ndash;57.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/hclust.html">hclust</a></code>, <code><a href="../../stats/html/stats-defunct.html">plclust</a></code>, <code><a href="../../Hmisc/help/hoeffd.html">hoeffd</a></code>, <code><a href="../../Hmisc/help/rcorr.html">rcorr</a></code>, <code><a href="../../stats/html/cor.html">cor</a></code>, <code><a href="../../stats/html/model.matrix.html">model.matrix</a></code>,
+<code><a href="../../graphics/html/locator.html">locator</a></code>, <code><a href="../../Hmisc/help/na.pattern.html">na.pattern</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x1 &lt;- rnorm(200)
+x2 &lt;- rnorm(200)
+x3 &lt;- x1 + x2 + rnorm(200)
+x4 &lt;- x2 + rnorm(200)
+x &lt;- cbind(x1,x2,x3,x4)
+v &lt;- varclus(x, similarity="spear")  # spearman is the default anyway
+v    # invokes print.varclus
+print(round(v$sim,2))
+plot(v)
+
+
+# plot(varclus(~ age + sys.bp + dias.bp + country - 1), abbrev=TRUE)
+# the -1 causes k dummies to be generated for k countries
+# plot(varclus(~ age + factor(disease.code) - 1))
+#
+#
+# use varclus(~., data= fracmiss= maxlevels= minprev=) to analyze all
+# "useful" variables - see dataframeReduce for details about arguments
+
+
+df &lt;- data.frame(a=c(1,2,3),b=c(1,2,3),c=c(1,2,NA),d=c(1,NA,3),
+                 e=c(1,NA,3),f=c(NA,NA,NA),g=c(NA,2,3),h=c(NA,NA,3))
+par(mfrow=c(2,2))
+for(m in c("ward","complete","median")) {
+  plot(naclus(df, method=m))
+  title(m)
+}
+naplot(naclus(df))
+n &lt;- naclus(df)
+plot(n); naplot(n)
+na.pattern(df)
+
+x &lt;- c(1, rep(2,11), rep(3,9))
+combine.levels(x)
+x &lt;- c(1, 2, rep(3,20))
+combine.levels(x)
+
+
+# plotMultSim example: Plot proportion of observations
+# for which two variables are both positive (diagonals
+# show the proportion of observations for which the
+# one variable is positive).  Chance-correct the
+# off-diagonals by subtracting the product of the
+# marginal proportions.  On each subplot the x-axis
+# shows month (0, 4, 8, 12) and there is a separate
+# curve for females and males
+d &lt;- data.frame(sex=sample(c('female','male'),1000,TRUE),
+                month=sample(c(0,4,8,12),1000,TRUE),
+                x1=sample(0:1,1000,TRUE),
+                x2=sample(0:1,1000,TRUE),
+                x3=sample(0:1,1000,TRUE))
+s &lt;- array(NA, c(3,3,4))
+opar &lt;- par(mar=c(0,0,4.1,0))  # waste less space
+for(sx in c('female','male')) {
+  for(i in 1:4) {
+    mon &lt;- (i-1)*4
+    s[,,i] &lt;- varclus(~x1 + x2 + x3, sim='ccbothpos', data=d,
+                      subset=d$month==mon &amp; d$sex==sx)$sim
+    }
+  plotMultSim(s, c(0,4,8,12), vname=c('x1','x2','x3'),
+              add=sx=='male', slimds=TRUE,
+              lty=1+(sx=='male'))
+  # slimds=TRUE causes separate  scaling for diagonals and
+  # off-diagonals
+}
+par(opar)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: plotly Multiple</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for plotlyM {Hmisc}"><tr><td>plotlyM {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>plotly Multiple</h2>
+
+<h3>Description</h3>
+
+<p>Generates multiple plotly graphics, driven by specs in a data frame
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+plotlyM(
+  data,
+  x = ~x,
+  y = ~y,
+  xhi = ~xhi,
+  yhi = ~yhi,
+  htext = NULL,
+  multplot = NULL,
+  strata = NULL,
+  fitter = NULL,
+  color = NULL,
+  size = NULL,
+  showpts = !length(fitter),
+  rotate = FALSE,
+  xlab = NULL,
+  ylab = NULL,
+  ylabpos = c("top", "y"),
+  xlim = NULL,
+  ylim = NULL,
+  shareX = TRUE,
+  shareY = FALSE,
+  height = NULL,
+  width = NULL,
+  nrows = NULL,
+  ncols = NULL,
+  colors = NULL,
+  alphaSegments = 1,
+  alphaCline = 0.3,
+  digits = 4,
+  zeroline = TRUE
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>input data frame</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>formula specifying the x-axis variable</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>formula for y-axis variable</p>
+</td></tr>
+<tr valign="top"><td><code>xhi</code></td>
+<td>
+<p>formula for upper x variable limits (<code>x</code> taken to be lower value)</p>
+</td></tr>
+<tr valign="top"><td><code>yhi</code></td>
+<td>
+<p>formula for upper y variable limit (<code>y</code> taken to be lower value)</p>
+</td></tr>
+<tr valign="top"><td><code>htext</code></td>
+<td>
+<p>formula for hovertext variable</p>
+</td></tr>
+<tr valign="top"><td><code>multplot</code></td>
+<td>
+<p>formula specifying a variable in <code>data</code> that when stratified on produces a separate plot</p>
+</td></tr>
+<tr valign="top"><td><code>strata</code></td>
+<td>
+<p>formula specifying an optional stratification variable</p>
+</td></tr>
+<tr valign="top"><td><code>fitter</code></td>
+<td>
+<p>a fitting such as <code>loess</code> that comes with a <code>predict</code> method.  Alternatively specify <code>fitter='ecdf'</code> to use an internal function for computing and displaying ECDFs, which moves the analysis variable from the y-axis to the x-axis</p>
+</td></tr>
+<tr valign="top"><td><code>color</code></td>
+<td>
+<p><code>plotly</code> formula specifying a color variable or e.g. <code>~ I('black')</code>.  To keep colors constant over multiple plots you will need to specify an AsIs color when you don't have a variable representing color groups.</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+<p><code>plotly</code> formula specifying a symbol size variable or AsIs</p>
+</td></tr>
+<tr valign="top"><td><code>showpts</code></td>
+<td>
+<p>if <code>fitter</code> is given, set to <code>TRUE</code> to show raw data points in addition to smooth fits</p>
+</td></tr>
+<tr valign="top"><td><code>rotate</code></td>
+<td>
+<p>set to <code>TRUE</code> to reverse the roles of <code>x</code> and <code>y</code>, for example to get horizontal dot charts with error bars</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+<p>x-axis label.  May contain html.</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+<p>a named vector of y-axis labels, possibly containing html (see example below).  The names of the vector must correspond to levels of the <code>multplot</code> variable.  <code>ylab</code> can be unnamed if <code>multplot</code> is not used.</p>
+</td></tr>
+<tr valign="top"><td><code>ylabpos</code></td>
+<td>
+<p>position of y-axis labels.  Default is on top left of plot.  Specify <code>ylabpos='y'</code> for usual y-axis placement.</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+<p>2-vector of x-axis limits, optional</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+<p>2-vector of y-axis limits, optional</p>
+</td></tr>
+<tr valign="top"><td><code>shareX</code></td>
+<td>
+<p>specifies whether x-axes should be shared when they align vertically over multiple plots</p>
+</td></tr>
+<tr valign="top"><td><code>shareY</code></td>
+<td>
+<p>specifies whether y-axes should be shared when they align horizontally over multiple plots</p>
+</td></tr>
+<tr valign="top"><td><code>height</code></td>
+<td>
+<p>height of the combined image in pixels</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+<p>width of the combined image in pixels</p>
+</td></tr>
+<tr valign="top"><td><code>nrows</code></td>
+<td>
+<p>the number of rows to produce using <code>subplot</code></p>
+</td></tr>
+<tr valign="top"><td><code>ncols</code></td>
+<td>
+<p>the number of columns to produce using <code>subplot</code> (specify at most one of <code>nrows,ncols</code>)</p>
+</td></tr>
+<tr valign="top"><td><code>colors</code></td>
+<td>
+<p>the color palette.  Leave unspecified to use the default <code>plotly</code> palette</p>
+</td></tr>
+<tr valign="top"><td><code>alphaSegments</code></td>
+<td>
+<p>alpha transparency for line segments (when <code>xhi</code> or <code>yhi</code> is not <code>NA</code>)</p>
+</td></tr>
+<tr valign="top"><td><code>alphaCline</code></td>
+<td>
+<p>alpha transparency for lines used to connect points</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>number of significant digits to use in constructing hovertext</p>
+</td></tr>
+<tr valign="top"><td><code>zeroline</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress vertical line at x=0</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Generates multiple <code>plotly</code> traces and combines them with <code>plotly::subplot</code>.  The traces are controlled by specifications in data frame <code>data</code> plus various arguments.  <code>data</code> must contain these variables: <code>x</code>, <code>y</code>, and <code>tracename</code> (if <code>color</code> is not an &quot;AsIs&quot; color such as <code>~ I('black')</code>), and can contain these optional variables: <code>xhi</code>, <code>yhi</code> (rows containing <code>NA</code> for both <code>xhi</code> and <code>yhi</code> represent points, and those with non-<code>NA</code> <code>xhi</code> or <code>yhi</code> represent segments, <code>connect</code> (set to <code>TRUE</code> for rows for points, to connect the symbols), <code>legendgroup</code> (see <code>plotly</code> documentation), and <code>htext</code> (hovertext).  If the <code>color</code> argument is given and it is not an &quot;AsIs&quot; color, the variable named in the <code>color</code> formula must also be in <code>data</code>.  Likewise for <code>size</code>.  If the <code>multplot</code> is given, the variable given in the formula must be in <code>data</code>.  If <code>strata</code> is present, another level of separate plots is generated by levels of <code>strata</code>, within levels of <code>multplot</code>.
+</p>
+<p>If <code>fitter</code> is specified, x,y coordinates for an individual plot are
+run through <code>fitter</code>, and a line plot is made instead of showing data points.  Alternatively you can specify <code>fitter='ecdf'</code> to compute and plot emirical cumulative distribution functions.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>plotly</code> object produced by <code>subplot</code>
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+set.seed(1)
+pts     &lt;- expand.grid(v=c('y1', 'y2', 'y3'), x=1:4, g=c('a', 'b'), yhi=NA,
+                       tracename='mean', legendgroup='mean',
+                       connect=TRUE, size=4)
+
+pts$y   &lt;- round(runif(nrow(pts)), 2)
+
+segs     &lt;- expand.grid(v=c('y1', 'y2', 'y3'), x=1:4, g=c('a', 'b'),
+                        tracename='limits', legendgroup='limits',
+                        connect=NA, size=6)
+segs$y   &lt;- runif(nrow(pts))
+segs$yhi &lt;- segs$y + runif(nrow(pts), .05, .15)
+
+z &lt;- rbind(pts, segs)
+
+xlab &lt;- labelPlotmath('X&lt;sub&gt;12&lt;/sub&gt;', 'm/sec&lt;sup&gt;2&lt;/sup&gt;', html=TRUE)
+ylab &lt;- c(y1=labelPlotmath('Y1', 'cm', html=TRUE),
+          y2='Y2',
+          y3=labelPlotmath('Y3', 'mm', html=TRUE))
+
+W=plotlyM(z, multplot=~v, color=~g, xlab=xlab, ylab=ylab, ncols=2,
+          colors=c('black', 'blue'))
+
+W2=plotlyM(z, multplot=~v, color=~I('black'), xlab=xlab, ylab=ylab,
+           colors=c('black', 'blue'))
+
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

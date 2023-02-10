@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Faciliate Use of save and load to Remote Directories</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for Save {Hmisc}"><tr><td>Save {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Faciliate Use of save and load to Remote Directories</h2>
+
+<h3>Description</h3>
+
+<p>These functions are slightly enhanced versions of <code>save</code> and
+<code>load</code> that allow a target directory to be specified using
+<code>options(LoadPath="pathname")</code>.  If the <code>LoadPath</code> option is
+not set, the current working directory is used.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+# options(LoadPath='mypath')
+Save(object, name=deparse(substitute(object)), compress=TRUE)
+Load(object)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>the name of an object, usually a data frame.  It must
+not be quoted.</p>
+</td></tr>
+<tr valign="top"><td><code>name</code></td>
+<td>
+<p>an optional name to assign to the object and file name
+prefix, if the argument name is not used</p>
+</td></tr>
+<tr valign="top"><td><code>compress</code></td>
+<td>
+<p>see <code><a href="../../base/html/save.html">save</a></code>.  Default is <code>TRUE</code>
+which corresponds to <code>gzip</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>Save</code> creates a temporary version of the object under the name
+given by the user, so that <code>save</code> will internalize this name.
+Then subsequent <code>Load</code> or <code>load</code> will cause an object of the
+original name to be created in the global environment.  The name of
+the <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> data file is assumed to be the name of the object (or the value
+of <code>name</code>) appended with <code>".rda"</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/save.html">save</a></code>, <code><a href="../../base/html/load.html">load</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+d &lt;- data.frame(x=1:3, y=11:13)
+options(LoadPath='../data/rda')
+Save(d)   # creates ../data/rda/d.rda
+Load(d)   # reads   ../data/rda/d.rda
+Save(d, 'D')   # creates object D and saves it in .../D.rda
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

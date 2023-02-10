@@ -1,0 +1,328 @@
+$                       Get data from column of horizon or site data in
+                        a SoilProfileCollection
+$<-                     Set data in column of horizon or site data in a
+                        SoilProfileCollection
+.as.data.frame.aqp      Wrapper method for data.frame subclass
+                        conversion
+.data_dots              Make a data.frame from non-standard expressions
+                        evaluated in a data environment
+HzDepthLogicSubset      Subset 'SoilProfileCollection' Objects or
+                        Horizons via 'checkHzDepthLogic'
+L1_profiles             Create Representative Soil Profiles via L1
+                        Estimator
+PMS2Munsell             Convert Pantone PMS codes to Munsell notation
+ROSETTA.centroids       Average Hydraulic Parameters from the ROSETTA
+                        Model by USDA Soil Texture Class
+SoilProfileCollection   An S4 object representation of a group of soil
+                        profiles.
+SoilTextureLevels       Ranking Systems for USDS Soil Texture Classes
+[,SoilProfileCollection-method
+                        Matrix/data.frame-like access to profiles and
+                        horizons in a SoilProfileCollection
+[[                      Get column of horizon or site data in a
+                        SoilProfileCollection
+[[<-                    Add or change column of horizon or site data in
+                        a SoilProfileCollection
+accumulateDepths        Accumulate horizon depths, and reflect reversed
+                        depths, relative to new datum
+addBracket              Add Depth Brackets
+addDiagnosticBracket    Annotate Diagnostic Features
+addVolumeFraction       Symbolize Volume Fraction on a Soil Profile
+                        Collection Plot
+aggregateColor          Summarize Soil Colors
+aggregateSoilDepth      Probabalistic Estimation of Soil Depth within
+                        Groups
+alignTransect           Calculate Relative Positions from Transect Data
+allocate                Allocate soil properties within various
+                        classification systems.
+aqp-package             Algorithms for Quantitative Pedology
+aqp_df_class,SoilProfileCollection-method
+                        Get aqp_df_class entry from metadata or return
+                        a safe value.
+argillic.clay.increase.depth
+                        Return upper boundary of argillic horizon
+as                      Coerce SoilProfileCollection with 'as()'
+barron.torrent.redness.LAB
+                        Barron & Torrent (1986) Redness Index in LAB
+                        color space
+bootstrapSoilTexture    Bootstrap Soil Texture Data
+brierScore              Multinominal Brier Score
+buntley.westin.index    Buntley-Westin (1965) Index
+c,SoilProfileCollection-method
+                        Combine SoilProfileCollection objects
+ca630                   Soil Data from the Central Sierra Nevada Region
+                        of California
+checkHzDepthLogic       Check a SoilProfileCollection object for errors
+                        in horizon depths.
+checkSPC                Test for a valid SoilProfileCollection
+colorChart              Visualize soil colors in Munsell notation
+                        according to within-group frequency.
+colorContrast           Metrics of Contrast Suitable for Comparing Soil
+                        Colors
+colorContrastPlot       Color Contrast Plot
+colorQuantiles          Soil Color Range via Quantiles
+compositeSPC            Return a list representation of site and
+                        horizon level data
+confusionIndex          Confusion Index
+contrastChart           Color Contrast Chart
+contrastClass           Soil Color Contrast
+coordinates,SoilProfileCollection-method
+                        Get coordinates from spatial slot
+correctAWC              Apply rock fragment or salt correction to
+                        available water content
+crit.clay.argillic      Determines threshold (minimum) clay content for
+                        argillic upper bound
+denormalize             Create a (redundant) horizon-level attribute
+                        from a site-level attribute
+depthOf                 Get top or bottom depths of horizons matching a
+                        regular expression pattern
+depthWeights            Return a vector of contributing fractions over
+                        a depth interval
+depth_units,SoilProfileCollection-method
+                        Get depth units from metadata
+depths<-,SoilProfileCollection-method
+                        Initialize a SoilProfileCollection from a
+                        data.frame object
+diagnostic_hz,SoilProfileCollection-method
+                        Retrieve diagnostic data from
+                        SoilProfileCollection
+diagnostic_hz<-         Add data to the diagnostic slot
+dice                    Efficient Slicing of 'SoilProfileCollection'
+                        Objects
+duplicate               Duplicte Profiles of a SoilProfileCollection
+equivalentMunsellChips
+                        Identify "equivalent" (whole number
+                        value/chroma) Munsell chips
+equivalent_munsell      Indices of "equivalent" Munsell chips in the
+                        'munsell' data set
+estimateAWC             Estimate available water capacity for
+                        fine-earth fraction
+estimatePSCS            Estimate boundaries of the particle size
+                        control section (U.S Soil Taxonomy; 12th
+                        edition)
+estimateSoilDepth       Estimate Soil Depth
+evalGenHZ               Evaluate Generalized Horizon Labels
+evalMissingData         Evaluate Missing Data
+explainPlotSPC          Visual Explanation for 'plotSPC'
+fillHzGaps              Find and Fill Horizon Gaps
+findOverlap             Find Overlap within a Sequence
+fixOverlap              Fix Overlap within a Sequence via Simulated
+                        Annealing
+generalize.hz           Generalize Horizon Names
+get.increase.depths     Return the horizon top depths from a call to
+                        get.increase.matrix()
+get.increase.matrix     compute pair-wise distances to determine where
+                        an attribute increases within a vertical
+                        distance specified
+get.ml.hz               Determine ML Horizon Boundaries
+getArgillicBounds       Estimate upper and lower boundary of argillic
+                        diagnostic subsurface horizon
+getCambicBounds         Find all intervals that are potentially part of
+                        a Cambic horizon
+getClosestMunsellChip   Get Approximate Munsell Chip
+getLastHorizonID        Get IDs of Deepest Horizons by Profile
+getSoilDepthClass       Generate Soil Depth Class Matrix
+getSurfaceHorizonDepth
+                        Determine thickness of horizons (continuous
+                        from surface) matching a pattern
+glom,SoilProfileCollection-method
+                        Subset soil horizon data using a depth or depth
+                        interval
+glomApply               Subset an SPC by applying glom to each profile
+grepSPC                 Subset SPC with pattern-matching for text-based
+                        attributes
+groupSPC                (EXPERIMENTAL) Store groupings within a profile
+                        collection.
+groupedProfilePlot      Grouped Soil Profile Plot
+guessGenHzLevels        Guess Appropriate Ordering for Generalized
+                        Horizon Labels
+guessHzAttrName         Guess Horizon Slot Column Names
+harden.melanization     Harden (1982) Melanization
+harden.rubification     Harden (1982) Rubification
+harmonize,SoilProfileCollection-method
+                        Harmonize a property by profile-level
+                        denormalization for convenient visualization or
+                        analysis of ranges
+hasDarkColors           Find horizons with colors darker than a Munsell
+                        hue, value, chroma threshold
+horizonColorIndices     Horizon Color Indices
+horizonDepths<-         Set horizon depth column names
+horizonNames<-          Set horizon column names
+horizons,SoilProfileCollection-method
+                        Retrieve horizon data from
+                        SoilProfileCollection
+huePosition             Munsell Hue Reference and Position Searching
+huePositionCircle       Visual Description of Munsell Hue Ordering
+hurst.redness           Hurst (1977) Redness Index
+hzAbove                 Horizons Above or Below
+hzDepthTests            Tests of horizon depth logic
+hzDesgn,SoilProfileCollection-method
+                        Get horizon designation column name
+hzDistinctnessCodeToOffset
+                        Convert Horizon Boundary Distinctness to
+                        Vertical Offset
+hzID<-,SoilProfileCollection-method
+                        Set horizon IDs
+hzTopographyCodeToLineType
+                        Convert Horizon Boundary Topography to Line
+                        Type
+hzTopographyCodeToOffset
+                        Convert Horizon Boundary Topography to Vertical
+                        Offset
+hzTransitionProbabilities
+                        Horizon Transition Probabilities
+hzdesgnname             Get or Set Horizon Designation Column Name
+hzidname<-              Set horizon ID column name
+hztexclname             Get or Set Horizon Texture Class Column Name
+idname,SoilProfileCollection-method
+                        Get profile ID column name
+invertLabelColor        Make High Contrast Label Colors
+jacobs2000              Soil Morphologic Data from Jacobs et al. 2002.
+length,SoilProfileCollection-method
+                        Get the number of profiles in a
+                        SoilProfileCollection
+lunique                 Eliminate duplicate instances of profile IDs in
+                        a list of SoilProfileCollections
+max,SoilProfileCollection-method
+                        Get the maximum bottom depth in a
+                        SoilProfileCollection
+metadata,SoilProfileCollection-method
+                        Retrieve metadata from SoilProfileCollection
+min,SoilProfileCollection-method
+                        Get the minimum bottom depth in a
+                        SoilProfileCollection
+missingDataGrid         Missing Data Grid
+mixMunsell              Mix Munsell Colors via Spectral Library
+mollic.thickness.requirement
+                        Calculate the minimum thickness requirement for
+                        Mollic epipedon
+munsell                 Munsell to sRGB Lookup Table for Common Soil
+                        Colors
+munsell.spectra         Spectral Library of Munsell Colors
+munsell2rgb             Convert Munsell Color Notation to other Color
+                        Space Coordinates (sRGB and CIELAB)
+munsell2spc,SoilProfileCollection-method
+                        Merge Munsell Hue, Value, Chroma converted to
+                        sRGB & CIELAB into a SoilProfileCollection
+munsellHuePosition      Munsell Hue Position Reference
+mutate_profile          Transform a SPC (by profile) with a set of
+                        expressions
+names,SoilProfileCollection-method
+                        Get names of columns in site and horizons table
+nrow,SoilProfileCollection-method
+                        Get the number of horizons in a
+                        SoilProfileCollection
+overlapMetrics          Find and Quantify Overlap within a 1D Sequence
+panel.depth_function    Lattice Panel Function for Soil Profiles
+parseMunsell            Parse Munsell Color Notation
+pbindlist               Combine a list of SoilProfileCollection objects
+pc                      Numerical Soil Profile Comparison
+perturb                 Perturb soil horizon depths using boundary
+                        distinctness
+plotColorMixture        Visualize Spectral Mixing of Munsell Colors
+plotColorQuantiles      Visualize Color Quantiles
+plotMultipleSPC         Plot Multiple 'SoilProfileCollection' Objects
+plotSPC                 Create Soil Profile Sketches
+plot_distance_graph     Between Individual Distance Plot
+pms.munsell.lut         Pantone Colors / Munsell Lookup Table
+previewColors           Preview Colors
+profileApply            Iterate over profiles in a
+                        SoilProfileCollection
+profileGroupLabels      Soil Profile Group Labels
+profileInformationIndex
+                        Soil Profile Information Index
+profile_id<-            Set profile IDs
+proj4string,SoilProfileCollection-method
+                        Set PROJ4 string for the SoilProfileCollection
+proj4string<-,SoilProfileCollection,ANY-method
+                        Set PROJ4 string for the SoilProfileCollection
+random_profile          Random Profile
+rebuildSPC              Rebuild a SoilProfileCollection object
+reduceSPC               Select a subset of columns from a
+                        SoilProfileCollection
+reorderHorizons         Re-order corrupted horizon data
+repairMissingHzDepths   Repair Problematic Lower Horizon Depths
+replaceHorizons<-       Replace data in the horizon slot
+restrictions,SoilProfileCollection-method
+                        Retrieve restriction data from
+                        SoilProfileCollection
+restrictions<-          Add data to the restrictions slot
+rgb2munsell             sRGB to Munsell Color Conversion
+rowley2019              Soil Morphologic, Geochemical, and Mineralogy
+                        Data from Rowley et al. 2019.
+rruff.sample            Sample XRD Patterns
+segment                 Segmenting of Soil Horizon Data by Depth
+                        Interval
+shannonEntropy          Shannon Entropy
+sierraTransect          Soil Physical and Chemical Data Related to
+                        Studies in the Sierra Nevada Mountains, CA,
+                        USA.
+sim                     DEPRECATED Simulate Soil Profiles
+simulateColor           Simulate Soil Colors
+site,SoilProfileCollection-method
+                        Retrieve site data from SoilProfileCollection
+siteNames<-             Set site column names
+slab-methods            Slab-Wise Aggregation of SoilProfileCollection
+                        Objects
+slice-methods           Slicing of SoilProfileCollection Objects
+slicedHSD               Tukey's HSD Over Slices
+soilColorSignature      Soil Profile Color Signatures
+soilPalette             Soil Color Palette
+soil_minerals           Munsell Colors of Common Soil Minerals
+soiltexture             Lookup tables for sand, silt, clay, texture
+                        class, and textural modifiers.
+sp1                     Soil Profile Data Example 1
+sp2                     Honcut Creek Soil Profile Data
+sp3                     Soil Profile Data Example 3
+sp4                     Soil Chemical Data from Serpentinitic Soils of
+                        California
+sp5                     Sample Soil Database #5
+sp6                     Soil Physical and Chemical Data from
+                        Manganiferous Soils
+spc2mpspline,SoilProfileCollection-method
+                        Missing-data-safe, SPC-wide wrapper around
+                        mpspline2::mpspline "continuous" 1cm output
+spc_in_sync             Quickly assess relative state of site and
+                        horizon slots
+spec2Munsell            Convert reflectance spectra to closest Munsell
+                        chip
+spectral.reference      Standard Illuminants and Observers
+split,SoilProfileCollection-method
+                        Split a SoilProfileCollection object into a
+                        list of SoilProfileCollection objects.
+splitLogicErrors        Split a SoilProfileCollection into a list based
+                        on types of horizon logic errors
+subApply                Subset SPC based on result of performing
+                        function on each profile
+subset,SoilProfileCollection-method
+                        Subset a SoilProfileCollection with logical
+                        expressions
+subsetHz,SoilProfileCollection-method
+                        Subset the horizons in a SoilProfileCollection
+                        using logical criteria
+subsetProfiles          DEPRECATED use subset
+summarizeSPC            Perform summaries on groups (from 'group_by')
+                        and create new site or horizon level attributes
+tauW                    Compute weighted naive and _tau_ statistics for
+                        a cross-classification matrix
+texcl_to_ssc            Textural conversions
+textureTriangleSummary
+                        Soil Texture Low-RV-High as Defined by
+                        Quantiles
+thompson.bell.darkness
+                        Thompson-Bell (1996) Index
+traditionalColorNames   Traditional Soil Color Names
+transform,SoilProfileCollection-method
+                        Transform a SPC with expressions based on site
+                        or horizon level attributes
+trunc,SoilProfileCollection-method
+                        Truncate a SoilProfileCollection to specified
+                        top and bottom depth
+unique,SoilProfileCollection-method
+                        Uniqueness within a 'SoilProfileCollection' via
+                        MD5 Hash
+unroll                  Unroll Genetic Horizons
+us.state.soils          US State Soils
+validSpatialData,SoilProfileCollection-method
+                        Get names of columns in site table
+xtableTauW              Format a LaTeX table with results

@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Enhanced Dot Chart</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for dotchart2 {Hmisc}"><tr><td>dotchart2 {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Enhanced Dot Chart
+</h2>
+
+<h3>Description</h3>
+
+<p><code>dotchart2</code> is an enhanced version of the <code>dotchart</code> function 
+with several new options.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
+          xlab='', ylab='', xlim=NULL, auxdata, auxgdata=NULL, auxtitle,
+          lty=1, lines=TRUE, dotsize = .8,
+          cex = par("cex"), cex.labels = cex,
+          cex.group.labels = cex.labels*1.25, sort.=TRUE, 
+	      add=FALSE, dotfont=par('font'), groupfont=2, 
+	      reset.par=add, xaxis=TRUE, width.factor=1.1,
+          lcolor='gray', leavepar=FALSE,
+          axisat=NULL, axislabels=NULL, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a numeric vector whose values are shown on the x-axis</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+<p>a vector of labels for each point, corresponding to
+<code>x</code>.  If omitted, <code>names(data)</code> are used, and if there are
+no <code>names</code>, integers prefixed by <code>"#"</code> are used.</p>
+</td></tr>
+<tr valign="top"><td><code>groups</code></td>
+<td>
+<p>an optional categorical variable indicating how
+<code>data</code> values are grouped</p>
+</td></tr>
+<tr valign="top"><td><code>gdata</code></td>
+<td>
+<p>data values for groups, typically summaries such as group
+medians</p>
+</td></tr>
+<tr valign="top"><td><code>horizontal</code></td>
+<td>
+<p>set to <code>FALSE</code> to make the chart vertical
+instead of the default</p>
+</td></tr>
+<tr valign="top"><td><code>pch</code></td>
+<td>
+
+<p>default character number or value for plotting dots in dot charts.
+The default is 16.</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+<p>x-axis title</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+<p>y-axis title</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+<p>x-axis limits.  Applies only to <code>horizontal=TRUE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>auxdata</code></td>
+<td>
+
+<p>a vector of auxiliary data given to <code>dotchart2</code>, of the same length
+as the first (<code>data</code>) argument.  If present, this
+vector of values will be printed outside the right margin of the dot
+chart.  Usually <code>auxdata</code> represents cell sizes.
+</p>
+</td></tr>
+<tr valign="top"><td><code>auxgdata</code></td>
+<td>
+
+<p>similar to <code>auxdata</code> but corresponding to the <code>gdata</code>
+argument.  These usually represent overall sample sizes for each
+group of lines.</p>
+</td></tr>
+<tr valign="top"><td><code>auxtitle</code></td>
+<td>
+
+<p>if <code>auxdata</code> is given, <code>auxtitle</code> specifies a column
+heading for the extra printed data in the chart, e.g., <code>"N"</code></p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+<p>line type for horizontal lines.  Default is 1 for R, 2 for S-Plus</p>
+</td></tr>
+<tr valign="top"><td><code>lines</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress drawing of reference
+lines</p>
+</td></tr>
+<tr valign="top"><td><code>dotsize</code></td>
+<td>
+
+<p><code>cex</code> value for drawing dots.  Default is 0.8.  Note that the original
+<code>dotchart</code> function used a default of 1.2.</p>
+</td></tr>
+<tr valign="top"><td><code>cex</code></td>
+<td>
+<p>see <code><a href="../../graphics/html/par.html">par</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>cex.labels</code></td>
+<td>
+
+<p><code>cex</code> parameter that applies only to the line labels for the
+dot chart <code>cex</code> parameter for major grouping labels for
+<code>dotchart2</code>.  Defaults to <code>cex</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>cex.group.labels</code></td>
+<td>
+<p>value of <code>cex</code> corresponding to <code>gdata</code></p>
+</td></tr>
+<tr valign="top"><td><code>sort.</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to keep <code>dotchart2</code> from sorting the input
+data, i.e., it will assume that the data are already properly
+arranged.  This is especially useful when you are using <code>gdata</code>
+and <code>groups</code> and you want to control the
+order that groups appear on the chart (from top to bottom).</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+<p>set to <code>TRUE</code> to add to an existing plot</p>
+</td></tr>
+<tr valign="top"><td><code>dotfont</code></td>
+<td>
+
+<p>font number of plotting dots.  Default is one.  Use <code>-1</code> to
+use &quot;outline&quot; fonts.  For example, <code>pch=183, dotfont=-1</code>
+plots an open circle for UNIX on postscript.  <code>pch=1</code> makes
+an open octagon under Windows.</p>
+</td></tr>
+<tr valign="top"><td><code>groupfont</code></td>
+<td>
+
+<p>font number to use in drawing <code>group</code> labels for <code>dotchart2</code>.
+Default is <code>2</code> for boldface.
+</p>
+</td></tr>
+<tr valign="top"><td><code>reset.par</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to cause <code>dotchart2</code> to not reset the <code>par</code>
+parameters when finished.  This is useful when <code>add=TRUE</code> is about to
+be used in another call.  The default is to reset the <code>par</code>
+parameters if <code>add=TRUE</code> and not if <code>add=FALSE</code>, i.e., the
+program assumes that only one set of points will be added to an
+existing set.  If you fail to use <code>reset.par=TRUE</code> for the 
+first of a series of plots, the next call to <code>plot</code> with
+<code>add=TRUE</code> will result in distorted x-axis scaling.</p>
+</td></tr>
+<tr valign="top"><td><code>xaxis</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress drawing x-axis</p>
+</td></tr>
+<tr valign="top"><td><code>width.factor</code></td>
+<td>
+
+<p>When the calculated left margin turns out to be faulty, specify a
+factor by which to multiple the left margin as <code>width.factor</code> to get
+the appropriate space for labels on horizonal charts.</p>
+</td></tr>
+<tr valign="top"><td><code>lcolor</code></td>
+<td>
+
+<p>color for horizontal reference lines.  Default is <code>"gray"</code> for R,
+<code>par("col")</code> for S-Plus.</p>
+</td></tr>
+<tr valign="top"><td><code>leavepar</code></td>
+<td>
+<p>set to <code>TRUE</code> to leave <code>par()</code> unchanged.
+This assumes the user has allocated sufficient left and right
+margins for a horizontal dot chart.</p>
+</td></tr>
+<tr valign="top"><td><code>axisat</code></td>
+<td>
+<p>a vector of tick mark locations to pass to <code>axis</code>.
+Useful if transforming the data axis</p>
+</td></tr>
+<tr valign="top"><td><code>axislabels</code></td>
+<td>
+<p>a vector of strings specifying axis tick mark
+labels.  Useful if transforming the data axis</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments passed to <code>plot.default</code></p>
+</td></tr>
+</table>
+
+
+<h3>Side Effects</h3>
+
+<p><code>dotchart</code> will leave <code>par</code> altered if <code>reset.par=FALSE</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/dotchart.html">dotchart</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(135)
+maj &lt;- factor(c(rep('North',13),rep('South',13)))
+g &lt;- paste('Category',rep(letters[1:13],2))
+n &lt;- sample(1:15000, 26, replace=TRUE)
+y1 &lt;- runif(26)
+y2 &lt;- pmax(0, y1 - runif(26, 0, .1))
+dotchart2(y1, g, groups=maj, auxdata=n, auxtitle='n', xlab='Y')
+dotchart2(y2, g, groups=maj, pch=17, add=TRUE)
+## Compare with dotchart function (no superpositioning or auxdata allowed):
+## dotchart(y1, g, groups=maj, xlab='Y')
+
+## To plot using a transformed scale add for example
+## axisat=sqrt(pretty(y)), axislabels=pretty(y)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

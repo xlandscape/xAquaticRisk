@@ -1,26 +1,9 @@
 # Functions for analysing Landscape model run data
 checkAndLoadPackages <- function(required.packages = c("devtools","tidyverse","drc","scales", "gridExtra","patchwork","hdf5r","parallel","snow",
                                                        "sp","Rcpp","raster","rgeos","rgdal","ggspatial","ggridges","usdm","gstat","openxlsx",
-                                                       "gstat","maptools","plotKML","terra","igraph","colorspace","mgcv"),library.loc){
-  if(length(installed.packages(lib.loc = library.loc))==0){
-    packages <- installed.packages(lib.loc = paste0(R.home(),"/library"))
-  }else{packages <- rbind(installed.packages(lib.loc = library.loc),installed.packages(lib.loc = paste0(R.home(),"/library")))}
-  
-  required.packages <- required.packages
-  not.installed <- required.packages[!required.packages %in% packages[,"Package"]]
-  if(length(not.installed)==0){
-    print("R environment ready!")
-    res <- lapply(required.packages,function(x){require(x, character.only = T,lib.loc = library.loc)})} else{
-      print("You need some additional packages, installing now.")
-      print("Choose Yes to update packages if already loaded")
-      print("Ignore any further warnings, these are known and of no consequence!")
-      for (j in not.installed){
-        if(j == "devtools"){install.packages(j,lib = library.loc,dependencies = T)}else{
-          install.packages(j,lib =  library.loc, dependencies = T)
-        }
-      }
-      res <- lapply(required.packages,function(x){require(x, character.only = T,lib.loc = library.loc)})
-    }
+                                                       "gstat","maptools","plotKML","terra","igraph","colorspace","mgcv")){
+  lapply(required.packages,function(x){require(x, character.only = T)})
+    
 }
 
 # Wrapper functions to prepare notebook work environments
@@ -28,8 +11,7 @@ prepareEnvironmentR <- function(first.year, last.year,
                                 first.application.day,
                                 last.application.day,
                                 first.application.month,
-                                last.application.month,libPath){
-  .libPaths(c(libPath, .libPaths()))
+                                last.application.month){
   params <- NULL
   params$first_year <- as.integer(first.year)
   params$last_year <- as.integer(last.year)
@@ -39,7 +21,7 @@ prepareEnvironmentR <- function(first.year, last.year,
   params$last_app_day <- as.integer(last.application.day)
   
   options(scipen = 999)
-  suppressWarnings(suppressMessages(checkAndLoadPackages(library.loc = libPath)))
+  suppressWarnings(suppressMessages(checkAndLoadPackages()))
   options(repr.plot.width=30, repr.plot.height=15)
 }
 

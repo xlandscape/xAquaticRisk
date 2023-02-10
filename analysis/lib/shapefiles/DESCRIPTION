@@ -1,0 +1,14 @@
+Package: shapefiles
+Version: 0.7.2
+Date: 2013-01-25
+Title: Read and Write ESRI Shapefiles
+Author: Ben Stabler <benstabler@yahoo.com>
+Maintainer: Ben Stabler <benstabler@yahoo.com>
+Depends: R (>= 1.6.0), foreign
+Description: Functions to read and write ESRI shapefiles.
+License: GPL
+Packaged: 2022-08-25 12:27:27 UTC; hornik
+Repository: CRAN
+Date/Publication: 2022-08-25 12:46:08 UTC
+NeedsCompilation: no
+Built: R 4.1.3; ; 2022-12-06 15:06:41 UTC; windows

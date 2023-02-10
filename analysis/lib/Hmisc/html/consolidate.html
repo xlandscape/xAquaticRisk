@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Element Merging</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for consolidate {Hmisc}"><tr><td>consolidate {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Element Merging </h2>
+
+<h3>Description</h3>
+
+<p>Merges an object by the names of its elements.  Inserting elements in
+<code>value</code> into <code>x</code> that do not exists in <code>x</code> and
+replacing elements in <code>x</code> that exists in <code>value</code> with
+<code>value</code> elements if <code>protect</code> is false.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+consolidate(x, value, protect, ...)
+## Default S3 method:
+consolidate(x, value, protect=FALSE, ...)
+
+consolidate(x, protect, ...) &lt;- value
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p> named list or vector </p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+<p> named list or vector </p>
+</td></tr>
+<tr valign="top"><td><code>protect</code></td>
+<td>
+
+<p>logical; should elements in <code>x</code> be kept instead
+of elements in <code>value</code>?
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p> currently does nothing; included if ever want to make generic. </p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p> Charles Dupont </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="../../base/html/names.html">names</a></code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- 1:5
+names(x) &lt;- LETTERS[x]
+
+y &lt;- 6:10
+names(y) &lt;- LETTERS[y-2]
+
+x                  # c(A=1,B=2,C=3,D=4,E=5)
+y                  # c(D=6,E=7,F=8,G=9,H=10)
+
+consolidate(x, y)      # c(A=1,B=2,C=3,D=6,E=7,F=8,G=9,H=10)
+consolidate(x, y, protect=TRUE)      # c(A=1,B=2,C=3,D=4,E=5,F=8,G=9,H=10)
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

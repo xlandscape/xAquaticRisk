@@ -1,0 +1,798 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>R: Algorithms for Quantitative Pedology</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+<h1> Algorithms for Quantitative Pedology
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;aqp&rsquo; version 1.42</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+<li><a href="../demo">Code demos</a>.  Use <a href="../../utils/help/demo">demo()</a> to run them.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<p style="text-align: center;">
+<a href="# "> </a>
+<a href="#A">A</a>
+<a href="#B">B</a>
+<a href="#C">C</a>
+<a href="#D">D</a>
+<a href="#E">E</a>
+<a href="#F">F</a>
+<a href="#G">G</a>
+<a href="#H">H</a>
+<a href="#I">I</a>
+<a href="#J">J</a>
+<a href="#L">L</a>
+<a href="#M">M</a>
+<a href="#N">N</a>
+<a href="#O">O</a>
+<a href="#P">P</a>
+<a href="#R">R</a>
+<a href="#S">S</a>
+<a href="#T">T</a>
+<a href="#U">U</a>
+<a href="#V">V</a>
+<a href="#X">X</a>
+<a href="#misc">misc</a>
+</p>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="aqp-package.html">aqp-package</a></td>
+<td>Algorithms for Quantitative Pedology</td></tr>
+</table>
+
+<h2><a name="A">-- A --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="accumulateDepths.html">accumulateDepths</a></td>
+<td>Accumulate horizon depths, and reflect reversed depths, relative to new datum</td></tr>
+<tr><td style="width: 25%;"><a href="addBracket.html">addBracket</a></td>
+<td>Add Depth Brackets</td></tr>
+<tr><td style="width: 25%;"><a href="addDiagnosticBracket.html">addDiagnosticBracket</a></td>
+<td>Annotate Diagnostic Features</td></tr>
+<tr><td style="width: 25%;"><a href="addVolumeFraction.html">addVolumeFraction</a></td>
+<td>Symbolize Volume Fraction on a Soil Profile Collection Plot</td></tr>
+<tr><td style="width: 25%;"><a href="aggregateColor.html">aggregateColor</a></td>
+<td>Summarize Soil Colors</td></tr>
+<tr><td style="width: 25%;"><a href="aggregateSoilDepth.html">aggregateSoilDepth</a></td>
+<td>Probabalistic Estimation of Soil Depth within Groups</td></tr>
+<tr><td style="width: 25%;"><a href="alignTransect.html">alignTransect</a></td>
+<td>Calculate Relative Positions from Transect Data</td></tr>
+<tr><td style="width: 25%;"><a href="allocate.html">allocate</a></td>
+<td>Allocate soil properties within various classification systems.</td></tr>
+<tr><td style="width: 25%;"><a href="aqp-package.html">aqp</a></td>
+<td>Algorithms for Quantitative Pedology</td></tr>
+<tr><td style="width: 25%;"><a href="aqp-package.html">aqp.env</a></td>
+<td>Algorithms for Quantitative Pedology</td></tr>
+<tr><td style="width: 25%;"><a href="aqp_df_class.html">aqp_df_class</a></td>
+<td>Get aqp_df_class entry from metadata or return a safe value.</td></tr>
+<tr><td style="width: 25%;"><a href="aqp_df_class.html">aqp_df_class-method</a></td>
+<td>Get aqp_df_class entry from metadata or return a safe value.</td></tr>
+<tr><td style="width: 25%;"><a href="aqp_df_class.html">aqp_df_class&lt;-</a></td>
+<td>Get aqp_df_class entry from metadata or return a safe value.</td></tr>
+<tr><td style="width: 25%;"><a href="aqp_df_class.html">aqp_df_class&lt;--method</a></td>
+<td>Get aqp_df_class entry from metadata or return a safe value.</td></tr>
+<tr><td style="width: 25%;"><a href="argillic.clay.increase.depth.html">argillic.clay.increase.depth</a></td>
+<td>Return upper boundary of argillic horizon</td></tr>
+<tr><td style="width: 25%;"><a href="coercion-methods.html">as</a></td>
+<td>Coerce SoilProfileCollection with 'as()'</td></tr>
+<tr><td style="width: 25%;"><a href="coercion-methods.html">as-method</a></td>
+<td>Coerce SoilProfileCollection with 'as()'</td></tr>
+</table>
+
+<h2><a name="B">-- B --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="barron.torrent.redness.LAB.html">barron.torrent.redness.LAB</a></td>
+<td>Barron &amp; Torrent (1986) Redness Index in LAB color space</td></tr>
+<tr><td style="width: 25%;"><a href="bootstrapSoilTexture.html">bootstrapSoilTexture</a></td>
+<td>Bootstrap Soil Texture Data</td></tr>
+<tr><td style="width: 25%;"><a href="brierScore.html">brierScore</a></td>
+<td>Multinominal Brier Score</td></tr>
+<tr><td style="width: 25%;"><a href="buntley.westin.index.html">buntley.westin.index</a></td>
+<td>Buntley-Westin (1965) Index</td></tr>
+</table>
+
+<h2><a name="C">-- C --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="combine-SoilProfileCollection-method.html">c</a></td>
+<td>Combine SoilProfileCollection objects</td></tr>
+<tr><td style="width: 25%;"><a href="combine-SoilProfileCollection-method.html">c-method</a></td>
+<td>Combine SoilProfileCollection objects</td></tr>
+<tr><td style="width: 25%;"><a href="ca630.html">ca630</a></td>
+<td>Soil Data from the Central Sierra Nevada Region of California</td></tr>
+<tr><td style="width: 25%;"><a href="checkHzDepthLogic.html">checkHzDepthLogic</a></td>
+<td>Check a SoilProfileCollection object for errors in horizon depths.</td></tr>
+<tr><td style="width: 25%;"><a href="checkSPC.html">checkSPC</a></td>
+<td>Test for a valid SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="colorChart.html">colorChart</a></td>
+<td>Visualize soil colors in Munsell notation according to within-group frequency.</td></tr>
+<tr><td style="width: 25%;"><a href="colorContrast.html">colorContrast</a></td>
+<td>Metrics of Contrast Suitable for Comparing Soil Colors</td></tr>
+<tr><td style="width: 25%;"><a href="colorContrastPlot.html">colorContrastPlot</a></td>
+<td>Color Contrast Plot</td></tr>
+<tr><td style="width: 25%;"><a href="colorQuantiles.html">colorQuantiles</a></td>
+<td>Soil Color Range via Quantiles</td></tr>
+<tr><td style="width: 25%;"><a href="combine-SoilProfileCollection-method.html">combine</a></td>
+<td>Combine SoilProfileCollection objects</td></tr>
+<tr><td style="width: 25%;"><a href="combine-SoilProfileCollection-method.html">combine-method</a></td>
+<td>Combine SoilProfileCollection objects</td></tr>
+<tr><td style="width: 25%;"><a href="compositeSPC.html">compositeSPC</a></td>
+<td>Return a list representation of site and horizon level data</td></tr>
+<tr><td style="width: 25%;"><a href="compositeSPC.html">compositeSPC-method</a></td>
+<td>Return a list representation of site and horizon level data</td></tr>
+<tr><td style="width: 25%;"><a href="confusionIndex.html">confusionIndex</a></td>
+<td>Confusion Index</td></tr>
+<tr><td style="width: 25%;"><a href="contrastChart.html">contrastChart</a></td>
+<td>Color Contrast Chart</td></tr>
+<tr><td style="width: 25%;"><a href="contrastClass.html">contrastClass</a></td>
+<td>Soil Color Contrast</td></tr>
+<tr><td style="width: 25%;"><a href="coordinates.html">coordinates</a></td>
+<td>Get coordinates from spatial slot</td></tr>
+<tr><td style="width: 25%;"><a href="coordinates.html">coordinates-method</a></td>
+<td>Get coordinates from spatial slot</td></tr>
+<tr><td style="width: 25%;"><a href="coordinates.html">coordinates&lt;--method</a></td>
+<td>Get coordinates from spatial slot</td></tr>
+<tr><td style="width: 25%;"><a href="correctAWC.html">correctAWC</a></td>
+<td>Apply rock fragment or salt correction to available water content</td></tr>
+<tr><td style="width: 25%;"><a href="crit.clay.argillic.html">crit.clay.argillic</a></td>
+<td>Determines threshold (minimum) clay content for argillic upper bound</td></tr>
+</table>
+
+<h2><a name="D">-- D --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="denormalize.html">denormalize</a></td>
+<td>Create a (redundant) horizon-level attribute from a site-level attribute</td></tr>
+<tr><td style="width: 25%;"><a href="depthOf.html">depthOf</a></td>
+<td>Get top or bottom depths of horizons matching a regular expression pattern</td></tr>
+<tr><td style="width: 25%;"><a href="depths.html">depths&lt;-</a></td>
+<td>Initialize a SoilProfileCollection from a data.frame object</td></tr>
+<tr><td style="width: 25%;"><a href="depths.html">depths&lt;--method</a></td>
+<td>Initialize a SoilProfileCollection from a data.frame object</td></tr>
+<tr><td style="width: 25%;"><a href="depthWeights.html">depthWeights</a></td>
+<td>Return a vector of contributing fractions over a depth interval</td></tr>
+<tr><td style="width: 25%;"><a href="depthWeights.html">depthWeights-method</a></td>
+<td>Return a vector of contributing fractions over a depth interval</td></tr>
+<tr><td style="width: 25%;"><a href="depth_units.html">depth_units</a></td>
+<td>Get depth units from metadata</td></tr>
+<tr><td style="width: 25%;"><a href="depth_units.html">depth_units-method</a></td>
+<td>Get depth units from metadata</td></tr>
+<tr><td style="width: 25%;"><a href="depth_units.html">depth_units&lt;-</a></td>
+<td>Get depth units from metadata</td></tr>
+<tr><td style="width: 25%;"><a href="depth_units.html">depth_units&lt;--method</a></td>
+<td>Get depth units from metadata</td></tr>
+<tr><td style="width: 25%;"><a href="diagnostic_hz.html">diagnostic_hz</a></td>
+<td>Retrieve diagnostic data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="diagnostic_hz.html">diagnostic_hz-method</a></td>
+<td>Retrieve diagnostic data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="diagnostic_hz-set.html">diagnostic_hz&lt;-</a></td>
+<td>Add data to the diagnostic slot</td></tr>
+<tr><td style="width: 25%;"><a href="diagnostic_hz-set.html">diagnostic_hz&lt;--method</a></td>
+<td>Add data to the diagnostic slot</td></tr>
+<tr><td style="width: 25%;"><a href="dice.html">dice</a></td>
+<td>Efficient Slicing of 'SoilProfileCollection' Objects</td></tr>
+<tr><td style="width: 25%;"><a href="duplicate.html">duplicate</a></td>
+<td>Duplicte Profiles of a SoilProfileCollection</td></tr>
+</table>
+
+<h2><a name="E">-- E --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="equivalentMunsellChips.html">equivalentMunsellChips</a></td>
+<td>Identify "equivalent" (whole number value/chroma) Munsell chips</td></tr>
+<tr><td style="width: 25%;"><a href="equivalent_munsell.html">equivalent_munsell</a></td>
+<td>Indices of "equivalent" Munsell chips in the 'munsell' data set</td></tr>
+<tr><td style="width: 25%;"><a href="estimateAWC.html">estimateAWC</a></td>
+<td>Estimate available water capacity for fine-earth fraction</td></tr>
+<tr><td style="width: 25%;"><a href="estimatePSCS.html">estimatePSCS</a></td>
+<td>Estimate boundaries of the particle size control section (U.S Soil Taxonomy; 12th edition)</td></tr>
+<tr><td style="width: 25%;"><a href="estimateSoilDepth.html">estimateSoilDepth</a></td>
+<td>Estimate Soil Depth</td></tr>
+<tr><td style="width: 25%;"><a href="evalGenHZ.html">evalGenHZ</a></td>
+<td>Evaluate Generalized Horizon Labels</td></tr>
+<tr><td style="width: 25%;"><a href="evalMissingData.html">evalMissingData</a></td>
+<td>Evaluate Missing Data</td></tr>
+<tr><td style="width: 25%;"><a href="explainPlotSPC.html">explainPlotSPC</a></td>
+<td>Visual Explanation for 'plotSPC'</td></tr>
+</table>
+
+<h2><a name="F">-- F --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="fillHzGaps.html">fillHzGaps</a></td>
+<td>Find and Fill Horizon Gaps</td></tr>
+<tr><td style="width: 25%;"><a href="findOverlap.html">findOverlap</a></td>
+<td>Find Overlap within a Sequence</td></tr>
+<tr><td style="width: 25%;"><a href="fixOverlap.html">fixOverlap</a></td>
+<td>Fix Overlap within a Sequence via Simulated Annealing</td></tr>
+<tr><td style="width: 25%;"><a href="texture.html">fragvol_to_texmod</a></td>
+<td>Textural conversions</td></tr>
+</table>
+
+<h2><a name="G">-- G --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="generalize.hz.html">generalize.hz</a></td>
+<td>Generalize Horizon Names</td></tr>
+<tr><td style="width: 25%;"><a href="hzTransitionProbabilities.html">genhzTableToAdjMat</a></td>
+<td>Horizon Transition Probabilities</td></tr>
+<tr><td style="width: 25%;"><a href="slab-methods.html">genSlabLabels</a></td>
+<td>Slab-Wise Aggregation of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="get.increase.depths.html">get.increase.depths</a></td>
+<td>Return the horizon top depths from a call to get.increase.matrix()</td></tr>
+<tr><td style="width: 25%;"><a href="get.increase.matrix.html">get.increase.matrix</a></td>
+<td>compute pair-wise distances to determine where an attribute increases within a vertical distance specified</td></tr>
+<tr><td style="width: 25%;"><a href="get.ml.hz.html">get.ml.hz</a></td>
+<td>Determine ML Horizon Boundaries</td></tr>
+<tr><td style="width: 25%;"><a href="slice-methods.html">get.slice</a></td>
+<td>Slicing of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="getArgillicBounds.html">getArgillicBounds</a></td>
+<td>Estimate upper and lower boundary of argillic diagnostic subsurface horizon</td></tr>
+<tr><td style="width: 25%;"><a href="getCambicBounds.html">getCambicBounds</a></td>
+<td>Find all intervals that are potentially part of a Cambic horizon</td></tr>
+<tr><td style="width: 25%;"><a href="getClosestMunsellChip.html">getClosestMunsellChip</a></td>
+<td>Get Approximate Munsell Chip</td></tr>
+<tr><td style="width: 25%;"><a href="getLastHorizonID.html">getLastHorizonID</a></td>
+<td>Get IDs of Deepest Horizons by Profile</td></tr>
+<tr><td style="width: 25%;"><a href="getSurfaceHorizonDepth.html">getMineralSoilSurfaceDepth</a></td>
+<td>Determine thickness of horizons (continuous from surface) matching a pattern</td></tr>
+<tr><td style="width: 25%;"><a href="getSurfaceHorizonDepth.html">getPlowLayerDepth</a></td>
+<td>Determine thickness of horizons (continuous from surface) matching a pattern</td></tr>
+<tr><td style="width: 25%;"><a href="getSoilDepthClass.html">getSoilDepthClass</a></td>
+<td>Generate Soil Depth Class Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="getSurfaceHorizonDepth.html">getSurfaceHorizonDepth</a></td>
+<td>Determine thickness of horizons (continuous from surface) matching a pattern</td></tr>
+<tr><td style="width: 25%;"><a href="glom-SoilProfileCollection-method.html">glom</a></td>
+<td>Subset soil horizon data using a depth or depth interval</td></tr>
+<tr><td style="width: 25%;"><a href="glom-SoilProfileCollection-method.html">glom-method</a></td>
+<td>Subset soil horizon data using a depth or depth interval</td></tr>
+<tr><td style="width: 25%;"><a href="glomApply.html">glomApply</a></td>
+<td>Subset an SPC by applying glom to each profile</td></tr>
+<tr><td style="width: 25%;"><a href="glomApply.html">glomApply-method</a></td>
+<td>Subset an SPC by applying glom to each profile</td></tr>
+<tr><td style="width: 25%;"><a href="grepSPC.html">grepSPC</a></td>
+<td>Subset SPC with pattern-matching for text-based attributes</td></tr>
+<tr><td style="width: 25%;"><a href="grepSPC.html">grepSPC-method</a></td>
+<td>Subset SPC with pattern-matching for text-based attributes</td></tr>
+<tr><td style="width: 25%;"><a href="groupedProfilePlot.html">groupedProfilePlot</a></td>
+<td>Grouped Soil Profile Plot</td></tr>
+<tr><td style="width: 25%;"><a href="groupSPC.html">groupSPC</a></td>
+<td>(EXPERIMENTAL) Store groupings within a profile collection.</td></tr>
+<tr><td style="width: 25%;"><a href="groupSPC.html">group_by</a></td>
+<td>(EXPERIMENTAL) Store groupings within a profile collection.</td></tr>
+<tr><td style="width: 25%;"><a href="guessGenHzLevels.html">guessGenHzLevels</a></td>
+<td>Guess Appropriate Ordering for Generalized Horizon Labels</td></tr>
+<tr><td style="width: 25%;"><a href="guessHzAttrName.html">guessHzAttrName</a></td>
+<td>Guess Horizon Slot Column Names</td></tr>
+<tr><td style="width: 25%;"><a href="guessHzAttrName.html">guessHzDesgnName</a></td>
+<td>Guess Horizon Slot Column Names</td></tr>
+<tr><td style="width: 25%;"><a href="guessHzAttrName.html">guessHzTexClName</a></td>
+<td>Guess Horizon Slot Column Names</td></tr>
+</table>
+
+<h2><a name="H">-- H --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="harden.melanization.html">harden.melanization</a></td>
+<td>Harden (1982) Melanization</td></tr>
+<tr><td style="width: 25%;"><a href="harden.rubification.html">harden.rubification</a></td>
+<td>Harden (1982) Rubification</td></tr>
+<tr><td style="width: 25%;"><a href="harmonize-SoilProfileCollection-method.html">harmonize</a></td>
+<td>Harmonize a property by profile-level denormalization for convenient visualization or analysis of ranges</td></tr>
+<tr><td style="width: 25%;"><a href="harmonize-SoilProfileCollection-method.html">harmonize-method</a></td>
+<td>Harmonize a property by profile-level denormalization for convenient visualization or analysis of ranges</td></tr>
+<tr><td style="width: 25%;"><a href="hasDarkColors.html">hasDarkColors</a></td>
+<td>Find horizons with colors darker than a Munsell hue, value, chroma threshold</td></tr>
+<tr><td style="width: 25%;"><a href="horizonColorIndices.html">horizonColorIndices</a></td>
+<td>Horizon Color Indices</td></tr>
+<tr><td style="width: 25%;"><a href="horizonDepths.html">horizonDepths</a></td>
+<td>Set horizon depth column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizonDepths.html">horizonDepths-method</a></td>
+<td>Set horizon depth column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizonDepths.html">horizonDepths&lt;-</a></td>
+<td>Set horizon depth column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizonDepths.html">horizonDepths&lt;--method</a></td>
+<td>Set horizon depth column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizonNames.html">horizonNames</a></td>
+<td>Set horizon column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizonNames.html">horizonNames-method</a></td>
+<td>Set horizon column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizonNames.html">horizonNames&lt;-</a></td>
+<td>Set horizon column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizonNames.html">horizonNames&lt;--method</a></td>
+<td>Set horizon column names</td></tr>
+<tr><td style="width: 25%;"><a href="horizons.html">horizons</a></td>
+<td>Retrieve horizon data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="horizons.html">horizons-method</a></td>
+<td>Retrieve horizon data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="horizons.html">horizons&lt;-</a></td>
+<td>Retrieve horizon data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="horizons.html">horizons&lt;--method</a></td>
+<td>Retrieve horizon data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="huePosition.html">huePosition</a></td>
+<td>Munsell Hue Reference and Position Searching</td></tr>
+<tr><td style="width: 25%;"><a href="huePositionCircle.html">huePositionCircle</a></td>
+<td>Visual Description of Munsell Hue Ordering</td></tr>
+<tr><td style="width: 25%;"><a href="hurst.redness.html">hurst.redness</a></td>
+<td>Hurst (1977) Redness Index</td></tr>
+<tr><td style="width: 25%;"><a href="hzOffset.html">hzAbove</a></td>
+<td>Horizons Above or Below</td></tr>
+<tr><td style="width: 25%;"><a href="hzOffset.html">hzBelow</a></td>
+<td>Horizons Above or Below</td></tr>
+<tr><td style="width: 25%;"><a href="HzDepthLogicSubset.html">HzDepthLogicSubset</a></td>
+<td>Subset 'SoilProfileCollection' Objects or Horizons via 'checkHzDepthLogic'</td></tr>
+<tr><td style="width: 25%;"><a href="hzDepthTests.html">hzDepthTests</a></td>
+<td>Tests of horizon depth logic</td></tr>
+<tr><td style="width: 25%;"><a href="hzDesgn.html">hzDesgn</a></td>
+<td>Get horizon designation column name</td></tr>
+<tr><td style="width: 25%;"><a href="hzDesgn.html">hzDesgn-method</a></td>
+<td>Get horizon designation column name</td></tr>
+<tr><td style="width: 25%;"><a href="hzdesgnname.html">hzdesgnname</a></td>
+<td>Get or Set Horizon Designation Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hzdesgnname.html">hzdesgnname-method</a></td>
+<td>Get or Set Horizon Designation Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hzdesgnname.html">hzdesgnname&lt;-</a></td>
+<td>Get or Set Horizon Designation Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hzdesgnname.html">hzdesgnname&lt;--method</a></td>
+<td>Get or Set Horizon Designation Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hzDistinctnessCodeToOffset.html">hzDistinctnessCodeToOffset</a></td>
+<td>Convert Horizon Boundary Distinctness to Vertical Offset</td></tr>
+<tr><td style="width: 25%;"><a href="hzID.html">hzID</a></td>
+<td>Set horizon IDs</td></tr>
+<tr><td style="width: 25%;"><a href="hzID.html">hzID-method</a></td>
+<td>Set horizon IDs</td></tr>
+<tr><td style="width: 25%;"><a href="hzID.html">hzID&lt;-</a></td>
+<td>Set horizon IDs</td></tr>
+<tr><td style="width: 25%;"><a href="hzID.html">hzID&lt;--method</a></td>
+<td>Set horizon IDs</td></tr>
+<tr><td style="width: 25%;"><a href="hzidname.html">hzidname</a></td>
+<td>Set horizon ID column name</td></tr>
+<tr><td style="width: 25%;"><a href="hzidname.html">hzidname-method</a></td>
+<td>Set horizon ID column name</td></tr>
+<tr><td style="width: 25%;"><a href="hzidname.html">hzidname&lt;-</a></td>
+<td>Set horizon ID column name</td></tr>
+<tr><td style="width: 25%;"><a href="hzidname.html">hzidname&lt;--method</a></td>
+<td>Set horizon ID column name</td></tr>
+<tr><td style="width: 25%;"><a href="hzOffset.html">hzOffset</a></td>
+<td>Horizons Above or Below</td></tr>
+<tr><td style="width: 25%;"><a href="hztexclname.html">hztexclname</a></td>
+<td>Get or Set Horizon Texture Class Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hztexclname.html">hztexclname-method</a></td>
+<td>Get or Set Horizon Texture Class Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hztexclname.html">hztexclname&lt;-</a></td>
+<td>Get or Set Horizon Texture Class Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hztexclname.html">hztexclname&lt;--method</a></td>
+<td>Get or Set Horizon Texture Class Column Name</td></tr>
+<tr><td style="width: 25%;"><a href="hzTopographyCodeToLineType.html">hzTopographyCodeToLineType</a></td>
+<td>Convert Horizon Boundary Topography to Line Type</td></tr>
+<tr><td style="width: 25%;"><a href="hzTopographyCodeToOffset.html">hzTopographyCodeToOffset</a></td>
+<td>Convert Horizon Boundary Topography to Vertical Offset</td></tr>
+<tr><td style="width: 25%;"><a href="hzTransitionProbabilities.html">hzTransitionProbabilities</a></td>
+<td>Horizon Transition Probabilities</td></tr>
+</table>
+
+<h2><a name="I">-- I --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="idname.html">idname</a></td>
+<td>Get profile ID column name</td></tr>
+<tr><td style="width: 25%;"><a href="idname.html">idname-method</a></td>
+<td>Get profile ID column name</td></tr>
+<tr><td style="width: 25%;"><a href="invertLabelColor.html">invertLabelColor</a></td>
+<td>Make High Contrast Label Colors</td></tr>
+</table>
+
+<h2><a name="J">-- J --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="jacobs2000.html">jacobs2000</a></td>
+<td>Soil Morphologic Data from Jacobs et al. 2002.</td></tr>
+</table>
+
+<h2><a name="L">-- L --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="L1_profiles.html">L1_profiles</a></td>
+<td>Create Representative Soil Profiles via L1 Estimator</td></tr>
+<tr><td style="width: 25%;"><a href="length.html">length</a></td>
+<td>Get the number of profiles in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="length.html">length-method</a></td>
+<td>Get the number of profiles in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="lunique.html">lunique</a></td>
+<td>Eliminate duplicate instances of profile IDs in a list of SoilProfileCollections</td></tr>
+</table>
+
+<h2><a name="M">-- M --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="max.html">max</a></td>
+<td>Get the maximum bottom depth in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="max.html">max-method</a></td>
+<td>Get the maximum bottom depth in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="depthOf.html">maxDepthOf</a></td>
+<td>Get top or bottom depths of horizons matching a regular expression pattern</td></tr>
+<tr><td style="width: 25%;"><a href="metadata.html">metadata</a></td>
+<td>Retrieve metadata from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="metadata.html">metadata-method</a></td>
+<td>Retrieve metadata from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="metadata.html">metadata&lt;-</a></td>
+<td>Retrieve metadata from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="metadata.html">metadata&lt;--method</a></td>
+<td>Retrieve metadata from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="min.html">min</a></td>
+<td>Get the minimum bottom depth in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="min.html">min-method</a></td>
+<td>Get the minimum bottom depth in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="depthOf.html">minDepthOf</a></td>
+<td>Get top or bottom depths of horizons matching a regular expression pattern</td></tr>
+<tr><td style="width: 25%;"><a href="missingDataGrid.html">missingDataGrid</a></td>
+<td>Missing Data Grid</td></tr>
+<tr><td style="width: 25%;"><a href="mixMunsell.html">mixMunsell</a></td>
+<td>Mix Munsell Colors via Spectral Library</td></tr>
+<tr><td style="width: 25%;"><a href="mollic.thickness.requirement.html">mollic.thickness.requirement</a></td>
+<td>Calculate the minimum thickness requirement for Mollic epipedon</td></tr>
+<tr><td style="width: 25%;"><a href="hzTransitionProbabilities.html">mostLikelyHzSequence</a></td>
+<td>Horizon Transition Probabilities</td></tr>
+<tr><td style="width: 25%;"><a href="munsell.html">munsell</a></td>
+<td>Munsell to sRGB Lookup Table for Common Soil Colors</td></tr>
+<tr><td style="width: 25%;"><a href="munsell.spectra.html">munsell.spectra</a></td>
+<td>Spectral Library of Munsell Colors</td></tr>
+<tr><td style="width: 25%;"><a href="munsell.spectra.html">munsell.spectra.wide</a></td>
+<td>Spectral Library of Munsell Colors</td></tr>
+<tr><td style="width: 25%;"><a href="munsell2rgb.html">munsell2rgb</a></td>
+<td>Convert Munsell Color Notation to other Color Space Coordinates (sRGB and CIELAB)</td></tr>
+<tr><td style="width: 25%;"><a href="munsell2spc-SoilProfileCollection-method.html">munsell2spc</a></td>
+<td>Merge Munsell Hue, Value, Chroma converted to sRGB &amp; CIELAB into a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="munsell2spc-SoilProfileCollection-method.html">munsell2spc-method</a></td>
+<td>Merge Munsell Hue, Value, Chroma converted to sRGB &amp; CIELAB into a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="munsellHuePosition.html">munsellHuePosition</a></td>
+<td>Munsell Hue Position Reference</td></tr>
+<tr><td style="width: 25%;"><a href="transform.html">mutate</a></td>
+<td>Transform a SPC with expressions based on site or horizon level attributes</td></tr>
+<tr><td style="width: 25%;"><a href="transform.html">mutate-method</a></td>
+<td>Transform a SPC with expressions based on site or horizon level attributes</td></tr>
+<tr><td style="width: 25%;"><a href="mutate_profile.html">mutate_profile</a></td>
+<td>Transform a SPC (by profile) with a set of expressions</td></tr>
+<tr><td style="width: 25%;"><a href="mutate_profile.html">mutate_profile-method</a></td>
+<td>Transform a SPC (by profile) with a set of expressions</td></tr>
+</table>
+
+<h2><a name="N">-- N --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="names.html">names</a></td>
+<td>Get names of columns in site and horizons table</td></tr>
+<tr><td style="width: 25%;"><a href="names.html">names-method</a></td>
+<td>Get names of columns in site and horizons table</td></tr>
+<tr><td style="width: 25%;"><a href="nrow.html">nrow</a></td>
+<td>Get the number of horizons in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="nrow.html">nrow-method</a></td>
+<td>Get the number of horizons in a SoilProfileCollection</td></tr>
+</table>
+
+<h2><a name="O">-- O --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="overlapMetrics.html">overlapMetrics</a></td>
+<td>Find and Quantify Overlap within a 1D Sequence</td></tr>
+</table>
+
+<h2><a name="P">-- P --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="panel.depth_function.html">panel.depth_function</a></td>
+<td>Lattice Panel Function for Soil Profiles</td></tr>
+<tr><td style="width: 25%;"><a href="parseMunsell.html">parseMunsell</a></td>
+<td>Parse Munsell Color Notation</td></tr>
+<tr><td style="width: 25%;"><a href="pbindlist.html">pbindlist</a></td>
+<td>Combine a list of SoilProfileCollection objects</td></tr>
+<tr><td style="width: 25%;"><a href="pc.html">pc</a></td>
+<td>Numerical Soil Profile Comparison</td></tr>
+<tr><td style="width: 25%;"><a href="pc.html">pc.SPC</a></td>
+<td>Numerical Soil Profile Comparison</td></tr>
+<tr><td style="width: 25%;"><a href="perturb.html">permute_profile</a></td>
+<td>Perturb soil horizon depths using boundary distinctness</td></tr>
+<tr><td style="width: 25%;"><a href="perturb.html">perturb</a></td>
+<td>Perturb soil horizon depths using boundary distinctness</td></tr>
+<tr><td style="width: 25%;"><a href="SoilProfileCollection-plotting-methods.html">plot</a></td>
+<td>Create Soil Profile Sketches</td></tr>
+<tr><td style="width: 25%;"><a href="SoilProfileCollection-plotting-methods.html">plot,SoilProfileCollection,ANY-method,plot.SoilProfileCollection</a></td>
+<td>Create Soil Profile Sketches</td></tr>
+<tr><td style="width: 25%;"><a href="SoilProfileCollection-plotting-methods.html">plot-method</a></td>
+<td>Create Soil Profile Sketches</td></tr>
+<tr><td style="width: 25%;"><a href="plotColorMixture.html">plotColorMixture</a></td>
+<td>Visualize Spectral Mixing of Munsell Colors</td></tr>
+<tr><td style="width: 25%;"><a href="plotColorQuantiles.html">plotColorQuantiles</a></td>
+<td>Visualize Color Quantiles</td></tr>
+<tr><td style="width: 25%;"><a href="plotMultipleSPC.html">plotMultipleSPC</a></td>
+<td>Plot Multiple 'SoilProfileCollection' Objects</td></tr>
+<tr><td style="width: 25%;"><a href="SoilProfileCollection-plotting-methods.html">plotSPC</a></td>
+<td>Create Soil Profile Sketches</td></tr>
+<tr><td style="width: 25%;"><a href="plot_distance_graph.html">plot_distance_graph</a></td>
+<td>Between Individual Distance Plot</td></tr>
+<tr><td style="width: 25%;"><a href="pms.munsell.lut.html">pms.munsell.lut</a></td>
+<td>Pantone Colors / Munsell Lookup Table</td></tr>
+<tr><td style="width: 25%;"><a href="PMS2Munsell.html">PMS2Munsell</a></td>
+<td>Convert Pantone PMS codes to Munsell notation</td></tr>
+<tr><td style="width: 25%;"><a href="panel.depth_function.html">prepanel.depth_function</a></td>
+<td>Lattice Panel Function for Soil Profiles</td></tr>
+<tr><td style="width: 25%;"><a href="previewColors.html">previewColors</a></td>
+<td>Preview Colors</td></tr>
+<tr><td style="width: 25%;"><a href="profileApply.html">profileApply</a></td>
+<td>Iterate over profiles in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="profileApply.html">profileApply-method</a></td>
+<td>Iterate over profiles in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="profileGroupLabels.html">profileGroupLabels</a></td>
+<td>Soil Profile Group Labels</td></tr>
+<tr><td style="width: 25%;"><a href="profileInformationIndex.html">profileInformationIndex</a></td>
+<td>Soil Profile Information Index</td></tr>
+<tr><td style="width: 25%;"><a href="pc.html">profile_compare</a></td>
+<td>Numerical Soil Profile Comparison</td></tr>
+<tr><td style="width: 25%;"><a href="pc.html">profile_compare-method</a></td>
+<td>Numerical Soil Profile Comparison</td></tr>
+<tr><td style="width: 25%;"><a href="profile_id.html">profile_id</a></td>
+<td>Set profile IDs</td></tr>
+<tr><td style="width: 25%;"><a href="profile_id.html">profile_id-method</a></td>
+<td>Set profile IDs</td></tr>
+<tr><td style="width: 25%;"><a href="profile_id.html">profile_id&lt;-</a></td>
+<td>Set profile IDs</td></tr>
+<tr><td style="width: 25%;"><a href="profile_id.html">profile_id&lt;--method</a></td>
+<td>Set profile IDs</td></tr>
+<tr><td style="width: 25%;"><a href="proj4string-SoilProfileCollection-method.html">proj4string-method</a></td>
+<td>Set PROJ4 string for the SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="proj4string-set-SoilProfileCollection-ANY-method.html">proj4string&lt;--method</a></td>
+<td>Set PROJ4 string for the SoilProfileCollection</td></tr>
+</table>
+
+<h2><a name="R">-- R --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="random_profile.html">random_profile</a></td>
+<td>Random Profile</td></tr>
+<tr><td style="width: 25%;"><a href="rebuildSPC.html">rebuildSPC</a></td>
+<td>Rebuild a SoilProfileCollection object</td></tr>
+<tr><td style="width: 25%;"><a href="reduceSPC.html">reduceSPC</a></td>
+<td>Select a subset of columns from a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="reorderHorizons.html">reorderHorizons</a></td>
+<td>Re-order corrupted horizon data</td></tr>
+<tr><td style="width: 25%;"><a href="reorderHorizons.html">reorderHorizons-method</a></td>
+<td>Re-order corrupted horizon data</td></tr>
+<tr><td style="width: 25%;"><a href="repairMissingHzDepths.html">repairMissingHzDepths</a></td>
+<td>Repair Problematic Lower Horizon Depths</td></tr>
+<tr><td style="width: 25%;"><a href="replaceHorizons.html">replaceHorizons&lt;-</a></td>
+<td>Replace data in the horizon slot</td></tr>
+<tr><td style="width: 25%;"><a href="replaceHorizons.html">replaceHorizons&lt;--method</a></td>
+<td>Replace data in the horizon slot</td></tr>
+<tr><td style="width: 25%;"><a href="restrictions.html">restrictions</a></td>
+<td>Retrieve restriction data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="restrictions.html">restrictions-method</a></td>
+<td>Retrieve restriction data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="restrictions-set.html">restrictions&lt;-</a></td>
+<td>Add data to the restrictions slot</td></tr>
+<tr><td style="width: 25%;"><a href="restrictions-set.html">restrictions&lt;--method</a></td>
+<td>Add data to the restrictions slot</td></tr>
+<tr><td style="width: 25%;"><a href="rgb2munsell.html">rgb2munsell</a></td>
+<td>sRGB to Munsell Color Conversion</td></tr>
+<tr><td style="width: 25%;"><a href="ROSETTA.centroids.html">ROSETTA.centroids</a></td>
+<td>Average Hydraulic Parameters from the ROSETTA Model by USDA Soil Texture Class</td></tr>
+<tr><td style="width: 25%;"><a href="rowley2019.html">rowley2019</a></td>
+<td>Soil Morphologic, Geochemical, and Mineralogy Data from Rowley et al. 2019.</td></tr>
+<tr><td style="width: 25%;"><a href="rruff.sample.html">rruff.sample</a></td>
+<td>Sample XRD Patterns</td></tr>
+</table>
+
+<h2><a name="S">-- S --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="segment.html">segment</a></td>
+<td>Segmenting of Soil Horizon Data by Depth Interval</td></tr>
+<tr><td style="width: 25%;"><a href="shannonEntropy.html">shannonEntropy</a></td>
+<td>Shannon Entropy</td></tr>
+<tr><td style="width: 25%;"><a href="sierraTransect.html">sierraTransect</a></td>
+<td>Soil Physical and Chemical Data Related to Studies in the Sierra Nevada Mountains, CA, USA.</td></tr>
+<tr><td style="width: 25%;"><a href="sim.html">sim</a></td>
+<td>DEPRECATED Simulate Soil Profiles</td></tr>
+<tr><td style="width: 25%;"><a href="simulateColor.html">simulateColor</a></td>
+<td>Simulate Soil Colors</td></tr>
+<tr><td style="width: 25%;"><a href="site.html">site</a></td>
+<td>Retrieve site data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="site.html">site-method</a></td>
+<td>Retrieve site data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="site.html">site&lt;-</a></td>
+<td>Retrieve site data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="site.html">site&lt;--method</a></td>
+<td>Retrieve site data from SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="siteNames.html">siteNames</a></td>
+<td>Set site column names</td></tr>
+<tr><td style="width: 25%;"><a href="siteNames.html">siteNames-method</a></td>
+<td>Set site column names</td></tr>
+<tr><td style="width: 25%;"><a href="siteNames.html">siteNames&lt;-</a></td>
+<td>Set site column names</td></tr>
+<tr><td style="width: 25%;"><a href="siteNames.html">siteNames&lt;--method</a></td>
+<td>Set site column names</td></tr>
+<tr><td style="width: 25%;"><a href="slab-methods.html">slab</a></td>
+<td>Slab-Wise Aggregation of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slab-methods.html">slab-method</a></td>
+<td>Slab-Wise Aggregation of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slab-methods.html">slab-methods</a></td>
+<td>Slab-Wise Aggregation of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slab-methods.html">slab2</a></td>
+<td>Slab-Wise Aggregation of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slice-methods.html">slice</a></td>
+<td>Slicing of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slice-methods.html">slice-method</a></td>
+<td>Slicing of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slice-methods.html">slice-methods</a></td>
+<td>Slicing of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slice-methods.html">slice.fast</a></td>
+<td>Slicing of SoilProfileCollection Objects</td></tr>
+<tr><td style="width: 25%;"><a href="slicedHSD.html">slicedHSD</a></td>
+<td>Tukey's HSD Over Slices</td></tr>
+<tr><td style="width: 25%;"><a href="soilColorSignature.html">soilColorSignature</a></td>
+<td>Soil Profile Color Signatures</td></tr>
+<tr><td style="width: 25%;"><a href="soilPalette.html">soilPalette</a></td>
+<td>Soil Color Palette</td></tr>
+<tr><td style="width: 25%;"><a href="SoilProfileCollection-class.html">SoilProfileCollection</a></td>
+<td>An S4 object representation of a group of soil profiles.</td></tr>
+<tr><td style="width: 25%;"><a href="SoilProfileCollection-class.html">SoilProfileCollection-class</a></td>
+<td>An S4 object representation of a group of soil profiles.</td></tr>
+<tr><td style="width: 25%;"><a href="soiltexture.html">soiltexture</a></td>
+<td>Lookup tables for sand, silt, clay, texture class, and textural modifiers.</td></tr>
+<tr><td style="width: 25%;"><a href="SoilTextureLevels.html">SoilTextureLevels</a></td>
+<td>Ranking Systems for USDS Soil Texture Classes</td></tr>
+<tr><td style="width: 25%;"><a href="soil_minerals.html">soil_minerals</a></td>
+<td>Munsell Colors of Common Soil Minerals</td></tr>
+<tr><td style="width: 25%;"><a href="sp1.html">sp1</a></td>
+<td>Soil Profile Data Example 1</td></tr>
+<tr><td style="width: 25%;"><a href="sp2.html">sp2</a></td>
+<td>Honcut Creek Soil Profile Data</td></tr>
+<tr><td style="width: 25%;"><a href="sp3.html">sp3</a></td>
+<td>Soil Profile Data Example 3</td></tr>
+<tr><td style="width: 25%;"><a href="sp4.html">sp4</a></td>
+<td>Soil Chemical Data from Serpentinitic Soils of California</td></tr>
+<tr><td style="width: 25%;"><a href="sp5.html">sp5</a></td>
+<td>Sample Soil Database #5</td></tr>
+<tr><td style="width: 25%;"><a href="sp6.html">sp6</a></td>
+<td>Soil Physical and Chemical Data from Manganiferous Soils</td></tr>
+<tr><td style="width: 25%;"><a href="spc2mpspline-SoilProfileCollection-method.html">spc2mpspline</a></td>
+<td>Missing-data-safe, SPC-wide wrapper around mpspline2::mpspline "continuous" 1cm output</td></tr>
+<tr><td style="width: 25%;"><a href="spc2mpspline-SoilProfileCollection-method.html">spc2mpspline-method</a></td>
+<td>Missing-data-safe, SPC-wide wrapper around mpspline2::mpspline "continuous" 1cm output</td></tr>
+<tr><td style="width: 25%;"><a href="spc_in_sync.html">spc_in_sync</a></td>
+<td>Quickly assess relative state of site and horizon slots</td></tr>
+<tr><td style="width: 25%;"><a href="spec2Munsell.html">spec2Munsell</a></td>
+<td>Convert reflectance spectra to closest Munsell chip</td></tr>
+<tr><td style="width: 25%;"><a href="spectral.reference.html">spectral.reference</a></td>
+<td>Standard Illuminants and Observers</td></tr>
+<tr><td style="width: 25%;"><a href="split-SoilProfileCollection-method.html">split-method</a></td>
+<td>Split a SoilProfileCollection object into a list of SoilProfileCollection objects.</td></tr>
+<tr><td style="width: 25%;"><a href="splitLogicErrors.html">splitLogicErrors</a></td>
+<td>Split a SoilProfileCollection into a list based on types of horizon logic errors</td></tr>
+<tr><td style="width: 25%;"><a href="texture.html">ssc_to_texcl</a></td>
+<td>Textural conversions</td></tr>
+<tr><td style="width: 25%;"><a href="subApply.html">subApply</a></td>
+<td>Subset SPC based on result of performing function on each profile</td></tr>
+<tr><td style="width: 25%;"><a href="subApply.html">subApply-method</a></td>
+<td>Subset SPC based on result of performing function on each profile</td></tr>
+<tr><td style="width: 25%;"><a href="subset-SoilProfileCollection-method.html">subset</a></td>
+<td>Subset a SoilProfileCollection with logical expressions</td></tr>
+<tr><td style="width: 25%;"><a href="subset-SoilProfileCollection-method.html">subset-method</a></td>
+<td>Subset a SoilProfileCollection with logical expressions</td></tr>
+<tr><td style="width: 25%;"><a href="subsetHz-SoilProfileCollection-method.html">subsetHz</a></td>
+<td>Subset the horizons in a SoilProfileCollection using logical criteria</td></tr>
+<tr><td style="width: 25%;"><a href="subsetHz-SoilProfileCollection-method.html">subsetHz-method</a></td>
+<td>Subset the horizons in a SoilProfileCollection using logical criteria</td></tr>
+<tr><td style="width: 25%;"><a href="subsetProfiles.html">subsetProfiles</a></td>
+<td>DEPRECATED use subset</td></tr>
+<tr><td style="width: 25%;"><a href="subsetProfiles.html">subsetProfiles-method</a></td>
+<td>DEPRECATED use subset</td></tr>
+<tr><td style="width: 25%;"><a href="summarizeSPC.html">summarize</a></td>
+<td>Perform summaries on groups (from 'group_by') and create new site or horizon level attributes</td></tr>
+<tr><td style="width: 25%;"><a href="summarizeSPC.html">summarizeSPC</a></td>
+<td>Perform summaries on groups (from 'group_by') and create new site or horizon level attributes</td></tr>
+<tr><td style="width: 25%;"><a href="summarizeSPC.html">summarizeSPC,SoilProfileCollection-method,</a></td>
+<td>Perform summaries on groups (from 'group_by') and create new site or horizon level attributes</td></tr>
+<tr><td style="width: 25%;"><a href="tauW.html">summaryTauW</a></td>
+<td>Compute weighted naive and _tau_ statistics for a cross-classification matrix</td></tr>
+</table>
+
+<h2><a name="T">-- T --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="tauW.html">tauW</a></td>
+<td>Compute weighted naive and _tau_ statistics for a cross-classification matrix</td></tr>
+<tr><td style="width: 25%;"><a href="texture.html">texcl_to_ssc</a></td>
+<td>Textural conversions</td></tr>
+<tr><td style="width: 25%;"><a href="texture.html">texmod_to_fragvoltot</a></td>
+<td>Textural conversions</td></tr>
+<tr><td style="width: 25%;"><a href="textureTriangleSummary.html">textureTriangleSummary</a></td>
+<td>Soil Texture Low-RV-High as Defined by Quantiles</td></tr>
+<tr><td style="width: 25%;"><a href="texture.html">texture_to_taxpartsize</a></td>
+<td>Textural conversions</td></tr>
+<tr><td style="width: 25%;"><a href="texture.html">texture_to_texmod</a></td>
+<td>Textural conversions</td></tr>
+<tr><td style="width: 25%;"><a href="thompson.bell.darkness.html">thompson.bell.darkness</a></td>
+<td>Thompson-Bell (1996) Index</td></tr>
+<tr><td style="width: 25%;"><a href="traditionalColorNames.html">traditionalColorNames</a></td>
+<td>Traditional Soil Color Names</td></tr>
+<tr><td style="width: 25%;"><a href="transform.html">transform-method</a></td>
+<td>Transform a SPC with expressions based on site or horizon level attributes</td></tr>
+<tr><td style="width: 25%;"><a href="trunc-SoilProfileCollection-method.html">trunc</a></td>
+<td>Truncate a SoilProfileCollection to specified top and bottom depth</td></tr>
+<tr><td style="width: 25%;"><a href="trunc-SoilProfileCollection-method.html">trunc-method</a></td>
+<td>Truncate a SoilProfileCollection to specified top and bottom depth</td></tr>
+</table>
+
+<h2><a name="U">-- U --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="unique.html">unique</a></td>
+<td>Uniqueness within a 'SoilProfileCollection' via MD5 Hash</td></tr>
+<tr><td style="width: 25%;"><a href="unique.html">unique-method</a></td>
+<td>Uniqueness within a 'SoilProfileCollection' via MD5 Hash</td></tr>
+<tr><td style="width: 25%;"><a href="unroll.html">unroll</a></td>
+<td>Unroll Genetic Horizons</td></tr>
+<tr><td style="width: 25%;"><a href="us.state.soils.html">us.state.soils</a></td>
+<td>US State Soils</td></tr>
+</table>
+
+<h2><a name="V">-- V --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="validSpatialData.html">validSpatialData</a></td>
+<td>Get names of columns in site table</td></tr>
+<tr><td style="width: 25%;"><a href="validSpatialData.html">validSpatialData-method</a></td>
+<td>Get names of columns in site table</td></tr>
+</table>
+
+<h2><a name="X">-- X --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="xtableTauW.html">xtableTauW</a></td>
+<td>Format a LaTeX table with results</td></tr>
+</table>
+
+<h2><a name="misc">-- misc --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="dollarsign.html">$</a></td>
+<td>Get data from column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="dollarsign.html">$-method</a></td>
+<td>Get data from column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="dollarsign-set.html">$&lt;-</a></td>
+<td>Set data in column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="dollarsign-set.html">$&lt;--method</a></td>
+<td>Set data in column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="dot-as.data.frame.aqp.html">.as.data.frame.aqp</a></td>
+<td>Wrapper method for data.frame subclass conversion</td></tr>
+<tr><td style="width: 25%;"><a href="dot-data_dots.html">.data_dots</a></td>
+<td>Make a data.frame from non-standard expressions evaluated in a data environment</td></tr>
+<tr><td style="width: 25%;"><a href="random_profile.html">.lpp</a></td>
+<td>Random Profile</td></tr>
+<tr><td style="width: 25%;"><a href="singlebracket.html">[-method</a></td>
+<td>Matrix/data.frame-like access to profiles and horizons in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="doublebracket.html">[[</a></td>
+<td>Get column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="doublebracket.html">[[,SoilProfileCollection,ANY-method,</a></td>
+<td>Get column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="doublebracket.html">[[-method</a></td>
+<td>Get column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="doublebracket-set.html">[[&lt;-</a></td>
+<td>Add or change column of horizon or site data in a SoilProfileCollection</td></tr>
+<tr><td style="width: 25%;"><a href="doublebracket-set.html">[[&lt;--method</a></td>
+<td>Add or change column of horizon or site data in a SoilProfileCollection</td></tr>
+</table>
+</div></body></html>

@@ -1,0 +1,1366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Transformations/Imputations using Canonical Variates</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for transcan {Hmisc}"><tr><td>transcan {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Transformations/Imputations using Canonical Variates
+</h2>
+
+<h3>Description</h3>
+
+<p><code>transcan</code> is a nonlinear additive transformation and imputation
+function, and there are several functions for using and operating on
+its results.  <code>transcan</code> automatically transforms continuous and
+categorical variables to have maximum correlation with the best linear
+combination of the other variables.  There is also an option to use a
+substitute criterion - maximum correlation with the first principal
+component of the other variables.  Continuous variables are expanded
+as restricted cubic splines and categorical variables are expanded as
+contrasts (e.g., dummy variables).  By default, the first canonical
+variate is used to find optimum linear combinations of component
+columns.  This function is similar to <code><a href="../../acepack/help/ace.html">ace</a></code> except that
+transformations for continuous variables are fitted using restricted
+cubic splines, monotonicity restrictions are not allowed, and
+<code>NA</code>s are allowed.  When a variable has any <code>NA</code>s,
+transformed scores for that variable are imputed using least squares
+multiple regression incorporating optimum transformations, or
+<code>NA</code>s are optionally set to constants.  Shrinkage can be used to
+safeguard against overfitting when imputing.  Optionally, imputed
+values on the original scale are also computed and returned.  For this
+purpose, recursive partitioning or multinomial logistic models can
+optionally be used to impute categorical variables, using what is
+predicted to be the most probable category.
+</p>
+<p>By default, <code>transcan</code> imputes <code>NA</code>s with &ldquo;best
+guess&rdquo; expected values of transformed variables, back transformed to
+the original scale. Values thus imputed are most like conditional
+medians assuming the transformations make variables' distributions
+symmetric (imputed values are similar to conditionl modes for
+categorical variables).  By instead specifying <code>n.impute</code>,
+<code>transcan</code> does approximate multiple imputation from the
+distribution of each variable conditional on all other variables.
+This is done by sampling <code>n.impute</code> residuals from the
+transformed variable, with replacement (a la bootstrapping), or by
+default, using Rubin's approximate Bayesian bootstrap, where a sample
+of size n with replacement is selected from the residuals on
+n non-missing values of the target variable, and then a sample
+of size m with replacement is chosen from this sample, where
+m is the number of missing values needing imputation for the
+current multiple imputation  repetition.  Neither of these bootstrap
+procedures assume normality or even symmetry of residuals. For
+sometimes-missing categorical variables, optimal scores are computed
+by adding the &ldquo;best guess&rdquo; predicted mean score to random
+residuals off this score.  Then categories having scores closest to
+these predicted scores are taken as the random multiple imputations
+(<code>impcat = "rpart"</code> is not currently allowed
+with <code>n.impute</code>).  The literature recommends using <code>n.impute
+  = 5</code> or greater. <code>transcan</code> provides only an approximation to
+multiple imputation, especially since it &ldquo;freezes&rdquo; the
+imputation model before drawing the multiple imputations rather than
+using different estimates of regression coefficients for each
+imputation.  For multiple imputation, the <code><a href="../../Hmisc/help/aregImpute.html">aregImpute</a></code> function
+provides a much better approximation to the full Bayesian approach
+while still not requiring linearity assumptions.
+</p>
+<p>When you specify <code>n.impute</code> to <code>transcan</code> you can use
+<code>fit.mult.impute</code> to re-fit any model <code>n.impute</code> times based
+on <code>n.impute</code> completed datasets (if there are any sometimes
+missing variables not specified to <code>transcan</code>, some observations
+will still be dropped from these fits).  After fitting <code>n.impute</code>
+models, <code>fit.mult.impute</code> will return the fit object from the
+last imputation, with <code>coefficients</code> replaced by the average of
+the <code>n.impute</code> coefficient vectors and with a component
+<code>var</code> equal to the imputation-corrected variance-covariance
+matrix.  <code>fit.mult.impute</code> can also use the object created by the
+<code><a href="../../mice/help/mice.html">mice</a></code> function in the <span class="pkg">mice</span> library to draw the
+multiple imputations, as well as objects created by
+<code><a href="../../Hmisc/help/aregImpute.html">aregImpute</a></code>.  The following components of fit objects are
+also replaced with averages over the <code>n.impute</code> model fits:
+<code>linear.predictors</code>, <code>fitted.values</code>, <code>stats</code>,
+<code>means</code>, <code>icoef</code>, <code>scale</code>, <code>center</code>,
+<code>y.imputed</code>.
+</p>
+<p>The <code><a href="../../base/html/summary.html">summary</a></code> method for <code>transcan</code> prints the function
+call, <i>R^2</i> achieved in transforming each variable, and for each
+variable the coefficients of all other transformed variables that are
+used to estimate the transformation of the initial variable.  If
+<code>imputed=TRUE</code> was used in the call to transcan, also uses the
+<code>describe</code> function to print a summary of imputed values.  If
+<code>long = TRUE</code>, also prints all imputed values with observation
+identifiers.  There is also a simple function <code>print.transcan</code>
+which merely prints the transformation matrix and the function call.
+It has an optional argument <code>long</code>, which if set to <code>TRUE</code>
+causes detailed parameters to be printed.  Instead of plotting while
+<code>transcan</code> is running, you can plot the final transformations
+after the fact using <code>plot.transcan</code> or <code>ggplot.transcan</code>,
+if the option <code>trantab  = TRUE</code> was specified to <code>transcan</code>.
+If in addition the option 
+<code>imputed = TRUE</code> was specified to <code>transcan</code>,
+<code>plot</code> and <code>ggplot</code> will show the location of imputed values
+(including multiples) along the axes.  For <code>ggplot</code>, imputed
+values are shown as red plus signs.
+</p>
+<p><code><a href="../../Hmisc/help/impute.html">impute</a></code> method for <code>transcan</code> does imputations for a
+selected original data variable, on the original scale (if
+<code>imputed=TRUE</code> was given to <code>transcan</code>).  If you do not
+specify a variable to <code>impute</code>, it will do imputations for all
+variables given to <code>transcan</code> which had at least one missing
+value.  This assumes that the original variables are accessible (i.e.,
+they have been attached) and that you want the imputed variables to
+have the same names are the original variables. If <code>n.impute</code> was
+specified to <code>transcan</code> you must tell <code><a href="../../Hmisc/help/impute.html">impute</a></code> which
+<code>imputation</code> to use.   Results are stored in <code>.GlobalEnv</code>
+when <code>list.out</code> is not specified  (it is recommended to use
+<code>list.out=TRUE</code>).   
+</p>
+<p>The <code><a href="../../stats/html/predict.html">predict</a></code> method for <code>transcan</code> computes
+predicted variables and imputed values from a matrix of new data.
+This matrix should have the same column variables as the original
+matrix used with <code>transcan</code>, and in the same order (unless a
+formula was used with <code>transcan</code>).
+</p>
+<p>The <code><a href="../../Hmisc/help/Function.html">Function</a></code> function is a generic function
+generator. <code>Function.transcan</code> creates <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> functions to transform
+variables using transformations created by <code>transcan</code>. These
+functions are useful for getting predicted values with predictors set
+to values on the original scale.
+</p>
+<p>The <code><a href="../../stats/html/vcov.html">vcov</a></code> methods are defined here so that
+imputation-corrected variance-covariance matrices are readily
+extracted from <code>fit.mult.impute</code> objects, and so that
+<code>fit.mult.impute</code> can easily compute traditional covariance
+matrices for individual completed datasets.
+</p>
+<p>The subscript method for <code>transcan</code> preserves attributes.
+</p>
+<p>The <code>invertTabulated</code> function does either inverse linear
+interpolation or uses sampling to sample qualifying x-values having
+y-values near the desired values.  The latter is used to get inverse
+values having a reasonable distribution (e.g., no floor or ceiling
+effects) when the transformation has a flat or nearly flat segment,
+resulting in a many-to-one transformation in that region.  Sampling
+weights are a combination of the frequency of occurrence of x-values
+that are within <code>tolInverse</code> times the range of <code>y</code> and the
+squared distance between the associated y-values and the target
+y-value (<code>aty</code>).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+transcan(x, method=c("canonical","pc"),
+         categorical=NULL, asis=NULL, nk, imputed=FALSE, n.impute,
+         boot.method=c('approximate bayesian', 'simple'),
+         trantab=FALSE, transformed=FALSE, 
+         impcat=c("score", "multinom", "rpart"),
+         mincut=40, 
+         inverse=c('linearInterp','sample'), tolInverse=.05,
+         pr=TRUE, pl=TRUE, allpl=FALSE, show.na=TRUE, 
+         imputed.actual=c('none','datadensity','hist','qq','ecdf'),
+         iter.max=50, eps=.1, curtail=TRUE, 
+         imp.con=FALSE, shrink=FALSE, init.cat="mode", 
+         nres=if(boot.method=='simple')200 else 400,
+         data, subset, na.action, treeinfo=FALSE, 
+         rhsImp=c('mean','random'), details.impcat='', ...)
+
+## S3 method for class 'transcan'
+summary(object, long=FALSE, digits=6, ...)
+
+## S3 method for class 'transcan'
+print(x, long=FALSE, ...)
+
+## S3 method for class 'transcan'
+plot(x, ...)
+
+## S3 method for class 'transcan'
+ggplot(data, mapping, scale=FALSE, ..., environment)
+
+## S3 method for class 'transcan'
+impute(x, var, imputation, name, pos.in, data, 
+       list.out=FALSE, pr=TRUE, check=TRUE, ...)
+
+fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
+                dtrans, derived, vcovOpts=NULL, pr=TRUE, subset, ...)
+
+## S3 method for class 'transcan'
+predict(object, newdata, iter.max=50, eps=0.01, curtail=TRUE,
+        type=c("transformed","original"),
+        inverse, tolInverse, check=FALSE, ...)
+
+Function(object, ...)
+
+## S3 method for class 'transcan'
+Function(object, prefix=".", suffix="", pos=-1, ...)
+
+invertTabulated(x, y, freq=rep(1,length(x)), 
+                aty, name='value',
+                inverse=c('linearInterp','sample'),
+                tolInverse=0.05, rule=2)
+
+## Default S3 method:
+vcov(object, regcoef.only=FALSE, ...)
+
+## S3 method for class 'fit.mult.impute'
+vcov(object, regcoef.only=TRUE,
+                intercepts='mid', ...)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a matrix containing continuous variable values and codes for
+categorical variables.  The matrix must have column names
+(<code>dimnames</code>).  If row names are present, they are used in
+forming the <code>names</code> attribute of imputed values if
+<code>imputed = TRUE</code>.  <code>x</code> may also be a formula, in which
+case the model matrix is created automatically, using data in the
+calling frame.  Advantages of using a formula are that
+<code style="white-space: pre;">categorical</code> variables can be determined automatically by a
+variable being a <code><a href="../../base/html/factor.html">factor</a></code> variable, and variables with
+two unique levels are modeled <code style="white-space: pre;">asis</code>. Variables with 3 unique
+values are considered to be <code style="white-space: pre;">categorical</code> if a formula is
+specified.  For a formula you may also specify that a variable is to
+remain untransformed by enclosing its name with the identify
+function, e.g. <code>I(x3)</code>.  The user may add other variable names
+to the <code>asis</code> and <code>categorical</code> vectors.  For
+<code>invertTabulated</code>, <code>x</code> is a vector or a list with three
+components: the x vector, the corresponding vector of transformed
+values, and the corresponding vector of frequencies of the pair of
+original and transformed variables. For <code>print</code>, <code>plot</code>,
+<code>ggplot</code>, <code>impute</code>, and <code>predict</code>, <code>x</code> is an
+object created by <code>transcan</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+
+<p>any <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> model formula
+</p>
+</td></tr>
+<tr valign="top"><td><code>fitter</code></td>
+<td>
+
+<p>any <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, <code>rms</code>, modeling function (not in quotes) that computes
+a vector of <code><a href="../../stats/html/coef.html">coefficients</a></code> and for which
+<code><a href="../../stats/html/vcov.html">vcov</a></code> will return a variance-covariance matrix.  E.g.,
+<code>fitter = <a href="../../stats/html/lm.html">lm</a></code>, <code><a href="../../stats/html/glm.html">glm</a></code>,
+<code><a href="../../rms/help/ols.html">ols</a></code>. At present models 
+involving non-regression parameters (e.g., scale parameters in
+parametric survival models) are not handled fully.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xtrans</code></td>
+<td>
+
+<p>an object created by <code>transcan</code>, <code><a href="../../Hmisc/help/aregImpute.html">aregImpute</a></code>, or
+<code><a href="../../mice/help/mice.html">mice</a></code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>use <code>method="canonical"</code> or any abbreviation thereof, to use
+canonical variates (the default). <code>method="pc"</code> transforms a
+variable instead so as to maximize the correlation with the first
+principal component of the other variables.
+</p>
+</td></tr>
+<tr valign="top"><td><code>categorical</code></td>
+<td>
+
+<p>a character vector of names of variables in <code>x</code> which are
+categorical, for which the ordering of re-scored values is not
+necessarily preserved. If <code>categorical</code> is omitted, it is
+assumed that all variables are continuous (or binary).  Set
+<code>categorical="*"</code> to treat all variables as categorical.
+</p>
+</td></tr>
+<tr valign="top"><td><code>asis</code></td>
+<td>
+
+<p>a character vector of names of variables that are not to be
+transformed. For these variables, the guts of
+<code><a href="../../stats/help/lm.fit.html">lm.fit</a></code> <code>method="qr"</code> is used to impute
+missing values. You may want to treat binary variables <code style="white-space: pre;">asis</code>
+(this is automatic if using a formula).  If <code>imputed = TRUE</code>,
+you may want to use <span class="samp">"categorical"</span> for binary variables if you
+want to force imputed values to be one of the original data
+values. Set <code>asis="*"</code> to treat all variables <code style="white-space: pre;">asis</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nk</code></td>
+<td>
+
+<p>number of knots to use in expanding each continuous variable (not
+listed in <code>asis</code>) in a restricted cubic spline function.
+Default is 3 (yielding 2 parameters for a variable) if
+<i>n &lt; 30</i>, 4 if
+<i>30 \eq n &lt; 100</i>, and 5 if
+<i>n &gt;= 100</i> (4 parameters).
+</p>
+</td></tr>
+<tr valign="top"><td><code>imputed</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to return a list containing imputed values on the
+original scale. If the transformation for a variable is
+non-monotonic, imputed values are not unique.  <code>transcan</code> uses
+the <code><a href="../../stats/html/approxfun.html">approx</a></code> function, which returns the highest value
+of the variable with the transformed score equalling the imputed
+score. <code>imputed=TRUE</code> also causes original-scale imputed values
+to be shown as tick marks on the top margin of each graph when
+<code>show.na=TRUE</code> (for the final iteration only). For categorical
+predictors, these imputed values are passed through the
+<code><a href="../../base/html/jitter.html">jitter</a></code> function so that their frequencies can be
+visualized.  When <code>n.impute</code> is used, each <code>NA</code> will have
+<code>n.impute</code> tick marks.
+</p>
+</td></tr>
+<tr valign="top"><td><code>n.impute</code></td>
+<td>
+
+<p>number of multiple imputations.  If omitted, single predicted
+expected value imputation is used.  <code>n.impute=5</code> is frequently
+recommended.
+</p>
+</td></tr>
+<tr valign="top"><td><code>boot.method</code></td>
+<td>
+
+<p>default is to use the approximate Bayesian bootstrap (sample with
+replacement from sample with replacement of the vector of residuals).
+You can also specify <code>boot.method="simple"</code> to use the usual
+bootstrap one-stage sampling with replacement.
+</p>
+</td></tr>
+<tr valign="top"><td><code>trantab</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to add an attribute <code>trantab</code> to the
+returned matrix. This contains a vector of lists each with
+components <code>x</code> and <code>y</code> containing the unique values and
+corresponding transformed values for the columns of <code>x</code>.  This
+is set up to be used easily with the <code><a href="../../stats/html/approxfun.html">approx</a></code> function.
+You must specify <code>trantab=TRUE</code> if you want to later use the
+<code>predict.transcan</code> function with <code>type = "original"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>transformed</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to cause <code>transcan</code> to return an object
+<code>transformed</code> containing the matrix of transformed variables  
+</p>
+</td></tr>
+<tr valign="top"><td><code>impcat</code></td>
+<td>
+
+<p>This argument tells how to impute categorical variables on the
+original scale.  The default is <code>impcat="score"</code> to impute the
+category whose canonical variate score is closest to the predicted
+score. Use <code>impcat="rpart"</code> to impute categorical variables
+using the values of all other transformed predictors in conjunction
+with the <code><a href="../../rpart/help/rpart.html">rpart</a></code> function.  A better but somewhat
+slower approach is to 
+use <code>impcat="multinom"</code> to fit a multinomial logistic model to
+the categorical variable, at the last iteraction of the
+<code>transcan</code> algorithm.  This uses the <code><a href="../../mgcv/html/multinom.html">multinom</a></code>
+function in the <span class="pkg">nnet</span> library of the <span class="pkg">MASS</span> package (which
+is assumed to have been installed by the user) to fit a polytomous
+logistic model to the current working transformations of all the
+other variables (using conditional mean imputation for missing
+predictors).  Multiple imputations are made by drawing multinomial
+values from the vector of predicted probabilities of category
+membership for the missing categorical values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>mincut</code></td>
+<td>
+
+<p>If <code>imputed=TRUE</code>, there are categorical variables, and
+<code>impcat = "rpart"</code>, <code>mincut</code> specifies the lowest node size
+that will be allowed to be split.  The default is 40.
+</p>
+</td></tr>
+<tr valign="top"><td><code>inverse</code></td>
+<td>
+
+<p>By default, imputed values are back-solved on the original scale
+using inverse linear interpolation on the fitted tabulated
+transformed values. This will cause distorted distributions of
+imputed values (e.g., floor and ceiling effects) when the estimated
+transformation has a flat or nearly flat section.  To instead use
+the <code>invertTabulated</code> function (see above) with the
+<code>"sample"</code> option, specify <code>inverse="sample"</code>.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>tolInverse</code></td>
+<td>
+
+<p>the multiplyer of the range of transformed values, weighted by
+<code>freq</code> and by the distance measure, for determining the set of
+x values having y values within a tolerance of the value of
+<code>aty</code> in <code>invertTabulated</code>.  For <code>predict.transcan</code>,
+<code>inverse</code> and <code>tolInverse</code> are obtained from options that
+were specified to <code>transcan</code> by default.  Otherwise, if not
+specified by the user, these default to the defaults used to
+<code>invertTabulated</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+
+<p>For <code>transcan</code>, set to <code>FALSE</code> to suppress printing
+<i>R^2</i> and shrinkage factors.  Set <code>impute.transcan=FALSE</code>
+to suppress messages concerning the number of <code>NA</code> values
+imputed. Set <code>fit.mult.impute=FALSE</code> to suppress printing
+variance inflation factors accounting for imputation, rate of
+missing information, and degrees of freedom.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pl</code></td>
+<td>
+
+<p>Set to <code>FALSE</code> to suppress plotting the final transformations
+with distribution of scores for imputed values (if
+<code>show.na=TRUE</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>allpl</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to plot transformations for intermediate iterations.
+</p>
+</td></tr>
+<tr valign="top"><td><code>show.na</code></td>
+<td>
+
+<p>Set to <code>FALSE</code> to suppress the distribution of scores assigned
+to missing values (as tick marks on the right margin of each
+graph). See also <code>imputed</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>imputed.actual</code></td>
+<td>
+
+<p>The default is <span class="samp">"none"</span> to suppress plotting of actual
+vs. imputed values for all variables having any <code>NA</code> values.
+Other choices are <span class="samp">"datadensity"</span> to use
+<code><a href="../../Hmisc/help/datadensity.html">datadensity</a></code> to make a single plot, <span class="samp">"hist"</span> to
+make a series of back-to-back histograms, <span class="samp">"qq"</span> to make a
+series of q-q plots, or <span class="samp">"ecdf"</span> to make a series of empirical
+cdfs.  For <code>imputed.actual="datadensity"</code> for example you get a
+rug plot of the non-missing values for the variable with beneath it
+a rug plot of the imputed values. When <code>imputed.actual</code> is not
+<span class="samp">"none"</span>, <code>imputed</code> is automatically set to <code>TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>iter.max</code></td>
+<td>
+
+<p>maximum number of iterations to perform for <code>transcan</code> or
+<code>predict</code>. For <code><a href="../../stats/html/predict.html">predict</a></code>, only one iteration is
+used if there are no <code>NA</code> values in the data or if
+<code>imp.con</code> was used.
+</p>
+</td></tr>
+<tr valign="top"><td><code>eps</code></td>
+<td>
+
+<p>convergence criterion for <code>transcan</code> and <code><a href="../../stats/html/predict.html">predict</a></code>.
+<code>eps</code> is the maximum change in transformed values from one
+iteration to the next.  If for a given iteration all new
+transformations of variables differ by less than <code>eps</code> (with or
+without negating the transformation to allow for &ldquo;flipping&rdquo;)
+from the transformations in the previous iteration, one more
+iteration is done for <code>transcan</code>. During this last iteration,
+individual transformations are not updated but coefficients of
+transformations are.  This improves stability of coefficients of
+canonical variates on the right-hand-side. <code>eps</code> is ignored
+when <code>rhsImp="random"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>curtail</code></td>
+<td>
+
+<p>for <code>transcan</code>, causes imputed values on the transformed scale
+to be truncated so that their ranges are within the ranges of
+non-imputed transformed values. For <code><a href="../../stats/html/predict.html">predict</a></code>,
+<code>curtail</code> defaults to <code>TRUE</code> to truncate predicted
+transformed values to their ranges in the original fit (<code>xt</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>imp.con</code></td>
+<td>
+
+<p>for <code>transcan</code>, set to <code>TRUE</code> to impute <code>NA</code> values
+on the original scales with constants (medians or most frequent
+category codes).  Set to a vector of constants to instead always use
+these constants for imputation. These imputed values are ignored
+when fitting the current working transformation for asingle
+variable.
+</p>
+</td></tr>
+<tr valign="top"><td><code>shrink</code></td>
+<td>
+
+<p>default is <code>FALSE</code> to use ordinary least squares or canonical
+variate estimates. For the purposes of imputing <code>NA</code>s, you may
+want to set <code>shrink=TRUE</code> to avoid overfitting when developing
+a prediction equation to predict each variables from all the others
+(see details below).
+</p>
+</td></tr>
+<tr valign="top"><td><code>init.cat</code></td>
+<td>
+
+<p>method for initializing scorings of categorical variables.  Default
+is <span class="samp">"mode"</span> to use a dummy variable set to 1 if the value is
+the most frequent value (this is the default). Use <span class="samp">"random"</span>
+to use a random 0-1 variable.  Set to <span class="samp">"asis"</span> to use the
+original integer codes asstarting scores.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nres</code></td>
+<td>
+
+<p>number of residuals to store if <code>n.impute</code> is specified.  If
+the dataset has fewer than <code>nres</code> observations, all residuals
+are saved. Otherwise a random sample of the residuals of length
+<code>nres</code> without replacement is saved.  The default for
+<code>nres</code> is higher if <code>boot.method="approximate bayesian"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+
+<p>Data frame used to fill the formula.  For <code>ggplot</code> is the
+result of <code>transcan</code> with <code>trantab=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>an integer or logical vector specifying the subset of observations
+to fit
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+
+<p>These may be used if <code>x</code> is a formula.  The default
+<code>na.action</code> is <code>na.retain</code> (defined by <code>transcan</code>)
+which keeps all observations with any <code>NA</code> values. For
+<code>impute.transcan</code>, <code>data</code> is a data frame to use as the
+source of variables to be imputed, rather than using
+<code>pos.in</code>.  For <code>fit.mult.impute</code>, <code>data</code> is
+mandatory and is a data frame containing the data to be used in
+fitting the model but before imputations are applied.  Variables
+omitted from <code>data</code> are assumed to be available from frame1
+and do not need to be imputed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>treeinfo</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to get additional information printed when
+<code>impcat="rpart"</code>, such as the predicted probabilities of
+category membership.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rhsImp</code></td>
+<td>
+
+<p>Set to <span class="samp">"random"</span> to use random draw imputation when a
+sometimes missing variable is moved to be a predictor of other
+sometimes missing variables.  Default is <code>rhsImp="mean"</code>, which
+uses conditional mean imputation on the transformed scale.
+Residuals used are residuals from the transformed scale.  When
+<span class="samp">"random"</span> is used, <code>transcan</code> runs 5 iterations and
+ignores <code>eps</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>details.impcat</code></td>
+<td>
+
+<p>set to a character scalar that is the name of a category variable to
+include in the resulting <code>transcan</code> object an element
+<code>details.impcat</code> containing details of how the categorical
+variable was multiply imputed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>arguments passed to <code><a href="../../Hmisc/help/scat1d.html">scat1d</a></code> or to the <code>fitter</code>
+function (for <code>fit.mult.impute</code>).  For <code>ggplot.transcan</code>,
+these arguments are passed to <code>facet_wrap</code>, e.g. <code>ncol=2</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>long</code></td>
+<td>
+
+<p>for <code><a href="../../base/html/summary.html">summary</a></code>, set to <code>TRUE</code> to print all imputed
+values. For <code><a href="../../base/html/print.html">print</a></code>, set to <code>TRUE</code> to print details
+of transformations/imputations.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>number of significant digits for printing values by
+<code><a href="../../base/html/summary.html">summary</a></code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>scale</code></td>
+<td>
+<p>for <code>ggplot.transcan</code> set <code>scale=TRUE</code> to
+scale transformed values to [0,1] before plotting.</p>
+</td></tr>
+<tr valign="top"><td><code>mapping,environment</code></td>
+<td>
+<p>not used; needed because of rules about generics</p>
+</td></tr>
+<tr valign="top"><td><code>var</code></td>
+<td>
+
+<p>For <code><a href="../../Hmisc/help/impute.html">impute</a></code>, is a variable that was originally a column
+in <code>x</code>, for which imputated values are to be filled
+in. <code>imputed=TRUE</code> must have been used in <code>transcan</code>.
+Omit <code>var</code> to impute all variables, creating new variables in
+position <code>pos</code> (see <code><a href="../../base/html/assign.html">assign</a></code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>imputation</code></td>
+<td>
+
+<p>specifies which of the multiple imputations to use for filling in
+<code>NA</code> values
+</p>
+</td></tr>
+<tr valign="top"><td><code>name</code></td>
+<td>
+
+<p>name of variable to impute, for <code><a href="../../Hmisc/help/impute.html">impute</a></code> function.
+Default is character string version of the second argument
+(<code>var</code>) in the call to <code><a href="../../Hmisc/help/impute.html">impute</a></code>. For
+<code>invertTabulated</code>, is the name of variable being transformed
+(used only for warning messages).
+</p>
+</td></tr>
+<tr valign="top"><td><code>pos.in</code></td>
+<td>
+
+<p>location as defined by <code><a href="../../base/html/assign.html">assign</a></code> to find variables that
+need to be 
+imputed, when all variables are to be imputed automatically by
+<code>impute.transcan</code> (i.e., when no input variable name is
+specified).  Default is position that contains
+the first variable to be imputed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>list.out</code></td>
+<td>
+
+<p>If <code>var</code> is not specified, you can set <code>list.out=TRUE</code> to
+have <code>impute.transcan</code> return a list containing variables with
+needed values imputed.  This list will contain a single imputation.
+Variables not needing imputation are copied to the list as-is.  You
+can use this list for analysis just like a data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>check</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress certain warning messages
+</p>
+</td></tr>
+<tr valign="top"><td><code>newdata</code></td>
+<td>
+
+<p>a new data matrix for which to compute transformed
+variables. Categorical variables must use the same integer codes as
+were used in the call to <code>transcan</code>.  If a formula was
+originally specified to <code>transcan</code> (instead of a data matrix),
+<code>newdata</code> is optional and if given must be a data frame; a
+model frame is generated automatically from the previous formula.
+The <code>na.action</code> is handled automatically, and the levels for
+factor variables must be the same and in the same order as were used
+in the original variables specified in the formula given to
+<code>transcan</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fit.reps</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to save all fit objects from the fit for each
+imputation in <code>fit.mult.impute</code>.  Then the object returned will
+have a component <code>fits</code> which is a list whose i'th
+element is the i'th fit object. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>dtrans</code></td>
+<td>
+
+<p>provides an approach to creating derived variables from a single
+filled-in dataset.  The function specified as <code>dtrans</code> can even
+reshape the imputed dataset.  An example of such usage is fitting
+time-dependent covariates in a Cox model that are created by
+&ldquo;start,stop&rdquo; intervals.  Imputations may be done on a one
+record per subject data frame that is converted by <code>dtrans</code> to
+multiple records per subject.  The imputation can enforce
+consistency of certain variables across records so that for example
+a missing value of sex will not be imputed as <span class="samp">male</span> for
+one of the subject's records and <span class="samp">female</span> as another.  An
+example of how <code>dtrans</code> might be specified is
+<code>dtrans=function(w) {w$age &lt;- w$years + w$months/12; w}</code>
+where <code>months</code> might havebeen imputed but <code>years</code> was
+never missing.  An outline for using 'dtrans' to impute missing
+baseline variables in a longitudinal analysis appears in Details below.
+</p>
+</td></tr>
+<tr valign="top"><td><code>derived</code></td>
+<td>
+
+<p>an expression containing <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> expressions for computing derived
+variables that are used in the model formula.  This is useful when
+multiple imputations are done for component variables but the actual
+model uses combinations of these (e.g., ratios or other
+derivations). For a single derived variable you can specify for
+example <code>derived=expression(ratio &lt;- weight/height)</code>.  For
+multiple derived variables use the form
+<code>derived=expression({ratio &lt;- weight/height; product &lt;-
+      weight*height})</code> or put the expression on separate input lines.
+To monitor the multiply-imputed derived variables you can add to the
+<code>expression</code> a command such as <code>print(describe(ratio))</code>.
+See the example below.  Note that <code>derived</code> is not yet
+implemented.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>vcovOpts</code></td>
+<td>
+<p>a list of named additional arguments to pass to the
+<code>vcov</code> method for <code>fitter</code>.  Useful for <code>orm</code> models
+for retaining all intercepts
+(<code>vcovOpts=list(intercepts='all')</code>) instead of just the middle one.</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>By default, the matrix of transformed variables is returned, with
+imputed values on the transformed scale.  If you had specified
+<code>trantab=TRUE</code> to <code>transcan</code>, specifying
+<code>type="original"</code> does the table look-ups with linear
+interpolation to return the input matrix <code>x</code> but with imputed
+values on the original scale inserted for <code>NA</code> values.  For
+categorical variables, the method used here is to select the
+category code having a corresponding scaled value closest to the
+predicted transformed value.  This corresponds to the default
+<code>impcat</code>.  Note: imputed values
+thus returned when <code>type="original"</code> are single expected value
+imputations even in <code>n.impute</code> is given.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>an object created by <code>transcan</code>, or an object to be converted to
+<span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> function code, typically a model fit object of some sort  
+</p>
+</td></tr>
+<tr valign="top"><td><code>prefix, suffix</code></td>
+<td>
+
+<p>When creating separate <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> functions for each variable in <code>x</code>,
+the name of the new function will be <code>prefix</code> placed in front of
+the variable name, and <code>suffix</code> placed in back of the name.  The
+default is to use names of the form <span class="samp">.varname</span>, where
+varname is the variable name.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pos</code></td>
+<td>
+
+<p>position as in <code><a href="../../base/html/assign.html">assign</a></code> at which to store new functions
+(for <code><a href="../../Hmisc/help/Function.html">Function</a></code>). Default is <code>pos=-1</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a vector corresponding to <code>x</code> for <code>invertTabulated</code>, if its
+first argument <code>x</code> is not a list
+</p>
+</td></tr>
+<tr valign="top"><td><code>freq</code></td>
+<td>
+
+<p>a vector of frequencies corresponding to cross-classified <code>x</code>
+and <code>y</code> if <code>x</code> is not a list.  Default is a vector of ones.
+</p>
+</td></tr>
+<tr valign="top"><td><code>aty</code></td>
+<td>
+
+<p>vector of transformed values at which inverses are desired
+</p>
+</td></tr>
+<tr valign="top"><td><code>rule</code></td>
+<td>
+
+<p>see <code><a href="../../stats/html/approxfun.html">approx</a></code>.  <code>transcan</code> assumes <code>rule</code> is
+always 2.
+</p>
+</td></tr>
+<tr valign="top"><td><code>regcoef.only</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to make <code>vcov.default</code> delete positions in
+the covariance matrix for any non-regression coefficients (e.g., log
+scale parameter from <code><a href="../../rms/help/psm.html">psm</a></code> or <code><a href="../../survival/html/survreg.html">survreg</a></code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>intercepts</code></td>
+<td>
+<p>this is primarily for <code><a href="../../rms/help/orm.html">orm</a></code>
+objects.  Set to <code>"none"</code> to discard all intercepts from the
+covariance matrix, or to <code>"all"</code> or <code>"mid"</code> to keep all
+elements generated by <code>orm</code> (<code>orm</code> only outputs the
+covariance matrix for the intercept corresponding to the median).
+You can also set <code>intercepts</code> to a vector of subscripts for
+selecting particular intercepts in a multi-intercept model.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The starting approximation to the transformation for each variable is
+taken to be the original coding of the variable.  The initial
+approximation for each missing value is taken to be the median of the
+non-missing values for the variable (for continuous ones) or the most
+frequent category (for categorical ones).  Instead, if <code>imp.con</code>
+is a vector, its values are used for imputing <code>NA</code> values.  When
+using each variable as a dependent variable, <code>NA</code> values on that
+variable cause all observations to be temporarily deleted.  Once a new
+working transformation is found for the variable, along with a model
+to predict that transformation from all the other variables, that
+latter model is used to impute <code>NA</code> values in the selected
+dependent variable if <code>imp.con</code> is not specified.
+</p>
+<p>When that variable is used to predict a new dependent variable, the
+current working imputed values are inserted.  Transformations are
+updated after each variable becomes a dependent variable, so the order
+of variables on <code>x</code> could conceivably make a difference in the
+final estimates.  For obtaining out-of-sample
+predictions/transformations, <code><a href="../../stats/html/predict.html">predict</a></code> uses the same
+iterative procedure as <code>transcan</code> for imputation, with the same
+starting values for fill-ins as were used by <code>transcan</code>.  It also
+(by default) uses a conservative approach of curtailing transformed
+variables to be within the range of the original ones. Even when
+<code>method = "pc"</code> is specified, canonical variables are used for
+imputing missing values.
+</p>
+<p>Note that fitted transformations, when evaluated at imputed variable
+values (on the original scale), will not precisely match the
+transformed imputed values returned in <code>xt</code>.  This is because
+<code>transcan</code> uses an approximate method based on linear
+interpolation to back-solve for imputed values on the original scale.
+</p>
+<p>Shrinkage uses the method of
+<cite>Van Houwelingen and Le Cessie (1990)</cite> (similar to
+<cite>Copas, 1983</cite>).  The shrinkage factor is
+</p>
+<p style="text-align: center;"><i>
+    [1 - (1 - R2)(n - 1)/(n - k - 1)]/R2</i></p>
+
+<p>where R2 is the apparent <i>R-square</i>d for predicting the
+variable, n is the number of non-missing values, and k is
+the effective number of degrees of freedom (aside from intercepts).  A
+heuristic estimate is used for k:
+<code>A - 1 + sum(max(0,Bi - 1))/m + m</code>, where
+A is the number of d.f. required to represent the variable being
+predicted, the Bi are the number of columns required to
+represent all the other variables, and m is the number of all
+other variables.  Division by m is done because the
+transformations for the other variables are fixed at their current
+transformations the last time they were being predicted.  The
+<i>+ m</i> term comes from the number of coefficients estimated
+on the right hand side, whether by least squares or canonical
+variates.  If a shrinkage factor is negative, it is set to 0.  The
+shrinkage factor is the ratio of the adjusted <i>R-square</i>d to
+the ordinary <i>R-square</i>d. The adjusted <i>R-square</i>d is
+</p>
+<p style="text-align: center;"><i>
+    1 - (1 - R2)(n - 1)/(n - k - 1)</i></p>
+
+<p>which is also set to zero if it is negative.  If <code>shrink=FALSE</code>
+and the adjusted <i>R-square</i>s are much smaller than the
+ordinary <i>R-square</i>s, you may want to run <code>transcan</code>
+with <code>shrink=TRUE</code>.
+</p>
+<p>Canonical variates are scaled to have variance of 1.0, by multiplying
+canonical coefficients from <code><a href="../../stats/html/cancor.html">cancor</a></code> by 
+<i>sqrt(n - 1)</i>.
+</p>
+<p>When specifying a non-<span class="pkg">rms</span> library fitting function to
+<code>fit.mult.impute</code> (e.g., <code><a href="../../stats/html/lm.html">lm</a></code>, <code><a href="../../stats/html/glm.html">glm</a></code>),
+running the result of <code>fit.mult.impute</code> through that fit's
+<code><a href="../../base/html/summary.html">summary</a></code> method will not use the imputation-adjusted
+variances.  You may obtain the new variances using <code>fit$var</code> or
+<code>vcov(fit)</code>.
+</p>
+<p>When you specify a <span class="pkg">rms</span> function to <code>fit.mult.impute</code> (e.g.
+<code><a href="../../rms/help/lrm.html">lrm</a></code>, <code><a href="../../rms/help/ols.html">ols</a></code>, <code><a href="../../rms/help/cph.html">cph</a></code>,
+<code><a href="../../rms/help/psm.html">psm</a></code>, <code><a href="../../rms/help/bj.html">bj</a></code>, <code><a href="../../rms/help/Rq.html">Rq</a></code>,
+<code><a href="../../rms/help/Gls.html">Gls</a></code>, <code><a href="../../rms/help/Glm.html">Glm</a></code>), automatically computed
+transformation  parameters (e.g., knot locations for
+<code><a href="../../rms/help/rcs.html">rcs</a></code>) that are estimated for the first imputation are
+used for all other imputations.  This ensures that knot locations will
+not vary, which would change the meaning of the regression
+coefficients.
+</p>
+<p>Warning: even though <code>fit.mult.impute</code> takes imputation into
+account when estimating variances of regression coefficient, it does
+not take into account the variation that results from estimation of
+the shapes and regression coefficients of the customized imputation
+equations. Specifying <code>shrink=TRUE</code> solves a small part of this
+problem.  To fully account for all sources of variation you should
+consider putting the <code>transcan</code> invocation inside a bootstrap or
+loop, if execution time allows.  Better still, use
+<code><a href="../../Hmisc/help/aregImpute.html">aregImpute</a></code> or a package such as  as <span class="pkg">mice</span> that uses
+real Bayesian posterior realizations to multiply impute missing values
+correctly.
+</p>
+<p>It is strongly recommended that you use the <span class="pkg">Hmisc</span> <code><a href="../../Hmisc/help/naclus.html">naclus</a></code>
+function to determine is there is a good basis for imputation.
+<code><a href="../../Hmisc/help/naclus.html">naclus</a></code> will tell you, for example, if systolic blood
+pressure is missing whenever diastolic blood pressure is missing.  If
+the only variable that is well correlated with diastolic bp is
+systolic bp, there is no basis for imputing diastolic bp in this case.
+</p>
+<p>At present, <code>predict</code> does not work with multiple imputation.
+</p>
+<p>When calling <code>fit.mult.impute</code> with <code><a href="../../stats/html/glm.html">glm</a></code> as the
+<code>fitter</code> argument, if you need to pass a <code>family</code> argument
+to <code><a href="../../stats/html/glm.html">glm</a></code> do it by quoting the family, e.g.,
+<code>family="binomial"</code>.
+</p>
+<p><code>fit.mult.impute</code> will not work with proportional odds models
+when regression imputation was used (as opposed to predictive mean
+matching).  That's because regression imputation will create values of
+the response variable that did not exist in the dataset, altering the
+intercept terms in the model.
+</p>
+<p>You should be able to use a variable in the formula given to
+<code>fit.mult.impute</code> as a numeric variable in the regression model
+even though it was a factor variable in the invocation of
+<code>transcan</code>.  Use for example <code>fit.mult.impute(y ~ codes(x),
+    lrm, trans)</code> (thanks to Trevor Thompson
+<a href="mailto:trevor@hp5.eushc.org">trevor@hp5.eushc.org</a>).
+</p>
+<p>Here is an outline of the steps necessary to impute baseline variables
+using the <code>dtrans</code> argument, when the analysis to be repeated by
+<code>fit.mult.impute</code> is a longitudinal analysis (using
+e.g. <code>Gls</code>).
+</p>
+
+<ol>
+<li><p> Create a one row per subject data frame containing baseline
+variables plus follow-up variables that are assigned to windows.  For
+example, you may have dozens of repeated measurements over years but
+you capture the measurements at the times measured closest to 1, 2,
+and 3 years after study entry
+</p>
+</li>
+<li><p> Make sure the dataset contains the subject ID
+</p>
+</li>
+<li><p> This dataset becomes the one passed to <code>aregImpute</code> as
+<code>data=</code>.  You will be imputing missing baseline variables from
+follow-up measurements defined at fixed times.
+</p>
+</li>
+<li><p> Have another dataset with all the non-missing follow-up values
+on it, one record per measurement time per subject.  This dataset
+should not have the baseline variables on it, and the follow-up
+measurements should not be named the same as the baseline variable(s);
+the subject ID must also appear
+</p>
+</li>
+<li><p> Add the dtrans argument to <code>fit.mult.impute</code> to define a
+function with one argument representing the one record per subject
+dataset with missing values filled it from the current imputation.
+This function merges the above 2 datasets; the returned value of this
+function is the merged data frame.
+</p>
+</li>
+<li><p> This merged-on-the-fly dataset is the one handed by <code>fit.mult.impute</code> to your fitting function, so  variable names in the formula given to <code>fit.mult.impute</code> must matched the names created by the merge
+</p>
+</li></ol>
+
+
+
+<h3>Value</h3>
+
+<p>For <code>transcan</code>, a list of class <span class="samp">transcan</span> with elements
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>call</code></td>
+<td>
+<p> (with the function call)</p>
+</td></tr>
+<tr valign="top"><td><code>iter</code></td>
+<td>
+<p> (number of  iterations done)</p>
+</td></tr>
+<tr valign="top"><td><code>rsq, rsq.adj</code></td>
+<td>
+
+<p>containing the <i>R-square</i>s and adjusted
+<i>R-square</i>s achieved in predicting each variable from all
+the others
+</p>
+</td></tr>
+<tr valign="top"><td><code>categorical</code></td>
+<td>
+
+<p>the values supplied for <code>categorical</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>asis</code></td>
+<td>
+
+<p>the values supplied for <code>asis</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>coef</code></td>
+<td>
+
+<p>the within-variable coefficients used to compute the first
+canonical variate
+</p>
+</td></tr>
+<tr valign="top"><td><code>xcoef</code></td>
+<td>
+
+<p>the (possibly shrunk) across-variables coefficients of the first
+canonical variate that predicts each variable in-turn.
+</p>
+</td></tr>
+<tr valign="top"><td><code>parms</code></td>
+<td>
+
+<p>the parameters of the transformation (knots for splines, contrast
+matrix for categorical variables)  
+</p>
+</td></tr>
+<tr valign="top"><td><code>fillin</code></td>
+<td>
+
+<p>the initial estimates for missing values (<code>NA</code> if variable
+never missing)
+</p>
+</td></tr>
+<tr valign="top"><td><code>ranges</code></td>
+<td>
+
+<p>the matrix of ranges of the transformed variables (min and max in
+first and secondrow)
+</p>
+</td></tr>
+<tr valign="top"><td><code>scale</code></td>
+<td>
+
+<p>a vector of scales used to determine convergence for a
+transformation.
+</p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+
+<p>the formula (if <code>x</code> was a formula)
+</p>
+</td></tr>
+</table>
+<p>, and optionally a vector of shrinkage factors used for predicting
+each variable from the others.  For <code>asis</code> variables, the scale
+is the average absolute difference about the median.  For other
+variables it is unity, since canonical variables are standardized.
+For <code>xcoef</code>, row i has the coefficients to predict
+transformed variable i, with the column for the coefficient of
+variable i set to <code>NA</code>.  If <code>imputed=TRUE</code> was given,
+an optional element <code>imputed</code> also appears.  This is a list with
+the vector of imputed values (on the original scale) for each variable
+containing <code>NA</code>s.  Matrices rather than vectors are returned if
+<code>n.impute</code> is given.  If <code>trantab=TRUE</code>, the <code>trantab</code>
+element also appears, as described above.  If <code>n.impute &gt; 0</code>,
+<code>transcan</code> also returns a list <code>residuals</code> that can be used
+for future multiple imputation.
+</p>
+<p><code>impute</code> returns a vector (the same length as <code>var</code>) of
+class <span class="samp">impute</span> with <code>NA</code> values imputed.  
+</p>
+<p><code>predict</code> returns a matrix with the same number of columns or
+variables as were in <code>x</code>.
+</p>
+<p><code>fit.mult.impute</code> returns a fit object that is a modification of
+the fit object created by fitting the completed dataset for the final
+imputation.  The <code>var</code> matrix in the fit object has the
+imputation-corrected variance-covariance matrix.  <code>coefficients</code>
+is the average (over imputations) of the coefficient vectors,
+<code>variance.inflation.impute</code> is a vector containing the ratios of
+the diagonals of the between-imputation variance matrix to the
+diagonals of the average apparent (within-imputation) variance
+matrix. <code>missingInfo</code> is
+<cite>Rubin's rate of missing information</cite> and <code>dfmi</code> is
+<cite>Rubin's degrees of freedom for a t-statistic</cite>
+for testing a single parameter.  The last two objects are vectors
+corresponding to the diagonal of the variance matrix.  The class
+<code>"fit.mult.impute"</code> is prepended to the other classes produced by
+the fitting function.
+</p>
+<p><code>fit.mult.impute</code> stores <code>intercepts</code> attributes in the
+coefficient matrix and in <code>var</code> for <code>orm</code> fits.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>prints, plots, and <code>impute.transcan</code> creates new variables.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell  <br />
+Department of Biostatistics  <br />
+Vanderbilt University  <br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Kuhfeld, Warren F: The PRINQUAL Procedure.  SAS/STAT User's Guide, Fourth
+Edition, Volume 2, pp. 1265&ndash;1323, 1990.
+</p>
+<p>Van Houwelingen JC, Le Cessie S: Predictive value of statistical models.
+Statistics in Medicine 8:1303&ndash;1325, 1990.
+</p>
+<p>Copas JB: Regression, prediction and shrinkage. JRSS B 45:311&ndash;354, 1983.
+</p>
+<p>He X, Shen L: Linear regression after spline transformation.
+Biometrika 84:474&ndash;481, 1997.
+</p>
+<p>Little RJA, Rubin DB: Statistical Analysis with Missing Data.  New
+York: Wiley, 1987.
+</p>
+<p>Rubin DJ, Schenker N: Multiple imputation in health-care databases: An
+overview and some applications.  Stat in Med 10:585&ndash;598, 1991.
+</p>
+<p>Faris PD, Ghali WA, et al:Multiple imputation versus data enhancement
+for dealing with missing data in observational health care outcome
+analyses.  J Clin Epidem 55:184&ndash;191, 2002.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/aregImpute.html">aregImpute</a></code>, <code><a href="../../Hmisc/help/impute.html">impute</a></code>, <code><a href="../../Hmisc/help/naclus.html">naclus</a></code>,
+<code><a href="../../Hmisc/help/naplot.html">naplot</a></code>, <code><a href="../../acepack/help/ace.html">ace</a></code>,
+<code><a href="../../acepack/help/avas.html">avas</a></code>, <code><a href="../../stats/html/cancor.html">cancor</a></code>,
+<code><a href="../../stats/html/prcomp.html">prcomp</a></code>, <code><a href="../../Hmisc/help/rcspline.eval.html">rcspline.eval</a></code>,
+<code><a href="../../stats/html/lsfit.html">lsfit</a></code>, <code><a href="../../stats/html/approxfun.html">approx</a></code>, <code><a href="../../Hmisc/help/datadensity.html">datadensity</a></code>,
+<code><a href="../../mice/help/mice.html">mice</a></code>, <code><a href="../../ggplot2/help/ggplot.html">ggplot</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+x &lt;- cbind(age, disease, blood.pressure, pH)  
+#cbind will convert factor object `disease' to integer
+par(mfrow=c(2,2))
+x.trans &lt;- transcan(x, categorical="disease", asis="pH",
+                    transformed=TRUE, imputed=TRUE)
+summary(x.trans)  #Summary distribution of imputed values, and R-squares
+f &lt;- lm(y ~ x.trans$transformed)   #use transformed values in a regression
+#Now replace NAs in original variables with imputed values, if not
+#using transformations
+age            &lt;- impute(x.trans, age)
+disease        &lt;- impute(x.trans, disease)
+blood.pressure &lt;- impute(x.trans, blood.pressure)
+pH             &lt;- impute(x.trans, pH)
+#Do impute(x.trans) to impute all variables, storing new variables under
+#the old names
+summary(pH)       #uses summary.impute to tell about imputations
+                  #and summary.default to tell about pH overall
+# Get transformed and imputed values on some new data frame xnew
+newx.trans     &lt;- predict(x.trans, xnew)
+w              &lt;- predict(x.trans, xnew, type="original")
+age            &lt;- w[,"age"]            #inserts imputed values
+blood.pressure &lt;- w[,"blood.pressure"]
+Function(x.trans)  #creates .age, .disease, .blood.pressure, .pH()
+#Repeat first fit using a formula
+x.trans &lt;- transcan(~ age + disease + blood.pressure + I(pH), 
+                    imputed=TRUE)
+age &lt;- impute(x.trans, age)
+predict(x.trans, expand.grid(age=50, disease="pneumonia",
+        blood.pressure=60:260, pH=7.4))
+z &lt;- transcan(~ age + factor(disease.code),  # disease.code categorical
+              transformed=TRUE, trantab=TRUE, imputed=TRUE, pl=FALSE)
+ggplot(z, scale=TRUE)
+plot(z$transformed)
+
+## End(Not run)
+
+
+# Multiple imputation and estimation of variances and covariances of
+# regression coefficient estimates accounting for imputation
+set.seed(1)
+x1 &lt;- factor(sample(c('a','b','c'),100,TRUE))
+x2 &lt;- (x1=='b') + 3*(x1=='c') + rnorm(100)
+y  &lt;- x2 + 1*(x1=='c') + rnorm(100)
+x1[1:20] &lt;- NA
+x2[18:23] &lt;- NA
+d &lt;- data.frame(x1,x2,y)
+n &lt;- naclus(d)
+plot(n); naplot(n)  # Show patterns of NAs
+f  &lt;- transcan(~y + x1 + x2, n.impute=10, shrink=FALSE, data=d)
+options(digits=3)
+summary(f)
+
+
+f  &lt;- transcan(~y + x1 + x2, n.impute=10, shrink=TRUE, data=d)
+summary(f)
+
+
+h &lt;- fit.mult.impute(y ~ x1 + x2, lm, f, data=d)
+# Add ,fit.reps=TRUE to save all fit objects in h, then do something like:
+# for(i in 1:length(h$fits)) print(summary(h$fits[[i]]))
+
+
+diag(vcov(h))
+
+
+h.complete &lt;- lm(y ~ x1 + x2, na.action=na.omit)
+h.complete
+diag(vcov(h.complete))
+
+
+# Note: had the rms ols function been used in place of lm, any
+# function run on h (anova, summary, etc.) would have automatically
+# used imputation-corrected variances and covariances
+
+
+# Example demonstrating how using the multinomial logistic model
+# to impute a categorical variable results in a frequency
+# distribution of imputed values that matches the distribution
+# of non-missing values of the categorical variable
+
+
+## Not run: 
+set.seed(11)
+x1 &lt;- factor(sample(letters[1:4], 1000,TRUE))
+x1[1:200] &lt;- NA
+table(x1)/sum(table(x1))
+x2 &lt;- runif(1000)
+z  &lt;- transcan(~ x1 + I(x2), n.impute=20, impcat='multinom')
+table(z$imputed$x1)/sum(table(z$imputed$x1))
+
+# Here is how to create a completed dataset
+d &lt;- data.frame(x1, x2)
+z &lt;- transcan(~x1 + I(x2), n.impute=5, data=d)
+imputed &lt;- impute(z, imputation=1, data=d,
+                  list.out=TRUE, pr=FALSE, check=FALSE)
+sapply(imputed, function(x)sum(is.imputed(x)))
+sapply(imputed, function(x)sum(is.na(x)))
+
+## End(Not run)
+
+# Example where multiple imputations are for basic variables and
+# modeling is done on variables derived from these
+
+
+set.seed(137)
+n &lt;- 400
+x1 &lt;- runif(n)
+x2 &lt;- runif(n)
+y  &lt;- x1*x2 + x1/(1+x2) + rnorm(n)/3
+x1[1:5] &lt;- NA
+d &lt;- data.frame(x1,x2,y)
+w &lt;- transcan(~ x1 + x2 + y, n.impute=5, data=d)
+# Add ,show.imputed.actual for graphical diagnostics
+## Not run: 
+g &lt;- fit.mult.impute(y ~ product + ratio, ols, w,
+                     data=data.frame(x1,x2,y),
+                     derived=expression({
+                       product &lt;- x1*x2
+                       ratio   &lt;- x1/(1+x2)
+                       print(cbind(x1,x2,x1*x2,product)[1:6,])}))
+
+## End(Not run)
+
+
+# Here's a method for creating a permanent data frame containing
+# one set of imputed values for each variable specified to transcan
+# that had at least one NA, and also containing all the variables
+# in an original data frame.  The following is based on the fact
+# that the default output location for impute.transcan is
+# given by the global environment
+
+
+## Not run: 
+xt &lt;- transcan(~. , data=mine,
+               imputed=TRUE, shrink=TRUE, n.impute=10, trantab=TRUE)
+attach(mine, use.names=FALSE)
+impute(xt, imputation=1) # use first imputation
+# omit imputation= if using single imputation
+detach(1, 'mine2')
+
+## End(Not run)
+
+
+# Example of using invertTabulated outside transcan
+x    &lt;- c(1,2,3,4,5,6,7,8,9,10)
+y    &lt;- c(1,2,3,4,5,5,5,5,9,10)
+freq &lt;- c(1,1,1,1,1,2,3,4,1,1)
+# x=5,6,7,8 with prob. .1 .2 .3 .4 when y=5
+# Within a tolerance of .05*(10-1) all y's match exactly
+# so the distance measure does not play a role
+set.seed(1)      # so can reproduce
+for(inverse in c('linearInterp','sample'))
+ print(table(invertTabulated(x, y, freq, rep(5,1000), inverse=inverse)))
+
+
+# Test inverse='sample' when the estimated transformation is
+# flat on the right.  First show default imputations
+set.seed(3)
+x &lt;- rnorm(1000)
+y &lt;- pmin(x, 0)
+x[1:500] &lt;- NA
+for(inverse in c('linearInterp','sample')) {
+par(mfrow=c(2,2))
+  w &lt;- transcan(~ x + y, imputed.actual='hist',
+                inverse=inverse, curtail=FALSE,
+                data=data.frame(x,y))
+  if(inverse=='sample') next
+# cat('Click mouse on graph to proceed\n')
+# locator(1)
+}
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

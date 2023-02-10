@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: plotCorrM</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for plotCorrM {Hmisc}"><tr><td>plotCorrM {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>plotCorrM</h2>
+
+<h3>Description</h3>
+
+<p>Plot Correlation Matrix and Correlation vs. Time Gap
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+plotCorrM(
+  r,
+  what = c("plots", "data"),
+  type = c("rectangle", "circle"),
+  xlab = "",
+  ylab = "",
+  maxsize = 12,
+  xangle = 0
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>r</code></td>
+<td>
+<p>correlation matrix</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+<p>specifies whether to return plots or the data frame used in making the plots</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+<p>specifies whether to use bottom-aligned rectangles (the default) or centered circles</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+<p>x-axis label for correlation matrix</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+<p>y-axis label for correlation matrix</p>
+</td></tr>
+<tr valign="top"><td><code>maxsize</code></td>
+<td>
+<p>maximum circle size if <code>type='circle'</code></p>
+</td></tr>
+<tr valign="top"><td><code>xangle</code></td>
+<td>
+<p>angle for placing x-axis labels, defaulting to 0.  Consider using <code>xangle=45</code> when labels are long.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Constructs two <code>ggplot2</code> graphics.  The first is a half matrix of rectangles where the height of the rectangle is proportional to the absolute value of the correlation coefficient, with positive and negative coefficients shown in different colors.  The second graphic is a variogram-like graph of correlation coefficients on the y-axis and absolute time gap on the x-axis, with a <code>loess</code> smoother added.  The times are obtained from the correlation matrix's row and column names if these are numeric.  If any names are not numeric, the times are taken as the integers 1, 2, 3, ...  The two graphics are <code>ggplotly</code>-ready if you use <code>plotly::ggplotly(..., tooltip='label')</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a list containing two <code>ggplot2</code> objects if <code>what='plots'</code>, or a data frame if <code>what='data'</code>
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+r &lt;- cor(matrix(rnorm(100), ncol=10))
+g &lt;- plotCorrM(r)
+g[[1]]  # plot matrix
+g[[2]]  # plot correlation vs gap time
+# ggplotlyr(g[[2]])
+# ggplotlyr uses ggplotly with tooltip='label' then removes
+# txt: from hover text
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

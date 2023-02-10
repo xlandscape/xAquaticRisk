@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Pretty-print the Structure of a Data Object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for list.tree {Hmisc}"><tr><td>list.tree {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Pretty-print the Structure of a Data Object
+</h2>
+
+<h3>Description</h3>
+
+<p>This is a function to pretty-print the structure of any data object
+(usually a list).  It is similar to the R function <code>str</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+list.tree(struct, depth=-1, numbers=FALSE, maxlen=22, maxcomp=12, 
+          attr.print=TRUE, front="", fill=". ", name.of, size=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>struct</code></td>
+<td>
+
+<p>The object to be displayed
+</p>
+</td></tr>
+<tr valign="top"><td><code>depth</code></td>
+<td>
+
+<p>Maximum depth of recursion (of lists within lists ...) to be printed; negative
+value means no limit on depth.
+</p>
+</td></tr>
+<tr valign="top"><td><code>numbers</code></td>
+<td>
+
+<p>If TRUE, use numbers in leader  instead  of  dots  to
+represent position in structure.
+</p>
+</td></tr>
+<tr valign="top"><td><code>maxlen</code></td>
+<td>
+
+<p>Approximate maximum length (in characters) allowed on each line to give the
+first few values of a vector.  maxlen=0 suppresses printing any values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>maxcomp</code></td>
+<td>
+
+<p>Maximum number of components of any list that will be described.
+</p>
+</td></tr>
+<tr valign="top"><td><code>attr.print</code></td>
+<td>
+
+<p>Logical flag, determining whether a description of attributes will be printed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>front</code></td>
+<td>
+
+<p>Front material of a line, for internal use.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fill</code></td>
+<td>
+
+<p>Fill character used for each level of indentation.
+</p>
+</td></tr>
+<tr valign="top"><td><code>name.of</code></td>
+<td>
+
+<p>Name of object, for internal use (deparsed version  of  struct  by  default). 
+</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+
+<p>Logical flag, should the size of the object in bytes be printed?
+</p>
+<p>A description of the structure of struct will be printed in outline
+form, with indentation
+for each level of recursion, showing the internal storage mode, length,
+class(es) if any, attributes, and first few elements of each data vector.
+By default each level of list recursion is indicated by a &quot;.&quot; and 
+attributes by &quot;A&quot;.
+</p>
+</td></tr></table>
+
+
+<h3>Author(s)</h3>
+
+<p>Alan Zaslavsky, <a href="mailto:zaslavsk@hcp.med.harvard.edu">zaslavsk@hcp.med.harvard.edu</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../utils/html/str.html">str</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+X &lt;- list(a=ordered(c(1:30,30:1)),b=c("Rick","John","Allan"),
+          c=diag(300),e=cbind(p=1008:1019,q=4))
+list.tree(X)
+# In R you can say str(X)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

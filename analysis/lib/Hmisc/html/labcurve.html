@@ -1,0 +1,802 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Label Curves, Make Keys, and Interactively Draw Points and...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for labcurve {Hmisc}"><tr><td>labcurve {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Label Curves, Make Keys, and Interactively Draw Points and Curves</h2>
+
+<h3>Description</h3>
+
+<p><code>labcurve</code> optionally draws a set of curves then labels the curves.
+A variety of methods for drawing labels are implemented, ranging from
+positioning using the mouse to automatic labeling to automatic placement
+of key symbols with manual placement of key legends to automatic
+placement of legends.  For automatic positioning of labels or keys, a
+curve is labeled at a point that is maximally separated from all of the
+other curves.  Gaps occurring when curves do not start or end at the
+same x-coordinates are given preference for positioning labels. If
+labels are offset from the curves (the default behaviour), if the
+closest curve to curve i is above curve i, curve i is labeled below its
+line.  If the closest curve is below curve i, curve i is labeled above
+its line.  These directions are reversed if the resulting labels would
+appear outside the plot region.
+</p>
+<p>Both ordinary lines and step functions are handled, and there is an
+option to draw the labels at the same angle as the curve within a
+local window.
+</p>
+<p>Unless the mouse is used to position labels or plotting symbols are
+placed along the curves to distinguish them, curves are examined at 100
+(by default) equally spaced points over the range of x-coordinates in
+the current plot area.  Linear interpolation is used to get
+y-coordinates to line up (step function or constant interpolation is
+used for step functions).  There is an option to instead examine all
+curves at the set of unique x-coordinates found by unioning the
+x-coordinates of all the curves.  This option is especially useful when
+plotting step functions.  By setting <code>adj="auto"</code> you can have
+<code>labcurve</code> try to optimally left- or right-justify labels depending
+on the slope of the curves at the points at which labels would be
+centered (plus a vertical offset).  This is especially useful when
+labels must be placed on steep curve sections.
+</p>
+<p>You can use the <code>on top</code> method to write (short) curve names
+directly on the curves (centered on the y-coordinate).  This is
+especially useful when there are many curves whose full labels would run
+into each other.  You can plot letters or numbers on the curves, for
+example (using the <code>keys</code> option), and have <code>labcurve</code> use the
+<code>key</code> function to provide long labels for these short ones (see the
+end of the example).  There is another option for connecting labels to
+curves using arrows.  When <code>keys</code> is a vector of integers, it is
+taken to represent plotting symbols (<code>pch</code>s), and these symbols are
+plotted at equally-spaced x-coordinates on each curve (by default, using
+5 points per curve).  The points are offset in the x-direction between
+curves so as to minimize the chance of collisions.
+</p>
+<p>To add a legend defining line types, colors, or line widths with no
+symbols, specify <code>keys="lines"</code>, e.g., <code>labcurve(curves,
+keys="lines", lty=1:2)</code>.
+</p>
+<p><code>putKey</code> provides a different way to use <code>key()</code> by allowing
+the user to specify vectors for labels, line types, plotting characters,
+etc.  Elements that do not apply (e.g., <code>pch</code> for lines
+(<code>type="l"</code>)) may be <code>NA</code>.  When a series of points is
+represented by both a symbol and a line, the corresponding elements of
+both <code>pch</code> and <code>lty</code>, <code>col.</code>, or <code>lwd</code> will be
+non-missing.
+</p>
+<p><code>putKeyEmpty</code>, given vectors of all the x-y coordinates that have been
+plotted, uses <code>largest.empty</code> to find the largest empty rectangle large
+enough to hold the key, and draws the key using <code>putKey</code>.
+</p>
+<p><code>drawPlot</code> is a simple mouse-driven function for drawing series of
+lines, step functions, polynomials, Bezier curves, and points, and
+automatically labeling the point groups using <code>labcurve</code> or
+<code>putKeyEmpty</code>.  When <code>drawPlot</code> is invoked it creates
+temporary functions <code>Points</code>, <code>Curve</code>, and <code>Abline</code>.
+The user calls these functions inside
+the call to <code>drawPlot</code> to define groups of points in the order they
+are defined with the mouse.  <code>Abline</code> is used to call <code>abline</code>
+and not actually great a group of points. For some curve types, the
+curve generated to represent the corresponding series of points is drawn
+after all points are entered for that series, and this curve may be
+different than the simple curve obtained by connecting points at the
+mouse clicks.  For example, to draw a general smooth Bezier curve the
+user need only click on a few points, and she must overshoot the final
+curve coordinates to define the curve.  The originally entered points
+are not erased once the curve is drawn.  The same goes for step
+functions and polynomials.  If you <code>plot()</code> the object returned by
+<code>drawPlot</code>, however, only final curves will be shown.  The last
+examples show how to use <code>drawPlot</code>.
+</p>
+<p>The <code>largest.empty</code> function finds the largest rectangle that is large
+enough to hold a rectangle of a given height and width, such that the
+rectangle does not contain any of a given set of points.  This is
+used by <code>labcurve</code> and <code>putKeyEmpty</code> to position keys at the most
+empty part of an existing plot.  The default method was created by Hans
+Borchers.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+labcurve(curves, labels=names(curves),
+         method=NULL, keys=NULL, keyloc=c("auto","none"),
+         type="l", step.type=c("left", "right"), 
+         xmethod=if(any(type=="s")) "unique" else "grid", 
+         offset=NULL, xlim=NULL,
+         tilt=FALSE, window=NULL, npts=100, cex=NULL, 
+         adj="auto", angle.adj.auto=30,
+         lty=pr$lty, lwd=pr$lwd, col.=pr$col, transparent=TRUE,
+         arrow.factor=1, point.inc=NULL, opts=NULL, key.opts=NULL,
+         empty.method=c('area','maxdim'), numbins=25, 
+         pl=!missing(add), add=FALSE, 
+         ylim=NULL, xlab="", ylab="",
+         whichLabel=1:length(curves),
+         grid=FALSE, xrestrict=NULL, ...)
+
+putKey(z, labels, type, pch, lty, lwd,
+       cex=par('cex'), col=rep(par('col'),nc),
+       transparent=TRUE, plot=TRUE, key.opts=NULL, grid=FALSE)
+
+putKeyEmpty(x, y, labels, type=NULL,
+            pch=NULL, lty=NULL, lwd=NULL,
+            cex=par('cex'), col=rep(par('col'),nc),
+            transparent=TRUE, plot=TRUE, key.opts=NULL,
+            empty.method=c('area','maxdim'), 
+            numbins=25, 
+            xlim=pr$usr[1:2], ylim=pr$usr[3:4], grid=FALSE)
+
+drawPlot(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
+         ticks=c('none','x','y','xy'),
+         key=FALSE, opts=NULL)
+
+# Points(label=' ', type=c('p','r'),
+#        n, pch=pch.to.use[1], cex=par('cex'), col=par('col'),
+#        rug = c('none','x','y','xy'), ymean)
+
+# Curve(label=' ',
+#       type=c('bezier','polygon','linear','pol','loess','step','gauss'),
+#       n=NULL, lty=1, lwd=par('lwd'), col=par('col'), degree=2,
+#      evaluation=100, ask=FALSE)
+
+# Abline(\dots)
+
+## S3 method for class 'drawPlot'
+plot(x, xlab, ylab, ticks,
+     key=x$key, keyloc=x$keyloc, ...)
+
+largest.empty(x, y, width=0, height=0, 
+              numbins=25, method=c('exhaustive','rexhaustive','area','maxdim'),
+              xlim=pr$usr[1:2], ylim=pr$usr[3:4],
+              pl=FALSE, grid=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>curves</code></td>
+<td>
+
+<p>a list of lists, each of which have at least two components: a vector of
+<code>x</code> values and a vector of corresponding <code>y</code> values.  <code>curves</code> is
+mandatory except when <code>method="mouse"</code> or <code>"locator"</code>, in which 
+case <code>labels</code> is mandatory.  Each list in <code>curves</code> may optionally have
+any of the parameters <code>type</code>, <code>lty</code>, <code>lwd</code>, or <code>col</code>
+for that curve, as defined below (see one of the last examples).
+</p>
+</td></tr>
+<tr valign="top"><td><code>z</code></td>
+<td>
+
+<p>a two-element list specifying the coordinate of the center of the key,
+e.g. <code>locator(1)</code> to use the mouse for positioning
+</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+
+<p>For <code>labcurve</code>, a vector of character strings used to label curves 
+(which may contain newline characters to stack labels vertically).  The
+default labels are taken from the names of the <code>curves</code> list.
+Setting <code>labels=FALSE</code> will suppress drawing any labels (for
+<code>labcurve</code> only). 
+For <code>putKey</code> and <code>putKeyEmpty</code> is a vector of character strings
+specifying group labels
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>for <code>putKeyEmpty</code> and <code>largest.empty</code>, <code>x</code> and <code>y</code>
+are same-length vectors specifying points that have been plotted.
+<code>x</code> can also be an object created by <code>drawPlot</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>For <code>drawPlot</code> is a series of invocations of <code>Points</code> and
+<code>Curve</code> (see example).  Any number of point groups can be defined
+in this way.  For <code>Abline</code> these may be any arguments to
+<code>abline</code>. 
+For <code>labcurve</code>, other parameters to pass to <code>text</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>height</code></td>
+<td>
+
+<p>for <code>largest.empty</code>, specifies the minimum allowable width in
+<code>x</code> units and the minimum allowable height in <code>y</code> units
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p><code>"offset"</code> (the default) offsets labels at largest gaps between
+curves, and draws labels beside curves.  
+<code>"on top"</code> draws labels on top of the curves (especially
+good when using keys).  
+<code>"arrow"</code> draws arrows connecting labels to the curves.
+<code>"mouse"</code> or <code>"locator"</code> positions labels according to mouse clicks.
+If <code>keys</code> is specified and is an integer vector or is <code>"lines"</code>, 
+<code>method</code> defaults to <code>"on top"</code>.  If <code>keys</code> is character,
+<code>method</code> defaults to <code>"offset"</code>.  Set <code>method="none"</code> to
+suppress all curve labeling and key drawing, which is useful when
+<code>pl=TRUE</code> and you only need <code>labcurve</code> to draw the curves and the
+rest of the basic graph.
+</p>
+<p>For <code>largest.empty</code> specifies the method a rectangle that does not
+collide with any of the (<code>x</code>, <code>y</code>) points.  The default
+method, <code>'exhaustive'</code>, uses a Fortran translation of an R function
+and algorithm developed by Hans Borchers.  The same result, more slowly,
+may be obtained by using pure R code by specifying
+<code>method='rexhaustive'</code>.  The original algorithms using binning (and
+the only methods supported for S-Plus) are
+still available.  For all methods, screening of candidate rectangles
+having at least a given width in <code>x</code>-units of <code>width</code> or
+having at least a given height in <code>y</code>-units of <code>height</code> is possible.
+Use <code>method="area"</code> to use the binning method to find the rectangle
+having the largest area, or <code>method="maxdim"</code> to use the binning
+method to return with last rectangle searched that had both
+the largest width and largest height over all previous rectangles.
+</p>
+</td></tr>
+<tr valign="top"><td><code>keys</code></td>
+<td>
+
+<p>This causes keys (symbols or short text) to be drawn on or beside
+curves, and if <code>keyloc</code> is not equal to <code>"none"</code>, a legend to be
+automatically drawn.  The legend links keys with full curve labels
+and optionally with colors and line types.
+Set <code>keys</code> to a vector of character strings, or a
+vector of integers specifying plotting character (<code>pch</code> values -
+see <code>points</code>).  For the latter case, the default behavior is to
+plot the symbols periodically, at equally spaced x-coordinates.
+</p>
+</td></tr>
+<tr valign="top"><td><code>keyloc</code></td>
+<td>
+
+<p>When <code>keys</code> is specified, <code>keyloc</code> specifies how the legend
+is to be positioned for drawing using the <code>key</code> function in
+<code>trellis</code>.  The default is <code>"auto"</code>, for which the
+<code>largest.empty</code> function to used to find the most empty part of the
+plot.  If no empty rectangle large enough to hold the key is found, no
+key will be drawn. Specify <code>keyloc="none"</code> to suppress drawing a
+legend, or set <code>keyloc</code> to a 2-element list containing the x and y
+coordinates for the center of the legend.  For example, use
+<code>keyloc=locator(1)</code> to click the mouse at the center.
+<code>keyloc</code> specifies the coordinates of the center of the
+key to be drawn with <code>plot.drawPlot</code> when <code>key=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>for <code>labcurve</code>, a scalar or vector of character strings specifying the
+method that the points in the curves were connected. <code>"l"</code> means
+ordinary connections between points and <code>"s"</code> means step functions.
+For <code>putKey</code> and <code>putKeyEmpty</code> is a vector of plotting types, <code>"l"</code>
+for regular line, <code>"p"</code> for point, <code>"b"</code> for both point and line, and
+<code>"n"</code> for none.  For <code>Points</code> is either <code>"p"</code> (the default) for
+regular points, or <code>"r"</code> for rugplot (one-dimensional scatter diagram
+to be drawn using the <code>scat1d</code> function).  For <code>Curve</code>, <code>type</code> is
+<code>"bezier"</code> (the default) for drawing a smooth Bezier curves (which can
+represent a non-1-to-1 function such as a circle), <code>"polygon"</code> for
+orginary line segments, <code>"linear"</code> for a straight line defined by two
+endpoints, <code>"pol"</code> for a <code>degree</code>-degree polynomial to be fitted to
+the mouse-clicked points, <code>"step"</code> for a left-step-function, <code>"gauss"</code>
+to plot a Gaussian density fitted to 3 clicked points, <code>"loess"</code> to
+use the <code>lowess</code> function to smooth the clicked points, or a function
+to draw a user-specified function, evaluated at <code>evaluation</code> points
+spanning the whole x-axis.  For the density the user must click in the
+left tail, at the highest value (at the mean), and in the right tail,
+with the two tail values being approximately equidistant from the
+mean.  The density is scaled to fit in the highest value regardless of
+its area.
+</p>
+</td></tr>
+<tr valign="top"><td><code>step.type</code></td>
+<td>
+
+<p>type of step functions used (default is <code>"left"</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>xmethod</code></td>
+<td>
+
+<p>method for generating the unique set of x-coordinates to examine (see above).  Default is <code>"grid"</code> for <code>type="l"</code> or <code>"unique"</code> for 
+<code>type="s"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>offset</code></td>
+<td>
+
+<p>distance in y-units between the center of the label and the line being
+labeled.  Default is 0.75 times the height of an &quot;m&quot; that would be
+drawn in a label.  For R grid/lattice you must specify offset using
+the <code>grid</code> <code>unit</code> function, e.g., <code>offset=unit(2,"native")</code> or
+<code>offset=unit(.25,"cm")</code> (<code>"native"</code> means data units)
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+
+<p>limits for searching for label positions, and is also used to set up
+plots when <code>pl=TRUE</code> and <code>add=FALSE</code>.  Default is total x-axis
+range for current plot (<code>par("usr")[1:2]</code>).  For
+<code>largest.empty</code>, <code>xlim</code> limits the search for largest
+rectanges, but it has the same default as above. For
+<code>pl=TRUE,add=FALSE</code> you may want to extend <code>xlim</code> somewhat to
+allow large keys to fit, when using <code>keyloc="auto"</code>.  For
+<code>drawPlot</code> default is <code>c(0,1)</code>.  When using
+<code>largest.empty</code> with <code>ggplot2</code>, <code>xlim</code> and <code>ylim</code>
+are mandatory.
+</p>
+</td></tr>
+<tr valign="top"><td><code>tilt</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to tilt labels to follow the curves, for <code>method="offset"</code>
+when <code>keys</code> is not given.
+</p>
+</td></tr>
+<tr valign="top"><td><code>window</code></td>
+<td>
+
+<p>width of a window, in x-units, to use in determining the local slope
+for tilting labels.  Default is 0.5 times number of characters in the
+label times the x-width of an &quot;m&quot; in the current character size and font.
+</p>
+</td></tr>
+<tr valign="top"><td><code>npts</code></td>
+<td>
+
+<p>number of points to use if <code>xmethod="grid"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>cex</code></td>
+<td>
+
+<p>character size to pass to <code>text</code> and <code>key</code>.  Default is current
+<code>par("cex")</code>.  For <code>putKey</code>, <code>putKeyEmpty</code>, and <code>Points</code> is the size of the
+plotting symbol.
+</p>
+</td></tr>
+<tr valign="top"><td><code>adj</code></td>
+<td>
+
+<p>Default is <code>"auto"</code> which has <code>labcurve</code> figure justification
+automatically when <code>method="offset"</code>.  This will cause centering to be used when the local angle
+of the curve is less than <code>angle.adj.auto</code> in absolute value, left
+justification if the angle is larger and either the label is under a
+curve of positive slope or over a curve of negative slope, and right
+justification otherwise.  For step functions, left justification is used
+when the label is above the curve and right justifcation otherwise.
+Set <code>adj=.5</code> to center labels at computed coordinates.  Set to 0 for
+left-justification, 1 for right.  Set <code>adj</code> to a vector to vary adjustments
+over the curves.
+</p>
+</td></tr>
+<tr valign="top"><td><code>angle.adj.auto</code></td>
+<td>
+
+<p>see <code>adj</code>.  Does not apply to step functions.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+
+<p>vector of line types which were used to draw the curves.
+This is only used when keys are drawn. If all of the
+line types, line widths, and line colors are the same, 
+lines are not drawn in the key.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+
+<p>vector of line widths which were used to draw the curves.
+This is only used when keys are drawn.  See <code>lty</code> also.
+</p>
+</td></tr>
+<tr valign="top"><td><code>col.</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+
+<p>vector of integer color numbers for use in curve labels, symbols,
+lines, and legends.  Default is <code>par("col")</code> for all curves.
+See <code>lty</code> also.
+</p>
+</td></tr>
+<tr valign="top"><td><code>transparent</code></td>
+<td>
+
+<p>Default is <code>TRUE</code> to make <code>key</code> draw transparent legends, i.e., to
+suppress drawing a solid rectangle background for the legend.
+Set to <code>FALSE</code> otherwise.
+</p>
+</td></tr>
+<tr valign="top"><td><code>arrow.factor</code></td>
+<td>
+
+<p>factor by which to multiply default arrow lengths
+</p>
+</td></tr>
+<tr valign="top"><td><code>point.inc</code></td>
+<td>
+
+<p>When <code>keys</code> is a vector of integers, <code>point.inc</code> specifies the x-increment
+between the point symbols that are overlaid periodically on the curves.  
+By default, <code>point.inc</code> is equal
+to the range for the x-axis divided by 5.
+</p>
+</td></tr>
+<tr valign="top"><td><code>opts</code></td>
+<td>
+
+<p>an optional list which can be used to specify any of the options
+to <code>labcurve</code>, with the usual element name abbreviations allowed.
+This is useful when <code>labcurve</code> is being called from another
+function.  Example: <code>opts=list(method="arrow", cex=.8, np=200)</code>.
+For <code>drawPlot</code> a list of <code>labcurve</code> options to pass as
+<code>labcurve(..., opts=)</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>key.opts</code></td>
+<td>
+
+<p>a list of extra arguments you wish to pass to <code>key()</code>, e.g.,
+<code>key.opts=list(background=1, between=3)</code>.  
+The argument names must be spelled out in full.
+</p>
+</td></tr>
+<tr valign="top"><td><code>empty.method</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>numbins</code></td>
+<td>
+
+<p>These two arguments are passed to the <code>largest.empty</code> function's
+<code>method</code> and <code>numbins</code> arguments (see below).
+For <code>largest.empty</code> specifies the number of bins in which to
+discretize both the <code>x</code> and <code>y</code> directions for searching for
+rectangles.  Default is 25.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pl</code></td>
+<td>
+
+<p>set to <code>TRUE</code> (or specify <code>add</code>) to cause the curves in <code>curves</code> to be
+drawn, under the control of <code>type</code>,<code>lty</code>,<code>lwd</code>,<code>col</code> parameters defined
+either in the <code>curves</code> lists or in the separate arguments given to
+<code>labcurve</code> or through <code>opts</code>.
+For <code>largest.empty</code>, set <code>pl=TRUE</code> to show the rectangle the function 
+found by drawing it with a solid color.  May not be used under <code>ggplot2</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>By default, when curves are actually drawn by <code>labcurve</code> a new plot is
+started.  To add to an existing plot, set <code>add=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+
+<p>When a plot has already been started, <code>ylim</code> defaults to <code>par("usr")[3:4]</code>.
+When <code>pl=TRUE</code>, <code>ylim</code> and <code>xlim</code> are determined from the ranges of the data.
+Specify <code>ylim</code> yourself to take control of the plot construction.  
+In some cases it is advisable to
+make <code>ylim</code> larger than usual to allow for automatically-positioned keys.
+For <code>largest.empty</code>, <code>ylim</code> specifies the limits on the y-axis to limit
+the search for rectangle.  
+Here <code>ylim</code> defaults to the same as above, i.e., the range
+of the y-axis of an open plot from <code>par</code>.  For <code>drawPlot</code> the default
+is <code>c(0,1)</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>x-axis and y-axis labels when <code>pl=TRUE</code> and <code>add=FALSE</code> or for
+<code>drawPlot</code>.
+Defaults to <code>""</code> unless the first curve has names for its first two
+elements, in which case the names of these elements are taken as
+<code>xlab</code> and <code>ylab</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>whichLabel</code></td>
+<td>
+
+<p>integer vector corresponding to <code>curves</code> specifying which curves
+are to be labelled or have a legend
+</p>
+</td></tr>
+<tr valign="top"><td><code>grid</code></td>
+<td>
+
+<p>set to <code>TRUE</code> if the R <code>grid</code> package was used to draw the
+current plot.  This prevents <code>labcurve</code> from using
+<code>par("usr")</code> etc.  If using R <code>grid</code> you can pass coordinates
+and lengths having arbitrary units, as documented in the <code>unit</code>
+function.  This is especially useful for <code>offset</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xrestrict</code></td>
+<td>
+
+<p>When having <code>labcurve</code> label curves where they are most
+separated, you can restrict the search for this separation point to a
+range of the x-axis, specified as a 2-vector <code>xrestrict</code>.  This
+is useful when one part of the curve is very steep.  Even though
+steep regions may have maximum separation, the labels will collide
+when curves are steep.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pch</code></td>
+<td>
+
+<p>vector of plotting characters for <code>putKey</code> and <code>putKeyEmpty</code>.  Can be
+any value including <code>NA</code> when only a line is used to indentify the
+group.  Is a single plotting character for <code>Points</code>, with the default
+being the next unused value from among 1, 2, 3, 4, 16, 17, 5, 6, 15,
+18, 19.
+</p>
+</td></tr>
+<tr valign="top"><td><code>plot</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to keep <code>putKey</code> or <code>putKeyEmpty</code> from actually drawing the
+key.  Instead, the size of the key will be return by <code>putKey</code>, or the
+coordinates of the key by <code>putKeyEmpty</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ticks</code></td>
+<td>
+
+<p>tells <code>drawPlot</code> which axes to draw tick marks and tick labels.
+Default is <code>"none"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>key</code></td>
+<td>
+
+<p>for <code>drawPlot</code> and <code>plot.drawPlot</code>.  Default is <code>FALSE</code> so that <code>labcurve</code>
+is used to label points or curves.  Set to <code>TRUE</code> to use
+<code>putKeyEmpty</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The internal functions <code>Points</code>, <code>Curve</code>, <code>Abline</code> have
+unique arguments as follows.
+</p>
+
+<dl>
+<dt><code>label</code>:</dt><dd><p>for <code>Points</code> and <code>Curve</code> is a single
+character string to label that group of points</p>
+</dd>
+<dt><code>n</code>:</dt><dd><p>number of points to accept from the mouse.  Default
+is to input points until a right mouse click.</p>
+</dd>
+<dt><code>rug</code>:</dt><dd><p>for <code>Points</code>.  Default is <code>"none"</code> to
+not show the  marginal x or y distributions as rug plots, for the
+points entered. Other possibilities are used to execute
+<code>scat1d</code> to show the marginal distribution of x, y, or both
+as rug plots.</p>
+</dd> 
+<dt><code>ymean</code>:</dt><dd><p>for <code>Points</code>, subtracts a constant from
+each y-coordinate entered to make the overall mean <code>ymean</code></p>
+</dd>
+<dt><code>degree</code>:</dt><dd><p>degree of polynomial to fit to points by
+<code>Curve</code></p>
+</dd> 
+<dt><code>evaluation</code>:</dt><dd><p>number of points at which to evaluate
+Bezier curves, polynomials, and other functions in <code>Curve</code></p>
+</dd>
+<dt><code>ask</code>:</dt><dd><p>set <code>ask=TRUE</code> to give the user the
+opportunity to try again at specifying points for Bezier curves,
+step functions, and polynomials</p>
+</dd>
+</dl>
+
+<p>The <code>labcurve</code> function used some code from the function <code>plot.multicurve</code> written
+by Rod Tjoelker of The Boeing Company (<a href="mailto:tjoelker@espresso.rt.cs.boeing.com">tjoelker@espresso.rt.cs.boeing.com</a>).
+</p>
+<p>If there is only one curve, a label is placed at the middle x-value,
+and no fancy features such as <code>angle</code> or positive/negative offsets are
+used.
+</p>
+<p><code>key</code> is called once (with the argument <code>plot=FALSE</code>) to find the key
+dimensions.  Then an empty rectangle with at least these dimensions is
+searched for using <code>largest.empty</code>.  Then <code>key</code> is called again to draw
+the key there, using the argument <code>corner=c(.5,.5)</code> so that the center
+of the rectangle can be specified to <code>key</code>.
+</p>
+<p>If you want to plot the data, an easier way to use <code>labcurve</code> is
+through <code>xYplot</code> as shown in some of its examples.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>labcurve</code> returns an invisible list with components <code>x, y, offset, adj, cex, col</code>, and if <code>tilt=TRUE</code>, 
+<code>angle</code>. <code>offset</code> is the amount to add to <code>y</code> to draw a label.
+<code>offset</code> is negative if the label is drawn below the line.
+<code>adj</code> is a vector containing the values 0, .5, 1.
+</p>
+<p><code>largest.empty</code> returns a list with elements <code>x</code> and <code>y</code>
+specifying the coordinates of the center of the rectangle which was
+found, and element <code>rect</code> containing the 4 <code>x</code> and <code>y</code>
+coordinates of the corners of the found empty rectangle.  The
+<code>area</code> of the rectangle is also returned.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/approxfun.html">approx</a></code>, <code><a href="../../graphics/html/text.html">text</a></code>, <code><a href="../../graphics/html/legend.html">legend</a></code>,
+<code><a href="../../Hmisc/help/scat1d.html">scat1d</a></code>, <code><a href="../../Hmisc/help/xYplot.html">xYplot</a></code>, <code><a href="../../graphics/html/abline.html">abline</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+n &lt;- 2:8
+m &lt;-  length(n)
+type &lt;- c('l','l','l','l','s','l','l')
+# s=step function l=ordinary line (polygon)
+curves &lt;- vector('list', m)
+
+
+plot(0,1,xlim=c(0,1),ylim=c(-2.5,4),type='n')
+
+
+set.seed(39)
+
+
+for(i in 1:m) {
+  x &lt;- sort(runif(n[i]))
+  y &lt;- rnorm(n[i])
+  lines(x, y, lty=i, type=type[i], col=i)
+  curves[[i]] &lt;- list(x=x,y=y)
+}
+
+
+labels &lt;- paste('Label for',letters[1:m])
+labcurve(curves, labels, tilt=TRUE, type=type, col=1:m)
+
+
+# Put only single letters on curves at points of 
+# maximum space, and use key() to define the letters,
+# with automatic positioning of the key in the most empty
+# part of the plot
+# Have labcurve do the plotting, leaving extra space for key
+
+
+names(curves) &lt;- labels
+labcurve(curves, keys=letters[1:m], type=type, col=1:m,
+         pl=TRUE, ylim=c(-2.5,4))
+
+
+# Put plotting symbols at equally-spaced points,
+# with a key for the symbols, ignoring line types
+
+
+labcurve(curves, keys=1:m, lty=1, type=type, col=1:m,
+         pl=TRUE, ylim=c(-2.5,4))
+
+
+
+
+# Plot and label two curves, with line parameters specified with data
+set.seed(191)
+ages.f &lt;- sort(rnorm(50,20,7))
+ages.m &lt;- sort(rnorm(40,19,7))
+height.f &lt;- pmin(ages.f,21)*.2+60
+height.m &lt;- pmin(ages.m,21)*.16+63
+
+
+labcurve(list(Female=list(ages.f,height.f,col=2),
+              Male  =list(ages.m,height.m,col=3,lty='dashed')),
+         xlab='Age', ylab='Height', pl=TRUE)
+# add ,keys=c('f','m') to label curves with single letters
+# For S-Plus use lty=2
+
+
+# Plot power for testing two proportions vs. n for various odds ratios, 
+# using 0.1 as the probability of the event in the control group.  
+# A separate curve is plotted for each odds ratio, and the curves are
+# labeled at points of maximum separation
+
+
+n  &lt;- seq(10, 1000, by=10)
+OR &lt;- seq(.2,.9,by=.1)
+pow &lt;- lapply(OR, function(or,n)list(x=n,y=bpower(p1=.1,odds.ratio=or,n=n)),
+              n=n)
+names(pow) &lt;- format(OR)
+labcurve(pow, pl=TRUE, xlab='n', ylab='Power')
+
+
+# Plot some random data and find the largest empty rectangle
+# that is at least .1 wide and .1 tall
+
+
+x &lt;- runif(50)
+y &lt;- runif(50)
+plot(x, y)
+z &lt;- largest.empty(x, y, .1, .1)
+z
+points(z,pch=3)  # mark center of rectangle, or
+polygon(z$rect, col='blue')  # to draw the rectangle, or
+#key(z$x, z$y, \dots stuff for legend)
+
+
+
+
+# Use the mouse to draw a series of points using one symbol, and
+# two smooth curves or straight lines (if two points are clicked), 
+# none of these being labeled
+
+
+# d &lt;- drawPlot(Points(), Curve(), Curve())
+# plot(d)
+
+
+## Not run: 
+# Use the mouse to draw a Gaussian density, two series of points
+# using 2 symbols, one Bezier curve, a step function, and raw data
+# along the x-axis as a 1-d scatter plot (rug plot).  Draw a key.
+# The density function is fit to 3 mouse clicks
+# Abline draws a dotted horizontal reference line
+d &lt;- drawPlot(Curve('Normal',type='gauss'),
+              Points('female'), Points('male'), 
+              Curve('smooth',ask=TRUE,lty=2), Curve('step',type='s',lty=3), 
+              Points(type='r'), Abline(h=.5, lty=2),
+              xlab='X', ylab='y', xlim=c(0,100), key=TRUE)
+plot(d, ylab='Y')
+plot(d, key=FALSE)  # label groups using labcurve
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

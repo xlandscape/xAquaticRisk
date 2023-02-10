@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Gini's Mean Difference</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for GiniMd {Hmisc}"><tr><td>GiniMd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Gini's Mean Difference</h2>
+
+<h3>Description</h3>
+
+<p><code>GiniMD</code> computes Gini's mean difference on a
+numeric vector.  This index is defined as the mean absolute difference
+between any two distinct elements of a vector.  For a Bernoulli
+(binary) variable with proportion of ones equal to <i>p</i> and sample
+size <i>n</i>, Gini's mean difference is
+<i>2np(1-p)/(n-1)</i>.  For a 
+trinomial variable (e.g., predicted values for a 3-level categorical
+predictor using two dummy variables) having (predicted)
+values <i>A, B, C</i> with corresponding proportions <i>a, b, c</i>,
+Gini's mean difference is
+<i>2n[ab|A-B|+ac|A-C|+bc|B-C|]/(n-1).</i>
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+GiniMd(x, na.rm=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a numeric vector (for <code>GiniMd</code>)</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p>set to <code>TRUE</code> if you suspect there may be <code>NA</code>s
+in <code>x</code>; these will then be removed.  Otherwise an error will
+result.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a scalar numeric</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell<br />
+Department of Biostatistics<br />
+Vanderbilt University<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>David HA (1968): Gini's mean difference rediscovered.  Biometrika 55:573&ndash;575.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- rnorm(40)
+# Test GiniMd against a brute-force solution
+gmd &lt;- function(x) {
+  n &lt;- length(x)
+  sum(outer(x, x, function(a, b) abs(a - b))) / n / (n - 1)
+  }
+GiniMd(x)
+gmd(x)
+
+z &lt;- c(rep(0,17), rep(1,6))
+n &lt;- length(z)
+GiniMd(z)
+2*mean(z)*(1-mean(z))*n/(n-1)
+
+a &lt;- 12; b &lt;- 13; c &lt;- 7; n &lt;- a + b + c
+A &lt;- -.123; B &lt;- -.707; C &lt;- 0.523
+xx &lt;- c(rep(A, a), rep(B, b), rep(C, c))
+GiniMd(xx)
+2*(a*b*abs(A-B) + a*c*abs(A-C) + b*c*abs(B-C))/n/(n-1)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

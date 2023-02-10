@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Generate Multinomial Random Variables with Varying...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for rMultinom {Hmisc}"><tr><td>rMultinom {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Generate Multinomial Random Variables with Varying Probabilities</h2>
+
+<h3>Description</h3>
+
+<p>Given a matrix of multinomial probabilities where rows correspond to
+observations and columns to categories (and each row sums to 1),
+generates a matrix with the same number of rows as has <code>probs</code> and
+with <code>m</code> columns.  The columns represent multinomial cell numbers,
+and within a row the columns are all samples from the same multinomial
+distribution.  The code is a modification of that in the
+<code>impute.polyreg</code> function in the <code>MICE</code> package.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rMultinom(probs, m)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>probs</code></td>
+<td>
+<p>matrix of probabilities</p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+<p>number of samples for each row of <code>probs</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>an integer matrix having <code>m</code> columns
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/Binomial.html">rbinom</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+w &lt;- rMultinom(rbind(c(.1,.2,.3,.4),c(.4,.3,.2,.1)),200)
+t(apply(w, 1, table)/200)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

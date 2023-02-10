@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Margin Titles</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for mtitle {Hmisc}"><tr><td>mtitle {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Margin Titles
+</h2>
+
+<h3>Description</h3>
+
+<p>Writes overall titles and subtitles after a multiple image plot is drawn.
+If <code>par()$oma==c(0,0,0,0)</code>, <code>title</code> is used instead of <code>mtext</code>, to draw
+titles or subtitles that are inside the plotting region for a single plot.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mtitle(main, ll, lc,  
+       lr=format(Sys.time(),'%d%b%y'),
+       cex.m=1.75, cex.l=.5, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>main</code></td>
+<td>
+
+<p>main title to be centered over entire figure, default is none
+</p>
+</td></tr>
+<tr valign="top"><td><code>ll</code></td>
+<td>
+
+<p>subtitle for lower left of figure, default is none
+</p>
+</td></tr>
+<tr valign="top"><td><code>lc</code></td>
+<td>
+
+<p>subtitle for lower center of figure, default is none
+</p>
+</td></tr>
+<tr valign="top"><td><code>lr</code></td>
+<td>
+
+<p>subtitle for lower right of figure, default is today's date in format
+23Jan91 for UNIX or R (Thu May 30 09:08:13 1996 format for Windows). 
+Set to <code>""</code> to suppress lower right title.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cex.m</code></td>
+<td>
+
+<p>character size for main, default is 1.75
+</p>
+</td></tr>
+<tr valign="top"><td><code>cex.l</code></td>
+<td>
+
+<p>character size for subtitles
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>other arguments passed to <code>mtext</code>
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>nothing
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>plots
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics, Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/par.html">par</a></code>, <code><a href="../../graphics/html/mtext.html">mtext</a></code>, <code><a href="../../graphics/html/title.html">title</a></code>, <code><a href="../../base/html/base-defunct.html">unix</a></code>, <code><a href="../../Hmisc/help/pstamp.html">pstamp</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+#Set up for 1 plot on figure, give a main title,
+#use date for lr
+plot(runif(20),runif(20))
+mtitle("Main Title")
+
+
+#Set up for 2 x 2 matrix of plots with a lower left subtitle and overall title
+par(mfrow=c(2,2), oma=c(3,0,3,0))
+plot(runif(20),runif(20))
+plot(rnorm(20),rnorm(20))
+plot(exp(rnorm(20)),exp(rnorm(20)))
+mtitle("Main Title",ll="n=20")
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Draw Axes With Side-Specific mgp Parameters</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for mgp.axis {Hmisc}"><tr><td>mgp.axis {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Draw Axes With Side-Specific mgp Parameters</h2>
+
+<h3>Description</h3>
+
+<p><code>mgp.axis</code> is a version of <code>axis</code> that uses the appropriate
+side-specific <code>mgp</code> parameter (see <code><a href="../../graphics/html/par.html">par</a></code>) to account
+for different space requirements for axis labels vertical vs. horizontal
+tick marks.  <code>mgp.axis</code> also fixes a bug in <code>axis(2,...)</code>
+that causes it to assume <code>las=1</code>.
+</p>
+<p><code>mgp.axis.labels</code> is used so that different spacing between tick
+marks and axis tick mark labels may be specified for x- and y-axes.  Use
+<code>mgp.axis.labels('default')</code> to set defaults. Users can set values
+manually using <code>mgp.axis.labels(x,y)</code> where <code>x</code> and <code>y</code>
+are 2nd value of <code>par('mgp')</code> to use.  Use
+<code>mgp.axis.labels(type=w)</code> to retrieve values, where <code>w='x'</code>,
+<code>'y'</code>, <code>'x and y'</code>, <code>'xy'</code>, to get 3 <code>mgp</code> values
+(first 3 types) or 2 <code>mgp.axis.labels</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mgp.axis(side, at = NULL, ...,
+         mgp = mgp.axis.labels(type = if (side == 1 | side == 3) "x"
+                               else "y"),
+         axistitle = NULL, cex.axis=par('cex.axis'), cex.lab=par('cex.lab'))
+
+mgp.axis.labels(value,type=c('xy','x','y','x and y'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>side,at</code></td>
+<td>
+<p>see <code><a href="../../graphics/html/par.html">par</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments passed through to <code><a href="../../graphics/html/axis.html">axis</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>mgp,cex.axis,cex.lab</code></td>
+<td>
+<p>see <code><a href="../../graphics/html/par.html">par</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>axistitle</code></td>
+<td>
+<p>if specified will cause <code>axistitle</code> to be drawn
+on the appropriate axis as a title</p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+<p>vector of values to which to set system option
+<code>mgp.axis.labels</code></p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+<p>see above</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>mgp.axis.labels</code> returns the value of <code>mgp</code> (only the
+second element of <code>mgp</code> if <code>type="xy"</code> or a list with
+elements <code>x</code> and <code>y</code> if <code>type="x or y"</code>, each list
+element being a 3-vector) for the 
+appropriate axis if <code>value</code> is not specified, otherwise it
+returns nothing but the system option <code>mgp.axis.labels</code> is set.
+</p>
+<p><code>mgp.axis</code> returns nothing.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p><code>mgp.axis.labels</code> stores the value in the
+system option <code>mgp.axis.labels</code></p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/par.html">par</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+mgp.axis.labels(type='x')  # get default value for x-axis
+mgp.axis.labels(type='y')  # get value for y-axis
+mgp.axis.labels(type='xy') # get 2nd element of both mgps
+mgp.axis.labels(type='x and y')  # get a list with 2 elements
+mgp.axis.labels(c(3,.5,0), type='x')  # set
+options('mgp.axis.labels')            # retrieve
+
+plot(..., axes=FALSE)
+mgp.axis(1, "X Label")
+mgp.axis(2, "Y Label")
+
+
+## End(Not run)</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Frequency Scatterplot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for ggfreqScatter {Hmisc}"><tr><td>ggfreqScatter {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Frequency Scatterplot</h2>
+
+<h3>Description</h3>
+
+<p>Uses <code>ggplot2</code> to plot a scatterplot or dot-like chart for the case
+where there is a very large number of overlapping values.  This works
+for continuous and categorical <code>x</code> and <code>y</code>.  For continuous
+variables it serves the same purpose as hexagonal binning.  Counts for
+overlapping points are grouped into quantile groups and level of
+transparency and rainbow colors are used to provide count information.
+</p>
+<p>Instead, you can specify <code>stick=TRUE</code> not use color but to encode
+cell frequencies 
+with the height of a black line y-centered at the middle of the bins.
+Relative frequencies are not transformed, and the maximum cell
+frequency is shown in a caption.  Every point with at least a
+frequency of one is depicted with a full-height light gray vertical
+line, scaled to the above overall maximum frequency.  In this way to
+relative frequency is to proportion of these light gray lines that are
+black, and one can see points whose frequencies are too low to see the
+black lines.
+</p>
+<p>The result can also be passed to <code>ggplotly</code>.  Actual cell
+frequencies are added to the hover text in that case using the
+<code>label</code> <code>ggplot2</code> aesthetic.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ggfreqScatter(x, y, by=NULL, bins=50, g=10, cuts=NULL,
+              xtrans = function(x) x,
+              ytrans = function(y) y,
+              xbreaks = pretty(x, 10),
+              ybreaks = pretty(y, 10),
+              xminor  = NULL, yminor = NULL,
+              xlab = as.character(substitute(x)),
+              ylab = as.character(substitute(y)),
+              fcolors = viridis::viridis(10), nsize=FALSE,
+              stick=FALSE, html=FALSE, prfreq=FALSE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>x-variable</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>y-variable</p>
+</td></tr>
+<tr valign="top"><td><code>by</code></td>
+<td>
+<p>an optional vector used to make separate plots for each
+distinct value using <code>facet_wrap()</code></p>
+</td></tr>
+<tr valign="top"><td><code>bins</code></td>
+<td>
+<p>for continuous <code>x</code> or <code>y</code> is the number of bins to
+create by rounding.  Ignored for categorical variables.  If a
+2-vector, the first element corresponds to <code>x</code> and the second to
+<code>y</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>g</code></td>
+<td>
+<p>number of quantile groups to make for frequency counts.  Use
+<code>g=0</code> to use frequencies continuously for color 
+coding.  This is recommended only when using <code>plotly</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>cuts</code></td>
+<td>
+<p>instead of using <code>g</code>, specify <code>cuts</code> to provide
+the vector of cuts for categorizing frequencies for assignment to colors</p>
+</td></tr>
+<tr valign="top"><td><code>xtrans,ytrans</code></td>
+<td>
+<p>functions specifying transformations to be made
+before binning and plotting</p>
+</td></tr>
+<tr valign="top"><td><code>xbreaks,ybreaks</code></td>
+<td>
+<p>vectors of values to label on axis, on original
+scale</p>
+</td></tr>
+<tr valign="top"><td><code>xminor,yminor</code></td>
+<td>
+<p>values at which to put minor tick marks, on
+original scale</p>
+</td></tr>
+<tr valign="top"><td><code>xlab,ylab</code></td>
+<td>
+<p>axis labels.  If not specified and variable has a
+<code>label</code>, thatu label will be used.</p>
+</td></tr>
+<tr valign="top"><td><code>fcolors</code></td>
+<td>
+<p><code>colors</code> argument to pass to
+<code>scale_color_gradientn</code> to color code frequencies.  Use
+<code>fcolors=gray.colors(10, 0.75, 0)</code> to show gray
+scale, for example.  Another good choice is
+<code>fcolors=hcl.colors(10, 'Blue-Red')</code>.</p>
+</td></tr> 
+<tr valign="top"><td><code>nsize</code></td>
+<td>
+<p>set to <code>TRUE</code> to not vary color or transparency but
+instead to size the symbols in relation to the number of points.  Best
+with both <code>x</code> and <code>y</code> are discrete.  <code>ggplot2</code>
+<code>size</code> is taken as the fourth root of the frequency.  If there
+are 15 or unique frequencies all the unique frequencies are used,
+otherwise <code>g</code> quantile groups of frequencies are used.</p>
+</td></tr>
+<tr valign="top"><td><code>stick</code></td>
+<td>
+<p>set to <code>TRUE</code> to not use colors but instead use
+varying-height black vertical lines to depict cell frequencies.</p>
+</td></tr>
+<tr valign="top"><td><code>html</code></td>
+<td>
+<p>set to <code>TRUE</code> to use html in axis labels instead of
+plotmath</p>
+</td></tr>
+<tr valign="top"><td><code>prfreq</code></td>
+<td>
+<p>set to <code>TRUE</code> to print the frequency distributions of
+the binned coordinate frequencies</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments to pass to <code>geom_point</code> such as <code>shape</code>
+and <code>size</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a <code>ggplot</code> object</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../help/cut2.html">cut2</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- rnorm(1000)
+y &lt;- rnorm(1000)
+count &lt;- sample(1:100, 1000, TRUE)
+x &lt;- rep(x, count)
+y &lt;- rep(y, count)
+# color=alpha=NULL below makes loess smooth over all points
+g &lt;- ggfreqScatter(x, y) +   # might add g=0 if using plotly
+      geom_smooth(aes(color=NULL, alpha=NULL), se=FALSE) +
+      ggtitle("Using Deciles of Frequency Counts, 2500 Bins")
+g
+# plotly::ggplotly(g, tooltip='label')  # use plotly, hover text = freq. only
+# Plotly makes it somewhat interactive, with hover text tooltips
+
+# Instead use varying-height sticks to depict frequencies
+ggfreqScatter(x, y, stick=TRUE) +
+ labs(subtitle='Relative height of black lines to gray lines
+is proportional to cell frequency.
+Note that points with even tiny frequency are visable
+(gray line with no visible black line).')
+
+
+# Try with x categorical
+x1 &lt;- sample(c('cat', 'dog', 'giraffe'), length(x), TRUE)
+ggfreqScatter(x1, y)
+
+# Try with y categorical
+y1 &lt;- sample(LETTERS[1:10], length(x), TRUE)
+ggfreqScatter(x, y1)
+
+# Both categorical, larger point symbols, box instead of circle
+ggfreqScatter(x1, y1, shape=15, size=7)
+# Vary box size instead
+ggfreqScatter(x1, y1, nsize=TRUE, shape=15)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

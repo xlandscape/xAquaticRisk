@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Rank Correlation for Censored Data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for rcorr.cens {Hmisc}"><tr><td>rcorr.cens {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Rank Correlation for Censored Data
+</h2>
+
+<h3>Description</h3>
+
+<p>Computes the c index and the corresponding
+generalization of Somers' Dxy rank correlation for a censored response
+variable. Also works for uncensored and binary responses, 
+although its use of all possible pairings
+makes it slow for this purpose.  Dxy and c are related by
+<i>Dxy = 2*(c - 0.5)</i>.
+</p>
+<p><code>rcorr.cens</code> handles one predictor variable.  <code>rcorrcens</code>
+computes rank correlation measures separately by a series of
+predictors.  In addition, <code>rcorrcens</code> has a rough way of handling
+categorical predictors.  If a categorical (factor) predictor has two
+levels, it is coverted to a numeric having values 1 and 2.  If it has
+more than 2 levels, an indicator variable is formed for the most
+frequently level vs. all others, and another indicator for the second
+most frequent level and all others.  The correlation is taken as the
+maximum of the two (in absolute value).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rcorr.cens(x, S, outx=FALSE)
+
+## S3 method for class 'formula'
+rcorrcens(formula, data=NULL, subset=NULL,
+          na.action=na.retain, exclude.imputed=TRUE, outx=FALSE,
+          ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a numeric predictor variable
+</p>
+</td></tr>
+<tr valign="top"><td><code>S</code></td>
+<td>
+
+<p>an <code>Surv</code> object or a vector.  If a vector, assumes that every
+observation is uncensored.
+</p>
+</td></tr>
+<tr valign="top"><td><code>outx</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to not count pairs of observations tied on <code>x</code> as a
+relevant pair.  This results in a Goodman&ndash;Kruskal gamma type rank
+correlation.
+</p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+
+<p>a formula with a <code>Surv</code> object or a numeric vector
+on the left-hand side
+</p>
+</td></tr>
+<tr valign="top"><td><code>data, subset, na.action</code></td>
+<td>
+
+<p>the usual options for models.  Default for <code>na.action</code> is to retain
+all values, NA or not, so that NAs can be deleted in only a pairwise
+fashion.
+</p>
+</td></tr>
+<tr valign="top"><td><code>exclude.imputed</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to include imputed values (created by
+<code>impute</code>) in the calculations.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>extra arguments passed to <code><a href="../../Hmisc/help/biVar.html">biVar</a></code>.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>rcorr.cens</code> returns a vector with the following named elements:
+<code>C Index</code>, <code>Dxy</code>, <code>S.D.</code>, <code>n</code>, <code>missing</code>,
+<code>uncensored</code>, <code>Relevant Pairs</code>, <code>Concordant</code>, and
+<code>Uncertain</code>
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>number of observations not missing on any input variables</p>
+</td></tr>
+<tr valign="top"><td><code>missing</code></td>
+<td>
+<p>number of observations missing on <code>x</code> or <code>S</code></p>
+</td></tr>
+<tr valign="top"><td><code>relevant</code></td>
+<td>
+<p>number of pairs of non-missing observations for which
+<code>S</code> could be ordered</p>
+</td></tr>
+<tr valign="top"><td><code>concordant</code></td>
+<td>
+<p>number of relevant pairs for which <code>x</code> and <code>S</code>
+are concordant.</p>
+</td></tr>
+<tr valign="top"><td><code>uncertain</code></td>
+<td>
+<p>number of pairs of non-missing observations for which
+censoring prevents classification of concordance of <code>x</code> and
+<code>S</code>.
+</p>
+</td></tr>
+</table>
+<p><code>rcorrcens.formula</code> returns an object of class <code>biVar</code>
+which is documented with the <code><a href="../../Hmisc/help/biVar.html">biVar</a></code> function.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Newson R: Confidence intervals for rank statistics: Somers' D and extensions.  Stata Journal 6:309-334; 2006.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/somers2.html">somers2</a></code>, <code><a href="../../Hmisc/help/biVar.html">biVar</a></code>, <code><a href="../../Hmisc/help/rcorrp.cens.html">rcorrp.cens</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- round(rnorm(200))
+y &lt;- rnorm(200)
+rcorr.cens(x, y, outx=TRUE)   # can correlate non-censored variables
+library(survival)
+age &lt;- rnorm(400, 50, 10)
+bp  &lt;- rnorm(400,120, 15)
+bp[1]  &lt;- NA
+d.time &lt;- rexp(400)
+cens   &lt;- runif(400,.5,2)
+death  &lt;- d.time &lt;= cens
+d.time &lt;- pmin(d.time, cens)
+rcorr.cens(age, Surv(d.time, death))
+r &lt;- rcorrcens(Surv(d.time, death) ~ age + bp)
+r
+plot(r)
+
+# Show typical 0.95 confidence limits for ROC areas for a sample size
+# with 24 events and 62 non-events, for varying population ROC areas
+# Repeat for 138 events and 102 non-events
+set.seed(8)
+par(mfrow=c(2,1))
+for(i in 1:2) {
+ n1 &lt;- c(24,138)[i]
+ n0 &lt;- c(62,102)[i]
+ y &lt;- c(rep(0,n0), rep(1,n1))
+ deltas &lt;- seq(-3, 3, by=.25)
+ C &lt;- se &lt;- deltas
+ j &lt;- 0
+ for(d in deltas) {
+  j &lt;- j + 1
+  x &lt;- c(rnorm(n0, 0), rnorm(n1, d))
+  w &lt;- rcorr.cens(x, y)
+  C[j]  &lt;- w['C Index']
+  se[j] &lt;- w['S.D.']/2
+ }
+ low &lt;- C-1.96*se; hi &lt;- C+1.96*se
+ print(cbind(C, low, hi))
+ errbar(deltas, C, C+1.96*se, C-1.96*se,
+        xlab='True Difference in Mean X',
+        ylab='ROC Area and Approx. 0.95 CI')
+ title(paste('n1=',n1,'  n0=',n0,sep=''))
+ abline(h=.5, v=0, col='gray')
+ true &lt;- 1 - pnorm(0, deltas, sqrt(2))
+ lines(deltas, true, col='blue')
+}
+par(mfrow=c(1,1))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

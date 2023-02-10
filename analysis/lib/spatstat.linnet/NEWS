@@ -1,0 +1,473 @@
+
+        CHANGES IN spatstat.linnet VERSION 3.0-4
+
+OVERVIEW
+
+    o quantile function on a network.
+    
+    o Minor enhancements and bug fixes.
+
+NEW FUNCTIONS
+
+    o quantilefun.linim
+    Quantile function, returned as a function.
+    Method for 'quantilefun' for images on a network.
+
+BUG FIXES
+
+    o relrisk.lpp
+    Crashed if allow.infinite=FALSE.
+    Fixed.
+    
+        CHANGES IN spatstat.linnet VERSION 3.0-3
+
+OVERVIEW
+
+    o We thank Brian Ripley for contributions.
+
+    o Internal bug fix.
+
+BUG FIXES
+
+    o pairdist.lpp
+    Results could have been completely incorrect, due to an internal bug,
+    if the linear network data was in the non-sparse representation.
+    
+
+        CHANGES IN spatstat.linnet VERSION 3.0-2
+
+OVERVIEW
+
+    o Internal tweaks to satisfy package checker.
+
+        CHANGES IN spatstat.linnet VERSION 3.0-1
+
+OVERVIEW
+
+    o Internal improvements.
+
+        CHANGES IN spatstat.linnet VERSION 3.0-0
+
+OVERVIEW
+
+    o We thank Greg McSwiggan, Fernando Milesi, Mehdi Moradi, Gopalan Nair
+    and James Pope for contributions.
+    
+    o spatstat.linnet now depends on the new packages 'spatstat.explore'
+    and 'spatstat.model' rather than the old 'spatstat.core'.
+
+    o Kernel smoothing on a linear network.
+    
+    o K function and pair correlation function based on Euclidean distance.
+
+    o Inhomogeneous J function on a network.
+
+    o Terminal vertices of a network.
+    
+    o Points along a network can be drawn as cross-ticks.
+
+    o Marks attached to vertices and segments of a network.
+    
+    o Important change to K function and pair correlation function
+    when 'ratio=TRUE'.
+
+    o U-shaped curves in 'rhohat'.
+
+    o Faster computation of the length of the disc in the shortest path metric.
+    
+    o Minor improvements and bug fixes.
+
+    o Improvements to internal code.
+
+    o Minor internal changes to package information.
+
+NEW FUNCTIONS
+
+    o lineardisclength
+    Compute the length of the disc in the shortest-path metric.
+    
+    o marks.linnet, marks<-.linnet
+    Marks attached to the vertices and segments of a linear network.
+    
+    o Smooth.lpp
+    Kernel smoothing (Nadaraya-Watson) on a linear network.
+
+    o distmap.lpp
+    Distance map for a point pattern on a network.
+    
+    o linearKEuclid, linearpcfEuclid, linearKEuclidInhom, linearpcfEuclidInhom
+    K function and pair correlation function based on Euclidean distances.
+
+    o linearJinhom
+    Inhomogeneous J function on a linear network.
+
+    o terminalvertices
+    Extract the terminal vertices of a linear network.
+
+    o bw.relrisk.lpp
+    This function replaces 'bw.relrisklpp'
+    and is a method for the generic 'bw.relrisk'.
+
+    o rThomaslpp
+    Simulate Thomas cluster process on a network.
+    
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o Package dependence
+    'spatstat.linnet' now depends on the new packages 'spatstat.explore'
+    and 'spatstat.model' rather than the old 'spatstat.core'.
+    
+    o plot.lpp
+    If 'shape="crossticks"', the points will be drawn as
+    short line segments perpendicular to the network.
+
+    o linearK, linearpcf, linearKdot, linearKcross, linearpcfcross, linearpcfdot
+    When 'ratio=TRUE', the denominator is now equal to the number of
+    ordered pairs of data points considered. This does not affect the
+    summary function, but it changes the calculation of pooled estimates.
+    
+    o densityQuick.lpp
+    If 'sigma' is a function for selecting a bandwidth,
+    additional arguments '...' of densityQuick.lpp will be passed to 'sigma',
+    provided they match the name of a formal argument of 'sigma'.
+
+    o bw.relrisklpp
+    This function is now deprecated, and is replaced by 'bw.relrisk.lpp',
+    a method for the generic 'bw.relrisk'.
+
+    o bw.relrisk.lpp
+    When 'method="likelihood"', the cross-validation criterion
+    is now defined as the *negative* likelihood. This is consistent with
+    'bw.relrisk.ppp', and ensures that the optimum bandwidth is always
+    found by minimising the cross-validation criterion.
+
+    o integral.linim, integral.linfun
+    New argument 'weight' specifies a weight function for the integration.
+    
+    o rhohat.lpp, rhohat.lppm
+    New options 'smoother="mountain"' and 'smoother="valley"'
+    for estimating a unimodal function (U-shaped curve).
+
+    o rhohat.lpp, rhohat.lppm
+    If the covariate is a 'distfun' on a network, the unit of length
+    will be saved, and will be displayed on the plot.
+
+    o rhohat.lpp, rhohat.lppm
+    New arguments 'jitter', 'jitterfactor', 'interpolate' allow greater
+    control over the calculation.
+
+    o plot.linnet
+    Optionally displays the marks of the segments or marks of the vertices.
+    Changed argument list.
+    
+    o print.linnet, summary.linnet
+    These functions print information about marks of the segments or vertices.
+
+    o predict.lppm
+    Can now compute standard errors.
+
+    o predict.lppm
+    New formal arguments 'covariates' and 'se'.
+
+    o rhohat.lpp, rhohat.lppm
+    New argument 'do.CI' specifies whether to calculate confidence bands.
+    
+BUG FIXES
+
+    o density.lpp
+    If 'weights' were given, the results were completely incorrect
+    when leaveoneout=TRUE (the default) and at="points".
+
+    o spatstat.model::effectfun
+    Results were sometimes incorrect for 'lppm' objects.
+    [Spotted by Fernando A. Milesi]
+    Fixed.
+    
+    o predict.lppm
+    Ignored argument 'covariates'.
+    Fixed.
+    
+    o rhohat.lpp, rhohat.lppm
+    The argument 'subset' was not handled correctly in the internal data.
+    The estimated function 'rho' was correct
+    but the results of 'predict.rhohat' may have been incorrect
+    and were computed only on the 'subset'.
+    Fixed.
+
+    o plot.lpp
+    Did not display the main title in some cases.
+    Fixed.
+    
+    o "[.lpp", "[.linnet"
+    Ignored marks attached to the network segments.
+    Fixed.
+
+    o "[.lpp", "[.linnet"
+    Crashed if the network vertices had marks, when 'snip=TRUE'.
+    Fixed.
+
+    o densityQuick.lpp
+    Crashed sometimes with a message about unequal lengths of vectors.
+    Fixed.
+
+
+        CHANGES IN spatstat.linnet VERSION 2.3-2
+
+OVERVIEW
+
+    o 'spatstat.linnet' now depends on 'spatstat.random'.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o package dependence
+    'spatstat.linnet' now depends on the new package 'spatstat.random'.
+
+        CHANGES IN spatstat.linnet VERSION 2.3-1
+
+OVERVIEW
+
+    o More control over resolution of 'linim' objects.
+    
+    o Improved documentation.
+
+    o Minor improvements and bug fixes.
+    
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o as.linim.default, as.linim.linfun
+    New argument 'nd'
+
+    o integral.linfun
+    New argument 'nd'
+
+    o rjitterlpp, rjitter.lpp
+    The function 'rjitterlpp' has been renamed 'rjitter.lpp'
+    and is now a method for the generic 'rjitter'.
+
+    o rjitterlpp
+    This function still exists, but is now deprecated in favour of 'rjitter.lpp'.
+
+BUG FIXES
+
+    o rjitterlpp
+    The argument 'radius' was interpreted as a fraction of segment length
+    rather than an absolute distance.
+    Fixed.
+    
+
+        CHANGES IN spatstat.linnet VERSION 2.3-0
+
+OVERVIEW
+
+    o We thank Suman Rakshit, Greg McSwiggan and Marc Schneble
+    for contributions.
+
+    o Sufficient Dimension Reduction on a linear network.
+    
+    o Perspective-view plots of linfun and linim objects.
+    
+    o Bug fix to Math.linim
+
+    o Minor additions.
+
+NEW FUNCTIONS
+
+    o sdr.lpp
+    Sufficient Dimension Reduction on a linear network.
+    [Contributed by Suman Rakshit.]
+    
+    o persp.linfun, persp.linim
+    Perspective-view plots of functions on a linear network (class linim)
+    and images on a linear network (class linfun).
+    [Written by Adrian Baddeley and Greg McSwiggan.]
+    
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o response.lppm
+    Method for 'response' for fitted point process models on a network.
+
+BUG FIXES
+
+    o Math.linim
+    If 'Z' was a pixel image on a network (class 'linim')
+    and 'v' was a single number, then 'Z/v' was a pixel image (class 'im')
+    instead of a pixel image on a network (class 'linim').
+    [Spotted by Marc Schneble.]
+    Fixed.
+
+    o bw.voronoi
+    Printed output stated that the cross-validation criterion was minimised
+    instead of maximised.
+
+
+        CHANGES IN spatstat.linnet VERSION 2.2-1
+
+OVERVIEW
+
+    o Minor changes to satisfy CRAN.
+
+        CHANGES IN spatstat.linnet VERSION 2.2-0
+
+OVERVIEW
+
+    o Extensions to rhohat.lpp and rhohat.lppm.
+    
+    o Internal bug fixes.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o rhohat.lpp, rhohat.lppm
+    New option (smoother='piecewise') computes a piecewise-constant
+    estimate of rho(z).
+
+    o rhohat.lpp, rhohat.lppm
+    The result now includes the 'average' intensity rho.
+
+        CHANGES IN spatstat.linnet VERSION 2.1-1
+
+OVERVIEW
+
+    o Tweak to satisfy the package checker.
+
+
+        CHANGES IN spatstat.linnet VERSION 2.1-0
+
+OVERVIEW
+
+    o We thank Andrea Gilardi for contributions.
+
+    o Bug fix in density.lpp
+
+    o Improvement to densityEqualSplit
+
+    o New function for jittering point patterns on a network.
+
+    o Function renamed.
+
+NEW FUNCTIONS
+
+    o rjitterlpp
+    Apply random displacements to the points on a linear network.
+
+    o densityHeat.lpp
+    Diffusion kernel estimation of intensity on a linear network.
+    (formerly known as 'densityHeatlpp' and 'densityHeat', this is
+    now a method for the new generic 'densityHeat')
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o densityEqualSplit
+    New arguments 'at' and 'leaveoneout' for consistency with other functions.
+
+    o densityHeat
+    The function formerly known as 'densityHeat' or 'densityHeatlpp'
+    is now renamed 'densityHeat.lpp' and is a method for the generic
+    'densityHeat'.
+
+    o density.lpp
+    Accelerated when the pattern contains duplicated points.
+    
+BUG FIXES
+
+    o density.lpp
+    The result had the wrong length if 'x' contained duplicated points
+    when 'weights' were given and 'at="points"'.
+    [Spotted by Andrea Gilardi]
+    Fixed.
+
+        CHANGES IN spatstat.linnet VERSION 2.0-0
+
+OVERVIEW
+
+    o We thank Andrea Gilardi for contributions.
+
+    o Function renamed.
+    
+    o Bug fix in density.lpp
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o densityHeat
+    'densityHeat' has been temporarily renamed 'densityHeatlpp',
+    to prevent errors in the package checking process.
+
+    o [.linim
+    Accelerated.
+
+
+BUG FIXES
+
+    o deviance.lppm, pseudoR2.lppm
+    Results were completely incorrect, due to a coding error.
+    Fixed.
+
+    o density.lpp
+    Crashed if 'weights' were given and 'x' contained duplicated points.
+    [Spotted by Andrea Gilardi]
+    Fixed.
+
+    o Lcross.inhom, Kcross.inhom, Kmulti.inhom
+    The option 'correction="none"' was accepted but ignored.
+    [Spotted by Corey Anderson.]
+    Fixed.
+
+    o simulate.rhohat
+    Crashed when applied to rhohat objects computed from data
+    on a linear network.
+    Fixed.
+    
+
+        CHANGES IN spatstat.linnet VERSION 1.65-9
+
+OVERVIEW
+
+    o Minor internal changes.
+
+        CHANGES IN spatstat.linnet VERSION 1.65-8
+
+OVERVIEW
+
+    o Function renamed.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o densityHeat
+    'densityHeat' has been renamed 'densityHeat.lpp'.
+
+
+        CHANGES IN spatstat.linnet VERSION 1.65-7
+
+OVERVIEW
+
+    o Tweaks to satisfy CRAN.
+
+
+        CHANGES IN spatstat.linnet VERSION 1.65-1
+
+OVERVIEW
+
+    o Added NEWS file.
+
+
+        CHANGES IN spatstat.linnet VERSION 1.65-0
+
+OVERVIEW
+
+    o Package initialised at version 1.65-0
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o spatstat.linnet
+    The package 'spatstat.linnet' has been created from a subset
+    of the code in the original 'spatstat' package version 1.65-0.
+    It contains the functionality for statistical analysis of
+    spatial data on a linear network.
+    For an overview, see help("spatstat.linnet-package")
+
+    o Execution
+    The 'spatstat.linnet' package is slightly faster than the corresponding
+    code in the 'spatstat' package, because the procedure for calling
+    internal C functions has been streamlined.
+
+
+

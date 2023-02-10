@@ -1,0 +1,701 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Additive Regression and Transformations using ace or avas</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for transace {Hmisc}"><tr><td>transace {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Additive Regression and Transformations using ace or avas
+</h2>
+
+<h3>Description</h3>
+
+<p><code>transace</code> is <code><a href="../../acepack/help/ace.html">ace</a></code> packaged for easily automatically
+transforming all variables in a matrix.  <code>transace</code> is a fast
+one-iteration version of <code><a href="../../Hmisc/help/transcan.html">transcan</a></code> without imputation of
+<code>NA</code>s.
+</p>
+<p><code>areg.boot</code> uses <code><a href="../../Hmisc/help/areg.html">areg</a></code> or
+<code><a href="../../acepack/help/avas.html">avas</a></code> to fit additive regression models allowing
+all variables in the model (including the left-hand-side) to be
+transformed, with transformations chosen so as to optimize certain
+criteria.  The default method uses <code><a href="../../Hmisc/help/areg.html">areg</a></code> whose goal it is
+to maximize <i>R^2</i>. <code>method="avas"</code> explicity tries to
+transform the response variable so as to stabilize the variance of the
+residuals. All-variables-transformed models tend to inflate <code>R^2</code>
+and it can be difficult to get confidence limits for each
+transformation. <code>areg.boot</code> solves both of these problems using
+the bootstrap.  As with the <code><a href="../../rms/help/validate.html">validate</a></code> function in the
+<span class="pkg">rms</span> library, the Efron bootstrap is used to estimate the
+optimism in the apparent <i>R^2</i>, and this optimism is subtracted
+from the apparent <i>R^2</i> to optain a bias-corrected <i>R^2</i>.
+This is done however on the transformed response variable scale.
+</p>
+<p>Tests with 3 predictors show that the <code><a href="../../acepack/help/avas.html">avas</a></code> and
+<code><a href="../../acepack/help/ace.html">ace</a></code> estimates are unstable unless the sample size
+exceeds 350.  Apparent <i>R^2</i> with low sample sizes can be very
+inflated, and bootstrap estimates of <i>R^2</i> can be even more
+unstable in such cases, resulting in optimism-corrected <i>R^2</i> that
+are much lower even than the actual <i>R^2</i>.  The situation can be
+improved a little by restricting predictor transformations to be
+monotonic.  On the other hand, the <code>areg</code> approach allows one to
+control overfitting by specifying the number of knots to use for each
+continuous variable in a restricted cubic spline function.
+</p>
+<p>For <code>method="avas"</code> the response transformation is restricted to
+be monotonic.  You can specify restrictions for transformations of
+predictors (and linearity for the response).  When the first argument
+is a formula, the function automatically determines which variables
+are categorical (i.e., <code>factor</code>, <code>category</code>, or character
+vectors).  Specify linear transformations by enclosing variables by
+the identify function (<code>I()</code>), and specify monotonicity by using
+<code>monotone(variable)</code>.  Monotonicity restrictions are not
+allowed with <code>method="areg"</code>.
+</p>
+<p>The <code><a href="../../base/html/summary.html">summary</a></code> method for <code>areg.boot</code> computes
+bootstrap estimates of standard errors of differences in predicted
+responses (usually on the original scale) for selected levels of each
+predictor against the lowest level of the predictor.  The smearing
+estimator (see below) can be used here to estimate differences in
+predicted means, medians, or many other statistics.  By default,
+quartiles are used for continuous predictors and all levels are used
+for categorical ones.  See <cite>Details</cite> below.  There is also a
+<code><a href="../../graphics/html/plot.default.html">plot</a></code> method for plotting transformation estimates,
+transformations for individual bootstrap re-samples, and pointwise
+confidence limits for transformations. Unless you already have a
+<code>par(mfrow=)</code> in effect with more than one row or column,
+<code>plot</code> will try to fit the plots on one page.  A
+<code><a href="../../stats/html/predict.html">predict</a></code> method computes predicted values on the original
+or transformed response scale, or a matrix of transformed
+predictors. There is a <code><a href="../../Hmisc/help/Function.html">Function</a></code> method for producing a
+list of <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> functions that perform the final fitted transformations.
+There is also a <code><a href="../../base/html/print.html">print</a></code> method for <code>areg.boot</code>
+objects.
+</p>
+<p>When estimated means (or medians or other statistical parameters) are
+requested for models fitted with <code>areg.boot</code> (by
+<code>summary.areg.boot</code> or <code>predict.areg.boot</code>), the
+&ldquo;smearing&rdquo; estimator of <cite>Duan (1983)</cite> is used.  Here we
+estimate the mean of the untransformed response by computing the
+arithmetic mean of <i>ginverse(lp + residuals)</i>,
+where ginverse is the inverse of the nonparametric
+transformation of the response (obtained by reverse linear
+interpolation), lp is the linear predictor for an individual
+observation on the transformed scale, and residuals is the
+entire vector of residuals estimated from the fitted model, on the
+transformed scales (n residuals for n original observations).  The
+<code>smearingEst</code> function computes the general smearing estimate.
+For efficiency <code>smearingEst</code> recognizes that quantiles are
+transformation-preserving, i.e., when one wishes to estimate a
+quantile of the untransformed distribution one just needs to compute
+the inverse transformation of the transformed estimate after the
+chosen quantile of the vector of residuals is added to it. When the
+median is desired, the estimate is
+<i>
+    ginverse(lp + median(residuals))</i>.
+See the last example for how <code>smearingEst</code> can be used outside of
+<code>areg.boot</code>.
+</p>
+<p><code>Mean</code> is a generic function that returns an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> function to
+compute the estimate of the mean of a variable.  Its input is
+typically some kind of model fit object.  Likewise, <code>Quantile</code> is
+a generic quantile function-producing function.  <code>Mean.areg.boot</code>
+and <code>Quantile.areg.boot</code> create functions of a vector of linear
+predictors that transform them into the smearing estimates of the mean
+or quantile of the response variable,
+respectively. <code>Quantile.areg.boot</code> produces exactly the same
+value as <code>predict.areg.boot</code> or <code>smearingEst</code>.  <code>Mean</code>
+approximates the mapping of linear predictors to means over an evenly
+spaced grid of by default 200 points.  Linear interpolation is used
+between these points.  This approximate method is much faster than the
+full smearing estimator once <code>Mean</code> creates the function.  These
+functions are especially useful in <code><a href="../../rms/help/nomogram.html">nomogram</a></code> (see the
+example on hypothetical data).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+transace(x, monotonic=NULL, categorical=NULL, binary=NULL, pl=TRUE)
+
+areg.boot(x, data, weights, subset, na.action=na.delete, 
+          B=100, method=c("areg","avas"), nk=4, evaluation=100, valrsq=TRUE, 
+          probs=c(.25,.5,.75), tolerance=NULL)
+
+## S3 method for class 'areg.boot'
+print(x, ...)
+
+## S3 method for class 'areg.boot'
+plot(x, ylim, boot=TRUE, col.boot=2, lwd.boot=.15,
+     conf.int=.95, ...)
+
+smearingEst(transEst, inverseTrans, res,
+            statistic=c('median','quantile','mean','fitted','lp'),
+            q)
+
+## S3 method for class 'areg.boot'
+summary(object, conf.int=.95, values, adj.to,
+        statistic='median', q, ...)
+
+## S3 method for class 'summary.areg.boot'
+print(x, ...)
+
+## S3 method for class 'areg.boot'
+predict(object, newdata,
+        statistic=c("lp", "median",
+                    "quantile", "mean", "fitted", "terms"),
+        q=NULL, ...) 
+
+## S3 method for class 'areg.boot'
+Function(object, type=c('list','individual'),
+         ytype=c('transformed','inverse'),
+         prefix='.', suffix='', pos=-1, ...)
+
+Mean(object, ...)
+
+Quantile(object, ...)
+
+## S3 method for class 'areg.boot'
+Mean(object, evaluation=200, ...)
+
+## S3 method for class 'areg.boot'
+Quantile(object, q=.5, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>for <code>transace</code> a numeric matrix.  For <code>areg.boot</code> <code>x</code>
+is a formula.  For <code>print</code> or <code>plot</code>, an object created by
+<code>areg.boot</code>.  For <code>print.summary.areg.boot</code>, and object
+created by <code>summary.areg.boot</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>an object created by <code>areg.boot</code>, or a model fit object
+suitable for <code>Mean</code> or <code>Quantile</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>transEst</code></td>
+<td>
+
+<p>a vector of transformed values.  In log-normal regression these
+could be predicted log(Y) for example.
+</p>
+</td></tr>
+<tr valign="top"><td><code>inverseTrans</code></td>
+<td>
+
+<p>a function specifying the inverse transformation needed to change
+<code>transEst</code> to the original untransformed scale.
+<code>inverseTrans</code> may also be a 2-element list defining a mapping
+from the transformed values to untransformed values.  Linear
+interpolation is used in this case to obtain untransform values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>binary, categorical, monotonic</code></td>
+<td>
+
+<p>These are vectors of variable names specifying what to assume about
+each column of <code>x</code> for <code>transace</code>.  Binary variables are not
+transformed, of course.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pl</code></td>
+<td>
+
+<p>set <code>pl=FALSE</code> to prevent <code>transace</code> from plotting each
+fitted transformation
+</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+
+<p>data frame to use if <code>x</code> is a formula and variables are not
+already in the search list
+</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>a numeric vector of observation weights.  By default, all
+observations are weighted equally.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>an expression to subset data if <code>x</code> is a formula
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+
+<p>a function specifying how to handle <code>NA</code>s.  Default is <code><a href="../../Hmisc/help/na.delete.html">na.delete</a></code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>B</code></td>
+<td>
+
+<p>number of bootstrap samples (default=100)
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p><code>"areg"</code> (the default) or <code>"avas"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>nk</code></td>
+<td>
+
+<p>number of knots for continuous variables not restricted to be
+linear.  Default is 4.  One or two is not allowed.  <code>nk=0</code>
+forces linearity for all continuous variables.
+</p>
+</td></tr>
+<tr valign="top"><td><code>evaluation</code></td>
+<td>
+
+<p>number of equally-spaced points at which to evaluate (and save) the
+nonparametric transformations derived by <code><a href="../../acepack/help/avas.html">avas</a></code> or
+<code><a href="../../acepack/help/ace.html">ace</a></code>.  Default is 100.  For <code>Mean.areg.boot</code>,
+<code>evaluation</code> is the number of points at which to evaluate exact
+smearing estimates, to approximate them using linear interpolation
+(default is 200).
+</p>
+</td></tr>
+<tr valign="top"><td><code>valrsq</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to more quickly do bootstrapping without
+validating <i>R^2</i>
+</p>
+</td></tr>
+<tr valign="top"><td><code>probs</code></td>
+<td>
+
+<p>vector probabilities denoting the quantiles of continuous predictors
+to use in estimating effects of those predictors
+</p>
+</td></tr>
+<tr valign="top"><td><code>tolerance</code></td>
+<td>
+
+<p>singularity criterion; list source code for the
+<code><a href="../../Hmisc/help/lm.fit.qr.bare.html">lm.fit.qr.bare</a></code> function.
+</p>
+</td></tr>
+<tr valign="top"><td><code>res</code></td>
+<td>
+
+<p>a vector of residuals from the transformed model.  Not required when
+<code>statistic="lp"</code> or <code>statistic="fitted"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>statistic</code></td>
+<td>
+
+<p>statistic to estimate with the smearing estimator.  For
+<code>smearingEst</code>, the default results in computation of the sample
+median of the model residuals, then <code>smearingEst</code> adds the
+median residual and back-transforms to get estimated median
+responses on the original scale.  <code>statistic="lp"</code> causes
+predicted transformed responses to be computed.  For
+<code>smearingEst</code>, the result (for <code>statistic="lp"</code>) is the
+input argument <code>transEst</code>.  <code>statistic="fitted"</code> gives
+predicted untransformed responses, i.e.,
+<i>ginverse(lp)</i>, where ginverse is the inverse
+of the estimated response transformation, estimated by reverse
+linear interpolation on the tabulated nonparametric response
+transformation or by using an explicit analytic
+function. <code>statistic="quantile"</code> generalizes <code>"median"</code> to
+any single quantile <code>q</code> which must be specified.  <code>"mean"</code>
+causes the population mean response to be estimated.  For
+<code>predict.areg.boot</code>, <code>statistic="terms"</code> returns a matrix
+of transformed predictors. <code>statistic</code> can also be any <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>
+function that computes a single value on a vector of values, such as
+<code>statistic=var</code>.  Note that in this case the function name is
+not quoted.
+</p>
+</td></tr>
+<tr valign="top"><td><code>q</code></td>
+<td>
+
+<p>a single quantile of the original response scale to estimate, when
+<code>statistic="quantile"</code>, or for <code>Quantile.areg.boot</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+
+<p>2-vector of y-axis limits
+</p>
+</td></tr>
+<tr valign="top"><td><code>boot</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to not plot any bootstrapped transformations.
+Set it to an integer k to plot the first k bootstrap
+estimates.
+</p>
+</td></tr>
+<tr valign="top"><td><code>col.boot</code></td>
+<td>
+
+<p>color for bootstrapped transformations
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd.boot</code></td>
+<td>
+
+<p>line width for bootstrapped transformations
+</p>
+</td></tr>
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+
+<p>confidence level (0-1) for pointwise bootstrap confidence limits and
+for estimated effects of predictors in <code>summary.areg.boot</code>. The
+latter assumes normality of the estimated effects.
+</p>
+</td></tr>
+<tr valign="top"><td><code>values</code></td>
+<td>
+
+<p>a list of vectors of settings of the predictors, for predictors for
+which you want to overide settings determined from <code>probs</code>.
+The list must have named components, with names corresponding to the
+predictors.  Example:
+<code>values=list(x1=c(2,4,6,8), x2=c(-1,0,1))</code> specifies that
+<code>summary</code> is to estimate the effect on <code>y</code> of changing
+<code>x1</code> from 2 to 4, 2 to 6, 2 to 8, and separately, of changing
+<code>x2</code> from -1 to 0 and -1 to 1.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>adj.to</code></td>
+<td>
+
+<p>a named vector of adjustment constants, for setting all other
+predictors when examining the effect of a single predictor in
+<code>summary</code>.  The more nonlinear is the transformation of
+<code>y</code> the more the adjustment settings will matter.  Default
+values are the medians of the values defined by <code>values</code> or
+<code>probs</code>.  You only need to name the predictors for which you
+are overriding the default settings. Example:
+<code>adj.to=c(x2=0,x5=10)</code> will set <code>x2</code> to 0 and <code>x5</code> to
+10 when assessing the impact of variation in the other predictors.
+</p>
+</td></tr>
+<tr valign="top"><td><code>newdata</code></td>
+<td>
+
+<p>a data frame or list containing the same number of values of all of
+the predictors used in the fit.  For <code><a href="../../base/html/factor.html">factor</a></code> predictors
+the <span class="samp">levels</span> attribute do not need to be in the same order as
+those used in the original fit, and not all levels need to be
+represented.  If <code>newdata</code> is omitted, you can still obtain
+linear predictors (on the transformed response scale) and fitted
+values (on the original response scale), but not <code>"terms"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>specifies how <code><a href="../../Hmisc/help/Function.html">Function</a></code> is to return the series of
+functions that define the transformations of all variables.  By
+default a list is created, with the names of the list elements being
+the names of the variables.  Specify <code>type="individual"</code> to
+have separate functions created in the current environment
+(<code>pos=-1</code>, the default) or in location defined by <code>pos</code>
+if <code>where</code> is specified.  For the latter method, the names of
+the objects created are the names of the corresponding variables,
+prefixed by <code>prefix</code> and with <code>suffix</code> appended to the
+end. If any of <code>pos</code>, <code>prefix</code>, or
+<code>suffix</code> is specified, <code>type</code> is automatically set to
+<code>"individual"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ytype</code></td>
+<td>
+
+<p>By default the first function created by <code>Function</code> is the
+y-transformation.  Specify <code>ytype="inverse"</code> to instead create
+the inverse of the transformation, to be able to obtain originally
+scaled y-values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>prefix</code></td>
+<td>
+
+<p>character string defining the prefix for function names created when
+<code>type="individual"</code>.  By default, the function specifying the
+transformation for variable <code>x</code> will be named <code>.x</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>suffix</code></td>
+<td>
+
+<p>character string defining the suffix for the function names
+</p>
+</td></tr>
+<tr valign="top"><td><code>pos</code></td>
+<td>
+
+<p>See <code><a href="../../base/html/assign.html">assign</a></code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>arguments passed to other functions
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>As <code>transace</code> only does one iteration over the predictors, it may
+not find optimal transformations and it will be dependent on the order
+of the predictors in <code>x</code>.
+</p>
+<p><code><a href="../../acepack/help/ace.html">ace</a></code> and <code><a href="../../acepack/help/avas.html">avas</a></code> standardize transformed variables to have
+mean zero and variance one for each bootstrap sample, so if a
+predictor is not important it will still consistently have a positive
+regression coefficient.  Therefore using the bootstrap to estimate
+standard errors of the additive least squares regression coefficients
+would not help in drawing inferences about the importance of the
+predictors.  To do this, <code>summary.areg.boot</code> computes estimates
+of, e.g., the inter-quartile range effects of predictors in predicting
+the response variable (after untransforming it).  As an example, at
+each bootstrap repetition the estimated transformed value of one of
+the predictors is computed at the lower quartile, median, and upper
+quartile of the raw value of the predictor.  These transformed x
+values are then multipled by the least squares estimate of the partial
+regression coefficient for that transformed predictor in predicting
+transformed y.  Then these weighted transformed x values have the
+weighted transformed x value corresponding to the lower quartile
+subtracted from them, to estimate an x effect accounting for
+nonlinearity.  The last difference computed is then the standardized
+effect of raising x from its lowest to its highest quartile.  Before
+computing differences, predicted values are back-transformed to be on
+the original y scale in a way depending on <code>statistic</code> and
+<code>q</code>. The sample standard deviation of these effects (differences)
+is taken over the bootstrap samples, and this is used to compute
+approximate confidence intervals for effects andapproximate P-values,
+both assuming normality.
+</p>
+<p><code>predict</code> does not re-insert <code>NA</code>s corresponding to
+observations that were dropped before the fit, when <code>newdata</code> is
+omitted.
+</p>
+<p><code>statistic="fitted"</code> estimates the same quantity as
+<code>statistic="median"</code> if the residuals on the transformed response
+have a symmetric distribution. The two provide identical estimates
+when the sample median of the residuals is exactly zero. The sample
+mean of the residuals is constrained to be exactly zero although this
+does not simplify anything.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>transace</code> returns a matrix like <code>x</code> but containing
+transformed values.  This matrix has attributes <code>rsq</code> (vector of
+<i>R^2</i> with which each variable can be predicted from the others)
+and <code>omitted</code> (row numbers of <code>x</code> that were deleted due to
+<code>NA</code>s).
+</p>
+<p><code>areg.boot</code> returns a list of class <span class="samp">areg.boot</span> containing
+many elements, including (if <code>valrsq</code> is <code>TRUE</code>)
+<code>rsquare.app</code> and <code>rsquare.val</code>.  <code>summary.areg.boot</code>
+returns a list of class <span class="samp">summary.areg.boot</span> containing a matrix
+of results for each predictor and a vector of adjust-to settings.  It
+also contains the call and a <span class="samp">label</span> for the statistic that was
+computed.  A <code>print</code> method for these objects handles the
+printing.  <code>predict.areg.boot</code> returns a vector unless
+<code>statistic="terms"</code>, in which case it returns a
+matrix. <code>Function.areg.boot</code> returns by default a list of
+functions whose argument is one of the variables (on the original
+scale) and whose returned values are the corresponding transformed
+values.  The names of the list of functions correspond to the names of
+the original variables.  When <code>type="individual"</code>,
+<code>Function.areg.boot</code> invisibly returns the vector of names of the
+created function objects. <code>Mean.areg.boot</code> and
+<code>Quantile.areg.boot</code> also return functions.
+</p>
+<p><code>smearingEst</code> returns a vector of estimates of distribution
+parameters of class <span class="samp">labelled</span> so that <code>print.labelled</code> wil
+print a label documenting the estimate that was used (see
+<code><a href="../../Hmisc/help/label.html">label</a></code>).  This label can be retrieved for other purposes
+by using e.g. <code>label(obj)</code>, where obj was the vector
+returned by <code>smearingEst</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Harrell FE, Lee KL, Mark DB (1996): Stat in Med 15:361&ndash;387.
+</p>
+<p>Duan N (1983): Smearing estimate: A nonparametric retransformation
+method.  JASA 78:605&ndash;610.
+</p>
+<p>Wang N, Ruppert D (1995): Nonparametric estimation of the
+transformation in the transform-both-sides regression model.  JASA
+90:522&ndash;534. 
+</p>
+<p>See <code><a href="../../acepack/help/avas.html">avas</a></code>, <code><a href="../../acepack/help/ace.html">ace</a></code> for primary references.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../acepack/help/avas.html">avas</a></code>, <code><a href="../../acepack/help/ace.html">ace</a></code>,
+<code><a href="../../rms/help/ols.html">ols</a></code>, <code><a href="../../rms/help/validate.html">validate</a></code>,
+<code><a href="../../rms/help/predab.resample.html">predab.resample</a></code>, <code><a href="../../Hmisc/help/label.html">label</a></code>,
+<code><a href="../../rms/help/nomogram.html">nomogram</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# xtrans &lt;- transace(cbind(age,sex,blood.pressure,race.code),
+#                    binary='sex', monotonic='age',
+#                    categorical='race.code')
+
+
+# Generate random data from the model y = exp(x1 + epsilon/3) where
+# x1 and epsilon are Gaussian(0,1)
+set.seed(171)  # to be able to reproduce example
+x1 &lt;- rnorm(200)
+x2 &lt;- runif(200)  # a variable that is really unrelated to y]
+x3 &lt;- factor(sample(c('cat','dog','cow'), 200,TRUE))  # also unrelated to y
+y  &lt;- exp(x1 + rnorm(200)/3)
+f  &lt;- areg.boot(y ~ x1 + x2 + x3, B=40)
+f
+plot(f)
+# Note that the fitted transformation of y is very nearly log(y)
+# (the appropriate one), the transformation of x1 is nearly linear,
+# and the transformations of x2 and x3 are essentially flat 
+# (specifying monotone(x2) if method='avas' would have resulted
+# in a smaller confidence band for x2)
+
+
+summary(f)
+
+
+# use summary(f, values=list(x2=c(.2,.5,.8))) for example if you
+# want to use nice round values for judging effects
+
+
+# Plot Y hat vs. Y (this doesn't work if there were NAs)
+plot(fitted(f), y)  # or: plot(predict(f,statistic='fitted'), y)
+
+
+# Show fit of model by varying x1 on the x-axis and creating separate
+# panels for x2 and x3.  For x2 using only a few discrete values
+newdat &lt;- expand.grid(x1=seq(-2,2,length=100),x2=c(.25,.75),
+                      x3=c('cat','dog','cow'))
+yhat &lt;- predict(f, newdat, statistic='fitted')  
+# statistic='mean' to get estimated mean rather than simple inverse trans.
+xYplot(yhat ~ x1 | x2, groups=x3, type='l', data=newdat)
+
+
+## Not run: 
+# Another example, on hypothetical data
+f &lt;- areg.boot(response ~ I(age) + monotone(blood.pressure) + race)
+# use I(response) to not transform the response variable
+plot(f, conf.int=.9)
+# Check distribution of residuals
+plot(fitted(f), resid(f))
+qqnorm(resid(f))
+# Refit this model using ols so that we can draw a nomogram of it.
+# The nomogram will show the linear predictor, median, mean.
+# The last two are smearing estimators.
+Function(f, type='individual')  # create transformation functions
+f.ols &lt;- ols(.response(response) ~ age + 
+             .blood.pressure(blood.pressure) + .race(race))
+# Note: This model is almost exactly the same as f but there
+# will be very small differences due to interpolation of
+# transformations
+meanr &lt;- Mean(f)      # create function of lp computing mean response
+medr  &lt;- Quantile(f)  # default quantile is .5
+nomogram(f.ols, fun=list(Mean=meanr,Median=medr))
+
+
+# Create S functions that will do the transformations
+# This is a table look-up with linear interpolation
+g &lt;- Function(f)
+plot(blood.pressure, g$blood.pressure(blood.pressure))
+# produces the central curve in the last plot done by plot(f)
+
+## End(Not run)
+
+
+# Another simulated example, where y has a log-normal distribution
+# with mean x and variance 1.  Untransformed y thus has median
+# exp(x) and mean exp(x + .5sigma^2) = exp(x + .5)
+# First generate data from the model y = exp(x + epsilon),
+# epsilon ~ Gaussian(0, 1)
+
+
+set.seed(139)
+n &lt;- 1000
+x &lt;- rnorm(n)
+y &lt;- exp(x + rnorm(n))
+f &lt;- areg.boot(y ~ x, B=20)
+plot(f)       # note log shape for y, linear for x.  Good!
+xs &lt;- c(-2, 0, 2)
+d &lt;- data.frame(x=xs)
+predict(f, d, 'fitted')
+predict(f, d, 'median')   # almost same; median residual=-.001
+exp(xs)                   # population medians
+predict(f, d, 'mean')
+exp(xs + .5)              # population means
+
+
+# Show how smearingEst works
+res &lt;- c(-1,0,1)          # define residuals
+y &lt;- 1:5
+ytrans &lt;- log(y)
+ys &lt;- seq(.1,15,length=50)
+trans.approx &lt;- list(x=log(ys), y=ys)
+options(digits=4)
+smearingEst(ytrans, exp, res, 'fitted')          # ignores res
+smearingEst(ytrans, trans.approx, res, 'fitted') # ignores res 
+smearingEst(ytrans, exp, res, 'median')          # median res=0
+smearingEst(ytrans, exp, res+.1, 'median')       # median res=.1
+smearingEst(ytrans, trans.approx, res, 'median')
+smearingEst(ytrans, exp, res, 'mean')
+mean(exp(ytrans[2] + res))                       # should equal 2nd # above
+smearingEst(ytrans, trans.approx, res, 'mean')
+smearingEst(ytrans, trans.approx, res, mean)
+# Last argument can be any statistical function operating
+# on a vector that returns a single value
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

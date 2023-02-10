@@ -1,0 +1,217 @@
+Math.linim              S3 Group Generic Methods for Images on a Linear
+                        Network
+Smooth.lpp              Spatial Smoothing of Observations on a Network
+Window.lpp              Extract Window of Spatial Object on a Network
+[.linim                 Extract Subset of Pixel Image on Linear Network
+[.linnet                Extract Subset of Linear Network
+[.lpp                   Extract Subset of Point Pattern on Linear
+                        Network
+[<-.linim               Reset Values in Subset of Image on Linear
+                        Network
+addVertices             Add New Vertices to a Linear Network
+affine.linnet           Apply Geometrical Transformations to a Linear
+                        Network
+affine.lpp              Apply Geometrical Transformations to Point
+                        Pattern on a Linear Network
+anova.lppm              ANOVA for Fitted Point Process Models on Linear
+                        Network
+as.data.frame.lintess   Convert Network Tessellation to Data Frame
+as.linfun               Convert Data to a Function on a Linear Network
+as.linim                Convert to Pixel Image on Linear Network
+as.linnet.linim         Extract Linear Network from Data on a Linear
+                        Network
+as.linnet.psp           Convert Line Segment Pattern to Linear Network
+as.lpp                  Convert Data to a Point Pattern on a Linear
+                        Network
+as.owin.lpp             Convert Data on a Network to class owin
+auc.lpp                 Area Under ROC Curve for Data on a Network
+begins                  Check Start of Character String
+berman.test.lpp         Berman's Tests for Point Process Model on a
+                        Network
+branchlabelfun          Tree Branch Membership Labelling Function
+bw.lppl                 Likelihood Cross Validation Bandwidth Selection
+                        for Kernel Density on a Linear Network
+bw.relrisk.lpp          Cross Validated Bandwidth Selection for
+                        Relative Risk Estimation on a Network
+bw.voronoi              Cross Validated Bandwidth Selection for Voronoi
+                        Estimator of Intensity on a Network
+cdf.test.lpp            Spatial Distribution Test for Points on a
+                        Linear Network
+chop.linnet             Divide a Linear Network into Tiles Using
+                        Infinite Lines
+clickjoin               Interactively join vertices on a plot
+clicklpp                Interactively Add Points on a Linear Network
+connected.linnet        Connected Components of a Linear Network
+connected.lpp           Connected Components of a Point Pattern on a
+                        Linear Network
+crossdist.lpp           Pairwise distances between two point patterns
+                        on a linear network
+crossing.linnet         Crossing Points between Linear Network and
+                        Other Lines
+cut.lpp                 Classify Points in a Point Pattern on a Network
+data.lppm               Extract Original Data from a Fitted Point
+                        Process Model on a Network
+delaunayNetwork         Linear Network of Delaunay Triangulation or
+                        Dirichlet Tessellation
+deletebranch            Delete or Extract a Branch of a Tree
+density.linnet          Kernel Smoothing of Linear Network
+density.lpp             Kernel Estimate of Intensity on a Linear
+                        Network
+densityEqualSplit       Equal-Split Algorithm for Kernel Density on a
+                        Network
+densityHeat.lpp         Kernel Density on a Network using Heat Equation
+densityQuick.lpp        Kernel Estimation of Intensity on a Network
+                        using a 2D Kernel
+densityVoronoi.lpp      Intensity Estimate of Point Pattern on Linear
+                        Network Using Voronoi-Dirichlet Tessellation
+densityfun.lpp          Kernel Estimate of Intensity on a Linear
+                        Network as a Spatial Function
+diameter.linnet         Diameter and Bounding Radius of a Linear
+                        Network
+distfun.lpp             Distance Map on Linear Network
+distmap.lpp             Distance Map of Point Pattern on Linear Network
+divide.linnet           Divide Linear Network at Cut Points
+domain.lpp              Extract the Linear Network on which Spatial
+                        Data are Defined
+envelope.lpp            Envelope for Point Patterns on Linear Network
+eval.linim              Evaluate Expression Involving Pixel Images on
+                        Linear Network
+fitted.lppm             Fitted Intensity for Point Process on Linear
+                        Network
+heatkernelapprox        Approximation to Heat Kernel on Linear Network
+                        at Source Point
+identify.lpp            Identify Points in a Point Pattern on a Linear
+                        Network
+insertVertices          Insert New Vertices in a Linear Network
+integral.linim          Integral on a Linear Network
+intensity.lpp           Empirical Intensity of Point Pattern on Linear
+                        Network
+intersect.lintess       Intersection of Tessellations on a Linear
+                        Network
+is.connected.linnet     Determine Whether a Linear Network is Connected
+is.marked.lppm          Test Whether A Point Process Model is Marked
+is.multitype.lpp        Test Whether A Point Pattern on a Network is
+                        Multitype
+is.multitype.lppm       Test Whether A Point Process Model is Multitype
+is.stationary.lppm      Recognise Stationary and Poisson Point Process
+                        Models on a Network
+joinVertices            Join Vertices in a Network
+linearJinhom            Inhomogeneous Linear J-function for Point
+                        Processes on Linear Networks
+linearK                 Linear K Function
+linearKEuclid           Linear K Function Using Euclidean Distance
+linearKEuclidInhom      Inhomogeneous Linear K Function Based on
+                        Euclidean Distances
+linearKcross            Multitype K Function (Cross-type) for Linear
+                        Point Pattern
+linearKcross.inhom      Inhomogeneous multitype K Function (Cross-type)
+                        for Linear Point Pattern
+linearKdot              Multitype K Function (Dot-type) for Linear
+                        Point Pattern
+linearKdot.inhom        Inhomogeneous multitype K Function (Dot-type)
+                        for Linear Point Pattern
+linearKinhom            Inhomogeneous Linear K Function
+lineardirichlet         Dirichlet Tessellation on a Linear Network
+lineardisc              Compute Disc of Given Radius in Linear Network
+linearmarkconnect       Mark Connection Function for Multitype Point
+                        Pattern on Linear Network
+linearmarkequal         Mark Connection Function for Multitype Point
+                        Pattern on Linear Network
+linearpcf               Linear Pair Correlation Function
+linearpcfEuclid         Linear Pair Correlation Function Using
+                        Euclidean Distance
+linearpcfEuclidInhom    Inhomogeneous Linear Pair Correlation Function
+                        Based on Euclidean Distances
+linearpcfcross          Multitype Pair Correlation Function
+                        (Cross-type) for Linear Point Pattern
+linearpcfcross.inhom    Inhomogeneous Multitype Pair Correlation
+                        Function (Cross-type) for Linear Point Pattern
+linearpcfdot            Multitype Pair Correlation Function (Dot-type)
+                        for Linear Point Pattern
+linearpcfdot.inhom      Inhomogeneous Multitype Pair Correlation
+                        Function (Dot-type) for Linear Point Pattern
+linearpcfinhom          Inhomogeneous Linear Pair Correlation Function
+lineartileindex         Determine Which Tile Contains Each Given Point
+                        on a Linear Network
+linequad                Quadrature Scheme on a Linear Network
+linfun                  Function on a Linear Network
+linim                   Create Pixel Image on Linear Network
+linnet                  Create a Linear Network
+lintess                 Tessellation on a Linear Network
+lixellate               Subdivide Segments of a Network
+lpp                     Create Point Pattern on Linear Network
+lppm                    Fit Point Process Model to Point Pattern on
+                        Linear Network
+marks.linnet            Marks of a Network
+marks.lintess           Marks of a Tessellation on a Network
+mean.linim              Mean, Median, Quantiles of Pixel Values on a
+                        Linear Network
+methods.linfun          Methods for Functions on Linear Network
+methods.linim           Methods for Images on a Linear Network
+methods.linnet          Methods for Linear Networks
+methods.lpp             Methods for Point Patterns on a Linear Network
+methods.lppm            Methods for Fitted Point Process Models on a
+                        Linear Network
+model.frame.lppm        Extract the Variables in a Point Process Model
+                        on a Network
+model.images.lppm       Compute Images of Constructed Covariates
+model.matrix.lppm       Extract Design Matrix from Point Process Model
+                        on a Network
+nncross.lpp             Nearest Neighbours on a Linear Network
+nndist.lpp              Nearest neighbour distances on a linear network
+nnfromvertex            Nearest Data Point From Each Vertex in a
+                        Network
+nnfun.lpp               Nearest Neighbour Map on Linear Network
+nnwhich.lpp             Identify Nearest Neighbours on a Linear Network
+pairdist.lpp            Pairwise shortest-path distances between points
+                        on a linear network
+pairs.linim             Scatterplot Matrix for Pixel Images on a Linear
+                        Network
+persp.linfun            Perspective View of Function on a Linear
+                        Network
+persp.linim             Perspective View of Pixel Image on a Linear
+                        Network
+plot.linim              Plot Pixel Image on Linear Network
+plot.linnet             Plot a linear network
+plot.lintess            Plot a Tessellation on a Linear Network
+plot.lpp                Plot Point Pattern on Linear Network
+plot.lppm               Plot a Fitted Point Process Model on a Linear
+                        Network
+points.lpp              Draw Points on Existing Plot
+predict.lppm            Predict Point Process Model on Linear Network
+pseudoR2.lppm           Calculate Pseudo-R-Squared for Point Process
+                        Model on Linear Network
+rSwitzerlpp             Switzer-type Point Process on Linear Network
+rThomaslpp              Simulate Thomas Process on Linear Network
+rcelllpp                Simulate Cell Process on Linear Network
+relrisk.lpp             Nonparametric Estimate of Spatially-Varying
+                        Relative Risk on a Network
+repairNetwork           Repair Internal Data in a Linear Network
+rhohat.lpp              Nonparametric Estimate of Intensity as Function
+                        of a Covariate
+rjitter.lpp             Random Perturbation of a Point Pattern on a
+                        Network
+rlpp                    Random Points on a Linear Network
+roc.lpp                 Receiver Operating Characteristic for Data on a
+                        Network
+rpoislpp                Poisson Point Process on a Linear Network
+runiflpp                Uniform Random Points on a Linear Network
+sdr.lpp                 Sufficient Dimension Reduction for a Point
+                        Pattern on a Linear Network
+simulate.lppm           Simulate a Fitted Point Process Model on a
+                        Linear Network
+spatstat.linnet-package
+                        The spatstat.linnet Package
+subset.lpp              Subset of Point Pattern Satisfying A Condition
+superimpose.lpp         Superimpose Several Point Patterns on Linear
+                        Network
+terminalvertices        Terminal Vertices of a Linear Network
+text.lpp                Add Text Labels to Point Pattern on a Network
+thinNetwork             Remove Vertices or Segments from a Linear
+                        Network
+tile.lengths            Compute Lengths of Tiles in a Tessellation on a
+                        Network
+tilenames.lintess       Names of Tiles in a Tessellation on a Network
+treebranchlabels        Label Vertices of a Tree by Branch Membership
+treeprune               Prune Tree to Given Level
+unstack.lpp             Separate Multiple Columns of Marks

@@ -1,0 +1,1195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Summarize Data for Making Tables and Plots</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for summary.formula {Hmisc}"><tr><td>summary.formula {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Summarize Data for Making Tables and Plots</h2>
+
+<h3>Description</h3>
+
+<p><code>summary.formula</code> summarizes the variables listed in an S formula,
+computing descriptive statistics (including ones in a
+user-specified function).  The summary statistics may be passed to
+<code>print</code> methods, <code>plot</code> methods for making annotated dot charts, and
+<code>latex</code> methods for typesetting tables using LaTeX. 
+<code>summary.formula</code> has three methods for computing descriptive
+statistics on univariate or multivariate responses, subsetted by
+categories of other variables.  The method of summarization is
+specified in the parameter <code>method</code> (see details below).  For the
+<code>response</code> and <code>cross</code> methods, the statistics used to
+summarize the data 
+may be specified in a very flexible way (e.g., the geometric mean,
+33rd percentile, Kaplan-Meier 2-year survival estimate, mixtures of
+several statistics).  The default summary statistic for these methods
+is the mean (the proportion of positive responses for a binary
+response variable).  The <code>cross</code> method is useful for creating data
+frames which contain summary statistics that are passed to <code>trellis</code>
+as raw data (to make multi-panel dot charts, for example).  The
+<code>print</code> methods use the <code>print.char.matrix</code> function to print boxed
+tables.
+</p>
+<p>The right hand side of <code>formula</code> may contain <code>mChoice</code>
+(&ldquo;multiple choice&rdquo;) variables.  When <code>test=TRUE</code> each choice is
+tested separately as a binary categorical response.
+</p>
+<p>The <code>plot</code> method for <code>method="reverse"</code> creates a temporary
+function <code>Key</code> in frame 0 as is done by the <code>xYplot</code> and
+<code>Ecdf.formula</code> functions.  After <code>plot</code> runs, you can type
+<code>Key()</code> to put a legend in a default location, or
+e.g. <code>Key(locator(1))</code> to draw a legend where you click the left
+mouse button.  This key is for categorical variables, so to have the
+opportunity to put the key on the graph you will probably want to use
+the command <code>plot(object, which="categorical")</code>.  A second function
+<code>Key2</code> is created if continuous variables are being plotted.  It is
+used the same as <code>Key</code>.  If the <code>which</code> argument is not
+specified to <code>plot</code>, two pages of plots will be produced.  If you
+don't define <code>par(mfrow=)</code> yourself,
+<code>plot.summary.formula.reverse</code> will try to lay out a multi-panel
+graph to best fit all the individual dot charts for continuous
+variables.
+</p>
+<p>There is a subscripting method for objects created with
+<code>method="response"</code>. 
+This can be used to print or plot selected variables or summary statistics
+where there would otherwise be too many on one page.
+</p>
+<p><code>cumcategory</code> is a utility function useful when summarizing an ordinal
+response variable.  It converts such a variable having <code>k</code> levels to a
+matrix with <code>k-1</code> columns, where column <code>i</code> is a vector of zeros and
+ones indicating that the categorical response is in level <code>i+1</code> or
+greater.  When the left hand side of <code>formula</code> is <code>cumcategory(y)</code>,
+the default <code>fun</code> will summarize it by computing all of the relevant
+cumulative proportions.
+</p>
+<p>Functions <code>conTestkw</code>, <code>catTestchisq</code>, <code>ordTestpo</code> are
+the default statistical test functions for <code>summary.formula</code>.
+These defaults are: Wilcoxon-Kruskal-Wallis test for continuous
+variables, Pearson chi-square test for categorical variables, and the
+likelihood ratio chi-square test from the proportional odds model for
+ordinal variables.  These three functions serve also as templates for
+the user to create her own testing functions that are self-defining in
+terms of how the results are printed or rendered in LaTeX, or plotted.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'formula'
+summary(formula, data=NULL, subset=NULL,
+        na.action=NULL, fun = NULL,
+        method = c("response", "reverse", "cross"),
+        overall = method == "response" | method == "cross",
+        continuous = 10, na.rm = TRUE, na.include = method != "reverse",
+        g = 4, quant = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
+                         0.75, 0.875, 0.95, 0.975),
+        nmin = if (method == "reverse") 100
+               else 0,
+        test = FALSE, conTest = conTestkw, catTest = catTestchisq,
+        ordTest = ordTestpo, ...)
+
+## S3 method for class 'summary.formula.response'
+x[i, j, drop=FALSE]
+
+## S3 method for class 'summary.formula.response'
+print(x, vnames=c('labels','names'), prUnits=TRUE,
+      abbreviate.dimnames=FALSE,
+      prefix.width, min.colwidth, formatArgs=NULL, markdown=FALSE, ...)
+
+## S3 method for class 'summary.formula.response'
+plot(x, which = 1, vnames = c('labels','names'), xlim, xlab,
+     pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), superposeStrata = TRUE,
+     dotfont = 1, add = FALSE, reset.par = TRUE, main, subtitles = TRUE,
+     ...)
+
+## S3 method for class 'summary.formula.response'
+latex(object, title = first.word(deparse(substitute(object))), caption,
+      trios, vnames = c('labels', 'names'), prn = TRUE, prUnits = TRUE,
+      rowlabel = '', cdec = 2, ncaption = TRUE, ...)
+
+## S3 method for class 'summary.formula.reverse'
+print(x, digits, prn = any(n != N), pctdig = 0,
+      what=c('%', 'proportion'),
+      npct = c('numerator', 'both', 'denominator', 'none'),
+      exclude1 = TRUE, vnames = c('labels', 'names'), prUnits = TRUE,
+      sep = '/', abbreviate.dimnames = FALSE,
+      prefix.width = max(nchar(lab)), min.colwidth, formatArgs=NULL, round=NULL,
+      prtest = c('P','stat','df','name'), prmsd = FALSE, long = FALSE,
+      pdig = 3, eps = 0.001, ...)
+
+## S3 method for class 'summary.formula.reverse'
+plot(x, vnames = c('labels', 'names'), what = c('proportion', '%'),
+     which = c('both', 'categorical', 'continuous'),
+     xlim = if(what == 'proportion') c(0,1)
+            else c(0,100), 
+     xlab = if(what=='proportion') 'Proportion'
+            else 'Percentage', 
+     pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
+     dotfont = 1, main,
+     prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
+     conType = c('dot', 'bp', 'raw'), cex.means = 0.5, ...)
+
+## S3 method for class 'summary.formula.reverse'
+latex(object, title = first.word(deparse(substitute(object))), digits,
+      prn = any(n != N), pctdig = 0, what=c('%', 'proportion'),
+      npct = c("numerator", "both", "denominator", "slash", "none"),
+      npct.size = 'scriptsize', Nsize = "scriptsize", exclude1 = TRUE,
+      vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
+      outer.size = "scriptsize", caption, rowlabel = "",
+      insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round = NULL,
+      prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
+      msdsize = NULL, long = dotchart, pdig = 3, eps = 0.001,
+      auxCol = NULL, dotchart=FALSE, ...)
+
+## S3 method for class 'summary.formula.cross'
+print(x, twoway = nvar == 2, prnmiss = any(stats$Missing &gt; 0), prn = TRUE,
+      abbreviate.dimnames = FALSE, prefix.width = max(nchar(v)),
+      min.colwidth, formatArgs = NULL, ...)
+
+## S3 method for class 'summary.formula.cross'
+latex(object, title = first.word(deparse(substitute(object))),
+      twoway = nvar == 2, prnmiss = TRUE, prn = TRUE,
+      caption=attr(object, "heading"), vnames=c("labels", "names"),
+      rowlabel="", ...)
+
+stratify(..., na.group = FALSE, shortlabel = TRUE)
+
+## S3 method for class 'summary.formula.cross'
+formula(x, ...)
+
+cumcategory(y)
+
+conTestkw(group, x)
+catTestchisq(tab)
+ordTestpo(group, x)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+
+<p>An <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> formula with additive effects.  For <code>method="response"</code> or
+<code>"cross"</code>, the dependent variable has the usual connotation.  For
+<code>method="reverse"</code>, the dependent variable is what is usually thought
+of as an independent variable, and it is one that is used to stratify
+all of the right hand side variables.  For <code>method="response"</code>
+(only), the <code>formula</code> may contain one or more invocations of the
+<code>stratify</code> function whose arguments are defined below.  This causes
+the entire analysis to be stratified by cross-classifications of the
+combined list of stratification factors.  This stratification will be
+reflected as major column groupings in the resulting table, or as more
+response columns for plotting.  If <code>formula</code> has no dependent variable
+<code>method="reverse"</code> is the only legal value and so <code>method</code> defaults to
+<code>"reverse"</code> in this case.
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>summary.formula</code>.  For
+<code>conTestkw</code> a numeric vector, and for <code>ordTestpo</code>, a numeric
+or factor variable that can be considered ordered</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a numeric, character, category, or factor vector for <code>cumcategory</code>.
+Is converted to a categorical variable is needed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>drop</code></td>
+<td>
+
+<p>logical. If <code>TRUE</code> the result is coerced to the
+lowest possible dimension.
+</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+
+<p>name or number of a data frame.  Default is the current frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>a logical vector or integer vector of subscripts used to specify the
+subset of data to use in the analysis.  The default is to use all
+observations in the data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+
+<p>function for handling missing data in the input data.  The default is
+a function defined here called <code>na.retain</code>, which keeps all
+observations for processing, with missing variables or not.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>function for summarizing data in each cell.  Default is to take the
+mean of each column of the possibly multivariate response variable.
+You can specify <code>fun="%"</code> to compute percentages (100 times the mean of a 
+series of logical or binary variables).
+User&ndash;specified functions can also return a matrix.  For example, you might 
+compute quartiles on a bivariate response.  Does not apply to
+<code>method="reverse"</code>. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>The default is <code>"response"</code>, in which case the response variable may
+be multivariate and any number of statistics may be used to summarize
+them.  Here the responses are summarized separately for each of any
+number of independent variables.  Continuous independent variables
+(see the <code>continuous</code> parameter below) are automatically stratified
+into <code>g</code> (see below) quantile groups (if you want to control the
+discretization for selected variables, use the <code>cut2</code> function on them).  
+Otherwise, the data are
+subsetted by all levels of discrete right hand side variables.  For
+multivariate responses, subjects are considered to be missing if any
+of the columns is missing.  
+</p>
+<p>The <code>method="reverse"</code> option is
+typically used to make baseline characteristic tables, for example.
+The single left hand side variable must be categorical (e.g.,
+treatment), and the right hand side variables are broken down one at a
+time by the &quot;dependent&quot; variable.  Continuous variables are described
+by three quantiles (quartiles by default) along with 
+outer quantiles (used only for scaling x-axes when plotting quartiles;
+all are used when plotting box-percentile plots), and
+categorical ones are
+described by counts and percentages.  If there is no left hand side
+variable, <code>summary</code> assumes that there is only one group in the data,
+so that only one column of summaries will appear.
+If there is no dependent variable in <code>formula</code>, <code>method</code> defaults to
+<code>"reverse"</code> automatically.
+</p>
+<p>The <code>method="cross"</code> option allows for a multivariate dependent
+variable and for up to three independents.  Continuous independent
+variables (those with at least <code>continuous</code> unique values) are
+automatically divided into <code>g</code> quantile groups.
+The independents are cross-classified, and marginal statistics may optionally be computed.
+The output of <code>summary.formula</code> in this case is a data frame
+containing the independent variable combinations (with levels of
+<code>"All"</code> corresponding to marginals) and the corresponding summary
+statistics in the matrix <code>S</code>.  The output data frame is suitable for
+direct use in <code>trellis</code>.  The <code>print</code> and <code>latex</code> typesetting methods for this
+method allows for a special two-way format if there are two right
+hand variables.
+</p>
+</td></tr>
+<tr valign="top"><td><code>overall</code></td>
+<td>
+
+<p>For <code>method="reverse"</code>, setting <code>overall=TRUE</code> makes a new column with
+overall statistics for the whole sample.  For <code>method="cross"</code>,
+<code>overall=TRUE</code> (the default) results in all marginal statistics being
+computed.  For <code>trellis</code> displays (usually multi-panel dot plots), 
+these marginals just form other categories.  For <code>"response"</code>, the
+default is <code>overall=TRUE</code>, causing a final row of global summary
+statistics to appear in tables and dot charts.  If <code>test=TRUE</code> these
+marginal statistics are ignored in doing statistical tests.
+</p>
+</td></tr>
+<tr valign="top"><td><code>continuous</code></td>
+<td>
+
+<p>specifies the threshold for when a variable is considered to be
+continuous (when there are at least <code>continuous</code> unique values).
+<code>factor</code> variables are always considered to be categorical no matter
+how many levels they have.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+
+<p><code>TRUE</code> (the default) to exclude <code>NA</code>s before passing data to
+<code>fun</code> to compute statistics, <code>FALSE</code> otherwise.
+<code>na.rm=FALSE</code> is useful if the response variable is a matrix and
+you do not wish to exclude a row of the matrix if any of the columns
+in that row are <code>NA</code>.  <code>na.rm</code> also applies to summary
+statistic functions such as <code>smean.cl.normal</code>.  For these <code>na.rm</code>
+defaults to <code>TRUE</code> unlike built-in functions.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.include</code></td>
+<td>
+
+<p>for <code>method="response"</code>, set <code>na.include=FALSE</code> to exclude missing values from
+being counted as their own category when subsetting the response(s)
+by levels of a categorical variable.  For <code>method="reverse"</code> set
+<code>na.include=TRUE</code> to keep missing values of categorical variables from
+being excluded from the table.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>g</code></td>
+<td>
+
+<p>number of quantile groups to use when variables are automatically
+categorized with <code>method="response"</code> or <code>"cross"</code> using <code>cut2</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>nmin</code></td>
+<td>
+
+<p>if fewer than <code>nmin</code> observations exist in a category for <code>"response"</code>
+(over all strata combined), that category will be ignored.  For
+<code>"reverse"</code>, for categories of the response variable in which there
+are less than or equal to <code>nmin</code> non-missing observations, the raw
+data are retained for later plotting in place of box plots.
+</p>
+</td></tr>
+<tr valign="top"><td><code>test</code></td>
+<td>
+
+<p>applies if <code>method="reverse"</code>.  Set to <code>TRUE</code> to compute test
+statistics using tests specified in <code>conTest</code> and <code>catTest</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>conTest</code></td>
+<td>
+
+<p>a function of two arguments (grouping variable and a continuous
+variable) that returns a list with components <code>P</code> (the computed
+P-value), <code>stat</code> (the test statistic, either chi-square or F),
+<code>df</code> (degrees of freedom), <code>testname</code> (test name), <code>statname</code>
+(statistic name), <code>namefun</code> (<code>"chisq", "fstat"</code>), an
+optional component <code>latexstat</code> (LaTeX 
+representation of <code>statname</code>), an optional component
+<code>plotmathstat</code> (for R - the <code>plotmath</code> representation of
+<code>statname</code>, as a character string),  and an
+optional component <code>note</code> 
+that contains a character string note about the test (e.g.,
+<code>"test not done because n &lt; 5"</code>).  <code>conTest</code> is applied to continuous variables
+on the right-hand-side of the formula when <code>method="reverse"</code>.  The
+default uses the <code>spearman2</code> function to run the Wilcoxon or
+Kruskal-Wallis test using the F distribution.
+</p>
+</td></tr>
+<tr valign="top"><td><code>catTest</code></td>
+<td>
+
+<p>a function of a frequency table (an integer matrix) that returns a
+list with the same components as created by <code>conTest</code>.  By default,
+the Pearson chi-square test is done, without continuity correction
+(the continuity correction would make the test conservative like the
+Fisher exact test).
+</p>
+</td></tr>
+<tr valign="top"><td><code>ordTest</code></td>
+<td>
+
+<p>a function of a frequency table (an integer matrix) that returns a
+list with the same components as created by <code>conTest</code>.  By default,
+the Proportional odds likelihood ratio test is done.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>for <code>summary.formula</code> these are optional
+arguments for <code>cut2</code> when variables are automatically categorized.
+For <code>plot</code> methods these arguments are passed to <code>dotchart2</code>.
+For <code>Key</code> and <code>Key2</code> these arguments are passed to <code>key</code>,
+<code>text</code>, or <code>mtitle</code>.  For <code>print</code> methods these are
+optional arguments to <code>print.char.matrix</code>. For <code>latex</code> methods
+these are passed to <code>latex.default</code>.  One of the most important of
+these is <code>file</code>.  Specifying <code>file=""</code> will cause LaTeX code
+to just be printed to standard output rather than be stored in a
+permanent file.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>an object created by <code>summary.formula</code></p>
+</td></tr>
+<tr valign="top"><td><code>quant</code></td>
+<td>
+
+<p>vector of quantiles to use for summarizing data with
+<code>method="reverse"</code>.  This must be numbers between 0 and 1
+inclusive and must include the numbers 0.5, 0.25, and 0.75 which are
+used for printing and for plotting 
+quantile intervals.  The outer quantiles are used for scaling the x-axes
+for such plots.  Specify outer quantiles as <code>0</code> and <code>1</code> to
+scale the x-axes using the whole observed data ranges instead of the
+default (a 0.95 quantile interval).  Box-percentile plots are drawn
+using all but the outer quantiles.
+</p>
+</td></tr>
+<tr valign="top"><td><code>vnames</code></td>
+<td>
+
+<p>By default, tables and plots are usually labeled with variable labels
+(see the <code>label</code> and <code>sas.get</code> functions).  To use the shorter
+variable names, specify <code>vnames="name"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pch</code></td>
+<td>
+
+<p>vector of plotting characters to represent different groups, in order
+of group levels.  For <code>method="response"</code> the characters
+correspond to levels of the <code>stratify</code> variable if
+<code>superposeStrata=TRUE</code>, and if no 
+<code>strata</code> are used or if <code>superposeStrata=FALSE</code>, the 
+<code>pch</code> vector corresponds to the <code>which</code> argument for
+<code>method="response"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>superposeStrata</code></td>
+<td>
+
+<p>If <code>stratify</code> was used, set <code>superposeStrata=FALSE</code> to make
+separate dot charts for each level of the <code>stratification</code>
+variable, for <code>method='response'</code>.  The default is to
+superposition all strata on one dot chart.
+</p>
+</td></tr>
+<tr valign="top"><td><code>dotfont</code></td>
+<td>
+<p>font for plotting points</p>
+</td></tr>
+<tr valign="top"><td><code>reset.par</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress the restoring of the
+old par values in <code>plot.summary.formula.response</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>abbreviate.dimnames</code></td>
+<td>
+<p>see <code>print.char.matrix</code></p>
+</td></tr>
+<tr valign="top"><td><code>prefix.width</code></td>
+<td>
+<p>see <code>print.char.matrix</code></p>
+</td></tr>
+<tr valign="top"><td><code>min.colwidth</code></td>
+<td>
+
+<p>minimum column width to use for boxes printed with <code>print.char.matrix</code>.
+The default is the maximum of the minimum column label length and the minimum
+length of entries in the data cells.
+</p>
+</td></tr>
+<tr valign="top"><td><code>formatArgs</code></td>
+<td>
+
+<p>a list containing other arguments to pass to <code>format.default</code> such as
+<code>scientific</code>, e.g., <code>formatArgs=list(scientific=c(-5,5))</code>.  For
+<code>print.summary.formula.reverse</code> and
+<code>format.summary.formula.reverse</code>, <code>formatArgs</code> applies only to
+statistics computed on continuous variables, not to percents,
+numerators, and denominators.  The <code>round</code> argument may be preferred.
+</p>
+</td></tr>
+<tr valign="top"><td><code>markdown</code></td>
+<td>
+<p>for <code>print.summary.formula.response</code> set to
+<code>TRUE</code> to use <code>knitr::kable</code> to produce the table in
+markdown format rather than using raw text output created by <code>print.char.matrix</code></p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>number of significant digits to print.  Default is to use the current
+value of the <code>digits</code> system option.
+</p>
+</td></tr>
+<tr valign="top"><td><code>prn</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to print the number of non-missing observations on the
+current (row) variable.  The default is to print these only if any of
+the counts of non-missing values differs from the total number of
+non-missing values of the left-hand-side variable.
+For <code>method="cross"</code> the default is to always print <code>N</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>prnmiss</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress printing counts of missing values for <code>"cross"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+
+<p>for <code>method="reverse"</code> specifies whether proportions or percentages
+are to be plotted
+</p>
+</td></tr>
+<tr valign="top"><td><code>pctdig</code></td>
+<td>
+
+<p>number of digits to the right of the decimal place for printing
+percentages. The default is zero, so percents will be rounded to the
+nearest percent.
+</p>
+</td></tr>
+<tr valign="top"><td><code>npct</code></td>
+<td>
+
+<p>specifies which counts are to be printed to the right of percentages.
+The default is to print the frequency (numerator of the percent) in
+parentheses.  You can specify <code>"both"</code> to print both numerator and
+denominator, <code>"denominator"</code>, <code>"slash"</code> to
+typeset horizontally using a forward slash, or <code>"none"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>npct.size</code></td>
+<td>
+
+<p>the size for typesetting <code>npct</code> information which appears after percents.
+The default is <code>"scriptsize"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>Nsize</code></td>
+<td>
+
+<p>When a second row of column headings is added showing sample sizes,
+<code>Nsize</code> specifies the LaTeX size for these subheadings.  Default
+is <code>"scriptsize"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>exclude1</code></td>
+<td>
+
+<p>by default, <code>method="reverse"</code> objects will be printed, plotted,  or typeset by
+removing redundant entries from percentage tables for categorical
+variables.  For example, if you print the percent of females, you
+don't need to print the percent of males.  To override this, set <code>exclude1=FALSE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>prUnits</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress printing or latexing <code>units</code>
+attributes of variables, when <code>method='reverse'</code> or <code>'response'</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>sep</code></td>
+<td>
+
+<p>character to use to separate quantiles when printing
+<code>method="reverse"</code> tables
+</p>
+</td></tr>
+<tr valign="top"><td><code>prtest</code></td>
+<td>
+
+<p>a vector of test statistic components to print if <code>test=TRUE</code> was in
+effect when <code>summary.formula</code> was called.  Defaults to printing all
+components.  Specify <code>prtest=FALSE</code> or <code>prtest="none"</code> to not
+print any tests.  This applies to <code>print</code>, <code>latex</code>, and
+<code>plot</code> methods for <code>method='reverse'</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>round</code></td>
+<td>
+
+<p>for <code>print.summary.formula.reverse</code> and
+<code>latex.summary.formula.reverse</code> specify <code>round</code> to round
+the quantiles and optional mean and standard deviation to
+<code>round</code> digits after the decimal point
+</p>
+</td></tr>
+<tr valign="top"><td><code>prmsd</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to print mean and SD after the three quantiles, for
+continuous variables with <code>method="reverse"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>msdsize</code></td>
+<td>
+
+<p>defaults to <code>NULL</code> to use the current font size for the mean and
+standard deviation if <code>prmsd</code> is <code>TRUE</code>.  Set to a character
+string to specify an alternate LaTeX font size.
+</p>
+</td></tr>
+<tr valign="top"><td><code>long</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to print the results for the first category on its own
+line, not on the same line with the variable label (for
+<code>method="reverse"</code> with <code>print</code> and <code>latex</code> methods)
+</p>
+</td></tr>
+<tr valign="top"><td><code>pdig</code></td>
+<td>
+
+<p>number of digits to the right of the decimal place for printing
+P-values.  Default is <code>3</code>.  This is passed to <code>format.pval</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>eps</code></td>
+<td>
+
+<p>P-values less than <code>eps</code> will be printed as <code>&lt; eps</code>.  See
+<code>format.pval</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>auxCol</code></td>
+<td>
+
+<p>an optional auxiliary column of information, right justified, to add
+in front of statistics typeset by
+<code>latex.summary.formula.reverse</code>.  This argument is a list with a
+single element that has a name specifying the column heading.  If this
+name includes a newline character, the portions of the string before
+and after the newline form respectively the main heading and the
+subheading (typically set in smaller font), respectively.  See the
+<code>extracolheads</code> argument to <code>latex.default</code>.  <code>auxCol</code>
+is filled with blanks when a variable being summarized takes up more
+than one row in the output.  This happens with categorical variables.
+</p>
+</td></tr>
+<tr valign="top"><td><code>twoway</code></td>
+<td>
+
+<p>for <code>method="cross"</code> with two right hand side variables, <code>twoway</code>
+controls whether the resulting table will be printed in enumeration
+format or as a two-way table (the default)
+</p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+
+<p>For <code>method="response"</code> specifies the sequential number or a vector of
+subscripts of statistics to plot.  If you had any <code>stratify</code>
+variables, these are counted as if more statistics were computed.
+For <code>method="reverse"</code> specifies whether to plot results 
+for categorical variables, continuous variables, or both (the default).
+</p>
+</td></tr>
+<tr valign="top"><td><code>conType</code></td>
+<td>
+
+<p>For plotting <code>method="reverse"</code> plots for continuous variables,
+dot plots showing quartiles are drawn by default.  Specify
+<code>conType='bp'</code> to draw box-percentile plots using all the
+quantiles in <code>quant</code> except the outermost ones.  Means are drawn
+with a solid dot and vertical reference lines are placed at the three
+quartiles.  Specify <code>conType='raw'</code> to make a strip chart showing
+the raw data.  This can only be used if the sample size for each
+left-hand-side group is less than or equal to <code>nmin</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>cex.means</code></td>
+<td>
+
+<p>character size for means in box-percentile plots; default is .5</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+
+<p>vector of length two specifying x-axis limits.  For
+<code>method="reverse"</code>, this is only used for plotting categorical
+variables.  Limits for continuous variables are determined by the
+outer quantiles specified in <code>quant</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>x-axis label
+</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to add to an existing plot
+</p>
+</td></tr>
+<tr valign="top"><td><code>main</code></td>
+<td>
+
+<p>a main title.  For <code>method="reverse"</code> this applies only to the plot
+for categorical variables.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subtitles</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress automatic subtitles
+</p>
+</td></tr>
+<tr valign="top"><td><code>caption</code></td>
+<td>
+
+<p>character string containing LaTeX table captions.
+</p>
+</td></tr>
+<tr valign="top"><td><code>title</code></td>
+<td>
+
+<p>name of resulting LaTeX file omitting the <code>.tex</code> suffix.  Default
+is the name of the <code>summary</code> object.  If <code>caption</code> is specied,
+<code>title</code> is also used for the table's symbolic reference label. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>trios</code></td>
+<td>
+
+<p>If for <code>method="response"</code> you summarized the response(s) by using
+three quantiles, specify <code>trios=TRUE</code> or <code>trios=v</code> to group each set of
+three statistics into one column for <code>latex</code> output, using the format
+a B c, where the outer quantiles are in smaller font
+(<code>scriptsize</code>).  For <code>trios=TRUE</code>, the overall column names are taken
+from the column names of the original data matrix.  To give new
+column names, specify <code>trios=v</code>, where <code>v</code> is a vector of column
+names, of length <code>m/3</code>, where <code>m</code> is the original number of columns
+of summary statistics.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowlabel</code></td>
+<td>
+
+<p>see <code>latex.default</code> (under the help file <code>latex</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>cdec</code></td>
+<td>
+
+<p>number of decimal places to the right of the decimal point for
+<code>latex</code>.  This value should be a scalar (which will be properly
+replicated), or a vector with length equal to the number of columns
+in the table.  For <code>"response"</code> tables, this length does not count
+the column for <code>N</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ncaption</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to not have <code>latex.summary.formula.response</code>
+put sample sizes in captions
+</p>
+</td></tr>
+<tr valign="top"><td><code>i</code></td>
+<td>
+
+<p>a vector of integers, or character strings containing variable names
+to subset on.  Note that each row subsetted on in an <code>summary.formula.reverse</code>
+object subsets on all the levels that make up the corresponding variable
+(automatically).
+</p>
+</td></tr>
+<tr valign="top"><td><code>j</code></td>
+<td>
+
+<p>a vector of integers representing column numbers
+</p>
+</td></tr>
+<tr valign="top"><td><code>middle.bold</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have LaTeX use bold face for the middle quantile for
+<code>method="reverse"</code> 
+</p>
+</td></tr>
+<tr valign="top"><td><code>outer.size</code></td>
+<td>
+
+<p>the font size for outer quantiles for <code>"reverse"</code> tables
+</p>
+</td></tr>
+<tr valign="top"><td><code>insert.bottom</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress inclusion of definitions placed at the
+bottom of LaTeX tables for <code>method="reverse"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>dcolumn</code></td>
+<td>
+
+<p>see <code>latex</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.group</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have missing stratification variables given their own
+category (<code>NA</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>shortlabel</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to include stratification variable names and equal signs
+in labels for strata levels
+</p>
+</td></tr>
+<tr valign="top"><td><code>dotchart</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to output a dotchart in the latex table being
+generated.
+</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+<p>for <code>conTest</code> and <code>ordTest</code>, a numeric or
+factor variable with length the same as <code>x</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>tab</code></td>
+<td>
+<p>for <code>catTest</code>, a frequency table such as that created
+by <code>table()</code>
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>summary.formula</code> returns a data frame or list depending on
+<code>method</code>.  <code>plot.summary.formula.reverse</code> returns the number
+of pages of plots that were made.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p><code>plot.summary.formula.reverse</code> creates a function <code>Key</code> and
+<code>Key2</code> in frame 0 that will draw legends.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell<br />
+Department of Biostatistics<br />
+Vanderbilt University<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Harrell FE (2007): Statistical tables and plots using S and LaTeX.
+Document available from <a href="https://hbiostat.org/R/Hmisc/summary.pdf">https://hbiostat.org/R/Hmisc/summary.pdf</a>.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/mChoice.html">mChoice</a></code>, <code><a href="../../Hmisc/help/smean.sd.html">smean.sd</a></code>, <code><a href="../../Hmisc/help/summarize.html">summarize</a></code>,
+<code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../survival/help/strata.html">strata</a></code>, <code><a href="../../Hmisc/help/dotchart2.html">dotchart2</a></code>,
+<code><a href="../../Hmisc/help/print.char.matrix.html">print.char.matrix</a></code>, <code><a href="../../stats/html/update.html">update</a></code>,
+<code><a href="../../stats/html/formula.html">formula</a></code>, <code><a href="../../Hmisc/help/cut2.html">cut2</a></code>, <code><a href="../../Hmisc/help/llist.html">llist</a></code>,
+<code><a href="../../base/html/format.html">format.default</a></code>, <code><a href="../../Hmisc/help/latex.html">latex</a></code>,
+<code><a href="../../Hmisc/help/latexTranslate.html">latexTranslate</a></code> <code><a href="../../Hmisc/help/bpplt.html">bpplt</a></code>,
+<code><a href="../../Hmisc/help/summaryM.html">summaryM</a></code>, <code><a href="../../base/html/summary.html">summary</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+options(digits=3)
+set.seed(173)
+sex &lt;- factor(sample(c("m","f"), 500, rep=TRUE))
+age &lt;- rnorm(500, 50, 5)
+treatment &lt;- factor(sample(c("Drug","Placebo"), 500, rep=TRUE))
+
+# Generate a 3-choice variable; each of 3 variables has 5 possible levels
+symp &lt;- c('Headache','Stomach Ache','Hangnail',
+          'Muscle Ache','Depressed')
+symptom1 &lt;- sample(symp, 500,TRUE)
+symptom2 &lt;- sample(symp, 500,TRUE)
+symptom3 &lt;- sample(symp, 500,TRUE)
+Symptoms &lt;- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
+table(Symptoms)
+
+# Note: In this example, some subjects have the same symptom checked
+# multiple times; in practice these redundant selections would be NAs
+# mChoice will ignore these redundant selections
+
+#Frequency table sex*treatment, sex*Symptoms
+summary(sex ~ treatment + Symptoms, fun=table)
+# could also do summary(sex ~ treatment +
+#  mChoice(symptom1,symptom2,symptom3), fun=table)
+
+
+#Compute mean age, separately by 3 variables
+summary(age ~ sex + treatment + Symptoms)
+
+
+f &lt;- summary(treatment ~ age + sex + Symptoms, method="reverse", test=TRUE)
+f
+# trio of numbers represent 25th, 50th, 75th percentile
+print(f, long=TRUE)
+plot(f)
+plot(f, conType='bp', prtest='P')
+bpplt()    # annotated example showing layout of bp plot
+
+#Compute predicted probability from a logistic regression model
+#For different stratifications compute receiver operating
+#characteristic curve areas (C-indexes)
+predicted &lt;- plogis(.4*(sex=="m")+.15*(age-50))
+positive.diagnosis &lt;- ifelse(runif(500)&lt;=predicted, 1, 0)
+roc &lt;- function(z) {
+   x &lt;- z[,1];
+   y &lt;- z[,2];
+   n &lt;- length(x);
+   if(n&lt;2)return(c(ROC=NA));
+   n1 &lt;- sum(y==1);
+   c(ROC= (mean(rank(x)[y==1])-(n1+1)/2)/(n-n1) );
+ }
+y &lt;- cbind(predicted, positive.diagnosis)
+options(digits=2)
+summary(y ~ age + sex, fun=roc)
+
+
+options(digits=3)
+summary(y ~ age + sex, fun=roc, method="cross")
+
+#Use stratify() to produce a table in which time intervals go down the
+#page and going across 3 continuous variables are summarized using
+#quartiles, and are stratified by two treatments
+
+set.seed(1)
+d &lt;- expand.grid(visit=1:5, treat=c('A','B'), reps=1:100)
+d$sysbp &lt;- rnorm(100*5*2, 120, 10)
+label(d$sysbp) &lt;- 'Systolic BP'
+d$diasbp &lt;- rnorm(100*5*2, 80,  7)
+d$diasbp[1] &lt;- NA
+d$age    &lt;- rnorm(100*5*2, 50, 12)
+g &lt;- function(y) {
+  N &lt;- apply(y, 2, function(w) sum(!is.na(w)))
+  h &lt;- function(x) {
+    qu &lt;- quantile(x, c(.25,.5,.75), na.rm=TRUE)
+    names(qu) &lt;- c('Q1','Q2','Q3')
+    c(N=sum(!is.na(x)), qu)
+}
+  w &lt;- as.vector(apply(y, 2, h))
+  names(w) &lt;- as.vector( outer(c('N','Q1','Q2','Q3'), dimnames(y)[[2]],
+                                function(x,y) paste(y,x)))
+  w
+}
+#Use na.rm=FALSE to count NAs separately by column
+s &lt;- summary(cbind(age,sysbp,diasbp) ~ visit + stratify(treat),
+             na.rm=FALSE, fun=g, data=d)
+#The result is very wide.  Re-do, putting treatment vertically
+x &lt;- with(d, factor(paste('Visit', visit, treat)))
+summary(cbind(age,sysbp,diasbp) ~ x, na.rm=FALSE, fun=g, data=d)
+
+#Compose LaTeX code directly
+g &lt;- function(y) {
+  h &lt;- function(x) {
+    qu &lt;- format(round(quantile(x, c(.25,.5,.75), na.rm=TRUE),1),nsmall=1)
+    paste('{\\scriptsize(',sum(!is.na(x)),
+          ')} \\hfill{\\scriptsize ', qu[1], '} \\textbf{', qu[2],
+          '} {\\scriptsize ', qu[3],'}', sep='')
+  }
+  apply(y, 2, h)
+}
+s &lt;- summary(cbind(age,sysbp,diasbp) ~ visit + stratify(treat),
+             na.rm=FALSE, fun=g, data=d)
+# latex(s, prn=FALSE)
+## need option in latex to not print n
+#Put treatment vertically
+s &lt;- summary(cbind(age,sysbp,diasbp) ~ x, fun=g, data=d, na.rm=FALSE)
+# latex(s, prn=FALSE)
+
+#Plot estimated mean life length (assuming an exponential distribution) 
+#separately by levels of 4 other variables.  Repeat the analysis
+#by levels of a stratification variable, drug.  Automatically break
+#continuous variables into tertiles.
+#We are using the default, method='response'
+## Not run: 
+life.expect &lt;- function(y) c(Years=sum(y[,1])/sum(y[,2]))
+attach(pbc)
+S &lt;- Surv(follow.up.time, death)
+s2 &lt;- summary(S ~ age + albumin + ascites + edema + stratify(drug),
+                         fun=life.expect, g=3)
+
+
+#Note: You can summarize other response variables using the same 
+#independent variables using e.g. update(s2, response~.), or you 
+#can change the list of independent variables using e.g. 
+#update(s2, response ~.- ascites) or update(s2, .~.-ascites)
+#You can also print, typeset, or plot subsets of s2, e.g.
+#plot(s2[c('age','albumin'),]) or plot(s2[1:2,])
+
+
+s2    # invokes print.summary.formula.response
+
+
+#Plot results as a separate dot chart for each of the 3 strata levels
+par(mfrow=c(2,2))
+plot(s2, cex.labels=.6, xlim=c(0,40), superposeStrata=FALSE)
+
+
+#Typeset table, creating s2.tex
+w &lt;- latex(s2, cdec=1)
+#Typeset table but just print LaTeX code
+latex(s2, file="")    # useful for Sweave
+
+
+#Take control of groups used for age.  Compute 3 quartiles for
+#both cholesterol and bilirubin (excluding observations that are missing
+#on EITHER ONE)
+
+
+age.groups &lt;- cut2(age, c(45,60))
+g &lt;- function(y) apply(y, 2, quantile, c(.25,.5,.75))
+y &lt;- cbind(Chol=chol,Bili=bili)
+label(y) &lt;- 'Cholesterol and Bilirubin'
+#You can give new column names that are not legal S names
+#by enclosing them in quotes, e.g. 'Chol (mg/dl)'=chol
+
+
+s &lt;- summary(y ~ age.groups + ascites, fun=g)
+
+
+par(mfrow=c(1,2), oma=c(3,0,3,0))   # allow outer margins for overall
+for(ivar in 1:2) {                  # title 
+  isub &lt;- (1:3)+(ivar-1)*3          # *3=number of quantiles/var.
+  plot(s3, which=isub, main='', 
+       xlab=c('Cholesterol','Bilirubin')[ivar],
+       pch=c(91,16,93))            # [, closed circle, ]
+  }
+mtext(paste('Quartiles of', label(y)), adj=.5, outer=TRUE, cex=1.75)  
+#Overall (outer) title
+
+
+prlatex(latex(s3, trios=TRUE)) 
+# trios -&gt; collapse 3 quartiles
+
+
+#Summarize only bilirubin, but do it with two statistics:
+#the mean and the median.  Make separate tables for the two randomized
+#groups and make plots for the active arm.
+
+
+g &lt;- function(y) c(Mean=mean(y), Median=median(y))
+
+
+for(sub in c("D-penicillamine", "placebo")) {
+  ss &lt;- summary(bili ~ age.groups + ascites + chol, fun=g,
+                subset=drug==sub)
+  cat('\n',sub,'\n\n')
+  print(ss)
+
+
+  if(sub=='D-penicillamine') {
+    par(mfrow=c(1,1))
+    plot(s4, which=1:2, dotfont=c(1,-1), subtitles=FALSE, main='')
+    #1=mean, 2=median     -1 font = open circle
+    title(sub='Closed circle: mean;  Open circle: median', adj=0)
+    title(sub=sub, adj=1)
+  }
+
+
+  w &lt;- latex(ss, append=TRUE, fi='my.tex', 
+             label=if(sub=='placebo') 's4b' else 's4a',
+             caption=paste(label(bili),' {\\em (',sub,')}', sep=''))
+  #Note symbolic labels for tables for two subsets: s4a, s4b
+  prlatex(w)
+}
+
+
+#Now consider examples in 'reverse' format, where the lone dependent
+#variable tells the summary function how to stratify all the 
+#'independent' variables.  This is typically used to make tables 
+#comparing baseline variables by treatment group, for example.
+
+
+s5 &lt;- summary(drug ~ bili + albumin + stage + protime + sex + 
+                     age + spiders,
+              method='reverse')
+#To summarize all variables, use summary(drug ~., data=pbc)
+#To summarize all variables with no stratification, use
+#summary(~a+b+c) or summary(~.,data=\dots)
+
+
+options(digits=1)
+print(s5, npct='both')
+#npct='both' : print both numerators and denominators
+plot(s5, which='categorical')
+Key(locator(1))  # draw legend at mouse click
+par(oma=c(3,0,0,0))  # leave outer margin at bottom
+plot(s5, which='continuous')
+Key2()           # draw legend at lower left corner of plot
+                 # oma= above makes this default key fit the page better
+
+
+options(digits=3)
+w &lt;- latex(s5, npct='both', here=TRUE)     
+# creates s5.tex
+
+
+#Turn to a different dataset and do cross-classifications on possibly 
+#more than one independent variable.  The summary function with 
+#method='cross' produces a data frame containing the cross-
+#classifications.  This data frame is suitable for multi-panel 
+#trellis displays, although `summarize' works better for that.
+
+
+attach(prostate)
+size.quartile &lt;- cut2(sz, g=4)
+bone &lt;- factor(bm,labels=c("no mets","bone mets"))
+
+
+s7 &lt;- summary(ap&gt;1 ~ size.quartile + bone, method='cross')
+#In this case, quartiles are the default so could have said sz + bone
+
+
+options(digits=3)
+print(s7, twoway=FALSE)
+s7   # same as print(s7)
+w &lt;- latex(s7, here=TRUE)   # Make s7.tex
+
+
+library(trellis,TRUE)
+invisible(ps.options(reset=TRUE))
+trellis.device(postscript, file='demo2.ps')
+
+
+dotplot(S ~ size.quartile|bone, data=s7, #s7 is name of summary stats
+                  xlab="Fraction ap&gt;1", ylab="Quartile of Tumor Size")
+#Can do this more quickly with summarize:
+# s7 &lt;- summarize(ap&gt;1, llist(size=cut2(sz, g=4), bone), mean,
+#                 stat.name='Proportion')
+# dotplot(Proportion ~ size | bone, data=s7)
+
+
+summary(age ~ stage, method='cross')
+summary(age ~ stage, fun=quantile, method='cross')
+summary(age ~ stage, fun=smean.sd, method='cross')
+summary(age ~ stage, fun=smedian.hilow, method='cross')
+summary(age ~ stage, fun=function(x) c(Mean=mean(x), Median=median(x)),
+        method='cross')
+#The next statements print real two-way tables
+summary(cbind(age,ap) ~ stage + bone, 
+        fun=function(y) apply(y, 2, quantile, c(.25,.75)),
+        method='cross')
+options(digits=2)
+summary(log(ap) ~ sz + bone,
+        fun=function(y) c(Mean=mean(y), quantile(y)),
+        method='cross')
+
+
+#Summarize an ordered categorical response by all of the needed
+#cumulative proportions
+summary(cumcategory(disease.severity) ~ age + sex)
+
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

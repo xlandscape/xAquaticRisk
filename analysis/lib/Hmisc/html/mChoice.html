@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Methods for Storing and Analyzing Multiple Choice Variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for mChoice {Hmisc}"><tr><td>mChoice {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Methods for Storing and Analyzing Multiple Choice Variables</h2>
+
+<h3>Description</h3>
+
+<p><code>mChoice</code> is a function that is useful for grouping 
+variables that represent
+individual choices on a multiple choice question.  These choices are
+typically factor or character values but may be of any type.  Levels
+of component factor variables need not be the same; all unique levels
+(or unique character values) are collected over all of the multiple
+variables.  Then a new character vector is formed with integer choice
+numbers separated by semicolons.  Optimally, a database system would
+have exported the semicolon-separated character strings with a
+<code>levels</code> attribute containing strings defining value labels
+corresponding to the integer choice numbers.  <code>mChoice</code> is a
+function for creating a multiple-choice variable after the fact.
+<code>mChoice</code> variables are explicitly handed by the <code>describe</code>
+and <code>summary.formula</code> functions. <code>NA</code>s or blanks in input
+variables are ignored. 
+</p>
+<p><code>format.mChoice</code> will convert the multiple choice representation
+to text form by substituting <code>levels</code> for integer codes.
+<code>as.double.mChoice</code> converts the <code>mChoice</code> object to a
+binary numeric matrix, one column per used level (or all levels of
+<code>drop=FALSE</code>.  This is called by
+the user by invoking <code>as.numeric</code>.  There is a
+<code>print</code> method and a <code>summary</code> method, and a <code>print</code>
+method for the <code>summary.mChoice</code> object.  The <code>summary</code>
+method computes frequencies of all two-way choice combinations, the
+frequencies of the top 5 combinations, information about which other
+choices are present when each given choice is present, and the
+frequency distribution of the number of choices per observation.  This
+<code>summary</code> output is used in the <code>describe</code> function.
+</p>
+<p><code>in.mChoice</code> creates a logical vector the same length as <code>x</code>
+whose elements are <code>TRUE</code> when the observation in <code>x</code>
+contains at least one of the codes or value labels in the second
+argument.
+</p>
+<p><code>match.mChoice</code> creates an integer vector of the indexes of all
+elements in <code>table</code> which contain any of the speicified levels
+</p>
+<p><code>nmChoice</code> returns an integer vector of the number of choices
+that were made
+</p>
+<p><code>is.mChoice</code> returns <code>TRUE</code> is the argument is a multiple
+choice variable.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mChoice(..., label='',
+        sort.levels=c('original','alphabetic'), 
+        add.none=FALSE, drop=TRUE, ignoreNA=TRUE)
+
+## S3 method for class 'mChoice'
+format(x, minlength=NULL, sep=";", ...)
+
+## S3 method for class 'mChoice'
+as.double(x, drop=FALSE, ...)
+
+## S3 method for class 'mChoice'
+print(x, quote=FALSE, max.levels=NULL,
+       width=getOption("width"), ...)
+
+## S3 method for class 'mChoice'
+as.character(x, ...)
+
+## S3 method for class 'mChoice'
+summary(object, ncombos=5, minlength=NULL, drop=TRUE, ...)
+
+## S3 method for class 'summary.mChoice'
+print(x, prlabel=TRUE, ...)
+
+## S3 method for class 'mChoice'
+x[..., drop=FALSE]
+
+match.mChoice(x, table, nomatch=NA, incomparables=FALSE)
+
+inmChoice(x, values, condition=c('any', 'all'))
+
+inmChoicelike(x, values, condition=c('any', 'all'),
+              ignore.case=FALSE, fixed=FALSE)
+
+nmChoice(object)
+
+is.mChoice(x)
+
+## S3 method for class 'mChoice'
+Summary(..., na.rm)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+
+<p>Logical: remove <code>NA</code>'s from data
+</p>
+</td></tr>
+<tr valign="top"><td><code>table</code></td>
+<td>
+
+<p>a vector (mChoice) of values to be matched against.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nomatch</code></td>
+<td>
+
+<p>value to return if a value for <code>x</code> does not exist in
+<code>table</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>incomparables</code></td>
+<td>
+
+<p>logical whether incomparable values should be compaired.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>a series of vectors
+</p>
+</td></tr>
+<tr valign="top"><td><code>label</code></td>
+<td>
+
+<p>a character string <code>label</code> attribute to attach to the matrix created
+by <code>mChoice</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>sort.levels</code></td>
+<td>
+
+<p>set <code>sort.levels="alphabetic"</code> to sort the columns of the matrix
+created by <code>mChoice</code> alphabetically by category rather than by the
+original order of levels in component factor variables (if there were
+any input variables that were factors)
+</p>
+</td></tr>
+<tr valign="top"><td><code>add.none</code></td>
+<td>
+
+<p>Set <code>add.none</code> to <code>TRUE</code> to make a new category
+<code>'none'</code> if it doesn't already exist and if there is an
+observations with no choices selected.
+</p>
+</td></tr>
+<tr valign="top"><td><code>drop</code></td>
+<td>
+
+<p>set <code>drop=FALSE</code> to keep unused factor levels as columns of the matrix
+produced by <code>mChoice</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>ignoreNA</code></td>
+<td>
+<p>set to <code>FALSE</code> to keep any <code>NA</code>s present in
+data as a real level.  Prior to Hmisc 4.7-2 <code>FALSE</code> was the default.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>an object of class <code>"mchoice"</code> such as that created by
+<code>mChoice</code>.  For <code>is.mChoice</code> is any object.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>an object of class <code>"mchoice"</code> such as that created by
+<code>mChoice</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>ncombos</code></td>
+<td>
+
+<p>maximum number of combos.
+</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+
+<p>With of a line of text to be formated
+</p>
+</td></tr>
+<tr valign="top"><td><code>quote</code></td>
+<td>
+
+<p>quote the output
+</p>
+</td></tr>
+<tr valign="top"><td><code>max.levels</code></td>
+<td>
+<p>max levels to be displayed</p>
+</td></tr>
+<tr valign="top"><td><code>minlength</code></td>
+<td>
+
+<p>By default no abbreviation of levels is done in
+<code>format</code> and <code>summary</code>.  Specify a positive integer to use
+abbreviation in those functions.  See <code><a href="../../base/html/abbreviate.html">abbreviate</a></code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>sep</code></td>
+<td>
+
+<p>character to use to separate levels when formatting
+</p>
+</td></tr>
+<tr valign="top"><td><code>prlabel</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to keep
+<code>print.summary.mChoice</code> from printing the variable label and
+number of unique values
+</p>
+</td></tr>
+<tr valign="top"><td><code>values</code></td>
+<td>
+
+<p>a scalar or vector.  If <code>values</code> is integer, it is
+the choice codes, and if it is a character vector, it is assumed to
+be value labels.  For <code>inmChoicelike</code> <code>values</code> must be
+character strings which are pieces of choice labels.
+</p>
+</td></tr>
+<tr valign="top"><td><code>condition</code></td>
+<td>
+<p>set to <code>'all'</code> for <code>inmChoice</code> to require
+that all choices in <code>values</code> be present instead of the default of
+any of them present.</p>
+</td></tr>
+<tr valign="top"><td><code>ignore.case</code></td>
+<td>
+<p>set to <code>TRUE</code> to have <code>inmChoicelike</code>
+ignore case in the data when matching on <code>values</code></p>
+</td></tr>
+<tr valign="top"><td><code>fixed</code></td>
+<td>
+<p>see <code>grep</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>mChoice</code> returns a character vector of class <code>"mChoice"</code>
+plus attributes <code>"levels"</code> and <code>"label"</code>.
+<code>summary.mChoice</code> returns an object of class
+<code>"summary.mChoice"</code>.  <code>inmChoice</code> and <code>inmChoicelike</code>
+return a logical vector.
+<code>format.mChoice</code> returns a character vector, and
+<code>as.double.mChoice</code> returns a binary numeric matrix.
+<code>nmChoice</code> returns an integer vector
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../Hmisc/help/combplotp.html">combplotp</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+options(digits=3)
+set.seed(3)
+n &lt;- 20
+sex &lt;- factor(sample(c("m","f"), n, rep=TRUE))
+age &lt;- rnorm(n, 50, 5)
+treatment &lt;- factor(sample(c("Drug","Placebo"), n, rep=TRUE))
+
+
+# Generate a 3-choice variable; each of 3 variables has 5 possible levels
+symp &lt;- c('Headache','Stomach Ache','Hangnail',
+          'Muscle Ache','Depressed')
+symptom1 &lt;- sample(symp, n, TRUE)
+symptom2 &lt;- sample(symp, n, TRUE)
+symptom3 &lt;- sample(symp, n, TRUE)
+cbind(symptom1, symptom2, symptom3)[1:5,]
+Symptoms &lt;- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
+Symptoms
+print(Symptoms, long=TRUE)
+format(Symptoms[1:5])
+inmChoice(Symptoms,'Headache')
+inmChoicelike(Symptoms, 'head', ignore.case=TRUE)
+levels(Symptoms)
+inmChoice(Symptoms, 3)
+# Find all subjects with either of two symptoms
+inmChoice(Symptoms, c('Headache','Hangnail'))
+# Note: In this example, some subjects have the same symptom checked
+# multiple times; in practice these redundant selections would be NAs
+# mChoice will ignore these redundant selections
+# Find all subjects with both symptoms
+inmChoice(Symptoms, c('Headache', 'Hangnail'), condition='all')
+
+meanage &lt;- N &lt;- numeric(5)
+for(j in 1:5) {
+ meanage[j] &lt;- mean(age[inmChoice(Symptoms,j)])
+ N[j] &lt;- sum(inmChoice(Symptoms,j))
+}
+names(meanage) &lt;- names(N) &lt;- levels(Symptoms)
+meanage
+N
+
+# Manually compute mean age for 2 symptoms
+mean(age[symptom1=='Headache' | symptom2=='Headache' | symptom3=='Headache'])
+mean(age[symptom1=='Hangnail' | symptom2=='Hangnail' | symptom3=='Hangnail'])
+
+summary(Symptoms)
+
+#Frequency table sex*treatment, sex*Symptoms
+summary(sex ~ treatment + Symptoms, fun=table)
+# Check:
+ma &lt;- inmChoice(Symptoms, 'Muscle Ache')
+table(sex[ma])
+
+# could also do:
+# summary(sex ~ treatment + mChoice(symptom1,symptom2,symptom3), fun=table)
+
+#Compute mean age, separately by 3 variables
+summary(age ~ sex + treatment + Symptoms)
+
+
+summary(age ~ sex + treatment + Symptoms, method="cross")
+
+f &lt;- summary(treatment ~ age + sex + Symptoms, method="reverse", test=TRUE)
+f
+# trio of numbers represent 25th, 50th, 75th percentile
+print(f, long=TRUE)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

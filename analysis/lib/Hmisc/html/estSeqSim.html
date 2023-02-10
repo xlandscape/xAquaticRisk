@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: estSeqSim</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for estSeqSim {Hmisc}"><tr><td>estSeqSim {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>estSeqSim</h2>
+
+<h3>Description</h3>
+
+<p>Simulate Comparisons For Use in Sequential Clinical Trial Simulations
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+estSeqSim(parameter, looks, gendat, fitter, nsim = 1, progress = FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>parameter</code></td>
+<td>
+<p>vector of true parameter (effects; group differences) values</p>
+</td></tr>
+<tr valign="top"><td><code>looks</code></td>
+<td>
+<p>integer vector of observation numbers at which posterior probabilities are computed</p>
+</td></tr>
+<tr valign="top"><td><code>gendat</code></td>
+<td>
+<p>a function of three arguments: true parameter value (scalar), sample size for first group, sample size for second group</p>
+</td></tr>
+<tr valign="top"><td><code>fitter</code></td>
+<td>
+<p>a function of two arguments: 0/1 group indicator vector and the dependent variable vector</p>
+</td></tr>
+<tr valign="top"><td><code>nsim</code></td>
+<td>
+<p>number of simulations (default is 1)</p>
+</td></tr>
+<tr valign="top"><td><code>progress</code></td>
+<td>
+<p>set to <code>TRUE</code> to send current iteration number to the console</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Simulates sequential clinical trials.  Looks are done sequentially at observation numbers given in the vector <code>looks</code> with the earliest possible look being at observation 2.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function <code>gendat</code> that given a true effect of <code>parameter</code> and the two sample sizes (for treatment groups 1 and 2) returns a list with vectors <code>y1</code> and <code>y2</code> containing simulated data.  The user also provides a function <code>fitter</code> with arguments <code>x</code> (group indicator 0/1) and <code>y</code> (response variable) that returns a 2-vector containing the effect estimate and its variance.  <code>parameter</code> is usually on the scale of a regression coefficient, e.g., a log odds ratio.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a data frame with number of rows equal to the product of <code>nsim</code>, the length of <code>looks</code>, and the length of <code>parameter</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code>gbayesSeqSim()</code>, <code>simMarkovOrd()</code>, <code>estSeqMarkovOrd()</code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+if (requireNamespace("rms", quietly = TRUE)) {
+  # Run 100 simulations, 5 looks, 2 true parameter values
+  # Total simulation time: 2s
+  lfit &lt;- function(x, y) {
+  f &lt;- rms::lrm.fit(x, y)
+    k &lt;- length(coef(f))
+    c(coef(f)[k], vcov(f)[k, k])
+  }
+  gdat &lt;- function(beta, n1, n2) {
+    # Cell probabilities for a 7-category ordinal outcome for the control group
+    p &lt;- c(2, 1, 2, 7, 8, 38, 42) / 100
+
+    # Compute cell probabilities for the treated group
+    p2 &lt;- pomodm(p=p, odds.ratio=exp(beta))
+    y1 &lt;- sample(1 : 7, n1, p,  replace=TRUE)
+    y2 &lt;- sample(1 : 7, n2, p2, replace=TRUE)
+    list(y1=y1, y2=y2)
+  }
+
+  set.seed(1)
+  est &lt;- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
+                    gendat=gdat,
+                    fitter=lfit, nsim=100)
+  head(est)
+}
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

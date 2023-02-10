@@ -1,0 +1,16 @@
+Package: pixmap
+Version: 0.4-12
+Date: 2021-01-29
+Title: Bitmap Images / Pixel Maps
+Imports: methods, graphics, grDevices
+Author: Roger Bivand, Friedrich Leisch and Martin Maechler
+Maintainer: Friedrich Leisch <Friedrich.Leisch@R-project.org>
+Description: Functions for import, export, plotting and other
+  manipulations of bitmapped images.
+License: GPL-2
+LazyLoad: yes
+NeedsCompilation: no
+Packaged: 2021-01-29 10:42:11 UTC; leisch
+Repository: CRAN
+Date/Publication: 2021-01-29 13:20:06 UTC
+Built: R 4.1.1; ; 2021-09-10 15:55:13 UTC; windows

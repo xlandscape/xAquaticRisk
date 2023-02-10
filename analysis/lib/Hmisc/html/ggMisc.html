@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Miscellaneous ggplot2 and grid Helper Functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for colorFacet {Hmisc}"><tr><td>colorFacet {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Miscellaneous ggplot2 and grid Helper Functions</h2>
+
+<h3>Description</h3>
+
+<p>These functions are used on <code>ggplot2</code> objects or as layers when
+building a <code>ggplot2</code> object, and to facilitate use of
+<code>gridExtra</code>.  <code>colorFacet</code> colors the thin 
+rectangles used to separate panels created by <code>facet_grid</code> (and
+probably by <code>facet_wrap</code>). 
+A better approach may be found at <a href="https://stackoverflow.com/questions/28652284/">https://stackoverflow.com/questions/28652284/</a>.
+<code>arrGrob</code> is a front-end to <code>gridExtra::arrangeGrob</code> that
+allows for proper printing.  See
+<a href="https://stackoverflow.com/questions/29062766/store-output-from-gridextragrid-arrange-into-an-object/">https://stackoverflow.com/questions/29062766/store-output-from-gridextragrid-arrange-into-an-object/</a>.  The <code>arrGrob</code> <code>print</code> method calls <code>grid::grid.draw</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+colorFacet(g, col = adjustcolor("blue", alpha.f = 0.3))
+
+arrGrob(...)
+
+## S3 method for class 'arrGrob'
+print(x, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>g</code></td>
+<td>
+<p>a <code>ggplot2</code> object that used faceting</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>color for facet separator rectanges</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>passed to <code>arrangeGrob</code></p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>arrGrob</code></p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Sandy Muspratt</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+s &lt;- summaryP(age + sex ~ region + treatment)
+colorFacet(ggplot(s))   # prints directly
+# arrGrob is called by rms::ggplot.Predict and others
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

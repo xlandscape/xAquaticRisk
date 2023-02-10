@@ -1,0 +1,374 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Enhanced Version of dotchart Function</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for dotchart3 {Hmisc}"><tr><td>dotchart3 {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Enhanced Version of dotchart Function</h2>
+
+<h3>Description</h3>
+
+<p>These are adaptations of the R dotchart function that sorts categories
+top to bottom, adds <code>auxdata</code> and <code>auxtitle</code> arguments to put
+extra information in the right margin, and for <code>dotchart3</code> adds
+arguments <code>cex.labels</code>, <code>cex.group.labels</code>, and
+<code>groupfont</code>.  By default, group headings are in a larger, bold
+font.  <code>dotchart3</code> also cuts a bit of white space from the top and
+bottom of the chart.  The most significant change, however, is in how
+<code>x</code> is interpreted.  Columns of <code>x</code> no longer provide an
+alternate way to define groups.  Instead, they define superpositioned
+values.  This is useful for showing three quartiles, for example.  Going
+along with this change, for <code>dotchart3</code> <code>pch</code> can now be a
+vector specifying symbols to use going across columns of <code>x</code>.
+<code>x</code> was changed in this way because to put multiple points on a
+line (e.g., quartiles) and keeping track of <code>par()</code> parameters when
+<code>dotchart2</code> was called with <code>add=TRUE</code> was cumbersome.
+<code>dotchart3</code> changes the margins to account for horizontal labels.
+</p>
+<p><code>dotchartp</code> is a version of <code>dotchart3</code> for making the chart
+with the <code>plotly</code> package.
+</p>
+<p><code>summaryD</code> creates aggregate data using <code><a href="../../Hmisc/help/summarize.html">summarize</a></code> and
+calls <code>dotchart3</code> with suitable arguments to summarize data by
+major and minor categories.  If <code>options(grType='plotly')</code> is in
+effect and the <code>plotly</code> package is installed, <code>summaryD</code> uses
+<code>dotchartp</code> instead of <code>dotchart3</code>.
+</p>
+<p><code>summaryDp</code> is a streamlined <code>summaryD</code>-like function that
+uses the <code>dotchartpl</code> function to render a <code>plotly</code> graphic.
+It is used to compute summary statistics stratified separately by a
+series of variables.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
+          cex = par("cex"), pch = 21, gpch = pch, bg = par("bg"),
+          color = par("fg"), gcolor = par("fg"), lcolor = "gray",
+          xlim = range(c(x, gdata), na.rm=TRUE), main = NULL, xlab = NULL,
+          ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
+          axisat=NULL, axislabels=NULL,
+          cex.labels = cex, cex.group.labels = cex.labels * 1.25,
+          cex.auxdata=cex, groupfont = 2,
+          auxwhere=NULL, height=NULL, width=NULL, ...)
+
+dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
+            xlim = range(c(x, gdata), na.rm=TRUE), main=NULL,
+            xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
+            auxgdata=NULL, auxwhere=c('right', 'hover'),
+            symbol='circle', col=colorspace::rainbow_hcl,
+            legendgroup=NULL,
+            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
+            height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE, ...) 
+
+summaryD(formula, data=NULL, fun=mean, funm=fun,
+         groupsummary=TRUE, auxvar=NULL, auxtitle='',
+         auxwhere=c('hover', 'right'),
+         vals=length(auxvar) &gt; 0, fmtvals=format,
+         symbol=if(use.plotly) 'circle' else 21,
+         col=if(use.plotly) colorspace::rainbow_hcl else 1:10,
+         legendgroup=NULL,
+         cex.auxdata=.7, xlab=v[1], ylab=NULL,
+         gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...)
+
+summaryDp(formula,
+          fun=function(x) c(Mean=mean(x, na.rm=TRUE),
+                            N=sum(! is.na(x))),
+          overall=TRUE, xlim=NULL, xlab=NULL,
+          data=NULL, subset=NULL, na.action=na.retain,
+          ncharsmax=c(50, 30),
+          digits=4, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a numeric vector or matrix</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+<p>labels for categories corresponding to rows of
+<code>x</code>.  If not specified these are taken from row names of <code>x</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>groups,gdata,cex,pch,gpch,bg,color,gcolor,lcolor,xlim,main,xlab,ylab</code></td>
+<td>
+<p>see <code><a href="../../graphics/html/dotchart.html">dotchart</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>auxdata</code></td>
+<td>
+<p>a vector of information to be put in the right margin,
+in the same order as <code>x</code>.  May be numeric, character, or a
+vector of expressions containing <code><a href="../../grDevices/html/plotmath.html">plotmath</a></code> markup.  For
+<code>dotchartp</code>, <code>auxdata</code> may be a matrix to go along
+with the numeric x-axis variable, to result in point-specific
+hover text.</p>
+</td></tr>
+<tr valign="top"><td><code>auxtitle</code></td>
+<td>
+<p>a column heading for <code>auxdata</code></p>
+</td></tr>
+<tr valign="top"><td><code>auxgdata</code></td>
+<td>
+<p>similar to <code>auxdata</code> but corresponding to the
+<code>gdata</code> argument.  These usually represent overall sample sizes
+for each group of lines.</p>
+</td></tr>
+<tr valign="top"><td><code>axisat</code></td>
+<td>
+<p>a vector of tick mark locations to pass to <code>axis</code>.
+Useful if transforming the data axis</p>
+</td></tr>
+<tr valign="top"><td><code>axislabels</code></td>
+<td>
+<p>a vector of strings specifying axis tick mark
+labels.  Useful if transforming the data axis</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>number of significant digits for formatting numeric data
+in hover text for <code>dotchartp</code> and <code>summaryDp</code></p>
+</td></tr>
+<tr valign="top"><td><code>dec</code></td>
+<td>
+<p>for <code>dotchartp</code> only, overrides <code>digits</code> to
+specify the argument to <code>round()</code> for rounding values for
+hover labels</p>
+</td></tr>
+<tr valign="top"><td><code>cex.labels</code></td>
+<td>
+<p><code>cex</code> for labels</p>
+</td></tr>
+<tr valign="top"><td><code>cex.group.labels</code></td>
+<td>
+<p><code>cex</code> for group labels</p>
+</td></tr>
+<tr valign="top"><td><code>cex.auxdata</code></td>
+<td>
+<p><code>cex</code> for <code>auxdata</code></p>
+</td></tr>
+<tr valign="top"><td><code>groupfont</code></td>
+<td>
+<p>font number for group headings</p>
+</td></tr>
+<tr valign="top"><td><code>auxwhere</code></td>
+<td>
+<p>for <code>summaryD</code> and <code>dotchartp</code> specifies
+whether <code>auxdata</code> 
+and <code>auxgdata</code> are to be placed on the far right of the
+chart, or should appear as pop-up tooltips when hovering the
+mouse over the ordinary <code>x</code> data points on the chart.
+Ignored for <code>dotchart3</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other arguments passed to some of the graphics functions,
+or to <code>dotchart3</code> or <code>dotchartp</code> from <code>summaryD</code>.
+The <code>auxwhere='hover'</code> option is a useful argument to pass
+from <code>summaryD</code> to <code>dotchartp</code>.  Also used to pass
+other arguments to <code>dotchartpl</code> from <code>summaryDp</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>layoutattr</code></td>
+<td>
+<p>set to <code>TRUE</code> to put <code>plotly::layout</code>
+information in a list as an attribute <code>layout</code> of the
+returned <code>plotly</code> object instead of running the
+<code>plotly</code> object through the <code>layout</code> function.  This
+is useful if running <code>dotchartp</code> multiple times to later
+put together using <code>plotly::subplot</code> and only then running
+the result through <code>plotly::layout</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>showlegend</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress the <code>plotly</code>
+legend with <code>dotchartp</code></p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula with one variable on the left hand side (the
+variable to compute summary statistics on), and one or two
+variables on the right hand side.  If there are two variables,
+the first is taken as the major grouping variable.  If the left
+hand side variable is a matrix it has to be a legal R variable
+name, not an expression, and <code>fun</code> needs to be able to
+process a matrix.  For <code>summaryDp</code> there may be more than
+two right-hand-side variables.</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a data frame or list used to find the variables in
+<code>formula</code>.  If omitted, the parent environment is used.</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+<p>a summarization function creating a single number from a
+vector.  Default is the mean.  For <code>summaryDp</code>, <code>fun</code>
+produces a named vector of summary statistics, with the default
+computing the <code>Mean</code> and <code>N</code> (number of non-missing values).</p>
+</td></tr>
+<tr valign="top"><td><code>funm</code></td>
+<td>
+<p>applies if there are two right hand variables and
+<code>groupsummary=TRUE</code> and the marginal summaries over just
+the first <code>x</code> variable need to be computed differently
+than the summaries that are cross-classified by both
+variables.  <code>funm</code> defaults to <code>fun</code> and should
+have the same structure as <code>fun</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>groupsummary</code></td>
+<td>
+<p>By default, when there are two right-hand
+variables, <code>summarize(..., fun)</code> is called a second time
+without the use of the second variable, to obtain marginal
+summaries for the major grouping variable and display the
+results as a dot (and optionally in the right margin).  Set
+<code>groupsummary=FALSE</code> to suppress this information.</p>
+</td></tr>
+<tr valign="top"><td><code>auxvar</code></td>
+<td>
+<p>when <code>fun</code> returns more than one statistic and the
+user names the elements in the returned vector, you can specify
+<code>auxvar</code> as a single character string naming one of them.
+This will cause the named element to be written in the right
+margin, and that element to be deleted when plotting the statistics.</p>
+</td></tr>
+<tr valign="top"><td><code>vals</code></td>
+<td>
+<p>set to <code>TRUE</code> to show data values (dot
+locations) in the right margin.  Defaults to <code>TRUE</code> if
+<code>auxvar</code> is specified.</p>
+</td></tr>
+<tr valign="top"><td><code>fmtvals</code></td>
+<td>
+<p>an optional function to format values before putting
+them in the right margin.  Default is the <code>format</code>
+function.</p>
+</td></tr>
+<tr valign="top"><td><code>symbol</code></td>
+<td>
+<p>a scalar or vector of <code>pch</code> values for ordinary
+graphics or a character vector or scalar of <code>plotly</code>
+symbols.   These correspond to columns of <code>x</code> or elements
+produced by <code>fun</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>a function or vector of colors to assign to multiple points
+plotted in one line. If a function it will be evaluated with an
+argument equal to the number of groups/columns.</p>
+</td></tr>
+<tr valign="top"><td><code>legendgroup</code></td>
+<td>
+<p>see <code>plotly</code> documentation; corresponds to
+column names/<code>fun</code> output for <code>plotly</code> graphs only</p>
+</td></tr>
+<tr valign="top"><td><code>gridevery</code></td>
+<td>
+<p>specify a positive number to draw very faint vertical
+grid lines every <code>gridevery</code> <code>x</code>-axis units; for
+non-<code>plotly</code> charts</p>
+</td></tr>
+<tr valign="top"><td><code>gridcol</code></td>
+<td>
+<p>color for grid lines; default is very faint gray scale</p>
+</td></tr>
+<tr valign="top"><td><code>sort</code></td>
+<td>
+<p>specify <code>sort=FALSE</code> to plot data in the original
+order, from top to bottom on the dot chart.  For
+<code>dotchartp</code>, set <code>sort</code> to <code>'descending'</code> to
+sort in descending order of the first column of <code>x</code>, or
+<code>'ascending'</code> to do the reverse.  These do not make sense
+if <code>groups</code> is present.</p>
+</td></tr>
+<tr valign="top"><td><code>height,width</code></td>
+<td>
+<p>height and width in pixels for <code>dotchartp</code> if
+not using <code>plotly</code> defaults.  Ignored for
+<code>dotchart3</code>.  If set to <code>"auto"</code> the height is
+computed using <code>Hmisc::plotlyHeightDotchart</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>overall</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress plotting of
+unstratified estimates</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>an observation subsetting expression</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+<p>an <code>NA</code> action function</p>
+</td></tr>
+<tr valign="top"><td><code>ncharsmax</code></td>
+<td>
+<p>a 2-vector specifying the number of characters after
+which an html new line character should be placed, respectively for
+the x-axis label and the stratification variable levels</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>the function returns invisibly</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/dotchart.html">dotchart</a></code>,<code><a href="../../Hmisc/help/dotchart2.html">dotchart2</a></code>,<code><a href="../../Hmisc/help/summarize.html">summarize</a></code>,
+<code><a href="../../Hmisc/help/rlegend.html">rlegend</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(135)
+maj &lt;- factor(c(rep('North',13),rep('South',13)))
+g &lt;- paste('Category',rep(letters[1:13],2))
+n &lt;- sample(1:15000, 26, replace=TRUE)
+y1 &lt;- runif(26)
+y2 &lt;- pmax(0, y1 - runif(26, 0, .1))
+dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
+          xlab='Y', pch=c(1,17))
+## Compare with dotchart function (no superpositioning or auxdata allowed):
+## dotchart(y1, g, groups=maj, xlab='Y')
+
+## Not run: 
+dotchartp(cbind(y1, y2), g, groups=maj, auxdata=n, auxtitle='n',
+          xlab='Y', gdata=cbind(c(0,.1), c(.23,.44)), auxgdata=c(-1,-2),
+          symbol=c('circle', 'line-ns-open'))
+
+summaryDp(sbp ~ region + sex + race + cut2(age, g=5), data=mydata)
+
+## End(Not run)
+
+## Put options(grType='plotly') to have the following use dotchartp
+## (rlegend will not apply)
+## Add argument auxwhere='hover' to summaryD or dotchartp to put
+## aux info in hover text instead of right margin
+summaryD(y1 ~ maj + g, xlab='Mean')
+summaryD(y1 ~ maj + g, groupsummary=FALSE)
+summaryD(y1 ~ g, fmtvals=function(x) sprintf('%4.2f', x))
+Y &lt;- cbind(y1, y2)   # summaryD cannot handle cbind(...) ~ ...
+summaryD(Y  ~ maj + g, fun=function(y) y[1,], symbol=c(1,17))
+rlegend(.1, 26, c('y1','y2'), pch=c(1,17))
+
+summaryD(y1 ~ maj, fun=function(y) c(Mean=mean(y), n=length(y)),
+         auxvar='n', auxtitle='N')
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>
