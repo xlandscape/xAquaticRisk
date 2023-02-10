@@ -11,7 +11,8 @@ prepareEnvironmentR <- function(first.year, last.year,
                                 first.application.day,
                                 last.application.day,
                                 first.application.month,
-                                last.application.month){
+                                last.application.month,
+                                hydrography.file.path){
   params <- NULL
   params$first_year <- as.integer(first.year)
   params$last_year <- as.integer(last.year)
@@ -19,16 +20,18 @@ prepareEnvironmentR <- function(first.year, last.year,
   params$first_app_day <- as.integer(first.application.day)
   params$last_app_month <- as.integer(last.application.month)
   params$last_app_day <- as.integer(last.application.day)
+  params$hydrography <- as.character(hydrography.file.path)
   
   options(scipen = 999)
   suppressWarnings(suppressMessages(checkAndLoadPackages()))
   options(repr.plot.width=30, repr.plot.height=15)
+  return(params)
 }
 
 prepareLP50Data <- function(params,run.name){
-  reach.info <- suppressWarnings(suppressMessages(getReachInfoFromScenario(scenario.path = params$options$hydrography)))
+  reach.info <- suppressWarnings(suppressMessages(getReachInfoFromScenario(scenario.path = params$hydrography.file.path)))
   
-  mc.folder <- list.dirs(paste0("./run/",run.name,"/mcs"),recursive = F)
+  mc.folder <- list.dirs(paste0("../run/",run.name,"/mcs"),recursive = F)
   lp50 <- suppressWarnings(suppressMessages(readLP50DataFromStore(data.store.fpath = paste0(mc.folder,"/store/arr.dat"),
                                                                   first.year = params$first_year, last.year = params$last_year, 
                                                                   reach.info = reach.info)))
@@ -39,7 +42,7 @@ prepareLP50Data <- function(params,run.name){
 }
 
 preparePECData <- function(params, run.name){
-  reach.info <- suppressWarnings(suppressMessages(getReachInfoFromScenario(scenario.path = params$options$hydrography)))
+  reach.info <- suppressWarnings(suppressMessages(getReachInfoFromScenario(scenario.path = params$hydrography.file.path)))
   
   mc.folder <- list.dirs(paste0("./run/",run.name,"/mcs"),recursive = F)
   PEC <- suppressWarnings(suppressMessages(readPECDataFromStore(data.store.fpath = paste0(mc.folder,"/store/arr.dat"), 
