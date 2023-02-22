@@ -48,7 +48,7 @@ lp50 <- readLP50DataFromStore(data.store.fpath = params$args[1], first.year = pa
 # Calculate median values
 medLP50 <- medianLP50Values(lp50 = lp50,reach.info = reach.info)
 # Create list with plots for species and model type combinations
-LP50.plot <- createLP50byStrahlerPlot(LP50 = lp50,reach.info = reach.info,medLP50 = medLP50)
+LP50.plot <- createLP50byStrahlerPlot(lp50 = lp50,reach.info = reach.info,medLP50 = medLP50)
 # Save outputs
 for(i in 1:length(LP50.plot)){
   file_path <- file.path(params$args[2], "Application_1_Week")
@@ -58,13 +58,9 @@ for(i in 1:length(LP50.plot)){
   ggsave(plot = LP50.plot[[i]],filename = file.path(file_path, "_medians_points.png"), width = 20,height = 15,units = "cm",dpi = 400)
 }
 
-# these functions create a set of output figures in designated folder
-file_path <- paste0(params$args[2], "/LP50_Risk_Stories/")
-dir.create(file_path)
-createLP50AggregationPlots(lp50 = lp50,output.folder = file_path)
 file_path <- paste0(params$args[2], "/STLP50/")
 dir.create(file_path)
-createSpatialTemporalLP50Plots(lp50 = lp50,reach.info = reach.info, output.folder = file_path, temporal.conditioning.percentile = 1)
+createSpatialTemporalLP50Plots(lp50 = lp50,reach.info = reach.info, output.folder = file_path, temporal.conditioning.year = 1)
 #####################################################################
 ################ Residende time and Loading drift ###################
 #####################################################################
@@ -77,8 +73,8 @@ ggsave(plot = ResidenceTime.Depth.Plot,
        width = 20,height = 12, units = "cm",dpi = 400)
 
 RtimePECLoadingLP50 <- createRtimeLoadingPECsLP50Plot(focal.year = params$first_year, first.app.day = params$first_app_day, first.app.month = params$first_app_month, last.app.month = params$last_app_month, last.app.day = params$last_app_day,
-                                                      residence.times = residence.times, loading.drift = loading.drift, max.pec = max.pec, lp50 = lp50,
-                                                      scenario.path = params$options$hydrography)
+                                                     residence.times = residence.times, loading.drift = loading.drift, max.pec = max.pec, lp50 = lp50,
+                                                     scenario.path = params$options$hydrography)
 ggsave(plot = RtimePECLoadingLP50,
-       filename = file.path(params$args[2], "Application_1_Week", "Catchment_plots_combined.png"),
-       width = 30,height = 30, units = "cm",dpi = 400)
+      filename = file.path(params$args[2], "Application_1_Week", "Catchment_plots_combined.png"),
+      width = 30,height = 30, units = "cm",dpi = 400)

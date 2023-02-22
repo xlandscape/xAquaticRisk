@@ -1,9 +1,9 @@
 # Functions for analysing Landscape model run data
-checkAndLoadPackages <- function(required.packages = c("devtools","tidyverse","drc","scales", "gridExtra","patchwork","hdf5r","parallel","snow",
-                                                       "sp","Rcpp","raster","rgeos","rgdal","ggspatial","ggridges","usdm","gstat","openxlsx",
-                                                       "gstat","maptools","plotKML","terra","igraph","colorspace","mgcv")){
+checkAndLoadPackages <- function(required.packages = c("devtools","tidyverse","scales","drc", "gridExtra","patchwork","hdf5r","parallel","snow",
+                                                       "sp","Rcpp","rgeos","rgdal","ggspatial","ggridges","gstat","openxlsx",
+                                                       "gstat","maptools","terra","raster","usdm","plotKML","igraph","colorspace","mgcv")){
   lapply(required.packages,function(x){require(x, character.only = T)})
-    
+  
 }
 
 # Wrapper functions to prepare notebook work environments
@@ -194,13 +194,13 @@ createPECbyStrahlerPlot <- function(max.pec,
                                     labels_y = c("0.000001","0.00001","0.0001","0.001","0.01","0.1"),
                                     point_colour = "red",
                                     linewidth = 0.75,
-                                    output.folder){
+                                    output.folder = NULL){
   vpos <- aggregate(.~strahler,data = reach.info[,c("strahler","width")],FUN = length)
   vpos <- vpos[order(vpos$strahler),]
   row.names(vpos) <- NULL
   vpos$x <- cumsum(vpos$width)
   
-  max.pec <- left_join(max.pec,unique(medPEC[,c("Reach", "rowID","strahler")]),by = c("RchID"="Reach"))
+  max.pec <- left_join(max.pec,unique(medPEC[,c("Reach", "rowID")]),by = c("RchID"="Reach"))
   max.pec <- max.pec[,c("rowID","RchID","Year","strahler","Max_PEC_Avg")]
   colnames(max.pec) <- c("rowID","Reach","Year","strahler","Max_PEC")
   max.pec <- max.pec[order(as.numeric(max.pec$strahler),max.pec$Max_PEC),]
@@ -237,8 +237,9 @@ createPECbyStrahlerPlot <- function(max.pec,
     geom_text(data = data.frame(x = vpos$x,y = rep(-1,nrow(vpos)),
                                 labels = paste0(c("Strahler order 1",as.character(vpos$strahler[!vpos$strahler==1])))),
               aes(x = x, y = y, label = labels), size = 6, hjust = "inward")
-  ggsave(plot = PEC.plots,paste0(output.folder,"./PEC_",".png"),
-         width = 20, height = 15,units = "cm",dpi = 200)
+  if(!is.null(output.folder)){
+    ggsave(plot = PEC.plots,paste0(output.folder,"./PEC_",".png"),
+           width = 20, height = 15,units = "cm",dpi = 200)}
   return(PEC.plots)
 }
 
@@ -320,7 +321,7 @@ readLP50DataFromStore <- function(data.store.fpath,first.year,last.year,reach.in
                    mode = "r+")
   # Get reach IDs
   rch <- reach.info$RchID
-
+  
   # list with species and model versions
   ls.spec <- list.groups(df)[grepl("IndEffect_LP50",list.groups(df))]
   model.versions <- lapply(ls.spec,function(x){
@@ -330,11 +331,11 @@ readLP50DataFromStore <- function(data.store.fpath,first.year,last.year,reach.in
     t3 <- data.frame(Group = x,Model_type = t2[grepl("it|sd",t2)],Species = gsub(" ","_",t2[grepl("Asellus|Cloeon|Gammarus",t2)]))
     t3
   }) %>% do.call(rbind,.)
-
+  
   # create year time series
   time.period <- data.frame(Year = (df[[paste0(ls.spec[1],"/SimulationStart")]]$read() %>% strsplit(.,"-") %>% unlist() %>% .[1] %>% as.numeric()):last.year)
-
-  df.1 <- pblapply(ls.spec, function(x){
+  
+  df.1 <- lapply(ls.spec, function(x){
     # using mclapply, need to initiate data store for each core
     df <- H5File$new(filename = data.store.fpath,
                      mode = "r+")
@@ -352,7 +353,7 @@ readLP50DataFromStore <- function(data.store.fpath,first.year,last.year,reach.in
   min.rep.val <- df[[paste0(ls.spec[1],"/MinimumReportValue")]]$read()
   max.rep.val <- df[[paste0(ls.spec[1],"/MaximumReportValue")]]$read()
   err.rep.val <- df[[paste0(ls.spec[1],"/ErrorReportValue")]]$read()
-
+  
   # set min and err values to NA to exclude for further analysis.
   df.1$LP50 <- ifelse(df.1$LP50 %in% c(max.rep.val,err.rep.val),Inf,df.1$LP50)
   return(df.1)
@@ -379,7 +380,7 @@ createLP50byStrahlerPlot <- function(lp50,
                                      point_colour = "red",
                                      linewidth = 0.75,
                                      LP50_category_colours = c("red","orange","yellow"),
-                                     output.folder){
+                                     output.folder = NULL){
   vpos <- aggregate(.~strahler,data = reach.info[,c("strahler","width")],FUN = length)
   vpos <- vpos[order(vpos$strahler),]
   row.names(vpos) <- NULL
@@ -442,8 +443,9 @@ createLP50byStrahlerPlot <- function(lp50,
                                   labels = paste0(c("Strahler order 1",as.character(vpos$strahler[!vpos$strahler==1])))),
                 aes(x = x, y = y, label = labels), size = 6, hjust = "inward") +
       theme(text = element_text(size = 20),plot.title = element_text(size = 12))
-    ggsave(plot = LP50.plot[[j]],paste0(output.folder,"./LP50_",model.versions$Model_type[j],"_",model.versions$Species[j],".png"),
-           width = 20, height = 15,units = "cm",dpi = 200)
+    if(!is.null(output.folder)){
+      ggsave(plot = LP50.plot[[j]],paste0(output.folder,"./LP50_",model.versions$Model_type[j],"_",model.versions$Species[j],".png"),
+             width = 20, height = 15,units = "cm",dpi = 200)}
   }
   
   return(LP50.plot)
@@ -466,235 +468,54 @@ createSpatialTemporalLP50Plots <- function(lp50,reach.info,output.folder,tempora
       no.exposure <- apply(lp50.rank,2,function(x) sum(is.infinite(x))==length(x))
       lp50.rank[,no.exposure]<-NA
       
-      # Rank LP50 values
-      lp50.rank <- apply(lp50.rank,2,FUN = function(x) x[order(x,decreasing = F,na.last = T)]) %>% 
-        .[,order(.[j,],decreasing = F,na.last = T)]
-      
-      # Now create plot
-      spatial.perc <- data.frame(RchID = colnames(lp50.rank))
-      spatial.perc <- left_join(spatial.perc,unique(lp50[,c("RchID","lenght")]))
-      spatial.perc$lenght <- 1
-      spatial.perc$cumsum <- cumsum(spatial.perc$lenght)
-      spatial.perc$x <- (100/sum(spatial.perc$lenght))*(spatial.perc$cumsum - (spatial.perc$lenght/2))
-      spatial.perc <- spatial.perc[,c(1,4)]
-      
-      temp.perc <- data.frame(Yr = 1:nrow(lp50.rank))
-      temp.perc$y <- (100/nrow(lp50.rank))*(temp.perc$Yr - (1/2))
-      temp.perc$Yr <- as.character(temp.perc$Yr)
-      
-      plot.df <- as.data.frame(lp50.rank) 
-      plot.df$Yr <- rownames(plot.df)
-      plot.df <- plot.df %>% pivot_longer(.,cols = starts_with("R"),names_to = "RchID",values_to = "STLP50") %>% as.data.frame()
-      plot.df <- left_join(plot.df,temp.perc)
-      plot.df <- left_join(plot.df,spatial.perc)
-      plot.df$STLP50 <- factor(with(plot.df, ifelse(STLP50 < 1,1,
-                                                    ifelse(STLP50 > 1 & STLP50 < 10,2,
-                                                           ifelse(STLP50 > 10 & STLP50 < 100,3,
-                                                                  ifelse(STLP50 > 100 & !(STLP50 ==Inf), 4,
-                                                                         ifelse(STLP50 == Inf,5,STLP50)))))),levels = c("1","2","3","4","5"))
-      
-      sorted.dfs[[paste0("CondP_",j,"_",combinations$Species[i],"_",combinations$Model_type[i])]] <- plot.df[plot.df$y==min(plot.df$y),]
-      
-      p<-ggplot(plot.df,aes(as.factor(x),as.factor(y))) + geom_tile(aes(fill = STLP50)) +
-        scale_x_discrete(paste0("Spatial percentile (n = ",nrow(spatial.perc),")"),breaks = as.factor(plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))]),
-                         labels = plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))] %>% round() %>% as.character()) +
-        scale_y_discrete(paste0("Temporal percentile (n = ",nrow(temp.perc),")")) +
-        scale_fill_manual("LP50", values = c("1" = "red","2" = "orange","3" = "yellow","4" = "forestgreen","5" = "lightskyblue1"),
-                          label = c("LP50 < 1", "1 < LP50 < 10", "10 < LP50 < 100","LP50 > 100","Effect free year","No effect"),
-                          drop = F,na.value = "lightsteelblue3") +
-        ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape") + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
-      ggsave(plot = p,paste0(output.folder,"ALL_",combinations$Species[i],"_",combinations$Model_type[i],"_conditioningPercentile",temp.perc$y[j],".png"),
-             width = 20, height = 15,units = "cm",dpi = 200)
-      
-      ls.output[[paste0("CondP_",j,"_",combinations$Species[i],"_",combinations$Model_type[i])]] <- p
+      if (nrow(lp50.rank)==1){
+        file.create(paste(output.folder,"/single_year_only" , ".message" , sep=""))
+      }else{
+        # Rank LP50 values
+        lp50.rank <- apply(lp50.rank,2,FUN = function(x) x[order(x,decreasing = F,na.last = T)]) %>% 
+          .[,order(.[j,],decreasing = F,na.last = T)]
+        
+        # Now create plot input
+        spatial.perc <- data.frame(RchID = colnames(lp50.rank))
+        spatial.perc <- left_join(spatial.perc,unique(lp50[,c("RchID","lenght")]))
+        spatial.perc$lenght <- 1
+        spatial.perc$cumsum <- cumsum(spatial.perc$lenght)
+        spatial.perc$x <- (100/sum(spatial.perc$lenght))*(spatial.perc$cumsum - (spatial.perc$lenght/2))
+        spatial.perc <- spatial.perc[,c(1,4)]
+        
+        temp.perc <- data.frame(Yr = 1:nrow(lp50.rank))
+        temp.perc$y <- (100/nrow(lp50.rank))*(temp.perc$Yr - (1/2))
+        temp.perc$Yr <- as.character(temp.perc$Yr)
+        
+        plot.df <- as.data.frame(lp50.rank) 
+        plot.df$Yr <- rownames(plot.df)
+        plot.df <- plot.df %>% pivot_longer(.,cols = starts_with("R"),names_to = "RchID",values_to = "STLP50") %>% as.data.frame()
+        plot.df <- left_join(plot.df,temp.perc)
+        plot.df <- left_join(plot.df,spatial.perc)
+        plot.df$STLP50 <- factor(with(plot.df, ifelse(STLP50 < 1,1,
+                                                      ifelse(STLP50 > 1 & STLP50 < 10,2,
+                                                             ifelse(STLP50 > 10 & STLP50 < 100,3,
+                                                                    ifelse(STLP50 > 100 & !(STLP50 ==Inf), 4,
+                                                                           ifelse(STLP50 == Inf,5,STLP50)))))),levels = c("1","2","3","4","5"))
+        
+        sorted.dfs[[paste0("CondP_",j,"_",combinations$Species[i],"_",combinations$Model_type[i])]] <- plot.df[plot.df$y==min(plot.df$y),]
+        
+        p<-ggplot(plot.df,aes(as.factor(x),as.factor(y))) + geom_tile(aes(fill = STLP50)) +
+          scale_x_discrete(paste0("Spatial percentile (n = ",nrow(spatial.perc),")"),breaks = as.factor(plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))]),
+                           labels = plot.df$x[round(seq(1,nrow(plot.df),length.out = 20))] %>% round() %>% as.character()) +
+          scale_y_discrete(paste0("Temporal percentile (n = ",nrow(temp.perc),")")) +
+          scale_fill_manual("LP50", values = c("1" = "red","2" = "orange","3" = "yellow","4" = "forestgreen","5" = "lightskyblue1"),
+                            label = c("LP50 < 1", "1 < LP50 < 10", "10 < LP50 < 100","LP50 > 100","Effect free year","No effect"),
+                            drop = F,na.value = "lightsteelblue3") +
+          ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape") + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
+        ggsave(plot = p,paste0(output.folder,"ALL_",combinations$Species[i],"_",combinations$Model_type[i],"_conditioningPercentile",temp.perc$y[j],".png"),
+               width = 20, height = 15,units = "cm",dpi = 200)
+        
+        ls.output[[paste0("CondP_",j,"_",combinations$Species[i],"_",combinations$Model_type[i])]] <- p
+      }
     }
   }
   return(list(plots = ls.output, dfs = sorted.dfs))
-}
-
-######################### LPOP functions ###########################
-readLPOPExtentNetworkDataFromStore <- function(data.store.fpath,
-                                               model.type = "IT",
-                                               first.application.year = 1992,
-                                               last.application.year = 2017,
-                                               reach.info = getReachInfoFromScenario(scenario.path = "D:/PesticideModel_BigDrive/scenario-rummen-tdi/geo/Reachlist_shp.shp")){
-  
-  # initiate data store
-  df <- H5File$new(filename = data.store.fpath,
-                   mode = "r+")
-  # name of model run of interest
-  ls.model.run <- names(df)[grepl("PopEffect",x = names(df))&grepl(model.type,x = names(df))]
-  # create daily time series
-  warmup <- df[[paste0(ls.model.run,"/NumberOfWarmUpYears")]]$read()
-  recov <- df[[paste0(ls.model.run,"/RecoveryPeriodYears")]]$read()
-  
-  start.time <- df[["Hydrology/TimeSeriesStart"]]$read() %>% strptime(.,format = "%Y-%m-%d",tz = "GMT")
-  start.time$year <- start.time$year - warmup
-  start.time <- start.time - 24 * 3600
-  end.time <- df[["Hydrology/TimeSeriesEnd"]]$read() %>% strptime(.,format = "%Y-%m-%d",tz = "GMT")
-  end.time$year <- end.time$year + (recov )
-  
-  time.period <- data.frame(Tstamp = seq(start.time,end.time,by=(24 * 3600)))
-  time.period$AppYear <- format(time.period$Tstamp,"%Y") >= first.application.year & format(time.period$Tstamp,"%Y") <= last.application.year
-  
-  # Get reach IDs
-  rch <- df[["Hydrology/Reaches"]]$read() %>% paste0("R",.)
-  
-  # get dimensions of juvenile and adult pops for looping, 1st dim = replicates; 2nd dim = conc mult.facs; 3rd dim = num reaches; 4th dim = time.days
-  dims <- df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]]$dims
-  # Loop index and values of concentration multiplication factors
-  loop.idx <- 1:dims[2]
-  cmfs <- df[[paste0(ls.model.run,"/MultiplicationFactors")]]$read()
-  
-  getExt <- function(loop.idx){
-    # initiate data store for each core
-    df <- hdf5r::H5File$new(filename = data.store.fpath,
-                            mode = "r+")
-    out <- lapply(1:length(rch), function(j) {
-      # Calculate if the 90%ile is smaller than 1 (i.e., pop in a reach is smaller than 1 for at least 90% of the time)
-      t1 <- apply(df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]][,loop.idx,j,][,time.period$AppYear],1,function(x) quantile(x,0.9)<1)
-      t4 <- apply(df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]][,loop.idx,j,][,time.period$AppYear],1,function(x) sum(x>1)/length(x))
-      t3 <- mean(df[[paste0(ls.model.run,"/JuvenileAndAdultPopulationByReach")]][,loop.idx,j,][,time.period$AppYear],na.rm = T)
-      # using a majority rule (based on three replicates): a local population is extant if in at least cases the 10th %-ile is larger than 1
-      t2 <- data.frame(RchID = rch[j],ModelType = ls.model.run, ConcMF = cmfs[loop.idx], 
-                       meanAbundance = t3, meanFractionOccupied = mean(t4), 
-                       extantPop = sum(t1)<=1)
-      t2
-    })
-    out <- data.table::rbindlist(out)
-    
-    # exclude extinct reaches and attach reach info on downstream connections to df to get edge list
-    t1 <- out[out$extantPop,]
-    t1 <- dplyr::left_join(t1,reach.info[,c("downstream","RchID")], by = "RchID")
-    t1$downstream <- paste0("R",t1$downstream)
-    
-    clusters <- igraph::clusters(igraph::graph.data.frame(t1[,c("RchID","downstream")]))
-    
-    cluster.membership <- with(clusters, 
-                               data.frame(
-                                 RchID = names(membership), 
-                                 subNetworkID = membership, 
-                                 sizeSubnetwork = csize[membership]))
-    cluster.membership <- dplyr::arrange(cluster.membership,subNetworkID)
-    
-    # Link network membership back to original dataframe
-    out <- dplyr::left_join(out,cluster.membership, by = "RchID")
-    
-    return(out)
-  }
-  cl <- makeCluster(getOption("cl.cores",detectCores()))
-  clusterExport(cl, c("data.store.fpath","ls.model.run","rch","loop.idx","cmfs","time.period","getExt", "reach.info"),
-                envir=environment())
-  df.1 <- parLapply(cl = cl, x = loop.idx, fun = getExt)
-  stopCluster(cl)
-  
-  return(df.1)
-}
-
-plotLpopExtentNetworks <- function(scenario.path.shp = "D:/PesticideModel_BigDrive/scenario-rummen-tdi/geo/Reachlist_shp.shp",
-                                   extent.population.list.data = df,
-                                   rows, output.folder){
-  # prevent plotting scientific notation
-  options(scipen = 999)
-  df <- extent.population.list.data
-  
-  # get model type for naming output plot
-  model.type <- unlist(strsplit(df[[1]]$ModelType[1],"_"))[3]
-  
-  out.plot.list <- lapply(df,function(z){
-    
-    riv.rummen <- suppressWarnings(readDRNFromScenario(scenario.path = scenario.path.shp))
-    riv.rummen@data$RchID <- paste0("R",as.character(riv.rummen@data$key))
-    
-    # Add residence time data for date of application
-    riv.rummen@data <- dplyr::left_join(riv.rummen@data, z, by = "RchID")
-    
-    ## Plot of river network
-    Rivs_f <- fortify(riv.rummen)
-    riv_df <- data.frame(id = as.character(as.numeric(lapply(riv.rummen@lines, function(x) x@ID) %>% do.call(rbind,.))),riv.rummen@data)
-    Rivs_f <- left_join(Rivs_f, riv_df,by = "id")
-    
-    R.catchment.plot <-ggplot() + # define variables
-      geom_path(data = Rivs_f,
-                aes(x = long, y = lat, group = group,colour = as.factor(subNetworkID)),size = 1.25) + # plot rivers
-      colorspace::scale_colour_discrete_sequential(palette = "Terrain",rev = F) + 
-      coord_equal() + guides(colour = "none") +
-      labs(x = "X (m)", y = "Y (m)")+
-      ggtitle(paste0("CMF = ",unique(z$ConcMF))) +
-      theme_linedraw() + theme_light() + theme(title = element_text(size = 10),
-                                               legend.title = element_text(size = 10),
-                                               axis.text = element_text(size = 10),
-                                               axis.title = element_text(size = 10))
-    R.catchment.plot
-  })
-  
-  p <- patchwork::wrap_plots(out.plot.list,nrow = rows)
-  
-  suppressWarnings(ggsave(plot = p,
-                          paste0(output.folder,"NetworkFragmentation_",model.type,".png"),
-                          width = 90, height = 45,units = "cm",dpi = 300, limitsize = F))
-  suppressWarnings(print(p))
-  
-}
-
-plotFI90 <- function(scenario.path.shp = "D:/PesticideModel_BigDrive/scenario-rummen-tdi/geo/Reachlist_shp.shp",
-                     extent.population.list.data = df,
-                     rows, output.folder){
-  
-  # prevent plotting scientific notation
-  options(scipen = 999)
-  df <- extent.population.list.data
-  
-  # get model type for naming output plot
-  model.type <- unlist(strsplit(df[[1]]$ModelType[1],"_"))[3]
-  
-  # get, for each CMF, the number of reaches that are part of a network
-  p.df <- lapply(df, function(x){
-    data.frame(N_connected = sum(x$extantPop),CMF = unique(x$ConcMF))
-  }) %>% do.call(rbind,.)
-  
-  p.df$Relative_N <- (p.df$N_connected / p.df$N_connected[p.df$CMF==0]) * 100
-  p.df$logCMF <- log(p.df$CMF)
-  
-  # fit a curve through the data to predict along a range of CMF values
-  fit <- drm(Relative_N~CMF,data = p.df,fct = LL.4())
-  m2 <- predict(object = fit,newdata = data.frame(CMF = seq(0,100000,1)),se.fit = T)
-  pred <- data.frame(CMF = seq(0,100000,1),Fit = m2[,1],SE.fit = m2[,2])
-  
-  # find CMF where number of connected patches falls below 90% of control
-  FI90 <- pred$CMF[min(which(pred$Fit <= 90))]
-  
-  p.raw <- ggplot() +
-    geom_line(data = pred,aes(x = log10(CMF), y = Fit),colour = "black",show.legend = F) +
-    geom_ribbon(data = pred,aes(x = log10(CMF), ymin = Fit - SE.fit, ymax = Fit + SE.fit),alpha = 0.25) +
-    geom_point(data = p.df, aes(x = log10(CMF), y = Relative_N), colour = "blue",size = 2,show.legend = F) +
-    scale_y_continuous("Fragmentation index", breaks = seq(0,100,10)) +
-    scale_x_continuous("Concentration multiplication factor",
-                       breaks = log10(p.df$CMF), 
-                       labels = as.character(p.df$CMF))+
-    theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust=1),
-          text = element_text(size = 10))
-  suppressWarnings(ggsave(plot = p.raw,
-                          paste0(output.folder,"FI90_raw",model.type,".png"),
-                          width = 20, height = 12,units = "cm",dpi = 300, limitsize = F))
-  
-  p.ann <- ggplot() +
-    geom_line(data = pred,aes(x = log10(CMF), y = Fit),colour = "black",show.legend = F) +
-    geom_ribbon(data = pred,aes(x = log10(CMF), ymin = Fit - SE.fit, ymax = Fit + SE.fit),alpha = 0.25) +
-    geom_point(data = p.df, aes(x = log10(CMF), y = Relative_N), colour = "blue",size = 2,show.legend = F) +
-    scale_y_continuous("Fragmentation index", breaks = seq(0,100,10)) +
-    scale_x_continuous("Concentration multiplication factor",
-                       breaks = log10(p.df$CMF), 
-                       labels = as.character(p.df$CMF)) +
-    geom_hline(yintercept = 90, lty = "dashed",lwd = 1, colour = "red") + 
-    geom_vline(xintercept = log10(FI90),lty = "dashed",lwd = 1, colour = "red") +
-    geom_label(aes(x = log10(FI90 + 1500), y = 92.5, label = paste0("FI90 = ", FI90))) +
-    theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust=1),
-          text = element_text(size = 10))
-  p.ann
-  suppressWarnings(ggsave(plot = p.ann,
-                          paste0(output.folder,"FI90_annotated",model.type,".png"),
-                          width = 20, height = 12,units = "cm",dpi = 300, limitsize = F))
 }
 
 ######################### Residence time functions #############################
@@ -714,11 +535,11 @@ readResidenceTimeFromStore <- function(data.store.fpath,reach.info, first.year,l
   time.period$Month <- format(time.period$Tstamp,"%m") %>% as.numeric()
   time.period$Day <- format(time.period$Tstamp,"%d") %>% as.numeric()
   time.period$Date <- format(time.period$Tstamp,"%d-%m-%Y") %>% as.character()
-
+  
   s <- reach.info$bankslope[order(reach.info$RchID)]
   L <- reach.info$lenght[order(reach.info$RchID)]
   w <- reach.info$btmwidth[order(reach.info$RchID)]
-
+  
   # Select only years after 1998 and month May for further residence time analysis in paper
   t.Q <- df[["Hydrology/Flow"]][,(time.period$Day>=first.app.day & time.period$Day <= last.app.day &
                                     time.period$Month>=first.app.month & time.period$Month <= last.app.month &
@@ -728,7 +549,7 @@ readResidenceTimeFromStore <- function(data.store.fpath,reach.info, first.year,l
                                      time.period$Year>=first.year & time.period$Year <= last.year)]
   # Convert cubic metre / day to cubic metre per hour
   t.Q <- (t.Q / 24)
-
+  
   # Calculate hourly residence time FOR T-SHAPE!!!!!!
   residence.time <- data.frame(((t.D * (w + t.D * s)) * L) / t.Q)
   colnames(residence.time) <- time.period$Date[(time.period$Day>=first.app.day & time.period$Day <= last.app.day &
@@ -743,11 +564,11 @@ readResidenceTimeFromStore <- function(data.store.fpath,reach.info, first.year,l
                                        time.period$Year>=first.year & time.period$Year <= last.year)]
   t.D$RchID <- rch
   residence.time$Depth <- pivot_longer(data = t.D,cols = -c("RchID"),names_to = "Date",values_to = "Depth") %>% as.data.frame() %>% .$Depth
-
+  
   # Aggregate over day to get daily average of residence time (hours)
   res.time <- aggregate(.~ Date*RchID, data = residence.time[,c("RchID","Date","Residence_time","Depth")], FUN = mean)
   res.time <- left_join(res.time,unique(time.period[,c("Date","Year")]))
-
+  
   return(res.time)
 }
 
@@ -768,7 +589,7 @@ readLoadingDriftFromStore <- function(data.store.fpath,reach.info, first.year,la
   time.period$Day <- format(time.period$Tstamp,"%d") %>% as.numeric()
   time.period$Date <- format(time.period$Tstamp,"%d-%m-%Y") %>% as.character()
   load.period <- unique(time.period[,c("Year","Month","Day","Date")]) # OK to remove hardcoded subsetting with fix in L313 above.
-
+  
   # Get loading drift information
   t.L <- df[["DepositionToReach/Deposition"]][,(load.period$Day>=first.app.day & load.period$Day <= last.app.day &
                                                   load.period$Month>=first.app.month &load.period$Month <= last.app.month &
@@ -783,13 +604,13 @@ readLoadingDriftFromStore <- function(data.store.fpath,reach.info, first.year,la
   loading.drift <- aggregate(.~ RchID*Year, data = t.L[,c("RchID","Year","Loading")], FUN = max)
   # Convert units from g/ha to mg/m2
   loading.drift$Loading <- loading.drift$Loading / 10
-
+  
   return(loading.drift)
 }
 
 createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info){
   reach.info <- left_join(reach.info,aggregate(.~RchID,residence.times[,c("RchID","Residence_time","Depth")],FUN = median))
-
+  
   R.residence.time.by.order <- ggplot(data = reach.info, aes(x = as.factor(strahler), y = Residence_time)) +
     geom_boxplot(outlier.shape = NA,fill = "grey70") +
     geom_jitter(width = 0.2,
@@ -805,8 +626,8 @@ createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info){
                                                   legend.title = element_text(size = 10),
                                                   axis.text = element_text(size = 10),
                                                   axis.title = element_text(size = 10))
-
-
+  
+  
   R.depth.by.order <- ggplot(data = reach.info, aes(x = as.factor(strahler), y = log2(Depth))) +
     geom_boxplot(outlier.shape = NA,fill = "grey70") +
     geom_jitter(width = 0.2,
@@ -834,18 +655,18 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
   #######################################
   riv.rummen <- readDRNFromScenario(scenario.path = scenario.path)
   riv.rummen@data$RchID <- paste0("R",as.character(riv.rummen@data$key))
-
+  
   # Add residence time data for date of application
   riv.rummen@data <- left_join(riv.rummen@data, aggregate(.~RchID,data = residence.times[residence.times$Year==focal.year,c("RchID","Residence_time")],FUN = median))
-
+  
   ## Plot of river network
   Rivs_f <- fortify(riv.rummen)
   riv_df <- data.frame(id = as.character(as.numeric(lapply(riv.rummen@lines, function(x) x@ID) %>% do.call(rbind,.))),riv.rummen@data)
   Rivs_f <- left_join(Rivs_f, riv_df,by = "id")
-
+  
   seqfun <- function(input,n.steps = 4){seq(as.numeric(input[1]),as.numeric(input[2]),length.out = n.steps)}
   grad.colours <- seqfun(quantile(log10(riv.rummen@data$Residence_time),c(0.025,0.975)),n.steps = 5)
-
+  
   R.catchment.plot <-ggplot() + # define variables
     geom_path(data = Rivs_f,
               aes(x = long, y = lat, group = group,colour = log10(Residence_time)),size = 1.25) + # plot rivers
@@ -856,30 +677,30 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
                            colours = c("green","yellow","orange","red"),
                            labels = as.character(round(10^grad.colours,digits = 2)),
                            limits = c(grad.colours[1],grad.colours[5])) +
-    coord_equal() + guides(size = F) +
+    coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
     ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
     theme_linedraw() + theme_light() + theme(title = element_text(size = 5),
                                              legend.title = element_text(size = 10),
                                              axis.text = element_text(size = 10),
                                              axis.title = element_text(size = 10))
-
+  
   #######################################
   ###### Spatial loading drif plot ######
   #######################################
   riv.rummen <- readDRNFromScenario(scenario.path = scenario.path)
   riv.rummen@data$RchID <- paste0("R",as.character(riv.rummen@data$key))
-
+  
   # Add residence time data for date of application
   riv.rummen@data <- left_join(riv.rummen@data,loading.drift[loading.drift$Year==focal.year,])
-
+  
   ## Plot of river network
   Rivs_f <- fortify(riv.rummen)
   riv_df <- data.frame(id = as.character(as.numeric(lapply(riv.rummen@lines, function(x) x@ID) %>% do.call(rbind,.))),riv.rummen@data)
   Rivs_f <- left_join(Rivs_f, riv_df,by = "id")
-
+  
   grad.colours <- seqfun(quantile(riv.rummen@data$Loading[!is.na(riv.rummen@data$Loading)&riv.rummen@data$Loading>0],c(0.05,0.95)),n.steps = 5)
-
+  
   L.catchment.plot <-ggplot() + # define variables
     geom_path(data = Rivs_f,
               aes(x = long, y = lat, group = group,colour = Loading),size = 1.25) + # plot rivers
@@ -891,30 +712,30 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
                            labels = as.character(signif(grad.colours,digits = 2)),
                            limits = c(grad.colours[1]*0.95,grad.colours[5]*1.1),
                            na.value = "grey50") +
-    coord_equal() + guides(size = F) +
+    coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
     ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
     theme_linedraw() + theme_light()+ theme(title = element_text(size = 5),
                                             legend.title = element_text(size = 10),
                                             axis.text = element_text(size = 10),
                                             axis.title = element_text(size = 10))
-
+  
   #######################################
   ###### Spatial maximum PEC plot #######
   #######################################
   riv.rummen <- readDRNFromScenario(scenario.path = scenario.path)
   riv.rummen@data$RchID <- paste0("R",as.character(riv.rummen@data$key))
-
+  
   # Add residence time data for date of application
   riv.rummen@data <- left_join(riv.rummen@data,max.pec[max.pec$Year == focal.year, c("RchID","Max_PEC_Avg")])
-
+  
   ## Plot of river network
   Rivs_f <- fortify(riv.rummen)
   riv_df <- data.frame(id = as.character(as.numeric(lapply(riv.rummen@lines, function(x) x@ID) %>% do.call(rbind,.))),riv.rummen@data)
   Rivs_f <- left_join(Rivs_f, riv_df,by = "id")
-
+  
   grad.colours <- seqfun(range(log10(riv.rummen@data$Max_PEC_Avg[riv.rummen@data$Max_PEC_Avg > 10^-6]),na.rm = T),n.steps = 5)
-
+  
   P.catchment.plot <-ggplot() + # define variables
     geom_path(data = Rivs_f,
               aes(x = long, y = lat, group = group,colour = log10(Max_PEC_Avg)),size = 1.25) + # plot rivers
@@ -925,205 +746,48 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
                            labels = as.character(signif(10^grad.colours,digits = 3)),
                            limits = c(grad.colours[1]*0.9,grad.colours[5]*2),
                            na.value = "grey50") +
-    coord_equal() + guides(size = F) +
+    coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
     ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
     theme_linedraw() + theme_light()+ theme(title = element_text(size = 5),
                                             legend.title = element_text(size = 10),
                                             axis.text = element_text(size = 10),
                                             axis.title = element_text(size = 10))
-
+  
   #######################################
   ######### Spatial LP50 plot ###########
   #######################################
   riv.rummen <- readDRNFromScenario(scenario.path = scenario.path)
   riv.rummen@data$RchID <- paste0("R",as.character(riv.rummen@data$key))
-
+  
   # Add residence time data for date of application
   riv.rummen@data <- left_join(riv.rummen@data,
                                lp50[as.numeric(lp50$Year) == focal.year & lp50$Model_type == "it" & lp50$Species=="Cloeon_dipterum",c("RchID","LP50")])
-
+  
   ## Plot of river network
   Rivs_f <- fortify(riv.rummen)
   riv_df <- data.frame(id = as.character(as.numeric(lapply(riv.rummen@lines, function(x) x@ID) %>% do.call(rbind,.))),riv.rummen@data)
   Rivs_f <- left_join(Rivs_f, riv_df,by = "id")
-  riv.rummen@data$LP50[is.infinite(riv.rummen@data$LP50)] <- NA
-  grad.colours <- seqfun(log10(range(riv.rummen@data$LP50,na.rm = T)),n.steps = 5)
-
+  Rivs_f$LP50 <- factor(with(Rivs_f, ifelse(LP50 < 1,1,
+                                                  ifelse(LP50 > 1 & LP50 < 10,2,
+                                                         ifelse(LP50 > 10 & LP50 < 100,3,
+                                                                ifelse(LP50 > 100 & !(LP50 ==Inf), 4,
+                                                                       ifelse(LP50 == Inf,5,LP50)))))),levels = c("1","2","3","4","5"))
+  
   LP50.catchment.plot <-ggplot() + # define variables
     geom_path(data = Rivs_f,
-              aes(x = long, y = lat, group = group,colour = log10(LP50)),size = 1.25) + # plot rivers
-    # scale_size_manual(values = c(1,1.5,2,2.5)) +
-    scale_colour_stepsn(paste0("LP50 estimate\nPeriod: ",first.app.day,"-",first.app.month,"/",
-                               last.app.day,"-",last.app.month," in ",focal.year),
-                        breaks = c(0,1,2),
-                        colours = c("red","yellow","green3","green3"),
-                        labels = c("1","10","100"),
-                        # limits = c(grad.colours[1]*1.1,grad.colours[5]*1.1),
-                        na.value = "green3") +
-    coord_equal() + guides(size = F) +
+              aes(x = long, y = lat, group = group,colour = LP50),size = 1.25) + # plot rivers
+    scale_colour_manual("LP50", values = c("1" = "red","2" = "orange","3" = "yellow","4" = "forestgreen", "5" = "lightskyblue1"),
+                      label = c("LP50 < 1", "1 < LP50 < 10", "10 < LP50 < 100","LP50 > 100","No effect"),
+                      drop = F,na.value = "lightsteelblue3") +
+    coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
     ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
     theme_linedraw() + theme_light()+ theme(title = element_text(size = 5),
                                             legend.title = element_text(size = 10),
                                             axis.text = element_text(size = 10),
                                             axis.title = element_text(size = 10))
-  LP50.catchment.plot
   return((R.catchment.plot + L.catchment.plot) / (P.catchment.plot + LP50.catchment.plot))
-}
-
-createLP50AggregationPlots <- function(lp50,output.folder){
-  #########################################################################################################
-  ##################################### LP50 analysis #####################################################
-  #########################################################################################################
-  # Exclude Inf values as no exposure then
-  lp50 <- lp50[!lp50$LP50==Inf,]
-  # Option 1
-  agg.reach.species.modeltype <- aggregate(.~Species*RchID*Model_type,
-                                           data = lp50[,c("LP50","Model_type","Species","RchID")],
-                                           FUN = function(x) quantile(x,0.1))
-  agg.reach.modeltype <- aggregate(.~RchID*Model_type,
-                                   data = agg.reach.species.modeltype[,c("RchID","Model_type","LP50")],
-                                   FUN = mean)
-  lbl <- aggregate(.~Model_type*Species, data = agg.reach.species.modeltype[,c("LP50","Model_type","Species")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p1 <- ggplot(agg.reach.species.modeltype)+
-    geom_density(aes(x = LP50,fill = as.factor(Species)),alpha = 0.5,stat="density")+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Species)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = rep(c(0.4,0.3,0.2),2),label = LP50,colour = as.factor(Species))) +
-    guides(colour = F, fill = guide_legend(title = "Species")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000)) +
-    facet_wrap(.~Model_type,ncol = 1)
-  ggsave(plot = p1,filename = paste0(output.folder,"Option1a_10ile_time.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- aggregate(.~Model_type, data = agg.reach.modeltype[,c("LP50","Model_type")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p2 <- ggplot(agg.reach.modeltype)+
-    geom_density(aes(x = LP50,fill = as.factor(Model_type)),alpha = 0.5,stat="density")+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Model_type)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = c(0.4,0.3),colour = as.factor(Model_type),label = LP50)) +
-    guides(colour = F, fill = guide_legend(title = "Model type")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000))
-  ggsave(plot = p2,filename = paste0(output.folder,"Option1a_10ile_species_time.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- aggregate(.~Model_type*Species, data = agg.reach.species.modeltype[,c("LP50","Model_type","Species")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p3 <- ggplot(agg.reach.species.modeltype)+
-    stat_ecdf(aes(x = LP50,colour = as.factor(Species)),lwd = 1)+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Species)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = rep(c(0.4,0.3,0.2),2),label = LP50,colour = as.factor(Species)),show.legend = F) +
-    guides(colour = guide_legend(title = "Species")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000)) +
-    facet_wrap(.~Model_type,ncol = 1)
-  ggsave(plot = p3,filename = paste0(output.folder,"Option1b_10ile_time_cumulfreq.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- aggregate(.~Model_type, data = agg.reach.modeltype[,c("LP50","Model_type")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p4 <- ggplot(agg.reach.modeltype)+
-    stat_ecdf(aes(x = LP50,colour = as.factor(Model_type)),lwd = 1)+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Model_type)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = c(0.4,0.3),colour = as.factor(Model_type),label = LP50), show.legend = F) +
-    guides(colour = guide_legend(title = "Model type")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000))
-  ggsave(plot = p4,filename = paste0(output.folder,"Option1b_10ile_species_time_cumulfreq.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  # Option 2
-  agg.reach.species.modeltype <- aggregate(.~Species*Model_type,
-                                           data = lp50[,c("LP50","Model_type","Species")],
-                                           FUN = function(x) quantile(x,0.1))
-  agg.reach.modeltype <- aggregate(.~Model_type,
-                                   data = agg.reach.species.modeltype[,c("Model_type","LP50")],
-                                   FUN = mean)
-  lbl <- aggregate(.~Model_type*Species, data = lp50[,c("LP50","Model_type","Species")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p1 <- ggplot(lp50[,c("LP50","Model_type","Species")])+
-    geom_density(aes(x = LP50,fill = as.factor(Species)),alpha = 0.5,stat="density")+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Species)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = rep(c(0.4,0.3,0.2),2),label = LP50,colour = as.factor(Species))) +
-    guides(colour = F, fill = guide_legend(title = "Species")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000)) +
-    facet_wrap(.~Model_type,ncol = 1)
-  ggsave(plot = p1,filename = paste0(output.folder,"Option2a_10ile_time.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- agg.reach.modeltype %>% mutate(LP50 = round(LP50,2))
-  p2 <- ggplot(lp50[,c("LP50","Model_type","Species")])+
-    geom_density(aes(x = LP50,fill = as.factor(Model_type)),alpha = 0.5,stat="density")+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Model_type)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = c(0.4,0.3),colour = as.factor(Model_type),label = LP50)) +
-    guides(colour = F, fill = guide_legend(title = "Model type")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000))
-  ggsave(plot = p2,filename = paste0(output.folder,"Option2a_10ile_species_time.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- aggregate(.~Model_type*Species, data = lp50[,c("LP50","Model_type","Species")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p3 <- ggplot(lp50[,c("LP50","Model_type","Species")])+
-    stat_ecdf(aes(x = LP50,colour = as.factor(Species)),lwd = 1)+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Species)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = rep(c(0.4,0.3,0.2),2),label = LP50,colour = as.factor(Species)),show.legend = F) +
-    guides(colour = guide_legend(title = "Species")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000)) +
-    facet_wrap(.~Model_type,ncol = 1)
-  ggsave(plot = p3,filename = paste0(output.folder,"Option2b_10ile_time_cumulfreq.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- agg.reach.modeltype %>% mutate(LP50 = round(LP50,2))
-  p4 <- ggplot(lp50[,c("LP50","Model_type","Species")])+
-    stat_ecdf(aes(x = LP50,colour = as.factor(Model_type)),lwd = 1)+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Model_type)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = c(0.4,0.3),colour = as.factor(Model_type),label = LP50), show.legend = F) +
-    guides(colour = guide_legend(title = "Model type")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000))
-  ggsave(plot = p4,filename = paste0(output.folder,"Option2b_10ile_species_time_cumulfreq.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-
-  # Option 3
-  agg.year.species.modeltype <- aggregate(.~Species*Year*Model_type,
-                                          data = lp50[,c("LP50","Model_type","Species","Year")],
-                                          FUN = function(x) quantile(x,0.1))
-  agg.year.modeltype <- aggregate(.~Year*Model_type,
-                                  data = agg.year.species.modeltype[,c("Year","Model_type","LP50")],
-                                  FUN = mean)
-  lbl <- aggregate(.~Model_type*Species, data = agg.year.species.modeltype[,c("LP50","Model_type","Species")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p1 <- ggplot(agg.year.species.modeltype)+
-    geom_density(aes(x = LP50,fill = as.factor(Species)),alpha = 0.5,stat="density")+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Species)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = rep(c(4,3,2),2),label = LP50,colour = as.factor(Species))) +
-    guides(colour = F, fill = guide_legend(title = "Species")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000)) +
-    facet_wrap(.~Model_type,ncol = 1)
-  ggsave(plot = p1,filename = paste0(output.folder,"Option3a_10ile_time.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- aggregate(.~Model_type, data = agg.year.modeltype[,c("LP50","Model_type")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p2 <- ggplot(agg.year.modeltype)+
-    geom_density(aes(x = LP50,fill = as.factor(Model_type)),alpha = 0.5,stat="density")+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Model_type)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = c(4,3),colour = as.factor(Model_type),label = LP50)) +
-    guides(colour = F, fill = guide_legend(title = "Model type")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000))
-  ggsave(plot = p2,filename = paste0(output.folder,"Option3a_10ile_species_time.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- aggregate(.~Model_type*Species, data = agg.year.species.modeltype[,c("LP50","Model_type","Species")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p3 <- ggplot(agg.year.species.modeltype)+
-    stat_ecdf(aes(x = LP50,colour = as.factor(Species)),lwd = 1)+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Species)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = rep(c(0.4,0.3,0.2),2),label = LP50,colour = as.factor(Species)),show.legend = F) +
-    guides(colour = guide_legend(title = "Species")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000)) +
-    facet_wrap(.~Model_type,ncol = 1)
-  ggsave(plot = p3,filename = paste0(output.folder,"Option3b_10ile_time_cumulfreq.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
-  lbl <- aggregate(.~Model_type, data = agg.year.modeltype[,c("LP50","Model_type")],
-                   FUN = function(x) round(quantile(x,0.1),2))
-  p4 <- ggplot(agg.year.modeltype)+
-    stat_ecdf(aes(x = LP50,colour = as.factor(Model_type)),lwd = 1)+
-    geom_vline(data = lbl,aes(xintercept = LP50,colour = as.factor(Model_type)),lwd = 1) +
-    geom_label(data = lbl,aes(x = LP50,y = c(0.4,0.3),colour = as.factor(Model_type),label = LP50), show.legend = F) +
-    guides(colour = guide_legend(title = "Model type")) +
-    scale_x_log10(breaks = c(0.1,1,10,100,1000,10000,100000),limits = c(0.01,100000))
-  ggsave(plot = p4,filename = paste0(output.folder,"Option3b_10ile_species_time_cumulfreq.png"),width = 20,height = 15,units = "cm",dpi = 200)
-
 }
 
 printLoadingVsTransferTable <- function(reach.info, max.pec, loading.drift){
