@@ -323,7 +323,7 @@ readLP50DataFromStore <- function(data.store.fpath,first.year,last.year,reach.in
   rch <- reach.info$RchID
   
   # list with species and model versions
-  ls.spec <- list.groups(df)[grepl("IndEffect_LP50",list.groups(df))]
+  ls.spec <- list.groups(df)[grepl("IndEffect_LP50_Cascade",list.groups(df))]
   model.versions <- lapply(ls.spec,function(x){
     # get species name and model type from hdf5
     t1 <- df[[paste0(x,"/ProcessingPath")]]$read() %>% strsplit(.,"\\\\") %>% unlist()
@@ -608,42 +608,34 @@ readLoadingDriftFromStore <- function(data.store.fpath,reach.info, first.year,la
   return(loading.drift)
 }
 
-createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info){
+createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info,application.window, first.year,last.year){
   reach.info <- left_join(reach.info,aggregate(.~RchID,residence.times[,c("RchID","Residence_time","Depth")],FUN = median))
   
-  R.residence.time.by.order <- ggplot(data = reach.info, aes(x = as.factor(strahler), y = Residence_time)) +
-    geom_boxplot(outlier.shape = NA,fill = "grey70") +
-    geom_jitter(width = 0.2,
-                shape = 21,
-                colour = "black",
-                fill = "blue",
-                alpha = 0.05,
-                size = 2) +
-    scale_y_continuous(breaks = c(36,360,900,1800,3600,10800)/3600,
-                       labels = as.character(signif(c(36,360,900,1800,3600,10800)/3600,2))) +
-    xlab("Strahler order") + ylab("Median residence time (hours)\nPeriod: May 1998 - 2017") +
-    theme_bw() + coord_trans(y = "log10") + theme(title = element_text(size = 5),
-                                                  legend.title = element_text(size = 10),
-                                                  axis.text = element_text(size = 10),
-                                                  axis.title = element_text(size = 10))
+  R.residence.time.by.order <- ggplot(data = reach.info, aes(x = as.factor(strahler), y = Residence_time * 60, group = as.factor(strahler))) +
+    geom_violin(fill = "lightblue",scale = "count") +
+    stat_summary(fun=median, geom="point", size=1, color="red") +
+    scale_y_continuous(breaks = c(0.5,1,2,5,10,15,30,60,120),
+                       labels = as.character(c(0.5,1,2,5,10,15,30,60,120))) +
+    xlab("Strahler order") + ylab("Median residence time (minutes)") +
+    theme_bw() + coord_trans(y = "log10") + theme(title = element_text(size = 12), plot.title = element_text(hjust = 0.5), 
+                                                  legend.title = element_text(size = 12),
+                                                  axis.text = element_text(size = 12),
+                                                  axis.title = element_text(size = 12)) +
+    ggtitle(paste0("Period: ", application.window, "between ",first.year, " and ",last.year))
   
   
   R.depth.by.order <- ggplot(data = reach.info, aes(x = as.factor(strahler), y = log2(Depth))) +
-    geom_boxplot(outlier.shape = NA,fill = "grey70") +
-    geom_jitter(width = 0.2,
-                shape = 21,
-                colour = "black",
-                fill = "blue",
-                alpha = 0.05,
-                size = 2) +
+    geom_violin(fill = "lightblue",scale = "count") +
+    stat_summary(fun=median, geom="point", size=1, color="red") +
     scale_y_continuous(breaks = log2(c(0,0.1,0.2,0.3,0.4,0.5)),
                        labels = as.character(signif(c(0,0.1,0.2,0.3,0.4,0.5),2))) +
-    xlab("Strahler order") + ylab("Median depth (m)\nPeriod: May 1998 - 2017") +
-    theme_bw() + theme(title = element_text(size = 5),
-                       legend.title = element_text(size = 10),
-                       axis.text = element_text(size = 10),
-                       axis.title = element_text(size = 10)) +
-    ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape")
+    xlab("Strahler order") + ylab("Median depth (m)") +
+    theme_bw() + theme(title = element_text(size = 5), 
+                       legend.title = element_text(size = 12),
+                       axis.text = element_text(size = 12),
+                       axis.title = element_text(size = 12)) +
+    ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape")
+  
   return(R.depth.by.order + R.residence.time.by.order)
 }
 

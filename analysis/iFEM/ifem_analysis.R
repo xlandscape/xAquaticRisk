@@ -52,14 +52,17 @@ LP50.plot <- createLP50byStrahlerPlot(lp50 = lp50,reach.info = reach.info,medLP5
 # Save outputs
 for(i in 1:length(LP50.plot)){
   file_path <- file.path(params$args[2], "Application_1_Week")
-  dir.create(file_path)
+  if(!dir.exists(file_path)){
+  dir.create(file_path)}
   file_path <- file.path(file_path, names(LP50.plot[i]))
-  dir.create(file_path)
+  if(!dir.exists(file_path)){
+  dir.create(file_path)}
   ggsave(plot = LP50.plot[[i]],filename = file.path(file_path, "_medians_points.png"), width = 20,height = 15,units = "cm",dpi = 400)
 }
 
 file_path <- paste0(params$args[2], "/STLP50/")
-dir.create(file_path)
+if(!dir.exists(file_path)){
+dir.create(file_path)}
 createSpatialTemporalLP50Plots(lp50 = lp50,reach.info = reach.info, output.folder = file_path, temporal.conditioning.year = 1)
 #####################################################################
 ################ Residende time and Loading drift ###################
@@ -67,7 +70,9 @@ createSpatialTemporalLP50Plots(lp50 = lp50,reach.info = reach.info, output.folde
 residence.times <- readResidenceTimeFromStore(data.store.fpath = params$args[1], first.year = params$first_year, last.year = params$last_year, reach.info = reach.info, first.app.month = params$first_app_month, last.app.month = params$last_app_month, first.app.day = params$first_app_day, last.app.day = params$last_app_day)
 loading.drift <- readLoadingDriftFromStore(data.store.fpath = params$args[1], first.year = params$first_year, last.year = params$last_year, reach.info = reach.info, first.app.day = params$first_app_day, first.app.month = params$first_app_month, last.app.month = params$last_app_month, last.app.day = params$last_app_day)
 
-ResidenceTime.Depth.Plot <- createResidenceTimeDepthByStrahlerPlot(residence.times = residence.times,reach.info = reach.info)
+ResidenceTime.Depth.Plot <- createResidenceTimeDepthByStrahlerPlot(residence.times = residence.times,reach.info = reach.info,
+                                                                   application.window = params$options$application_window,
+                                                                   first.year = params$first_year, last.year = params$last_year)
 ggsave(plot = ResidenceTime.Depth.Plot,
        filename = file.path(params$args[2], "Application_1_Week", "Boxplot_median_Depth_residence_time_by_Strahler.png"),
        width = 20,height = 12, units = "cm",dpi = 400)
