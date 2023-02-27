@@ -8,7 +8,9 @@ params <- parse_args(
       make_option("--start", type = "character", help = "The first day of the simulation period"),
       make_option("--end", type = "character", help = "The last day of the simulation period"),
       make_option("--application_window", type = "character", help = "The application period"),
-      make_option("--lib", type = "character", help = "Additional library path for R packages")
+      make_option("--lib", type = "character", help = "Additional library path for R packages"),
+      make_option("--model_name", type = "character", help = "The name of the landscape model"),
+      make_option("--model_version", type = "character", help = "The version of the landscape model")
     )
   ),
   positional_arguments = TRUE
@@ -20,6 +22,9 @@ params$first_app_month <- as.integer(substr(params$options$application_window, 1
 params$first_app_day <- as.integer(substr(params$options$application_window, 4, 5))
 params$last_app_month <- as.integer(substr(params$options$application_window, 10, 11))
 params$last_app_day <- as.integer(substr(params$options$application_window, 13, 14))
+
+print(params$options$model_name)
+print(params$options$model_version)
 
 source(params$options$source)
 # Script for analysis of ifem outputs

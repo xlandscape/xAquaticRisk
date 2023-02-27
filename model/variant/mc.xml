@@ -26,6 +26,8 @@
             <End>$(SimulationEnd)</End>
             <Application_Window>$(ApplicationTimeWindow)</Application_Window>
             <Lib>$(_PARAM_DIR_)\analysis\lib</Lib>
+            <Model_Name>xAquaticRisk</Model_Name>
+            <Model_Version>2.73</Model_Version>
         </Observer>
     </Observers>
     <Store module="stores" class="X3dfStore">
