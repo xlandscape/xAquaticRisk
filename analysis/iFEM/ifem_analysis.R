@@ -43,7 +43,8 @@ max.pec <- left_join(max.pec,reach.info)
 # Calculate median values
 medPEC <- medianPECValues(max.pec = max.pec,reach.info = reach.info)
 # Plot PECS by strahler order
-PEC.plot <- createPECbyStrahlerPlot(max.pec = max.pec,reach.info = reach.info, medPEC = medPEC)
+PEC.plot <- createPECbyStrahlerPlot(max.pec = max.pec,reach.info = reach.info, medPEC = medPEC,
+                                    model.name = params$options$model_name,model.version = params$options$model_version)
 ggsave(plot = PEC.plot, filename = file.path(params$args[2], paste0("PEC_", params$first_year, "-", params$last_year, "_medians_points.png")), width = 20, height = 15, units = "cm", dpi = 400)
 
 ############################################
@@ -68,7 +69,8 @@ for(i in 1:length(LP50.plot)){
 file_path <- paste0(params$args[2], "/STLP50/")
 if(!dir.exists(file_path)){
 dir.create(file_path)}
-createSpatialTemporalLP50Plots(lp50 = lp50,reach.info = reach.info, output.folder = file_path, temporal.conditioning.year = 1)
+createSpatialTemporalLP50Plots(lp50 = lp50,reach.info = reach.info, output.folder = file_path, temporal.conditioning.year = 1,
+                               model.name = params$options$model_name,model.version = params$options$model_version)
 #####################################################################
 ################ Residende time and Loading drift ###################
 #####################################################################
@@ -77,14 +79,16 @@ loading.drift <- readLoadingDriftFromStore(data.store.fpath = params$args[1], fi
 
 ResidenceTime.Depth.Plot <- createResidenceTimeDepthByStrahlerPlot(residence.times = residence.times,reach.info = reach.info,
                                                                    application.window = params$options$application_window,
-                                                                   first.year = params$first_year, last.year = params$last_year)
+                                                                   first.year = params$first_year, last.year = params$last_year,
+                                                                   model.name = params$options$model_name,model.version = params$options$model_version)
 ggsave(plot = ResidenceTime.Depth.Plot,
        filename = file.path(params$args[2], "Application_1_Week", "Boxplot_median_Depth_residence_time_by_Strahler.png"),
        width = 20,height = 12, units = "cm",dpi = 400)
 
 RtimePECLoadingLP50 <- createRtimeLoadingPECsLP50Plot(focal.year = params$first_year, first.app.day = params$first_app_day, first.app.month = params$first_app_month, last.app.month = params$last_app_month, last.app.day = params$last_app_day,
                                                      residence.times = residence.times, loading.drift = loading.drift, max.pec = max.pec, lp50 = lp50,
-                                                     scenario.path = params$options$hydrography)
+                                                     scenario.path = params$options$hydrography,
+                                                     model.name = params$options$model_name,model.version = params$options$model_version)
 ggsave(plot = RtimePECLoadingLP50,
       filename = file.path(params$args[2], "Application_1_Week", "Catchment_plots_combined.png"),
       width = 30,height = 30, units = "cm",dpi = 400)

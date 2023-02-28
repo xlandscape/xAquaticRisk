@@ -194,7 +194,10 @@ createPECbyStrahlerPlot <- function(max.pec,
                                     labels_y = c("0.000001","0.00001","0.0001","0.001","0.01","0.1"),
                                     point_colour = "red",
                                     linewidth = 0.75,
-                                    output.folder = NULL){
+                                    output.folder = NULL,
+                                    model.name = NULL,
+                                    model.version = NULL
+                                    ){
   vpos <- aggregate(.~strahler,data = reach.info[,c("strahler","width")],FUN = length)
   vpos <- vpos[order(vpos$strahler),]
   row.names(vpos) <- NULL
@@ -231,7 +234,7 @@ createPECbyStrahlerPlot <- function(max.pec,
                        limits = c(0,max(vpos$x)),
                        expand = c(0,20)) +
     coord_cartesian(ylim = c(-6.5, 0)) +
-    ggtitle("Model: xAquatic v2.73\nHydrology: diffusive wave, T-shape") +
+    ggtitle(paste0("Model: " ,model.name, " ", model.version)) +
     theme_bw() +
     theme(text = element_text(size = 12),axis.text = element_text(size = 12),plot.title = element_text(size = 6,hjust = 1)) +
     geom_text(data = data.frame(x = vpos$x,y = rep(-1,nrow(vpos)),
@@ -243,7 +246,7 @@ createPECbyStrahlerPlot <- function(max.pec,
   return(PEC.plots)
 }
 
-createSpatialTemporalPECPlots <- function(max.pec,assessment.period,reach.info,output.folder,temporal.conditioning.year,min.concentration, max.concentration,log.steps.concentration.range){
+createSpatialTemporalPECPlots <- function(max.pec,assessment.period,reach.info,output.folder,temporal.conditioning.year,min.concentration, max.concentration,log.steps.concentration.range, model.name = NULL,model.version = NULL){
   
   PEC <- max.pec
   PEC <- PEC[PEC$Year %in% assessment.period,]
@@ -304,7 +307,7 @@ createSpatialTemporalPECPlots <- function(max.pec,assessment.period,reach.info,o
       # labels = trans_format("log10", label_math(10^.x)),
       # breaks = c(-6,-5,-4,-3,-2,-1),
       # labels = c("0.000001","0.00001","0.0001","0.001","0.01","0.1")) +
-      ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape") + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
+       ggtitle(paste0("Model: " ,model.name, " ", model.version)) + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
     ggsave(plot = p,paste0(output.folder,"/PEC_plot_conditioningPercentile_",temp.perc$y[j],".png"),
            width = 20, height = 15,units = "cm",dpi = 200)
     
@@ -451,7 +454,7 @@ createLP50byStrahlerPlot <- function(lp50,
   return(LP50.plot)
 }
 
-createSpatialTemporalLP50Plots <- function(lp50,reach.info,output.folder,temporal.conditioning.year){
+createSpatialTemporalLP50Plots <- function(lp50,reach.info,output.folder,temporal.conditioning.year,model.name = NULL, model.version = NULL){
   
   lp50.mat <- lp50[,c("LP50","Year","RchID","Species","Model_type")] %>% pivot_wider(.,names_from = "RchID",values_from = "LP50") %>% as.data.frame()
   lp50 <- left_join(lp50,reach.info,by = "RchID")
@@ -507,7 +510,7 @@ createSpatialTemporalLP50Plots <- function(lp50,reach.info,output.folder,tempora
           scale_fill_manual("LP50", values = c("1" = "red","2" = "orange","3" = "yellow","4" = "forestgreen","5" = "lightskyblue1"),
                             label = c("LP50 < 1", "1 < LP50 < 10", "10 < LP50 < 100","LP50 > 100","Effect free year","No effect"),
                             drop = F,na.value = "lightsteelblue3") +
-          ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape") + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
+           ggtitle(paste0("Model: " ,model.name, " ", model.version)) + theme(text = element_text(size = 12),plot.title = element_text(size = 5))
         ggsave(plot = p,paste0(output.folder,"ALL_",combinations$Species[i],"_",combinations$Model_type[i],"_conditioningPercentile",temp.perc$y[j],".png"),
                width = 20, height = 15,units = "cm",dpi = 200)
         
@@ -608,7 +611,7 @@ readLoadingDriftFromStore <- function(data.store.fpath,reach.info, first.year,la
   return(loading.drift)
 }
 
-createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info,application.window, first.year,last.year){
+createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info,application.window, first.year,last.year, model.name = NULL, model.version = NULL){
   reach.info <- left_join(reach.info,aggregate(.~RchID,residence.times[,c("RchID","Residence_time","Depth")],FUN = median))
   
   R.residence.time.by.order <- ggplot(data = reach.info, aes(x = as.factor(strahler), y = Residence_time * 60, group = as.factor(strahler))) +
@@ -621,7 +624,7 @@ createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info,ap
                                                   legend.title = element_text(size = 12),
                                                   axis.text = element_text(size = 12),
                                                   axis.title = element_text(size = 12)) +
-    ggtitle(paste0("Period: ", application.window, "between ",first.year, " and ",last.year))
+    ggtitle(paste0("Period: ", application.window, "\nbetween ",first.year, " and ",last.year))
   
   
   R.depth.by.order <- ggplot(data = reach.info, aes(x = as.factor(strahler), y = log2(Depth))) +
@@ -634,14 +637,14 @@ createResidenceTimeDepthByStrahlerPlot <- function(residence.times,reach.info,ap
                        legend.title = element_text(size = 12),
                        axis.text = element_text(size = 12),
                        axis.title = element_text(size = 12)) +
-    ggtitle("Model: xAquatic v2.67\nHydrology: diffusive wave, T-shape")
+     ggtitle(paste0("Model: " ,model.name, " ", model.version))
   
   return(R.depth.by.order + R.residence.time.by.order)
 }
 
 # Plot for residence times, loading, PECs, and LP50
 createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day,first.app.month,last.app.month,
-                                           residence.times,loading.drift,max.pec,lp50,scenario.path){
+                                           residence.times,loading.drift,max.pec,lp50,scenario.path, model.name = NULL, model.version = NULL){
   #######################################
   ##### Spatial residence time plot #####
   #######################################
@@ -671,7 +674,7 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
                            limits = c(grad.colours[1],grad.colours[5])) +
     coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
-    ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
+     ggtitle(paste0("Model: " ,model.name, " ", model.version)) +
     theme_linedraw() + theme_light() + theme(title = element_text(size = 5),
                                              legend.title = element_text(size = 10),
                                              axis.text = element_text(size = 10),
@@ -706,7 +709,7 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
                            na.value = "grey50") +
     coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
-    ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
+     ggtitle(paste0("Model: " ,model.name, " ", model.version)) +
     theme_linedraw() + theme_light()+ theme(title = element_text(size = 5),
                                             legend.title = element_text(size = 10),
                                             axis.text = element_text(size = 10),
@@ -740,7 +743,7 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
                            na.value = "grey50") +
     coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
-    ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
+     ggtitle(paste0("Model: " ,model.name, " ", model.version)) +
     theme_linedraw() + theme_light()+ theme(title = element_text(size = 5),
                                             legend.title = element_text(size = 10),
                                             axis.text = element_text(size = 10),
@@ -774,7 +777,7 @@ createRtimeLoadingPECsLP50Plot <- function(focal.year,first.app.day,last.app.day
                       drop = F,na.value = "lightsteelblue3") +
     coord_equal() + guides(size = "none") +
     labs(x = "X (m)", y = "Y (m)")+
-    ggtitle("Model: xAquatic v2.45\nHydrology: diffusive wave, T-shape") +
+     ggtitle(paste0("Model: " ,model.name, " ", model.version)) +
     theme_linedraw() + theme_light()+ theme(title = element_text(size = 5),
                                             legend.title = element_text(size = 10),
                                             axis.text = element_text(size = 10),
