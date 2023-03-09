@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: knitr Setup and plotly Service Function</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for knitrSet {Hmisc}"><tr><td>knitrSet {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>knitr Setup and plotly Service Function</h2>
+
+<h3>Description</h3>
+
+<p><code>knitrSet</code> sets up knitr to use better default parameters for base graphics,
+better code formatting, and to allow several arguments to be passed
+from code chunk headers, such as <code>bty</code>, <code>mfrow</code>, <code>ps</code>,
+<code>bot</code> (extra bottom margin for base graphics), <code>top</code> (extra
+top margin), <code>left</code> (extra left margin), <code>rt</code> (extra right
+margin), <code>lwd</code>, <code>mgp</code>, <code>las</code>, <code>tcl</code>, <code>axes</code>,
+<code>xpd</code>, <code>h</code> (usually <code>fig.height</code> in knitr),
+<code>w</code> (usually <code>fig.width</code> in knitr), <code>wo</code>
+(<code>out.width</code> in knitr), <code>ho</code> (<code>out.height</code> in knitr),
+<code>cap</code> (character
+string containing figure caption), <code>scap</code> (character string
+containing short figure caption for table of figures).  The
+<code>capfile</code> argument facilities auto-generating a table of figures
+for certain Rmarkdown report themes.  This is done by the addition of
+a hook function that appends data to the <code>capfile</code> file each time
+a chunk runs that has a long or short caption in the chunk header.
+</p>
+<p><code>plotlySave</code> saves a plotly graphic with name <code>foo.png</code>
+where <code>foo</code> is the name of the current chunk.  You must have a
+free <code>plotly</code> account from <code>plot.ly</code> to use this function,
+and you must have run 
+<code>Sys.setenv(plotly_username="your_plotly_username")</code> and
+<code>Sys.setenv(plotly_api_key="your_api_key")</code>. The API key can be
+found in one's profile settings.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+knitrSet(basename=NULL, w=if(! bd) 4, h=if(! bd) 3, wo=NULL, ho=NULL,
+         fig.path=if(length(basename)) basename else '',
+         fig.align=if(! bd) 'center', fig.show='hold',
+         fig.pos=if(! bd) 'htbp',
+         fig.lp    = if(! bd) paste('fig', basename, sep=':'),
+         dev=switch(lang, latex='pdf', markdown='png',
+                    blogdown=NULL, quarto=NULL),
+         tidy=FALSE, error=FALSE,
+         messages=c('messages.txt', 'console'),
+         width=61, decinline=5, size=NULL, cache=FALSE,
+         echo=TRUE, results='markup', capfile=NULL,
+         lang=c('latex','markdown','blogdown','quarto'))
+
+plotlySave(x, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>basename</code></td>
+<td>
+<p>base name to be added in front of graphics file
+names. <code>basename</code> is followed by a minus sign.</p>
+</td></tr>
+<tr valign="top"><td><code>w,h</code></td>
+<td>
+<p>default figure width and height in inches</p>
+</td></tr>
+<tr valign="top"><td><code>wo,ho</code></td>
+<td>
+<p>default figure rendering width and height, in integer
+pixels or percent as a character string, e.g. <code>'40%'</code></p>
+</td></tr>
+<tr valign="top"><td><code>fig.path</code></td>
+<td>
+<p>path for figures.  To put figures in a subdirectory
+specify e.g. <code>fig.path='folder/'</code>.  Ignored for blogdown.</p>
+</td></tr>
+<tr valign="top"><td><code>fig.align,fig.show,fig.pos,fig.lp,tidy,cache,echo,results,error,size</code></td>
+<td>
+<p>see knitr documentation</p>
+</td></tr> 
+<tr valign="top"><td><code>dev</code></td>
+<td>
+<p>graphics device, with default figured from <code>lang</code></p>
+</td></tr>
+<tr valign="top"><td><code>messages</code></td>
+<td>
+<p>By default warning and other messages such as those
+from loading packages are sent to file <code>'messages.txt'</code> in the
+current working directory.  You can specify
+<code>messages='console'</code> to send them directly to the console.</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+<p>text output width for R code and output</p>
+</td></tr>
+<tr valign="top"><td><code>decinline</code></td>
+<td>
+<p>number of digits to the right of the decimal point to
+round numeric values appearing inside Sexpr</p>
+</td></tr>
+<tr valign="top"><td><code>capfile</code></td>
+<td>
+<p>the name of a file in the current working directory
+that is used to accumulate chunk labels, figure cross-reference
+tags, and figure short captions (long captions if no short caption
+is defined) for the purpose of using
+<code>markupSpecs$markdown$tof()</code> to insert a table of figures in a
+report.  The file as appended to, which is useful if
+<code>cache=TRUE</code> is used since this will keep some chunks from
+running.  The <code>tof</code> function will remove earlier duplicated
+figure tags if this is the case.  If not <code>cache</code>ing, the user
+should initialize the file to empty at the top of the script.</p>
+</td></tr>
+<tr valign="top"><td><code>lang</code></td>
+<td>
+<p>Default is <code>'latex'</code> to use LaTeX.  Set to
+<code>'markdown'</code> when using R Markdown or <code>'blogdown'</code> or
+<code>'quarto'</code>.  For 
+<code>'blogdown'</code> and <code>'quarto'</code>, <code>par</code> and <code>knitr</code>
+graphics-related hooks are not called as this would prevent
+writing graphics files in the correct directory
+for the blog system.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a <code>plotly</code> graphics object or a named list of such
+objects.  The resulting <code>png</code> file will go in the file path
+given by the <code>knitr</code> <code>fig.path</code> value, and have a base
+name equal to the current <code>knitr</code> chunk name.  If <code>x</code> is a
+list, a minus sign followed by the chunk name are inserted before
+<code>.png</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>additional arguments passed to <code>plotly::plotly_IMAGE</code></p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../knitr/help/knit.html">knit</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+# Typical call (without # comment symbols):
+# &lt;&lt;echo=FALSE&gt;&gt;=
+# require(Hmisc)
+# knitrSet()
+# @
+
+knitrSet()    # use all defaults and don't use a graphics file prefix
+knitrSet('modeling')   # use modeling- prefix for a major section or chapter
+knitrSet(cache=TRUE, echo=FALSE)  # global default to cache and not print code
+knitrSet(w=5,h=3.75)   # override default figure width, height
+
+# ```{r chunkname}
+# p &lt;- plotly::plot_ly(...)
+# plotlySave(p)   # creates fig.path/chunkname.png
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

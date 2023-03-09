@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Creates a string of arbitry length</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for nstr {Hmisc}"><tr><td>nstr {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Creates a string of arbitry length </h2>
+
+<h3>Description</h3>
+
+<p>Creates a vector of strings which consists of the string segment given in
+each element of the <code>string</code> vector repeated <code>times</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+nstr(string, times)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>string</code></td>
+<td>
+<p> character: vector of string segments to be
+repeated.  Will be recycled if argument <code>times</code> is longer.</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p> integer: vector of number of times to repeat the
+corisponding segment.  Will be recycled if argument <code>string</code> is
+longer.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>returns a character vector the same length as the longest of the two arguments.
+</p>
+
+
+<h3>Note</h3>
+
+<p>Will throw a warning if the length of the longer argment is not a even
+multiple of the shorter argument.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Charles Dupont </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="../../base/html/paste.html">paste</a></code>, <code><a href="../../base/html/rep.html">rep</a></code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+nstr(c("a"), c(0,3,4))
+
+nstr(c("a", "b", "c"), c(1,2,3))
+
+nstr(c("a", "b", "c"), 4)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

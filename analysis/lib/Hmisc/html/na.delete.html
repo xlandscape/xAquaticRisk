@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Row-wise Deletion na.action</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for na.delete {Hmisc}"><tr><td>na.delete {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Row-wise Deletion na.action
+</h2>
+
+<h3>Description</h3>
+
+<p>Does row-wise deletion as <code>na.omit</code>, but adds frequency of missing values
+for each predictor
+to the <code>"na.action"</code> attribute of the returned model frame.
+Optionally stores further details if <code>options(na.detail.response=TRUE)</code>. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+na.delete(frame)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>frame</code></td>
+<td>
+
+<p>a model frame
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>a model frame with rows deleted and the <code>"na.action"</code> attribute added.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/na.fail.html">na.omit</a></code>, <code><a href="../../Hmisc/help/na.keep.html">na.keep</a></code>, <code><a href="../../Hmisc/help/na.detail.response.html">na.detail.response</a></code>, <code><a href="../../stats/html/model.frame.html">model.frame.default</a></code>,
+<code><a href="../../stats/html/nafns.html">naresid</a></code>, <code><a href="../../stats/html/naprint.html">naprint</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# options(na.action="na.delete")
+# ols(y ~ x)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

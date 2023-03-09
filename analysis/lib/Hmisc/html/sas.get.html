@@ -1,0 +1,599 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Convert a SAS Dataset to an S Data Frame</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for sas.get {Hmisc}"><tr><td>sas.get {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Convert a SAS Dataset to an S Data Frame</h2>
+
+<h3>Description</h3>
+
+<p>Converts a <acronym><span class="acronym">SAS</span></acronym> dataset into an S data frame.  
+You may choose to extract only a subset of variables 
+or a subset of observations in the <acronym><span class="acronym">SAS</span></acronym> dataset.
+The function will automatically convert </p>
+<pre>PROC FORMAT</pre><p>-coded
+variables to factor objects.  The original <acronym><span class="acronym">SAS</span></acronym> codes are stored in an
+attribute called <code>sas.codes</code> and these may be added back to the
+<code>levels</code> of a <code>factor</code> variable using the <code>code.levels</code>
+function. 
+Information about special missing values may be captured in an attribute
+of each variable having special missing values.  This attribute is
+called <code>special.miss</code>, and such variables are given class <code>special.miss</code>.
+There are <code>print</code>, <code>[]</code>, <code>format</code>, and <code>is.special.miss</code>
+methods for such variables.
+date, time, and date-time variables use respectively
+<code><a href="../../base/html/Dates.html">Dates</a></code>, <code><a href="../../base/html/DateTimeClasses.html">DateTimeClasses</a></code>, and
+<code><a href="../../chron/help/chron.html">chron</a></code> variables.
+If using S-Plus 5 or 6 or later, the <code>timeDate</code> function is used instead.
+If a date variable represents a partial date (0.5 added if
+month missing, 0.25 added if day missing, 0.75 if both), an attribute
+<code>partial.date</code> is added to the variable, and the variable also becomes
+a class <code>imputed</code> variable.
+The <code>describe</code> function uses information about partial dates and
+special missing values.
+There is an option to automatically <code>PKUNZIP</code> compressed
+<acronym><span class="acronym">SAS</span></acronym> datasets.
+</p>
+<p><code>sas.get</code> works by composing and running a <acronym><span class="acronym">SAS</span></acronym> job that
+creates various <acronym><span class="acronym">ASCII</span></acronym> files that are read and analyzed
+by <code>sas.get</code>.  You can also run the <acronym><span class="acronym">SAS</span></acronym> <code>sas_get</code> macro,
+which writes the <acronym><span class="acronym">ASCII</span></acronym> files for downloading, in a separate
+step or on another computer, and then tell <code>sas.get</code> (through the
+<code>sasout</code> argument) to access these files instead of running <acronym><span class="acronym">SAS</span></acronym>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sas.get(libraryName, member, variables=character(0), ifs=character(0),
+     format.library=libraryName, id,
+     dates.=c("sas","yymmdd","yearfrac","yearfrac2"),
+     keep.log=TRUE, log.file="_temp_.log", macro=sas.get.macro,
+     data.frame.out=existsFunction("data.frame"), clean.up=FALSE, quiet=FALSE,
+     temp=tempfile("SaS"), formats=TRUE, 
+     recode=formats, special.miss=FALSE, sasprog="sas",
+     as.is=.5, check.unique.id=TRUE, force.single=FALSE, pos,
+     uncompress=FALSE, defaultencoding="latin1", var.case="lower")
+
+is.special.miss(x, code)
+
+## S3 method for class 'special.miss'
+x[..., drop=FALSE]
+
+## S3 method for class 'special.miss'
+print(x, ...)
+
+## S3 method for class 'special.miss'
+format(x, ...)
+
+sas.codes(object)
+
+code.levels(object)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>libraryName</code></td>
+<td>
+
+<p>character string naming the directory in which the dataset is kept.
+The default is <code>libraryName = "."</code>, indicating that the current
+directory is to be used.
+</p>
+</td></tr>
+<tr valign="top"><td><code>member</code></td>
+<td>
+
+<p>character string giving the second part of the two part <acronym><span class="acronym">SAS</span></acronym> dataset name.  
+(The first part is irrelevant here - it is mapped to the directory name.)
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a variable that may have been created by <code>sas.get</code> with <code>special.miss=TRUE</code>
+or with <code>recode</code> in effect.
+</p>
+</td></tr>
+<tr valign="top"><td><code>variables</code></td>
+<td>
+
+<p>vector of character strings naming the variables in the <acronym><span class="acronym">SAS</span></acronym> dataset.  
+The resulting data frame will contain only those variables from the
+<acronym><span class="acronym">SAS</span></acronym> dataset.  
+To get all of the variables (the default), an empty string may be given.
+It is a fatal error if any one of the variables is not
+in the <acronym><span class="acronym">SAS</span></acronym> dataset.  If you have retrieved a subset of the variables
+in the <acronym><span class="acronym">SAS</span></acronym> dataset and which to retrieve the same list of variables
+from another dataset, you can program the value of <code>variables</code> - see
+one of the last examples.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ifs</code></td>
+<td>
+
+<p>a vector of character strings, each containing one <acronym><span class="acronym">SAS</span></acronym> &ldquo;subsetting if&rdquo;
+statement.  
+These will be used to extract a subset of the observations in the <acronym><span class="acronym">SAS</span></acronym> dataset.
+</p>
+</td></tr>
+<tr valign="top"><td><code>format.library</code></td>
+<td>
+
+<p>The directory containing the file &lsquo;<span class="file">formats.sc2</span>&rsquo;, which contains
+the definitions of the user defined formats used in this dataset.
+By default, we look for the formats in the same directory as the data.
+The user defined formats must be available (so <acronym><span class="acronym">SAS</span></acronym> can read the data).
+</p>
+</td></tr>
+<tr valign="top"><td><code>formats</code></td>
+<td>
+
+<p>Set <code>formats</code> to <code>FALSE</code> to keep <code>sas.get</code> from telling the <acronym><span class="acronym">SAS</span></acronym> macro to 
+retrieve value label formats from <code>format.library</code>.  When you do not
+specify <code>formats</code> or <code>recode</code>, <code>sas.get</code> will set <code>format</code> to <code>TRUE</code> if a
+<acronym><span class="acronym">SAS</span></acronym> format catalog (&lsquo;<span class="file">.sct</span>&rsquo; or &lsquo;<span class="file">.sc2</span>&rsquo;) file exists in <code>format.library</code>.
+<code>sas.get</code> stores <acronym><span class="acronym">SAS</span></acronym> </p>
+<pre>PROC FORMAT VALUE</pre><p> definitions
+as the <code>formats</code> attribute of the returned
+object (see below). A format is used if it is referred to by one or more 
+variables
+in the dataset, if it contains no ranges of values (i.e., it identifies
+value labels for single values), and if it is a character format
+or a numeric format that is not used just to label missing values.
+To fetch the values and labels for variable <code>x</code> in the dataset <code>d</code> you
+could type:
+<br />
+<code>f &lt;- attr(d\$x, "format")</code>
+<br />
+<code>formats &lt;- attr(d, "formats")</code>
+<br />
+<code>formats\$f\$values; formats\$f\$labels</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>recode</code></td>
+<td>
+
+<p>This parameter defaults to <code>TRUE</code> if <code>formats</code> is <code>TRUE</code>.  If it is
+<code>TRUE</code>, variables that have an appropriate format (see above) are
+recoded as <code>factor</code> objects, which map the values
+to the value labels for the format.  Alternatively, set <code>recode</code> to
+1 to use labels of the form value:label, e.g. 1:good 2:better 3:best.
+Set <code>recode</code> to 2 to use labels such as good(1) better(2) best(3).
+Since <code>sas.codes</code> and <code>code.levels</code> add flexibility, the usual choice
+for <code>recode</code> is <code>TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>drop</code></td>
+<td>
+
+<p>logical. If <code>TRUE</code> the result is coerced to the
+lowest possible dimension.
+</p>
+</td></tr>
+<tr valign="top"><td><code>special.miss</code></td>
+<td>
+
+<p>For numeric variables, any missing values are stored as NA in S.
+You can recover special missing values by setting <code>special.miss</code> to
+<code>TRUE</code>.  This will cause the <code>special.miss</code> attribute and the
+<code>special.miss</code> class to be added
+to each variable that has at least one special missing value.  
+Suppose that variable  <code>y</code> was .E in observation 3 and .G
+in observation 544.  The <code>special.miss</code> attribute for <code>y</code> then has the
+value
+<br />
+<code>list(codes=c("E","G"),obs=c(3,544))</code>
+<br />
+To fetch this information for variable <code>y</code> you would say for example
+<br />
+<code>s &lt;- attr(y, "special.miss")</code>
+<br />
+<code>s\$codes; s\$obs</code>
+<br />
+or use <code>is.special.miss(x)</code> or the <code>print.special.miss</code> method, which
+will replace <code>NA</code> values for the variable with <span class="samp">E</span> or <span class="samp">G</span> if they
+correspond to special missing values.
+The describe
+function uses this information in printing a data summary.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+
+<p>The name of the variable to be used as the row names of the S dataset.
+The id variable becomes the <code>row.names</code> attribute of a data frame, but
+the id variable is still retained as a variable in the data frame.
+You can also specify a vector of variable names as the <code>id</code>
+parameter.  After fetching the data from <acronym><span class="acronym">SAS</span></acronym>, all these variables will be
+converted to character format and concatenated (with a space as a separator)
+to form a (hopefully) unique identification variable.
+</p>
+</td></tr>
+<tr valign="top"><td><code>dates.</code></td>
+<td>
+
+<p>specifies the format for storing <acronym><span class="acronym">SAS</span></acronym> dates in the
+resulting data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>as.is</code></td>
+<td>
+
+<p><acronym><span class="acronym">SAS</span></acronym> character variables are converted to S factor
+objects if <code>as.is=FALSE</code> or if <code>as.is</code> is a number between 0 and 1 inclusive and
+the number of unique values of the variable is less than
+the number of observations (<code>n</code>) times <code>as.is</code>.  The default if <code>as.is</code> is 0.5,
+so character variables are converted to factors only if they have fewer
+than <code>n/2</code> unique values.  The primary purpose of this is to keep unique
+identification variables as character values in the data frame instead
+of using more space to store both the integer factor codes and the
+factor labels.
+</p>
+</td></tr>
+<tr valign="top"><td><code>check.unique.id</code></td>
+<td>
+
+<p>If <code>id</code> is specified, the row names are checked for
+uniqueness if <code>check.unique.id = TRUE</code>.  If any are duplicated, a warning
+is printed.  Note that if a data frame is being created with duplicate
+row names, statements such as <code>my.data.frame["B23",]</code> will retrieve
+only the first row with a row name of <span class="samp">B23</span>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>force.single</code></td>
+<td>
+
+<p>By default, <acronym><span class="acronym">SAS</span></acronym> numeric variables having <i>LENGTH &gt; 4</i> are stored as
+S double precision numerics, which allow for the same precision as
+a <acronym><span class="acronym">SAS</span></acronym> </p>
+<pre>LENGTH</pre><p> 8 variable.  Set <code>force.single = TRUE</code> to store every
+numeric variable in single precision (7 digits of precision).
+This option is useful when the creator of the <acronym><span class="acronym">SAS</span></acronym> dataset has
+failed to use a </p>
+<pre>LENGTH</pre><p> statement.
+R does not have single precision,
+so no attempt is made to convert to single if running <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>keep.log</code></td>
+<td>
+
+<p>logical: if <code>FALSE</code>, delete the <acronym><span class="acronym">SAS</span></acronym> log file upon completion.
+</p>
+</td></tr>
+<tr valign="top"><td><code>log.file</code></td>
+<td>
+
+<p>the name of the <acronym><span class="acronym">SAS</span></acronym> log file.
+</p>
+</td></tr>
+<tr valign="top"><td><code>macro</code></td>
+<td>
+
+<p>the name of an S object in the current search path that contains the text of
+the <acronym><span class="acronym">SAS</span></acronym> macro called by S. The S object is a character vector that
+can be edited using, for example, <code>sas.get.macro &lt;- editor(sas.get.macro)</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>data.frame.out</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to make the result a list instead of a data
+frame
+</p>
+</td></tr>
+<tr valign="top"><td><code>clean.up</code></td>
+<td>
+
+<p>logical flag: if <code>TRUE</code>, remove all temporary files when finished.  You
+may want to keep these while debugging the <acronym><span class="acronym">SAS</span></acronym> macro.  Not needed for <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>quiet</code></td>
+<td>
+
+<p>logical flag: if <code>FALSE</code>, print the contents of the
+<acronym><span class="acronym">SAS</span></acronym> log file if there has been an error.
+</p>
+</td></tr>
+<tr valign="top"><td><code>temp</code></td>
+<td>
+
+<p>the prefix to use for the temporary files.  Two characters
+will be added to this, the resulting name
+must fit on your file system.
+</p>
+</td></tr>
+<tr valign="top"><td><code>sasprog</code></td>
+<td>
+
+<p>the name of the system command to invoke <acronym><span class="acronym">SAS</span></acronym>
+</p>
+</td></tr>
+<tr valign="top"><td><code>uncompress</code></td>
+<td>
+
+<p>set to <code>FALSE</code> by default.  Set it
+to <code>TRUE</code> to automatically invoke the DOS <code>PKUNZIP</code> command
+if &lsquo;<span class="file"><var>member</var>.zip</span>&rsquo; exists,
+to uncompress the <acronym><span class="acronym">SAS</span></acronym> dataset before
+proceeding.  This assumes you have the file permissions to allow
+uncompressing in place.  If the file is already uncompressed, this
+option is ignored.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pos</code></td>
+<td>
+
+<p>by default, a list or data frame which contains all the variables
+is returned.  If you specify <code>pos</code>, each individual variable
+is placed into a separate object (whose name is the name
+of the variable) using the <code>assign</code> function with the
+<code>pos</code> argument.  For example, you can put each variable
+in its own file in a directory, which in some cases may
+save memory over attaching a data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>code</code></td>
+<td>
+
+<p>a special missing value code (<span class="samp">A</span> through <span class="samp">Z</span> or
+<span class="samp">\_</span>) to check against. If <code>code</code> is omitted,
+<code>is.special.miss</code> will return a <code>TRUE</code> for each 
+observation that has any special missing value.
+</p>
+</td></tr>
+<tr valign="top"><td><code>defaultencoding</code></td>
+<td>
+
+<p>encoding to assume if the SAS dataset does not specify one. Defaults to &quot;latin1&quot;.
+</p>
+</td></tr>
+<tr valign="top"><td><code>var.case</code></td>
+<td>
+
+<p>specify the case that you want variable names to be in.  &quot;lower&quot; for lower case, 
+&quot;upper&quot; for upper case, and &quot;preserve&quot; to retain the case from SAS.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>a variable in a data frame created by <code>sas.get</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>ignored</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>If you specify <code>special.miss = TRUE</code> and there are no special missing
+values in the data <acronym><span class="acronym">SAS</span></acronym> dataset, the <acronym><span class="acronym">SAS</span></acronym> step will bomb.
+</p>
+<p>For variables having a </p>
+<pre>PROC FORMAT VALUE</pre>
+<p>format with some of the levels undefined, <code>sas.get</code> will interpret those
+values as <code>NA</code> if you are using <code>recode</code>.
+</p>
+<p>If you leave the <code>sasprog</code> argument at its default value of
+<span class="samp">sas</span>, be sure that the <acronym><span class="acronym">SAS</span></acronym> executable is in the &lsquo;<span class="file">PATH</span>&rsquo;
+specified in your &lsquo;<span class="file">autoexec.bat</span>&rsquo; file.  Also make sure that
+you invoke S so that your current project directory is known
+to be the current working directory.  This is best done by creating
+a shortcut in Windows95, for which the command to execute will be
+something like <code>drive:\spluswin\cmd\splus.exe HOME=.</code> and the
+program is flagged to start in &lsquo;<span class="file">drive:\myproject</span>&rsquo; for example.
+In this way, you will be able to examine the <acronym><span class="acronym">SAS</span></acronym> log file easily
+since it will be placed in &lsquo;<span class="file">drive:\myproject</span>&rsquo; by default.
+</p>
+<p><acronym><span class="acronym">SAS</span></acronym> will create <span class="samp">SASWORK</span> and <span class="samp">SASUSER</span> directories in what it thinks
+are the current working directories.  To specify where <acronym><span class="acronym">SAS</span></acronym> should
+put these instead, edit the &lsquo;<span class="file">config.sas</span>&rsquo; file or specify a
+<code>sasprog</code> argument of the following form:
+<code>sasprog="\sas\sas.exe -saswork c:\saswork -sasuser c:\sasuser"</code>.
+</p>
+<p>When <code>sas.get</code> needs to run <acronym><span class="acronym">SAS</span></acronym> it is run in iconized form.
+</p>
+<p>The <acronym><span class="acronym">SAS</span></acronym> macro &lsquo;<span class="file">sas\_get</span>&rsquo; uses record lengths of up to 4096 in two
+places.  If you are exporting records that are very long (because of
+a large number of variables and/or long character variables), you
+may want to edit these <span class="samp">LRECL</span>s to quadruple them, for example.
+</p>
+
+
+<h3>Value</h3>
+
+<p>A data frame resembling the <acronym><span class="acronym">SAS</span></acronym> dataset.  If <code>id</code>
+was specified, that column of the data frame will be used
+as the row names of the data frame.  Each variable in the data frame
+or vector in the list will have the attributes <code>label</code> and <code>format</code>
+containing <acronym><span class="acronym">SAS</span></acronym> labels and formats.  Underscores in formats are
+converted to periods.  Formats for character variables have <span class="samp">\$</span> placed
+in front of their names.
+If <code>formats</code> is <code>TRUE</code> and there are any 
+appropriate format definitions in <code>format.library</code>, the returned
+object will have attribute <code>formats</code> containing lists named the
+same as the format names (with periods substituted for underscores and
+character formats prefixed by <span class="samp">\$</span>).
+Each of these lists has a vector called <code>values</code> and one called
+<code>labels</code> with the </p>
+<pre>PROC FORMAT; VALUE</pre> <p><code>...</code> definitions.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>if a <acronym><span class="acronym">SAS</span></acronym> error occurs the <acronym><span class="acronym">SAS</span></acronym> log file will be
+printed under the control of the <code>pager</code> function.
+</p>
+
+
+<h3>BACKGROUND</h3>
+
+<p>The references cited below explain the structure of <acronym><span class="acronym">SAS</span></acronym> datasets and how
+they are stored.
+See <em><acronym><span class="acronym">SAS</span></acronym> Language</em> 
+for a discussion of the </p>
+<pre>subsetting if</pre><p> statement.
+</p>
+
+
+<h3>Note</h3>
+
+<p>If <code>sasout</code> is not given, you
+must be able to run <acronym><span class="acronym">SAS</span></acronym> on your system.  
+</p>
+<p>If you are reading time or
+date-time variables, you will need to execute the command <code>library(chron)</code>
+to print those variables or the data frame.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Terry Therneau, Mayo Clinic
+<br />
+Frank Harrell, Vanderbilt University
+<br />
+Bill Dunlap, University of Washington and Insightful Corp.
+<br />
+Michael W. Kattan, Cleveland Clinic Foundation
+<br />
+Reinhold Koch (encoding)
+</p>
+
+
+<h3>References</h3>
+
+<p><acronym><span class="acronym">SAS</span></acronym> Institute Inc. (1990).
+<em><acronym><span class="acronym">SAS</span></acronym> Language: Reference, Version 6.</em>
+First Edition.
+<acronym><span class="acronym">SAS</span></acronym> Institute Inc., Cary, North Carolina.
+</p>
+<p><acronym><span class="acronym">SAS</span></acronym> Institute Inc. (1988).
+<acronym><span class="acronym">SAS</span></acronym> Technical Report P-176,
+<em>Using the <acronym><span class="acronym">SAS</span></acronym> System, Release 6.03, under UNIX Operating Systems and Derivatives.  </em>
+<acronym><span class="acronym">SAS</span></acronym> Institute Inc., Cary, North Carolina.
+</p>
+<p><acronym><span class="acronym">SAS</span></acronym> Institute Inc. (1985).
+<em><acronym><span class="acronym">SAS</span></acronym> Introductory Guide.</em>
+Third Edition.
+<acronym><span class="acronym">SAS</span></acronym> Institute Inc., Cary, North Carolina.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/data.frame.html">data.frame</a></code>, <code><a href="../help/describe.html">describe</a></code>,
+<code><a href="../help/label.html">label</a></code>, <code><a href="../help/upData.html">upData</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+mice &lt;- sas.get("saslib", mem="mice", var=c("dose", "strain", "ld50"))
+plot(mice$dose, mice$ld50)
+
+nude.mice &lt;- sas.get(lib=unix("echo $HOME/saslib"), mem="mice",
+	ifs="if strain='nude'")
+
+nude.mice.dl &lt;- sas.get(lib=unix("echo $HOME/saslib"), mem="mice",
+	var=c("dose", "ld50"), ifs="if strain='nude'")
+
+# Get a dataset from current directory, recode PROC FORMAT; VALUE \dots 
+# variables into factors with labels of the form "good(1)" "better(2)",
+# get special missing values, recode missing codes .D and .R into new
+# factor levels "Don't know" and "Refused to answer" for variable q1
+d &lt;- sas.get(mem="mydata", recode=2, special.miss=TRUE)
+attach(d)
+nl &lt;- length(levels(q1))
+lev &lt;- c(levels(q1), "Don't know", "Refused")
+q1.new &lt;- as.integer(q1)
+q1.new[is.special.miss(q1,"D")] &lt;- nl+1
+q1.new[is.special.miss(q1,"R")] &lt;- nl+2
+q1.new &lt;- factor(q1.new, 1:(nl+2), lev)
+# Note: would like to use factor() in place of as.integer ... but
+# factor in this case adds "NA" as a category level
+
+d &lt;- sas.get(mem="mydata")
+sas.codes(d$x)    # for PROC FORMATted variables returns original data codes
+d$x &lt;- code.levels(d$x)   # or attach(d); x &lt;- code.levels(x)
+# This makes levels such as "good" "better" "best" into e.g.
+# "1:good" "2:better" "3:best", if the original SAS values were 1,2,3
+
+# For the following example, suppose that SAS is run on a
+# different machine from the one on which S is run.
+# The sas_get macro is used to create files needed by
+# sas.get.  To make a text file containing the sas_get macro
+# run the following S command, for example:
+#   cat(sas.get.macro, file='/sasmacro/sas_get.sas', sep='\n')
+
+# Here is the SAS job.  This job assumes that you put
+# sas_get.sas in an autocall macro library.
+
+
+#  libname db '/my/sasdata/area';
+#  %sas_get(db.mydata, dict, data, formats, specmiss,
+#           formats=1, specmiss=1)
+
+
+# Substitute whatever file names you may want.
+# Next the 4 files are moved to the S machine (using
+# ASCII file transfer mode) and the following S
+# program is run:
+
+
+mydata &lt;- sas.get(sasout=c('dict','data','formats','specmiss'),
+                  id='idvar')
+
+
+# If PKZIP is run after %sas_get, e.g. "PKZIP port dict data formats"
+# (assuming that specmiss was not used here), use
+
+
+mydata &lt;- sas.get(sasout='a:port', id='idvar')
+
+
+# which will run PKUNZIP port to unzip a:port.zip, creating the
+# dict, data, and formats files which are generated (and later
+# deleted) by sas.get
+
+
+# Retrieve the same variables from another dataset (or an update of
+# the original dataset)
+mydata2 &lt;- sas.get('mydata2', var=names(mydata))
+# This only works if none of the original SAS variable names contained _
+
+# Code from Don MacQueen to generate SAS dataset to test import of
+# date, time, date-time variables
+# data ssd.test;
+#     d1='3mar2002'd ;
+#     dt1='3mar2002 9:31:02'dt;
+#     t1='11:13:45't;
+#     output;
+#
+#     d1='3jun2002'd ;
+#     dt1='3jun2002 9:42:07'dt;
+#     t1='11:14:13't;
+#     output;
+#     format d1 mmddyy10. dt1 datetime. t1 time.;
+# run;
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

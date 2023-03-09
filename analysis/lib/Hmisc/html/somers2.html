@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Somers' Dxy Rank Correlation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for somers2 {Hmisc}"><tr><td>somers2 {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Somers' Dxy Rank Correlation
+</h2>
+
+<h3>Description</h3>
+
+<p>Computes Somers' Dxy rank correlation between a variable <code>x</code> and a
+binary (0-1) variable <code>y</code>, and the corresponding receiver operating
+characteristic curve area <code>c</code>. Note that <code>Dxy = 2(c-0.5)</code>.  
+<code>somers</code> allows for a <code>weights</code> variable, which specifies frequencies
+to associate with each observation.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+somers2(x, y, weights=NULL, normwt=FALSE, na.rm=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>typically a predictor variable. <code>NA</code>s are allowed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a numeric outcome variable coded <code>0-1</code>. <code>NA</code>s are allowed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>a numeric vector of observation weights (usually frequencies).  Omit
+or specify a zero-length vector to do an unweighted analysis.
+</p>
+</td></tr>
+<tr valign="top"><td><code>normwt</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to make <code>weights</code> sum to the actual number of non-missing
+observations.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress checking for NAs.
+</p>
+</td></tr></table>
+
+
+<h3>Details</h3>
+
+<p>The <code>rcorr.cens</code> function, which although slower than <code>somers2</code> for large
+sample sizes, can also be used to obtain Dxy for non-censored binary
+<code>y</code>, and it has the advantage of computing the standard deviation of
+the correlation index.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a vector with the named elements <code>C</code>, <code>Dxy</code>, <code>n</code> (number of non-missing
+pairs), and <code>Missing</code>. Uses the formula 
+<code>C = (mean(rank(x)[y == 1]) - (n1 + 1)/2)/(n - n1)</code>, where <code>n1</code> is the
+frequency of <code>y=1</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/rcorr.cens.html">rcorr.cens</a></code>, <code><a href="../../base/html/rank.html">rank</a></code>, <code><a href="../../Hmisc/help/wtd.rank.html">wtd.rank</a></code>, 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+predicted &lt;- runif(200)
+dead      &lt;- sample(0:1, 200, TRUE)
+roc.area &lt;- somers2(predicted, dead)["C"]
+
+# Check weights
+x &lt;- 1:6
+y &lt;- c(0,0,1,0,1,1)
+f &lt;- c(3,2,2,3,2,1)
+somers2(x, y)
+somers2(rep(x, f), rep(y, f))
+somers2(x, y, f)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

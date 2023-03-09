@@ -1,0 +1,547 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Concise Statistical Description of a Vector, Matrix, Data...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for describe {Hmisc}"><tr><td>describe {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Concise Statistical Description of a Vector, Matrix, Data Frame,
+or Formula</h2>
+
+<h3>Description</h3>
+
+<p><code>describe</code> is a generic method that invokes <code>describe.data.frame</code>,
+<code>describe.matrix</code>, <code>describe.vector</code>, or
+<code>describe.formula</code>. <code>describe.vector</code> is the basic 
+function for handling a single variable.
+This function determines whether the variable is character, factor,
+category, binary, discrete numeric, and continuous numeric, and prints
+a concise statistical summary according to each. A numeric variable is
+deemed discrete if it has &lt;= 10 distinct values. In this case,
+quantiles are not printed. A frequency table is printed 
+for any non-binary variable if it has no more than 20 distinct
+values.  For any variable for which the frequency table is not printed,
+the 5 lowest and highest values are printed.  This behavior can be
+overriden for long character variables with many levels using the
+<code>listunique</code> parameter, to get a complete tabulation.
+</p>
+<p><code>describe</code> is especially useful for
+describing data frames created by <code>*.get</code>, as labels, formats,
+value labels, and (in the case of <code>sas.get</code>) frequencies of special
+missing values are printed.
+</p>
+<p>For a binary variable, the sum (number of 1's) and mean (proportion of
+1's) are printed. If the first argument is a formula, a model frame
+is created and passed to describe.data.frame.  If a variable
+is of class <code>"impute"</code>, a count of the number of imputed values is
+printed.  If a date variable has an attribute <code>partial.date</code>
+(this is set up by <code>sas.get</code>), counts of how many partial dates are
+actually present (missing month, missing day, missing both) are also presented.
+If a variable was created by the special-purpose function <code>substi</code> (which
+substitutes values of a second variable if the first variable is NA),
+the frequency table of substitutions is also printed.
+</p>
+<p>For numeric variables, <code>describe</code> adds an item called <code>Info</code>
+which is a relative information measure using the relative efficiency of
+a proportional odds/Wilcoxon test on the variable relative to the same
+test on a variable that has no ties.  <code>Info</code> is related to how
+continuous the variable is, and ties are less harmful the more untied
+values there are.  The formula for <code>Info</code> is one minus the sum of
+the cubes of relative frequencies of values divided by one minus the
+square of the reciprocal of the sample size.  The lowest information
+comes from a variable having only one distinct value following by a
+highly skewed binary variable.  <code>Info</code> is reported to
+two decimal places.
+</p>
+<p>A latex method exists for converting the <code>describe</code> object to a
+LaTeX file.  For numeric variables having more than 20 distinct values,
+<code>describe</code> saves in its returned object the frequencies of 100
+evenly spaced bins running from minimum observed value to the maximum.
+When there are less than or equal to 20 distinct values, the original
+values are maintained.
+<code>latex</code> and <code>html</code> insert a spike histogram displaying these
+frequency counts in the tabular material using the LaTeX picture
+environment.  For example output see
+<a href="https://hbiostat.org/doc/rms/book/chapter7edition1.pdf">https://hbiostat.org/doc/rms/book/chapter7edition1.pdf</a>.
+Note that the latex method assumes you have the following styles
+installed in your latex installation: setspace and relsize.
+</p>
+<p>The <code>html</code> method mimics the LaTeX output.  This is useful in the
+context of Quarto/Rmarkdown html and html notebook output.
+If <code>options(prType='html')</code> is in effect, calling <code>print</code> on
+an object that is the result of running <code>describe</code> on a data frame
+will result in rendering the HTML version.  If run from the console a
+browser window will open.
+</p>
+<p>The <code>plot</code> method is for <code>describe</code> objects run on data
+frames.  It produces spike histograms for a graphic of
+continuous variables and a dot chart for categorical variables, showing
+category proportions.  The graphic format is <code>ggplot2</code> if the user
+has not set <code>options(grType='plotly')</code> or has set the <code>grType</code>
+option to something other than <code>'plotly'</code>.  Otherwise <code>plotly</code>
+graphics that are interactive are produced, and these can be placed into
+an Rmarkdown html notebook.  The user must install the <code>plotly</code>
+package for this to work.  When the use hovers the mouse over a bin for
+a raw data value, the actual value will pop-up (formatted using
+<code>digits</code>).  When the user hovers over the minimum data value, most
+of the information calculated by <code>describe</code> will pop up.  For each
+variable, the number of missing values is used to assign the color to
+the histogram or dot chart, and a legend is drawn.  Color is not used if
+there are no missing values in any variable. For categorical variables,
+hovering over the leftmost point for a variable displays details, and
+for all points proportions, numerators, and denominators are displayed
+in the popup.  If both continuous and categorical variables are present
+and <code>which='both'</code> is specified, the <code>plot</code> method returns an
+unclassed <code>list</code> containing two objects, named <code>'Categorical'</code>
+and <code>'Continuous'</code>, in that order.
+</p>
+<p>Sample weights may be specified to any of the functions, resulting
+in weighted means, quantiles, and frequency tables.
+</p>
+<p>Note: As discussed in Cox and Longton (2008), Stata Technical Bulletin 8(4)
+pp. 557, the term &quot;unique&quot; has been replaced with &quot;distinct&quot; in the
+output (but not in parameter names).
+</p>
+<p>When <code>weights</code> are not used, Gini's mean difference is computed for
+numeric variables.  This is a robust measure of dispersion that is the
+mean absolute difference between any pairs of observations.  In the
+output Gini's difference is labeled <code>Gmd</code>.
+</p>
+<p><code>formatdescribeSingle</code> is a service function for <code>latex</code>,
+<code>html</code>, and <code>print</code> methods for single variables that is not
+intended to be called by the user.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'vector'
+describe(x, descript, exclude.missing=TRUE, digits=4,
+         listunique=0, listnchar=12,
+         weights=NULL, normwt=FALSE, minlength=NULL, ...)
+## S3 method for class 'matrix'
+describe(x, descript, exclude.missing=TRUE, digits=4, ...)
+## S3 method for class 'data.frame'
+describe(x, descript, exclude.missing=TRUE,
+    digits=4, ...)
+## S3 method for class 'formula'
+describe(x, descript, data, subset, na.action,
+    digits=4, weights, ...)
+## S3 method for class 'describe'
+print(x, ...)
+## S3 method for class 'describe'
+latex(object, title=NULL,
+      file=paste('describe',first.word(expr=attr(object,'descript')),'tex',sep='.'),
+      append=FALSE, size='small', tabular=TRUE, greek=TRUE,
+      spacing=0.7, lspace=c(0,0), ...)
+## S3 method for class 'describe.single'
+latex(object, title=NULL, vname,
+      file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
+      lspace=c(0,0), ...)
+## S3 method for class 'describe'
+html(object, size=85, tabular=TRUE,
+      greek=TRUE, scroll=FALSE, rows=25, cols=100, ...)
+## S3 method for class 'describe.single'
+html(object, size=85,
+      tabular=TRUE, greek=TRUE, ...)
+formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
+           lang=c('plain', 'latex', 'html'), verb=0, lspace=c(0, 0),
+           size=85, ...)
+## S3 method for class 'describe'
+plot(x, which=c('both', 'continuous', 'categorical'),
+                          what=NULL,
+                          sort=c('ascending', 'descending', 'none'),
+                          n.unique=10, digits=5, bvspace=2, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a data frame, matrix, vector, or formula.  For a data frame, the 
+<code>describe.data.frame</code>
+function is automatically invoked.  For a matrix, <code>describe.matrix</code> is
+called.  For a formula, describe.data.frame(model.frame(x))
+is invoked. The formula may or may not have a response variable.  For
+<code>print</code>, <code>latex</code>, <code>html</code>, or
+<code>formatdescribeSingle</code>, <code>x</code> is an object created by
+<code>describe</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>descript</code></td>
+<td>
+
+<p>optional title to print for x. The default is the name of the argument
+or the &quot;label&quot; attributes of individual variables. When the first argument
+is a formula, <code>descript</code> defaults to a character representation of
+the formula.
+</p>
+</td></tr>
+<tr valign="top"><td><code>exclude.missing</code></td>
+<td>
+
+<p>set toTRUE to print the names of variables that contain only missing values.
+This list appears at the bottom of the printout, and no space is taken
+up for such variables in the main listing.
+</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>number of significant digits to print.  For <code>plot.describe</code> is
+the number of significant digits to put in hover text for
+<code>plotly</code> when showing raw variable values.</p>
+</td></tr> 
+<tr valign="top"><td><code>listunique</code></td>
+<td>
+
+<p>For a character variable that is not an <code>mChoice</code> variable, that
+has its longest string length greater than <code>listnchar</code>, and that
+has no more than <code>listunique</code> distinct values, all values are
+listed in alphabetic order.  Any value having more than one occurrence
+has the frequency of occurrence included.  Specify
+<code>listunique</code> equal to some value at least as large as the number
+of observations to ensure that all character variables will have all
+their values listed.  For purposes of tabulating character strings,
+multiple white spaces of any kind are translated to a single space,
+leading and trailing white space are ignored, and case is ignored.
+</p>
+</td></tr>
+<tr valign="top"><td><code>listnchar</code></td>
+<td>
+<p>see <code>listunique</code></p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>a numeric vector of frequencies or sample weights.  Each observation
+will be treated as if it were sampled <code>weights</code> times.
+</p>
+</td></tr>
+<tr valign="top"><td><code>minlength</code></td>
+<td>
+<p>value passed to summary.mChoice.</p>
+</td></tr>
+<tr valign="top"><td><code>normwt</code></td>
+<td>
+
+<p>The default, <code>normwt=FALSE</code> results in the use of <code>weights</code> as
+weights in computing various statistics.  In this case the sample size
+is assumed to be equal to the sum of <code>weights</code>.  Specify
+<code>normwt=TRUE</code> to divide 
+<code>weights</code> by a constant so that <code>weights</code> sum to the number of
+observations (length of vectors specified to <code>describe</code>).  In this
+case the number of observations is taken to be the actual number of
+records given to <code>describe</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>a result of <code>describe</code></p>
+</td></tr>
+<tr valign="top"><td><code>title</code></td>
+<td>
+<p>unused</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+
+<p>These are used if a formula is specified.  <code>na.action</code> defaults to
+<code>na.retain</code> which does not delete any <code>NA</code>s from the data frame.
+Use <code>na.action=na.omit</code> or <code>na.delete</code> to drop any observation with
+any <code>NA</code> before processing.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>arguments passed to <code>describe.default</code> which are passed to calls
+to <code>format</code> for numeric variables.  For example if using R
+<code>POSIXct</code> or <code>Date</code> date/time formats, specifying
+<code>describe(d,format='%d%b%y')</code> will print date/time variables as
+<code>"01Jan2000"</code>.  This is useful for omitting the time
+component.  See the help file for <code>format.POSIXct</code> or
+<code>format.Date</code> for more
+information.  For <code>plot</code> methods, ... is ignored.
+For <code>html</code> and <code>latex</code> methods, ... is used to pass
+optional arguments to <code>formatdescribeSingle</code>, especially the
+<code>condense</code> argument.
+</p>
+</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+
+<p>name of output file (should have a suffix of .tex).  Default name is
+formed from the first word of the <code>descript</code> element of the
+<code>describe</code> object, prefixed by <code>"describe"</code>.  Set
+<code>file=""</code> to send LaTeX code to standard output instead of a file.
+</p>
+</td></tr>
+<tr valign="top"><td><code>append</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have <code>latex</code> append text to an existing file
+named <code>file</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+
+<p>LaTeX text size (<code>"small"</code>, the default, or <code>"normalsize"</code>,
+<code>"tiny"</code>, <code>"scriptsize"</code>, etc.) for the <code>describe</code> output
+in LaTeX. For html is the percent of the prevailing font size to use for
+the output.
+</p>
+</td></tr>
+<tr valign="top"><td><code>tabular</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to use verbatim rather than tabular (or html
+table) environment for the summary statistics output.  By default,
+tabular is used if the output is not too wide.</p>
+</td></tr>
+<tr valign="top"><td><code>greek</code></td>
+<td>
+<p>By default, the <code>latex</code> and <code>html</code> methods
+will change names of greek letters that appear in variable
+labels to appropriate LaTeX symbols in math mode, or html symbols,  unless
+<code>greek=FALSE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>spacing</code></td>
+<td>
+<p>By default, the <code>latex</code> method for <code>describe</code> run
+on a matrix or data frame uses the <code>setspace</code> LaTeX package with a
+line spacing of 0.7 so as to no waste space.  Specify <code>spacing=0</code>
+to suppress the use of the <code>setspace</code>'s <code>spacing</code> environment,
+or specify another positive value to use this environment with a
+different spacing.</p>
+</td></tr>
+<tr valign="top"><td><code>lspace</code></td>
+<td>
+<p>extra vertical scape, in character size units (i.e., &quot;ex&quot;
+as appended to the space).  When using certain font sizes, there is
+too much space left around LaTeX verbatim environments.  This
+two-vector specifies space to remove (i.e., the values are negated in
+forming the <code>vspace</code> command) before (first element) and after
+(second element of <code>lspace</code>) verbatims</p>
+</td></tr>
+<tr valign="top"><td><code>scroll</code></td>
+<td>
+<p>set to <code>TRUE</code> to create an html scrollable box for
+the html output</p>
+</td></tr>
+<tr valign="top"><td><code>rows, cols</code></td>
+<td>
+<p>the number of rows or columns to allocate for the
+scrollable box</p>
+</td></tr>
+<tr valign="top"><td><code>vname</code></td>
+<td>
+<p>unused argument in <code>latex.describe.single</code></p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+<p>specifies whether to plot numeric continuous or
+binary/categorical variables, or both.  When <code>"both"</code> a list with 
+two elements is created.  Each element is a <code>ggplot2</code> or
+<code>plotly</code> object.  If 
+there are no variables of a given type, a single <code>ggplot2</code> or
+<code>plotly</code> object is returned, ready to print.</p>
+</td></tr> 
+<tr valign="top"><td><code>what</code></td>
+<td>
+<p>character or numeric vector specifying which variables to
+plot; default is to plot all</p>
+</td></tr>
+<tr valign="top"><td><code>sort</code></td>
+<td>
+<p>specifies how and whether variables are sorted in order of
+the proportion of positives when <code>which="categorical"</code>.  Specify
+<code>sort="none"</code> to leave variables in the order they appear in the
+original data.</p>
+</td></tr>
+<tr valign="top"><td><code>n.unique</code></td>
+<td>
+<p>the minimum number of distinct values a numeric variable
+must have before <code>plot.describe</code> uses it in a continuous variable
+plot</p>
+</td></tr>
+<tr valign="top"><td><code>bvspace</code></td>
+<td>
+<p>the between-variable spacing for categorical variables.
+Defaults to 2, meaning twice the amount of vertical space as what is
+used for between-category spacing within a variable</p>
+</td></tr>
+<tr valign="top"><td><code>condense</code></td>
+<td>
+<p>specifies whether to condense the output with regard to
+the 5 lowest and highest values (<code>"extremes"</code>) and the frequency table
+</p>
+</td></tr>
+<tr valign="top"><td><code>lang</code></td>
+<td>
+<p>specifies the markup language</p>
+</td></tr>
+<tr valign="top"><td><code>verb</code></td>
+<td>
+<p>set to 1 if a verbatim environment is already in effect for LaTeX</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>If <code>options(na.detail.response=TRUE)</code>
+has been set and <code>na.action</code> is <code>"na.delete"</code> or
+<code>"na.keep"</code>, summary  statistics on
+the response variable are printed separately for missing and non-missing
+values of each predictor.  The default summary function returns
+the number of non-missing response values and the mean of the last
+column of the response values, with a <code>names</code> attribute of
+<code>c("N","Mean")</code>. 
+When the response is a <code>Surv</code> object and the mean is used, this will
+result in the crude proportion of events being used to summarize
+the response.  The actual summary function can be designated through
+<code>options(na.fun.response = "function name")</code>.
+</p>
+<p>If you are modifying LaTex <code>parskip</code> or certain other parameters,
+you may need to shrink the area around <code>tabular</code> and
+<code>verbatim</code> environments produced by <code>latex.describe</code>.  You can
+do this using for example
+<code>\usepackage{etoolbox}\makeatletter\preto{\@verbatim}{\topsep=-1.4pt
+	\partopsep=0pt}\preto{\@tabular}{\parskip=2pt
+	\parsep=0pt}\makeatother</code> in the LaTeX preamble.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a list containing elements <code>descript</code>, <code>counts</code>,
+<code>values</code>.  The list  is of class <code>describe</code>.  If the input
+object was a matrix or a data 
+frame, the list is a list of lists, one list for each variable
+analyzed. <code>latex</code> returns a standard <code>latex</code> object.  For numeric
+variables having at least 20 distinct values, an additional component
+<code>intervalFreq</code>.  This component is a list with two elements, <code>range</code>
+(containing two values) and <code>count</code>, a vector of 100 integer frequency
+counts.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/sas.get.html">sas.get</a></code>, <code><a href="../../stats/html/quantile.html">quantile</a></code>, <code><a href="../../Hmisc/help/GiniMd.html">GiniMd</a></code>,
+<code><a href="../../base/html/table.html">table</a></code>, <code><a href="../../base/html/summary.html">summary</a></code>,
+<code><a href="../../stats/html/model.frame.html">model.frame.default</a></code>, 
+<code><a href="../../stats/html/naprint.html">naprint</a></code>, <code><a href="../../base/html/lapply.html">lapply</a></code>, <code><a href="../../base/html/tapply.html">tapply</a></code>,
+<code><a href="../../survival/help/Surv.html">Surv</a></code>, <code><a href="../../Hmisc/help/na.delete.html">na.delete</a></code>,
+<code><a href="../../Hmisc/help/na.keep.html">na.keep</a></code>, 
+<code><a href="../../Hmisc/help/na.detail.response.html">na.detail.response</a></code>, <code><a href="../../Hmisc/help/latex.html">latex</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+describe(runif(200),dig=2)    #single variable, continuous
+                              #get quantiles .05,.10,\dots
+
+dfr &lt;- data.frame(x=rnorm(400),y=sample(c('male','female'),400,TRUE))
+describe(dfr)
+
+## Not run: 
+options(grType='plotly')
+d &lt;- describe(mydata)
+p &lt;- plot(d)   # create plots for both types of variables
+p[[1]]; p[[2]] # or p$Categorical; p$Continuous
+plotly::subplot(p[[1]], p[[2]], nrows=2)  # plot both in one
+plot(d, which='categorical')    # categorical ones
+
+d &lt;- sas.get(".","mydata",special.miss=TRUE,recode=TRUE)
+describe(d)      #describe entire data frame
+attach(d, 1)
+describe(relig)  #Has special missing values .D .F .M .R .T
+                 #attr(relig,"label") is "Religious preference"
+
+#relig : Religious preference  Format:relig
+#    n missing  D  F M R T distinct 
+# 4038     263 45 33 7 2 1        8
+#
+#0:none (251, 6%), 1:Jewish (372, 9%), 2:Catholic (1230, 30%) 
+#3:Jehovah's Witnes (25, 1%), 4:Christ Scientist (7, 0%) 
+#5:Seventh Day Adv (17, 0%), 6:Protestant (2025, 50%), 7:other (111, 3%) 
+
+
+# Method for describing part of a data frame:
+ describe(death.time ~ age*sex + rcs(blood.pressure))
+ describe(~ age+sex)
+ describe(~ age+sex, weights=freqs)  # weighted analysis
+
+ fit &lt;- lrm(y ~ age*sex + log(height))
+ describe(formula(fit))
+ describe(y ~ age*sex, na.action=na.delete)   
+# report on number deleted for each variable
+ options(na.detail.response=TRUE)  
+# keep missings separately for each x, report on dist of y by x=NA
+ describe(y ~ age*sex)
+ options(na.fun.response="quantile")
+ describe(y ~ age*sex)   # same but use quantiles of y by x=NA
+
+ d &lt;- describe(my.data.frame)
+ d$age                   # print description for just age
+ d[c('age','sex')]       # print description for two variables
+ d[sort(names(d))]       # print in alphabetic order by var. names
+ d2 &lt;- d[20:30]          # keep variables 20-30
+ page(d2)                # pop-up window for these variables
+
+# Test date/time formats and suppression of times when they don't vary
+ library(chron)
+ d &lt;- data.frame(a=chron((1:20)+.1),
+                 b=chron((1:20)+(1:20)/100),
+                 d=ISOdatetime(year=rep(2003,20),month=rep(4,20),day=1:20,
+                               hour=rep(11,20),min=rep(17,20),sec=rep(11,20)),
+                 f=ISOdatetime(year=rep(2003,20),month=rep(4,20),day=1:20,
+                               hour=1:20,min=1:20,sec=1:20),
+                 g=ISOdate(year=2001:2020,month=rep(3,20),day=1:20))
+ describe(d)
+
+# Make a function to run describe, latex.describe, and use the kdvi
+# previewer in Linux to view the result and easily make a pdf file
+
+ ldesc &lt;- function(data) {
+  options(xdvicmd='kdvi')
+  d &lt;- describe(data, desc=deparse(substitute(data)))
+  dvi(latex(d, file='/tmp/z.tex'), nomargins=FALSE, width=8.5, height=11)
+ }
+
+ ldesc(d)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Do-nothing na.action</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for na.keep {Hmisc}"><tr><td>na.keep {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Do-nothing na.action
+</h2>
+
+<h3>Description</h3>
+
+<p>Does not delete rows containing NAs, but does add details concerning
+the distribution of the response variable if <code>options(na.detail.response=TRUE)</code>.
+This <code>na.action</code> is primarily for use with <code>describe.formula</code>. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+na.keep(mf)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>mf</code></td>
+<td>
+
+<p>a model frame
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>the same model frame with the <code>"na.action"</code> attribute
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/na.fail.html">na.omit</a></code>, <code><a href="../../Hmisc/help/na.delete.html">na.delete</a></code>, <code><a href="../../stats/html/model.frame.html">model.frame.default</a></code>, <code><a href="../../Hmisc/help/na.detail.response.html">na.detail.response</a></code>,
+<code><a href="../../stats/html/nafns.html">naresid</a></code>, <code><a href="../../stats/html/naprint.html">naprint</a></code>, <code><a href="../../Hmisc/help/describe.html">describe</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+options(na.action="na.keep", na.detail.response=TRUE)
+x1 &lt;- runif(20)
+x2 &lt;- runif(20)
+x2[1:4] &lt;- NA
+y &lt;- rnorm(20)
+describe(y ~ x1*x2)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

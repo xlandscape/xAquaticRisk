@@ -1,0 +1,390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Plot smoothed estimates</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for plsmo {Hmisc}"><tr><td>plsmo {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Plot smoothed estimates
+</h2>
+
+<h3>Description</h3>
+
+<p>Plot smoothed estimates of x vs. y, handling missing data for lowess
+or supsmu, and adding axis labels.  Optionally suppresses plotting
+extrapolated estimates.  An optional <code>group</code> variable can be
+specified to compute and plot the smooth curves by levels of
+<code>group</code>.  When <code>group</code> is present, the <code>datadensity</code>
+option will draw tick marks showing the location of the raw
+<code>x</code>-values, separately for each curve.  <code>plsmo</code> has an
+option to plot connected points for raw data, with no smoothing.  The
+non-panel version of <code>plsmo</code> allows <code>y</code> to be a matrix, for
+which smoothing is done separately over its columns.  If both
+<code>group</code> and multi-column <code>y</code> are used, the number of curves
+plotted is the product of the number of groups and the number of
+<code>y</code> columns.
+</p>
+<p><code>method='intervals'</code> is often used when y is binary, as it may be
+tricky to specify a reasonable smoothing parameter to <code>lowess</code> or
+<code>supsmu</code> in this case.  The <code>'intervals'</code> method uses the
+<code>cut2</code> function to form intervals of x containing a target of
+<code>mobs</code> observations.  For each interval the <code>ifun</code> function
+summarizes y, with the default being the mean (proportions for binary
+y).  The results are plotted as step functions, with vertical
+discontinuities drawn with a saturation of 0.15 of the original color.
+A plus sign is drawn at the mean x within each interval.
+For this approach, the default x-range is the entire raw data range,
+and <code>trim</code> and <code>evaluate</code> are ignored.  For
+<code>panel.plsmo</code> it is best to specify <code>type='l'</code> when using
+<code>'intervals'</code>. 
+</p>
+<p><code>panel.plsmo</code> is a <code>panel</code> function for <code>trellis</code> for the
+<code>xyplot</code> function that uses <code>plsmo</code> and its options to draw
+one or more nonparametric function estimates on each panel.  This has
+advantages over using <code>xyplot</code> with <code>panel.xyplot</code> and
+<code>panel.loess</code>: (1) by default it will invoke <code>labcurve</code> to
+label the curves where they are most separated, (2) the
+<code>datadensity</code> option will put rug plots on each curve (instead of a
+single rug plot at the bottom of the graph), and (3) when
+<code>panel.plsmo</code> invokes <code>plsmo</code> it can use the &quot;super smoother&quot;
+(<code>supsmu</code> function) instead of <code>lowess</code>, or pass
+<code>method='intervals'</code>.  <code>panel.plsmo</code> 
+senses when a <code>group</code> variable is specified to <code>xyplot</code> so
+that it can invoke <code><a href="../../lattice/help/panel.superpose.html">panel.superpose</a></code> instead of
+<code>panel.xyplot</code>.  Using <code>panel.plsmo</code> through <code>trellis</code>
+has some advantages over calling <code>plsmo</code> directly in that
+conditioning variables are allowed and <code>trellis</code> uses nicer fonts
+etc.
+</p>
+<p>When a <code>group</code> variable was used, <code>panel.plsmo</code> creates a function
+<code>Key</code> in the session frame that the user can invoke to draw a key for
+individual data point symbols used for the <code>group</code>s.  
+By default, the key is positioned at the upper right
+corner of the graph.  If <code>Key(locator(1))</code> is specified, the key will
+appear so that its upper left corner is at the coordinates of the
+mouse click.
+</p>
+<p>For <code>ggplot2</code> graphics the counterparts are
+<code><a href="../../Hmisc/help/stat_plsmo.html">stat_plsmo</a></code> and <code><a href="../../Hmisc/help/histSpikeg.html">histSpikeg</a></code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+plsmo(x, y, method=c("lowess","supsmu","raw","intervals"), xlab, ylab, 
+      add=FALSE, lty=1 : lc, col=par("col"), lwd=par("lwd"),
+      iter=if(length(unique(y))&gt;2) 3 else 0, bass=0, f=2/3, mobs=30, trim, 
+      fun, ifun=mean, group, prefix, xlim, ylim, 
+      label.curves=TRUE, datadensity=FALSE, scat1d.opts=NULL,
+      lines.=TRUE, subset=TRUE,
+      grid=FALSE, evaluate=NULL, ...)
+
+
+#To use panel function:
+#xyplot(formula=y ~ x | conditioningvars, groups,
+#       panel=panel.plsmo, type='b', 
+#       label.curves=TRUE,
+#       lwd = superpose.line$lwd, 
+#       lty = superpose.line$lty, 
+#       pch = superpose.symbol$pch, 
+#       cex = superpose.symbol$cex, 
+#       font = superpose.symbol$font, 
+#       col = NULL, scat1d.opts=NULL, \dots)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>vector of x-values, NAs allowed
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>vector or matrix of y-values, NAs allowed
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p><code>"lowess"</code> (the default), <code>"supsmu"</code>, <code>"raw"</code> to not
+smooth at all, or <code>"intervals"</code> to use intervals (see above)
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>x-axis label iff add=F.  Defaults of label(x) or argument name.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>y-axis label, like xlab.
+</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>Set to T to call lines instead of plot.  Assumes axes already labeled.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+
+<p>line type, default=1,2,3,..., corresponding to columns of <code>y</code> and
+<code>group</code> combinations
+</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+
+<p>color for each curve, corresponding to <code>group</code>.  Default is
+current <code>par("col")</code>. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+
+<p>vector of line widths for the curves, corresponding to <code>group</code>.
+Default is current <code>par("lwd")</code>. 
+<code>lwd</code> can also be specified as an element of <code>label.curves</code> if
+<code>label.curves</code> is a list.
+</p>
+</td></tr>
+<tr valign="top"><td><code>iter</code></td>
+<td>
+
+<p>iter parameter if <code>method="lowess"</code>, default=0 if <code>y</code> is binary, and 3 otherwise.
+</p>
+</td></tr>
+<tr valign="top"><td><code>bass</code></td>
+<td>
+
+<p>bass parameter if <code>method="supsmu"</code>, default=0.
+</p>
+</td></tr>
+<tr valign="top"><td><code>f</code></td>
+<td>
+<p>passed to the <code>lowess</code> function, for <code>method="lowess"</code></p>
+</td></tr>
+<tr valign="top"><td><code>mobs</code></td>
+<td>
+<p>for <code>method='intervals'</code>, the target number of
+observations per interval</p>
+</td></tr>
+<tr valign="top"><td><code>trim</code></td>
+<td>
+
+<p>only plots smoothed estimates between trim and 1-trim quantiles
+of x.  Default is to use 10th smallest to 10th largest x in the group if the number of observations in the group exceeds 200 (0 otherwise).
+Specify trim=0 to plot over entire range.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>after computing the smoothed estimates, if <code>fun</code> is given the y-values
+are transformed by <code>fun()</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>ifun</code></td>
+<td>
+<p>a summary statistic function to apply to the
+<code>y</code>-variable for <code>method='intervals'</code>.  Default is <code>mean</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+
+<p>a variable, either a <code>factor</code> vector or one that will be converted to
+<code>factor</code> by <code>plsmo</code>, that is used to stratify the data so that separate
+smooths may be computed
+</p>
+</td></tr>
+<tr valign="top"><td><code>prefix</code></td>
+<td>
+
+<p>a character string to appear in group of group labels.  The presence of
+<code>prefix</code> ensures that <code>labcurve</code> will be called even when <code>add=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+
+<p>a vector of 2 x-axis limits.  Default is observed range.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+
+<p>a vector of 2 y-axis limits.  Default is observed range.
+</p>
+</td></tr>
+<tr valign="top"><td><code>label.curves</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to prevent <code>labcurve</code> from being called to label multiple
+curves corresponding to <code>group</code>s.  Set to a list to pass options to
+<code>labcurve</code>.  <code>lty</code> and <code>col</code> are passed to <code>labcurve</code> automatically.
+</p>
+</td></tr>
+<tr valign="top"><td><code>datadensity</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to draw tick marks on each curve, using x-coordinates
+of the raw data <code>x</code> values.  This is done using <code>scat1d</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>scat1d.opts</code></td>
+<td>
+<p>a list of options to hand to <code>scat1d</code></p>
+</td></tr>
+<tr valign="top"><td><code>lines.</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress smoothed curves from being drawn.  This can
+make sense if <code>datadensity=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>a logical or integer vector specifying a subset to use for processing,
+with respect too all variables being analyzed
+</p>
+</td></tr>
+<tr valign="top"><td><code>grid</code></td>
+<td>
+
+<p>set to <code>TRUE</code> if the <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> <code>grid</code> package drew the current	plot</p>
+</td></tr>
+<tr valign="top"><td><code>evaluate</code></td>
+<td>
+
+<p>number of points to keep from smoother.  If specified, an
+equally-spaced grid of <code>evaluate</code> <code>x</code> values will be obtained from the
+smoother using linear interpolation.  This will keep from plotting an
+enormous number of points if the dataset contains a very large number
+of unique <code>x</code> values.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>optional arguments that are passed to <code>scat1d</code>,
+or optional parameters to pass to <code>plsmo</code> from
+<code>panel.plsmo</code>.  See optional arguments for <code>plsmo</code> above.
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>set to <code>p</code> to have <code>panel.plsmo</code> plot points (and not call <code>plsmo</code>), 
+<code>l</code> to call <code>plsmo</code> and not plot points, or use the default <code>b</code> to plot both.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pch,cex,font</code></td>
+<td>
+
+<p>vectors of graphical parameters corresponding to the <code>group</code>s (scalars
+if <code>group</code> is absent).  By default, the parameters set up by
+<code>trellis</code> will be used.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>plsmo</code> returns a list of curves (x and y coordinates) that was passed to <code>labcurve</code>
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>plots, and <code>panel.plsmo</code> creates the <code>Key</code> function in the session frame.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/lowess.html">lowess</a></code>, <code><a href="../../stats/html/supsmu.html">supsmu</a></code>, <code><a href="../../Hmisc/help/label.html">label</a></code>,
+<code><a href="../../stats/html/quantile.html">quantile</a></code>, <code><a href="../../Hmisc/help/labcurve.html">labcurve</a></code>, <code><a href="../../Hmisc/help/scat1d.html">scat1d</a></code>,
+<code><a href="../../lattice/help/xyplot.html">xyplot</a></code>, <code><a href="../../lattice/help/panel.superpose.html">panel.superpose</a></code>,
+<code><a href="../../lattice/help/panel.xyplot.html">panel.xyplot</a></code>, <code><a href="../../Hmisc/help/stat_plsmo.html">stat_plsmo</a></code>,
+<code><a href="../../Hmisc/help/histSpikeg.html">histSpikeg</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- 1:100
+y &lt;- x + runif(100, -10, 10)
+plsmo(x, y, "supsmu", xlab="Time of Entry") 
+#Use label(y) or "y" for ylab
+
+
+plsmo(x, y, add=TRUE, lty=2)
+#Add lowess smooth to existing plot, with different line type
+
+
+age &lt;- rnorm(500, 50, 15)
+survival.time &lt;- rexp(500)
+sex &lt;- sample(c('female','male'), 500, TRUE)
+race &lt;- sample(c('black','non-black'), 500, TRUE)
+plsmo(age, survival.time &lt; 1, fun=qlogis, group=sex) # plot logit by sex
+
+#Bivariate Y
+sbp &lt;- 120 + (age - 50)/10 + rnorm(500, 0, 8) + 5 * (sex == 'male')
+dbp &lt;-  80 + (age - 50)/10 + rnorm(500, 0, 8) - 5 * (sex == 'male')
+Y &lt;- cbind(sbp, dbp)
+plsmo(age, Y)
+plsmo(age, Y, group=sex)
+
+
+#Plot points and smooth trend line using trellis 
+# (add type='l' to suppress points or type='p' to suppress trend lines)
+require(lattice)
+xyplot(survival.time ~ age, panel=panel.plsmo)
+
+
+#Do this for multiple panels
+xyplot(survival.time ~ age | sex, panel=panel.plsmo)
+
+#Repeat this using equal sample size intervals (n=25 each) summarized by
+#the median, then a proportion (mean of binary y)
+xyplot(survival.time ~ age | sex, panel=panel.plsmo, type='l',
+       method='intervals', mobs=25, ifun=median)
+ybinary &lt;- ifelse(runif(length(sex)) &lt; 0.5, 1, 0)
+xyplot(ybinary ~ age, groups=sex, panel=panel.plsmo, type='l',
+       method='intervals', mobs=75, ifun=mean, xlim=c(0, 120))
+
+
+#Do this for subgroups of points on each panel, show the data
+#density on each curve, and draw a key at the default location
+xyplot(survival.time ~ age | sex, groups=race, panel=panel.plsmo,
+       datadensity=TRUE)
+Key()
+
+
+#Use wloess.noiter to do a fast weighted smooth
+plot(x, y)
+lines(wtd.loess.noiter(x, y))
+lines(wtd.loess.noiter(x, y, weights=c(rep(1,50), 100, rep(1,49))), col=2)
+points(51, y[51], pch=18)   # show overly weighted point
+#Try to duplicate this smooth by replicating 51st observation 100 times
+lines(wtd.loess.noiter(c(x,rep(x[51],99)),c(y,rep(y[51],99)),
+      type='ordered all'), col=3)
+#Note: These two don't agree exactly
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

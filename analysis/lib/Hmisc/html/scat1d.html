@@ -1,0 +1,777 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: One-Dimensional Scatter Diagram, Spike Histogram, or Density</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for scat1d {Hmisc}"><tr><td>scat1d {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>One-Dimensional Scatter Diagram, Spike Histogram, or Density</h2>
+
+<h3>Description</h3>
+
+<p><code>scat1d</code> adds tick marks (bar codes. rug plot) on any of the four
+sides of an existing plot, corresponding with non-missing values of a
+vector <code>x</code>.  This is used to show the data density.  Can also
+place the tick marks along a curve by specifying y-coordinates to go
+along with the <code>x</code> values.
+</p>
+<p>If any two values of <code>x</code> are within <i>\code{eps}*w</i> of
+each other, where <code>eps</code> defaults to .001 and w is the span
+of the intended axis, values of <code>x</code> are jittered by adding a
+value uniformly distributed in <i>[-\code{jitfrac}*w,
+  \code{jitfrac}*w]</i>, where <code>jitfrac</code> defaults to
+.008. Specifying <code>preserve=TRUE</code> invokes <code>jitter2</code> with a
+different logic of jittering. Allows plotting random sub-segments to
+handle very large <code>x</code> vectors (see<code>tfrac</code>).
+</p>
+<p><code>jitter2</code> is a generic method for jittering, which does not add
+random noise. It retains unique values and ranks, and randomly spreads
+duplicate values at equidistant positions within limits of enclosing
+values. <code>jitter2</code> is especially useful for numeric variables with
+discrete values, like rating scales. Missing values are allowed and
+are returned. Currently implemented methods are <code>jitter2.default</code>
+for vectors and <code>jitter2.data.frame</code> which returns a data.frame
+with each numeric column jittered.
+</p>
+<p><code>datadensity</code> is a generic method used to show data densities in
+more complex situations.  Here, another <code>datadensity</code> method is
+defined for data frames. Depending on the <code>which</code> argument, some
+or all of the variables in a data frame will be displayed, with
+<code>scat1d</code> used to display continuous variables and, by default,
+bars used to display frequencies of categorical, character, or
+discrete numeric variables.  For such variables, when the total length
+of value labels exceeds 200, only the first few characters from each
+level are used. By default, <code>datadensity.data.frame</code> will
+construct one axis (i.e., one strip) per variable in the data frame.
+Variable names appear to the left of the axes, and the number of
+missing values (if greater than zero) appear to the right of the axes.
+An optional <code>group</code> variable can be used for stratification,
+where the different strata are depicted using different colors.  If
+the <code>q</code> vector is specified, the desired quantiles (over all
+<code>group</code>s) are displayed with solid triangles below each axis.
+</p>
+<p>When the sample size exceeds 2000 (this value may be modified using
+the <code>nhistSpike</code> argument, <code>datadensity</code> calls
+<code>histSpike</code> instead of <code>scat1d</code> to show the data density for
+numeric variables.  This results in a histogram-like display that
+makes the resulting graphics file much smaller.  In this case,
+<code>datadensity</code> uses the <code>minf</code> argument (see below) so that
+very infrequent data values will not be lost on the variable's axis,
+although this will slightly distortthe histogram.
+</p>
+<p><code>histSpike</code> is another method for showing a high-resolution data
+distribution that is particularly good for very large datasets (say
+<i>\code{n} &gt; 1000</i>).  By default, <code>histSpike</code> bins the
+continuous <code>x</code> variable into 100 equal-width bins and then
+computes the frequency counts within bins (if <code>n</code> does not exceed
+10, no binning is done). If <code>add=FALSE</code> (the default), the
+function displays either proportions or frequencies as in a vertical
+histogram.  Instead of bars, spikes are used to depict the
+frequencies.  If <code>add=FALSE</code>, the function assumes you are adding
+small density displays that are intended to take up a small amount of
+space in the margins of the overall plot.  The <code>frac</code> argument is
+used as with <code>scat1d</code> to determine the relative length of the
+whole plot that is used to represent the maximum frequency.  No
+jittering is done by <code>histSpike</code>.
+</p>
+<p><code>histSpike</code> can also graph a kernel density estimate for
+<code>x</code>, or add a small density curve to any of 4 sides of an
+existing plot.  When <code>y</code> or <code>curve</code> is specified, the
+density or spikes are drawn with respect to the curve rather than the
+x-axis.
+</p>
+<p><code>histSpikeg</code> is similar to <code>histSpike</code> but is for adding layers
+to a <code>ggplot2</code> graphics object or traces to a <code>plotly</code>
+object.
+<code>histSpikeg</code> can also add <code>lowess</code> curves to the plot.
+</p>
+<p><code>ecdfpM</code> makes a <code>plotly</code> graph or series of graphs showing
+possibly superposed empirical cumulative distribution functions.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+scat1d(x, side=3, frac=0.02, jitfrac=0.008, tfrac,
+       eps=ifelse(preserve,0,.001),
+       lwd=0.1, col=par("col"),
+       y=NULL, curve=NULL,
+       bottom.align=FALSE,
+       preserve=FALSE, fill=1/3, limit=TRUE, nhistSpike=2000, nint=100,
+       type=c('proportion','count','density'), grid=FALSE, ...)
+
+jitter2(x, ...)
+
+## Default S3 method:
+jitter2(x, fill=1/3, limit=TRUE, eps=0,
+        presorted=FALSE, ...)
+
+## S3 method for class 'data.frame'
+jitter2(x, ...)
+
+datadensity(object, ...)
+
+## S3 method for class 'data.frame'
+datadensity(object, group,
+            which=c("all","continuous","categorical"),
+            method.cat=c("bar","freq"),
+            col.group=1:10,
+            n.unique=10, show.na=TRUE, nint=1, naxes,
+            q, bottom.align=nint&gt;1,
+            cex.axis=sc(.5,.3), cex.var=sc(.8,.3),
+            lmgp=NULL, tck=sc(-.009,-.002),
+            ranges=NULL, labels=NULL, ...)
+# sc(a,b) means default to a if number of axes &lt;= 3, b if &gt;=50, use
+# linear interpolation within 3-50
+
+histSpike(x, side=1, nint=100, bins=NULL, frac=.05, minf=NULL, mult.width=1,
+          type=c('proportion','count','density'),
+          xlim=range(x), ylim=c(0,max(f)), xlab=deparse(substitute(x)), 
+          ylab=switch(type,proportion='Proportion',
+                           count     ='Frequency',
+                           density   ='Density'),
+          y=NULL, curve=NULL, add=FALSE, minimal=FALSE,
+          bottom.align=type=='density', col=par('col'), lwd=par('lwd'),
+          grid=FALSE, ...)
+
+histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
+           lowess=FALSE, xlim=NULL, ylim=NULL,
+           side=1, nint=100,
+           frac=function(f) 0.01 + 0.02*sqrt(f-1)/sqrt(max(f,2)-1),
+           span=3/4, histcol='black', showlegend=TRUE)
+
+ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
+       extra=c(0.025, 0.025), xlab=NULL, ylab=NULL, height=NULL, width=NULL,
+       colors=NULL, nrows=NULL, ncols=NULL, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a vector of numeric data, or a data frame (for <code>jitter2</code> or
+<code>ecdfpM</code>) 
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>a data frame or list (even with unequal number of observations per
+variable, as long as <code>group</code> is notspecified)
+</p>
+</td></tr>
+<tr valign="top"><td><code>side</code></td>
+<td>
+
+<p>axis side to use (1=bottom (default for <code>histSpike</code>), 2=left,
+3=top (default for <code>scat1d</code>), 4=right)
+</p>
+</td></tr>
+<tr valign="top"><td><code>frac</code></td>
+<td>
+
+<p>fraction of smaller of vertical and horizontal axes for tick mark
+lengths. Can be negative to move tick marks outside of plot. For
+<code>histSpike</code>, this is the relative y-direction length to be used for the
+largest frequency. When <code>scat1d</code> calls <code>histSpike</code>, it
+multiplies its <code>frac</code> argument by 2.5.  For <code>histSpikeg</code>,
+<code>frac</code> is a function of <code>f</code>, the vector of all frequencies.  The
+default function scales tick marks so that they are between 0.01 and
+0.03 of the y range, linearly scaled in the square root of the
+frequency less one.
+</p>
+</td></tr>
+<tr valign="top"><td><code>jitfrac</code></td>
+<td>
+
+<p>fraction of axis for jittering.  If
+<i>\code{jitfrac} &lt;= 0</i>, no
+jittering is done. If <code>preserve=TRUE</code>, the amount of
+jittering is independent of jitfrac.
+</p>
+</td></tr>
+<tr valign="top"><td><code>tfrac</code></td>
+<td>
+
+<p>Fraction of tick mark to actually draw.  If <i>\code{tfrac}&lt;1</i>,
+will draw a random fraction <code>tfrac</code>  of the line segment at
+each point. This is useful for very large samples or ones with some
+very dense points. The default value is 1 if the number of
+non-missing observations <code>n</code>  is less than 125, and
+<i>\max{(.1, 125/n)}</i> otherwise.
+</p>
+</td></tr>
+<tr valign="top"><td><code>eps</code></td>
+<td>
+
+<p>fraction of axis for determining overlapping points in <code>x</code>. For
+<code>preserve=TRUE</code> the default is 0 and original unique values are
+retained, bigger values of eps tends to bias observations from dense
+to sparse regions, but ranks are still preserved.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+
+<p>line width for tick marks, passed to <code>segments</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+
+<p>color for tick marks, passed to <code>segments</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>specify a vector the same length as <code>x</code> to draw tick marks
+along a curve instead of by one of the axes.  The <code>y</code> values
+are often predicted values from a model.  The <code>side</code> argument
+is ignored when <code>y</code> is given.  If the curve is already
+represented as a table look-up, you may specify it using the
+<code>curve</code> argument instead.  <code>y</code> may be a scalar to use a
+constant verticalplacement.
+</p>
+</td></tr>
+<tr valign="top"><td><code>curve</code></td>
+<td>
+
+<p>a list containing elements <code>x</code> and <code>y</code> for which linear
+interpolation is used to derive <code>y</code> values corresponding to
+values of <code>x</code>.  This results in tick marks being drawn along
+the curve.  For <code>histSpike</code>, interpolated <code>y</code> values are
+derived for binmidpoints.
+</p>
+</td></tr>
+<tr valign="top"><td><code>minimal</code></td>
+<td>
+<p>for <code>histSpike</code> set <code>minimal=TRUE</code> to draw a
+minimalist spike histogram with no y-axis.  This works best when
+produce graphics images that are short, e.g., have a height of
+two inches.  <code>add</code> is forced to be <code>FALSE</code> in this case
+so that a standalone graph is produced.  Only base graphics are
+used.</p>
+</td></tr>
+<tr valign="top"><td><code>bottom.align</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have the bottoms of tick marks (for
+<code>side=1</code> or <code>side=3</code>) aligned at the y-coordinate.  The
+default behavior is to center the tick marks.  For
+<code>datadensity.data.frame</code>, <code>bottom.align</code> defaults to
+<code>TRUE</code> if <code>nint&gt;1</code>.  In other words, if you are only
+labeling the first and last axis tick mark, the <code>scat1d</code> tick
+marks are centered on the variable's axis.
+</p>
+</td></tr>
+<tr valign="top"><td><code>preserve</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to invoke <code>jitter2</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>fill</code></td>
+<td>
+
+<p>maximum fraction of the axis filled by jittered values. If <code>d</code>
+are duplicated values between a lower value l and upper value
+u, then d will be spread within
+<i>
+      +/- \code{fill}*min(u-d,d-l)/2</i>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>limit</code></td>
+<td>
+
+<p>specifies a limit for maximum shift in jittered values. Duplicate
+values will be spread within
+<i>
+      +/- \code{fill}*min(u-d,d-l)/2</i>. The
+default <code>TRUE</code> restricts jittering to the smallest
+<i>\min{(u-d,d-l)}/2</i> observed and results
+in equal amount of jittering for all d. Setting to
+<code>FALSE</code> allows for locally different amount of jittering, using
+maximum space available.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nhistSpike</code></td>
+<td>
+
+<p>If the number of observations exceeds or equals <code>nhistSpike</code>,
+<code>scat1d</code> will automatically call <code>histSpike</code> to draw the
+data density, to prevent the graphics file from being too large.
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>used by or passed to <code>histSpike</code>.  Set to <code>"count"</code> to
+display frequency counts rather than relative frequencies, or
+<code>"density"</code> to display a kernel density estimate computed using
+the <code>density</code> function.
+</p>
+</td></tr>
+<tr valign="top"><td><code>grid</code></td>
+<td>
+
+<p>set to <code>TRUE</code> if the <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> <code>grid</code> package is in effect for
+the current plot
+</p>
+</td></tr>
+<tr valign="top"><td><code>nint</code></td>
+<td>
+
+<p>number of intervals to divide each continuous variable's axis for
+<code>datadensity</code>. For <code>histSpike</code>, is the number of
+equal-width intervals for which to bin <code>x</code>, and if instead
+<code>nint</code> is a character string (e.g.,<code>nint="all"</code>), the
+frequency tabulation is done with no binning.  In other words,
+frequencies for all unique values of <code>x</code> are derived and
+plotted.  For <code>histSpikeg</code>, if <code>x</code> has no more than
+<code>nint</code> unique values, all observed values are used, otherwise
+the data are rounded before tabulation so that there are no more
+than <code>nint</code> intervals.  For <code>histSpike</code>, <code>nint</code> is
+ignored if <code>bins</code> is given.
+</p>
+</td></tr>
+<tr valign="top"><td><code>bins</code></td>
+<td>
+<p>for <code>histSpike</code> specifies the actual cutpoints to use
+for binning <code>x</code>.  The default is to use <code>nint</code> in
+conjunction with <code>xlim</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>optional arguments passed to <code>scat1d</code> from <code>datadensity</code>
+or to <code>histSpike</code> from <code>scat1d</code>.  For <code>histSpikep</code>
+are passed to the <code>lines</code> list to <code>add_trace</code>.  For
+<code>ecdfpM</code> these arguments are passed to <code>add_lines</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>presorted</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to prevent from sorting for determining the order
+<i>l&lt;d&lt;u</i>. This is usefull if an existing
+meaningfull local order would be destroyed by sorting, as in
+<i>\sin{(&pi;*\code{sort}(\code{round}(\code{runif}(1000,0,10),1)))}</i>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+
+<p>an optional stratification variable, which is converted to a
+<code>factor</code> vector if it is not one already
+</p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+
+<p>set <code>which="continuous"</code> to only plot continuous variables, or
+<code>which="categorical"</code> to only plot categorical, character, or
+discrete numeric ones.  By default, all types of variables are
+depicted.
+</p>
+</td></tr>
+<tr valign="top"><td><code>method.cat</code></td>
+<td>
+
+<p>set <code>method.cat="freq"</code> to depict frequencies of categorical
+variables with digits representing the cell frequencies, with size
+proportional to the square root of the frequency.  By default,
+vertical bars are used.
+</p>
+</td></tr>
+<tr valign="top"><td><code>col.group</code></td>
+<td>
+
+<p>colors representing the <code>group</code> strata.  The vector of colors
+is recycled to be the same length as the levels of <code>group</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>n.unique</code></td>
+<td>
+
+<p>number of unique values a numeric variable must have before it is
+considered to be a continuous variable
+</p>
+</td></tr>
+<tr valign="top"><td><code>show.na</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress drawing the number of <code>NA</code>s to
+the right of each axis
+</p>
+</td></tr>
+<tr valign="top"><td><code>naxes</code></td>
+<td>
+
+<p>number of axes to draw on each page before starting a new plot.  You
+can set <code>naxes</code> larger than the number of variables in the data
+frame if you want to compress the plot vertically.
+</p>
+</td></tr>
+<tr valign="top"><td><code>q</code></td>
+<td>
+
+<p>a vector of quantiles to display.  By default, quantiles are not
+shown.
+</p>
+</td></tr>
+<tr valign="top"><td><code>extra</code></td>
+<td>
+<p>a two-vector specifying the fraction of the x
+range to add on the left and the fraction to add on the right</p>
+</td></tr>
+<tr valign="top"><td><code>cex.axis</code></td>
+<td>
+
+<p>character size for draw labels for axis tick marks
+</p>
+</td></tr>
+<tr valign="top"><td><code>cex.var</code></td>
+<td>
+
+<p>character size for variable names and frequence of <code>NA</code>s
+</p>
+</td></tr>
+<tr valign="top"><td><code>lmgp</code></td>
+<td>
+
+<p>spacing between numeric axis labels and axis (see <code>par</code> for
+<code>mgp</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>tck</code></td>
+<td>
+
+<p>see <code>tck</code> under <code><a href="../../graphics/html/par.html">par</a></code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>ranges</code></td>
+<td>
+
+<p>a list containing ranges for some or all of the numeric variables.
+If <code>ranges</code> is not given or if a certain variable is not found
+in the list, the empirical range, modified by <code>pretty</code>, is
+used.  Example:
+<code>ranges=list(age=c(10,100), pressure=c(50,150))</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+
+<p>a vector of labels to use in labeling the axes for
+<code>datadensity.data.frame</code>.  Default is to use the names of the
+variable in the input data frame.  Note: margin widths computed for
+setting aside names of variables use the names, and not these
+labels.
+</p>
+</td></tr>
+<tr valign="top"><td><code>minf</code></td>
+<td>
+
+<p>For <code>histSpike</code>, if <code>minf</code> is specified low bin
+frequencies are set to a minimum value of <code>minf</code> times the
+maximum bin frequency, so that rare data points will remain visible.
+A good choice of <code>minf</code> is 0.075.
+<code>datadensity.data.frame</code> passes <code>minf=0.075</code> to
+<code>scat1d</code> to pass to <code>histSpike</code>.  Note that specifying
+<code>minf</code> will cause the shape of the histogram to be distorted
+somewhat.
+</p>
+</td></tr>
+<tr valign="top"><td><code>mult.width</code></td>
+<td>
+
+<p>multiplier for the smoothing window width computed by
+<code>histSpike</code> when <code>type="density"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+
+<p>a 2-vector specifying the outer limits of <code>x</code> for binning (and
+plotting, if <code>add=FALSE</code> and <code>nint</code> is a number).  For
+<code>histSpikeg</code>, observations outside the <code>xlim</code> range are ignored.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+
+<p>y-axis range for plotting (if <code>add=FALSE</code>).  Often needed for
+<code>histSpikeg</code> to help scale the tick mark line segments.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>x-axis label (<code>add=FALSE</code> or for <code>ecdfpM</code>); default is
+name of input argument, or for <code>ecdfpM</code> comes from
+<code>label</code> and <code>units</code> attributes of the analysis
+variable.  For <code>ecdfpM</code> <code>xlab</code> may be a vector if there
+is more than one analysis variable.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>y-axis label (<code>add=FALSE</code> or for <code>ecdfpM</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to add the spike-histogram to an existing plot,
+to show marginal data densities
+</p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+
+<p>a formula of the form <code>y ~ x1</code> or <code>y ~ x1 + ...</code> where
+<code>y</code> is the name of the <code>y</code>-axis variable being plotted
+with <code>ggplot</code>, <code>x1</code> is the name of the <code>x</code>-axis
+variable, and optional ... are variables used by
+<code>ggplot</code> to produce multiple curves on a panel and/or facets.
+</p>
+</td></tr>
+<tr valign="top"><td><code>predictions</code></td>
+<td>
+
+<p>the data frame being plotted by <code>ggplot</code>, containing <code>x</code>
+and <code>y</code> coordinates of curves.  If omitted, spike histograms
+are drawn at the bottom (default) or top of the plot according to
+<code>side</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+
+<p>for <code>histSpikeg</code> is a mandatory data frame containing raw data whose
+frequency distribution is to be summarized, using variables in
+<code>formula</code>. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>plotly</code></td>
+<td>
+
+<p>an existing <code>plotly</code> object.  If not <code>NULL</code>,
+<code>histSpikeg</code> uses <code>plotly</code> instead of <code>ggplot</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>lowess</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have <code>histSpikeg</code> add a <code>geom_line</code>
+layer to the <code>ggplot2</code> graphic, containing
+<code>lowess()</code> nonparametric smoothers.  This causes the
+returned value of <code>histSpikeg</code> to be a list with two
+components: <code>"hist"</code> and <code>"lowess"</code> each containing
+a layer.  Fortunately, <code>ggplot2</code> plots both layers
+automatically.  If the dependent variable is binary,
+<code>iter=0</code> is passed to <code>lowess</code> so that outlier
+detection is turned off; otherwise <code>iter=3</code> is passed.
+</p>
+</td></tr>
+<tr valign="top"><td><code>span</code></td>
+<td>
+<p>passed to <code>lowess</code> as the <code>f</code> argument</p>
+</td></tr>
+<tr valign="top"><td><code>histcol</code></td>
+<td>
+<p>color of line segments (tick marks) for
+<code>histSpikeg</code>.  Default is black.  Set to any color or to
+<code>"default"</code> to use the prevailing colors for the
+graphic.</p>
+</td></tr>
+<tr valign="top"><td><code>showlegend</code></td>
+<td>
+<p>set to <code>FALSE</code> too have the added <code>plotly</code>
+traces not have entries in the plot legend</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+<p>set to <code>"1-F"</code> to plot 1 minus the ECDF instead of the
+ECDF, <code>"f"</code> to plot cumulative frequency, or <code>"1-f"</code> to
+plot the inverse cumulative frequency</p>
+</td></tr>
+<tr valign="top"><td><code>height,width</code></td>
+<td>
+<p>passed to <code>plot_ly</code></p>
+</td></tr>
+<tr valign="top"><td><code>colors</code></td>
+<td>
+<p>a vector of colors to pas to <code>add_lines</code></p>
+</td></tr>
+<tr valign="top"><td><code>nrows,ncols</code></td>
+<td>
+<p>passed to <code>plotly::subplot</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>For <code>scat1d</code> the length of line segments used is
+<code>frac*min(par()$pin)/par()$uin[opp]</code> data units, where
+opp is the index of the opposite axis and <code>frac</code> defaults
+to .02.  Assumes that <code>plot</code> has already been called.  Current
+<code>par("usr")</code> is used to determine the range of data for the axis
+of the current plot.  This range is used in jittering and in
+constructing line segments.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>histSpike</code> returns the actual range of <code>x</code> used in its binning
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p><code>scat1d</code> adds line segments to plot.
+<code>datadensity.data.frame</code> draws a complete plot.  <code>histSpike</code>
+draws a complete plot or adds to an existing plot.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell<br />
+Department of Biostatistics<br />
+Vanderbilt University<br />
+Nashville TN, USA<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+<p>Martin Maechler (improved <code>scat1d</code>)<br />
+Seminar fuer Statistik<br />
+ETH Zurich SWITZERLAND<br />
+<a href="mailto:maechler@stat.math.ethz.ch">maechler@stat.math.ethz.ch</a>
+</p>
+<p>Jens Oehlschlaegel-Akiyoshi (wrote <code>jitter2</code>)<br />
+Center for Psychotherapy Research<br />
+Christian-Belser-Strasse 79a<br />
+D-70597 Stuttgart Germany<br />
+<a href="mailto:oehl@psyres-stuttgart.de">oehl@psyres-stuttgart.de</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/segments.html">segments</a></code>, <code><a href="../../base/html/jitter.html">jitter</a></code>, <code><a href="../../graphics/html/rug.html">rug</a></code>,
+<code><a href="../../Hmisc/help/plsmo.html">plsmo</a></code>, <code><a href="../../stats/html/lowess.html">lowess</a></code>, <code><a href="../../lattice/html/xyplot.html">stripplot</a></code>,
+<code><a href="../../Hmisc/help/hist.data.frame.html">hist.data.frame</a></code>,<code><a href="../../Hmisc/help/Ecdf.html">Ecdf</a></code>, <code><a href="../../graphics/html/hist.html">hist</a></code>,
+<code><a href="../../lattice/help/histogram.html">histogram</a></code>, <code><a href="../../base/html/table.html">table</a></code>,
+<code><a href="../../stats/html/density.html">density</a></code>, <code><a href="../../Hmisc/help/stat_plsmo.html">stat_plsmo</a></code>, <code><a href="../../Hmisc/help/histboxp.html">histboxp</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+plot(x &lt;- rnorm(50), y &lt;- 3*x + rnorm(50)/2 )
+scat1d(x)                 # density bars on top of graph
+scat1d(y, 4)              # density bars at right
+histSpike(x, add=TRUE)       # histogram instead, 100 bins
+histSpike(y, 4, add=TRUE)
+histSpike(x, type='density', add=TRUE)  # smooth density at bottom
+histSpike(y, 4, type='density', add=TRUE)
+
+
+smooth &lt;- lowess(x, y)    # add nonparametric regression curve
+lines(smooth)             # Note: plsmo() does this
+scat1d(x, y=approx(smooth, xout=x)$y) # data density on curve
+scat1d(x, curve=smooth)   # same effect as previous command
+histSpike(x, curve=smooth, add=TRUE) # same as previous but with histogram
+histSpike(x, curve=smooth, type='density', add=TRUE)  
+# same but smooth density over curve
+
+
+plot(x &lt;- rnorm(250), y &lt;- 3*x + rnorm(250)/2)
+scat1d(x, tfrac=0)        # dots randomly spaced from axis
+scat1d(y, 4, frac=-.03)   # bars outside axis
+scat1d(y, 2, tfrac=.2)    # same bars with smaller random fraction
+
+
+x &lt;- c(0:3,rep(4,3),5,rep(7,10),9)
+plot(x, jitter2(x))       # original versus jittered values
+abline(0,1)               # unique values unjittered on abline
+points(x+0.1, jitter2(x, limit=FALSE), col=2)
+                          # allow locally maximum jittering
+points(x+0.2, jitter2(x, fill=1), col=3); abline(h=seq(0.5,9,1), lty=2)
+                          # fill 3/3 instead of 1/3
+x &lt;- rnorm(200,0,2)+1; y &lt;- x^2
+x2 &lt;- round((x+rnorm(200))/2)*2
+x3 &lt;- round((x+rnorm(200))/4)*4
+dfram &lt;- data.frame(y,x,x2,x3)
+plot(dfram$x2, dfram$y)   # jitter2 via scat1d
+scat1d(dfram$x2, y=dfram$y, preserve=TRUE, col=2)
+scat1d(dfram$x2, preserve=TRUE, frac=-0.02, col=2)
+scat1d(dfram$y, 4, preserve=TRUE, frac=-0.02, col=2)
+
+
+pairs(jitter2(dfram))     # pairs for jittered data.frame
+# This gets reasonable pairwise scatter plots for all combinations of
+# variables where
+#
+# - continuous variables (with unique values) are not jittered at all, thus
+#   all relations between continuous variables are shown as they are,
+#   extreme values have exact positions.
+#
+# - discrete variables get a reasonable amount of jittering, whether they
+#   have 2, 3, 5, 10, 20 \dots levels
+#
+# - different from adding noise, jitter2() will use the available space
+#   optimally and no value will randomly mask another
+#
+# If you want a scatterplot with lowess smooths on the *exact* values and
+# the point clouds shown jittered, you just need
+#
+pairs( dfram ,panel=function(x,y) { points(jitter2(x),jitter2(y))
+                                    lines(lowess(x,y)) } )
+
+
+
+
+datadensity(dfram)     # graphical snapshot of entire data frame
+datadensity(dfram, group=cut2(dfram$x2,g=3))
+                          # stratify points and frequencies by
+                          # x2 tertiles and use 3 colors
+
+
+# datadensity.data.frame(split(x, grouping.variable))
+# need to explicitly invoke datadensity.data.frame when the
+# first argument is a list
+
+## Not run: 
+require(rms)
+f &lt;- lrm(y ~ blood.pressure + sex * (age + rcs(cholesterol,4)),
+         data=d)
+p &lt;- Predict(f, cholesterol, sex)
+g &lt;- ggplot(p, aes(x=cholesterol, y=yhat, color=sex)) + geom_line() +
+  xlab(xl2) + ylim(-1, 1)
+g &lt;- g + geom_ribbon(data=p, aes(ymin=lower, ymax=upper), alpha=0.2,
+                linetype=0, show_guide=FALSE)
+g + histSpikeg(yhat ~ cholesterol + sex, p, d)
+
+# colors &lt;- c('red', 'blue')
+# p &lt;- plot_ly(x=x, y=y, color=g, colors=colors, mode='markers')
+# histSpikep(p, x, y, z, color=g, colors=colors)
+
+w &lt;- data.frame(x1=rnorm(100), x2=exp(rnorm(100)))
+g &lt;- c(rep('a', 50), rep('b', 50))
+ecdfpM(w, group=g, ncols=2)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

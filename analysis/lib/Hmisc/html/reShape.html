@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Reshape Matrices and Serial Data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for reShape {Hmisc}"><tr><td>reShape {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Reshape Matrices and Serial Data</h2>
+
+<h3>Description</h3>
+
+<p>If the first argument is a matrix, <code>reShape</code> strings out its values
+and creates row and column vectors specifying the row and column each
+element came from.  This is useful for sending matrices to Trellis
+functions, for analyzing or plotting results of <code>table</code> or
+<code>crosstabs</code>, or for reformatting serial data stored in a matrix (with
+rows representing multiple time points) into vectors.  The number of
+observations in the new variables will be the product of the number of
+rows and number of columns in the input matrix.  If the first
+argument is a vector, the <code>id</code> and <code>colvar</code> variables are used to
+restructure it into a matrix, with <code>NA</code>s for elements that corresponded
+to combinations of <code>id</code> and <code>colvar</code> values that did not exist in the
+data.  When more than one vector is given, multiple matrices are
+created.  This is useful for restructuring irregular serial data into
+regular matrices.  It is also useful for converting data produced by
+<code>expand.grid</code> into a matrix (see the last example).  The number of
+rows of the new matrices equals the number of unique values of <code>id</code>,
+and the number of columns equals the number of unique values of
+<code>colvar</code>.
+</p>
+<p>When the first argument is a vector and the <code>id</code> is a data frame
+(even with only one variable),
+<code>reShape</code> will produce a data frame, and the unique groups are
+identified by combinations of the values of all variables in <code>id</code>.
+If a data frame <code>constant</code> is specified, the variables in this data
+frame are assumed to be constant within combinations of <code>id</code>
+variables (if not, an arbitrary observation in <code>constant</code> will be
+selected for each group).  A row of <code>constant</code> corresponding to the
+target <code>id</code> combination is then carried along when creating the
+data frame result.
+</p>
+<p>A different behavior of <code>reShape</code> is achieved when <code>base</code> and <code>reps</code>
+are specified.  In that case <code>x</code> must be a list or data frame, and
+those data are assumed to contain one or more non-repeating
+measurements (e.g., baseline measurements) and one or more repeated
+measurements represented by variables named by pasting together the
+character strings in the vector <code>base</code> with the integers 1, 2, ...,
+<code>reps</code>.  The input data are rearranged by repeating each value of the
+baseline variables <code>reps</code> times and by transposing each observation's
+values of one of the set of repeated measurements as <code>reps</code>
+observations under the variable whose name does not have an integer
+pasted to the end.  if <code>x</code> has a <code>row.names</code> attribute, those
+observation identifiers are each repeated <code>reps</code> times in the output
+object.  See the last example.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+reShape(x, ..., id, colvar, base, reps, times=1:reps,
+        timevar='seqno', constant=NULL)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a matrix or vector, or, when <code>base</code> is specified, a list or data frame
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>other optional vectors, if <code>x</code> is a vector
+</p>
+</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+
+<p>A numeric, character, category, or factor variable containing subject
+identifiers, or a data frame of such variables that in combination form
+groups of interest.  Required if <code>x</code> is a vector, ignored otherwise.
+</p>
+</td></tr>
+<tr valign="top"><td><code>colvar</code></td>
+<td>
+
+<p>A numeric, character, category, or factor variable containing column
+identifiers.  <code>colvar</code> is using a &quot;time of data collection&quot; variable.
+Required if <code>x</code> is a vector, ignored otherwise.
+</p>
+</td></tr>
+<tr valign="top"><td><code>base</code></td>
+<td>
+
+<p>vector of character strings containing base names of repeated
+measurements
+</p>
+</td></tr>
+<tr valign="top"><td><code>reps</code></td>
+<td>
+
+<p>number of times variables named in <code>base</code> are repeated.  This must be
+a constant.
+</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+
+<p>when <code>base</code> is given, <code>times</code> is the vector of times to create
+if you do not want to use consecutive integers beginning with 1.
+</p>
+</td></tr>
+<tr valign="top"><td><code>timevar</code></td>
+<td>
+
+<p>specifies the name of the time variable to create if <code>times</code> is
+given, if you do not want to use <code>seqno</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>constant</code></td>
+<td>
+
+<p>a data frame with the same number of rows in <code>id</code> and <code>x</code>,
+containing auxiliary information to be merged into the resulting data
+frame.  Logically, the rows of <code>constant</code> within each group
+should have the same value of all of its variables.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>In converting <code>dimnames</code> to vectors, the resulting variables are
+numeric if all elements of the matrix dimnames can be converted to
+numeric, otherwise the corresponding row or column variable remains
+character.  When the <code>dimnames</code> if <code>x</code> have a <code>names</code> attribute, those
+two names become the new variable names.  If <code>x</code> is a vector and
+another vector is also given (in <code>...</code>), the matrices in the resulting
+list are named the same as the input vector calling arguments.  You
+can specify customized names for these on-the-fly by using
+e.g. <code>reShape(X=x, Y=y, id= , colvar= )</code>.  The new names will then be
+<code>X</code> and <code>Y</code> instead of <code>x</code> and <code>y</code>.   A new variable named <code>seqnno</code> is
+also added to the resulting object.  <code>seqno</code> indicates the sequential
+repeated measurement number.  When <code>base</code> and <code>times</code> are
+specified, this new variable is named the character value of <code>timevar</code> and the values
+are given by a table lookup into the vector <code>times</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>If <code>x</code> is a matrix, returns a list containing the row variable, the
+column variable, and the <code>as.vector(x)</code> vector, named the same as the
+calling argument was called for <code>x</code>.  If <code>x</code> is a vector and no other
+vectors were specified as <code>...</code>, the result is a matrix.  If at least
+one vector was given to <code>...</code>, the result is a list containing <code>k</code>
+matrices, where <code>k</code> one plus the number of vectors in <code>...</code>.  If <code>x</code>
+is a list or data frame, the same type of object is returned.  If
+<code>x</code> is a vector and <code>id</code> is a data frame, a data frame will be
+the result.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell<br />
+Department of Biostatistics<br />
+Vanderbilt University School of Medicine<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/help/reshape.html">reshape</a></code>, <code><a href="../../base/help/vector.html">as.vector</a></code>,
+<code><a href="../../base/help/matrix.html">matrix</a></code>, <code><a href="../../base/help/dimnames.html">dimnames</a></code>,
+<code><a href="../../base/help/outer.html">outer</a></code>, <code><a href="../../base/help/table.html">table</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+Solder  &lt;- factor(sample(c('Thin','Thick'),200,TRUE),c('Thin','Thick'))
+Opening &lt;- factor(sample(c('S','M','L'),  200,TRUE),c('S','M','L'))
+
+tab &lt;- table(Opening, Solder)
+tab
+reShape(tab)
+# attach(tab)  # do further processing
+
+# An example where a matrix is created from irregular vectors
+follow &lt;- data.frame(id=c('a','a','b','b','b','d'),
+                     month=c(1, 2,  1,  2,  3,  2),
+                     cholesterol=c(225,226, 320,319,318, 270))
+follow
+attach(follow)
+reShape(cholesterol, id=id, colvar=month)
+detach('follow')
+# Could have done :
+# reShape(cholesterol, triglyceride=trig, id=id, colvar=month)
+
+# Create a data frame, reshaping a long dataset in which groups are
+# formed not just by subject id but by combinations of subject id and
+# visit number.  Also carry forward a variable that is supposed to be
+# constant within subject-visit number combinations.  In this example,
+# it is not constant, so an arbitrary visit number will be selected.
+w &lt;- data.frame(id=c('a','a','a','a','b','b','b','d','d','d'),
+             visit=c(  1,  1,  2,  2,  1,  1,  2,  2,  2,  2),
+                 k=c('A','A','B','B','C','C','D','E','F','G'),
+               var=c('x','y','x','y','x','y','y','x','y','z'),
+               val=1:10)
+with(w,
+     reShape(val, id=data.frame(id,visit),
+             constant=data.frame(k), colvar=var))
+
+# Get predictions from a regression model for 2 systematically
+# varying predictors.  Convert the predictions into a matrix, with
+# rows corresponding to the predictor having the most values, and
+# columns corresponding to the other predictor
+# d &lt;- expand.grid(x2=0:1, x1=1:100)
+# pred &lt;- predict(fit, d)
+# reShape(pred, id=d$x1, colvar=d$x2)  # makes 100 x 2 matrix
+
+
+# Reshape a wide data frame containing multiple variables representing
+# repeated measurements (3 repeats on 2 variables; 4 subjects)
+set.seed(33)
+n &lt;- 4
+w &lt;- data.frame(age=rnorm(n, 40, 10),
+                sex=sample(c('female','male'), n,TRUE),
+                sbp1=rnorm(n, 120, 15),
+                sbp2=rnorm(n, 120, 15),
+                sbp3=rnorm(n, 120, 15),
+                dbp1=rnorm(n,  80, 15),
+                dbp2=rnorm(n,  80, 15),
+                dbp3=rnorm(n,  80, 15), row.names=letters[1:n])
+options(digits=3)
+w
+
+
+u &lt;- reShape(w, base=c('sbp','dbp'), reps=3)
+u
+reShape(w, base=c('sbp','dbp'), reps=3, timevar='week', times=c(0,3,12))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

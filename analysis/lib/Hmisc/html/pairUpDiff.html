@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: pairUpDiff</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for pairUpDiff {Hmisc}"><tr><td>pairUpDiff {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>pairUpDiff</h2>
+
+<h3>Description</h3>
+
+<p>Pair-up and Compute Differences
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+pairUpDiff(
+  x,
+  major = NULL,
+  minor = NULL,
+  group,
+  refgroup,
+  lower = NULL,
+  upper = NULL,
+  minkeep = NULL,
+  sortdiff = TRUE,
+  conf.int = 0.95
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a numeric vector</p>
+</td></tr>
+<tr valign="top"><td><code>major</code></td>
+<td>
+<p>an optional factor or character vector</p>
+</td></tr>
+<tr valign="top"><td><code>minor</code></td>
+<td>
+<p>an optional factor or character vector</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+<p>a required factor or character vector with two levels</p>
+</td></tr>
+<tr valign="top"><td><code>refgroup</code></td>
+<td>
+<p>a character string specifying which level of <code>group</code> is to be subtracted</p>
+</td></tr>
+<tr valign="top"><td><code>lower</code></td>
+<td>
+<p>an optional numeric vector giving the lower <code>conf.int</code> confidence limit for <code>x</code></p>
+</td></tr>
+<tr valign="top"><td><code>upper</code></td>
+<td>
+<p>similar to <code>lower</code> but for the upper limit</p>
+</td></tr>
+<tr valign="top"><td><code>minkeep</code></td>
+<td>
+<p>the minimum value of <code>x</code> required to keep the observation.  An observation is kept if either <code>group</code> has <code>x</code> exceeding or equalling <code>minkeep</code>.  Default is to keep all observations.</p>
+</td></tr>
+<tr valign="top"><td><code>sortdiff</code></td>
+<td>
+<p>set to <code>FALSE</code> to avoid sorting observations by descending between-<code>group</code> differences</p>
+</td></tr>
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+<p>confidence level; must have been the value used to compute <code>lower</code> and <code>upper</code> if they are provided</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function sets up for plotting half-width confidence intervals for differences, sorting by descending order of differences within major categories, especially for dot charts as produced by <code><a href="../../Hmisc/help/dotchartpl.html">dotchartpl()</a></code>. Given a numeric vector <code>x</code> and a grouping (superpositioning) vector <code>group</code> with exactly two levels, computes differences in possibly transformed <code>x</code> between levels of <code>group</code> for the two observations that are equal on <code>major</code> and <code>minor</code>.  If <code>lower</code> and <code>upper</code> are specified, using <code>conf.int</code> and approximate normality on the transformed scale to backsolve for the standard errors of estimates, and uses approximate normality to get confidence intervals on differences by taking the square root of the sum of squares of the two standard errors.  Coordinates for plotting half-width confidence intervals are also computed.  These intervals may be plotted on the same scale as <code>x</code>, having the property that they overlap the two <code>x</code> values if and only if there is no &quot;significant&quot; difference at the <code>conf.int</code> level.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a list of two objects both sorted by descending values of differences in <code>x</code>.  The <code>X</code> object is a data frame that contains the original variables sorted by descending differences across <code>group</code> and in addition a variable <code>subscripts</code> denoting the subscripts of original observations with possible re-sorting and dropping depending on <code>sortdiff</code> and <code>minkeep</code>.  The <code>D</code> data frame contains sorted differences (<code>diff</code>), <code>major</code>, <code>minor</code>, <code>sd</code> of difference, <code>lower</code> and <code>upper</code> confidence limits for the difference, <code>mid</code>, the midpoint of the two <code>x</code> values involved in the difference, <code>lowermid</code>, the midpoint minus 1/2 the width of the confidence interval, and <code>uppermid</code>, the midpoint plus 1/2 the width of the confidence interval.  Another element returned is <code>dropped</code> which is a vector of <code>major</code> / <code>minor</code> combinations dropped due to <code>minkeep</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- c(1, 4, 7, 2, 5, 3, 6)
+pairUpDiff(x, c(rep('A', 4), rep('B', 3)),
+  c('u','u','v','v','z','z','q'),
+  c('a','b','a','b','a','b','a'), 'a', x-.1, x+.1)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

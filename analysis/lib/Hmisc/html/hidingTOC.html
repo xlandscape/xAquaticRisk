@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Moving and Hiding Table of Contents</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for hidingTOC {Hmisc}"><tr><td>hidingTOC {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Moving and Hiding Table of Contents</h2>
+
+<h3>Description</h3>
+
+<p>Moving and hiding table of contents for Rmd HTML documents
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+hidingTOC(
+  buttonLabel = "Contents",
+  levels = 3,
+  tocSide = c("right", "left"),
+  buttonSide = c("right", "left"),
+  posCollapse = c("margin", "top", "bottom"),
+  hidden = FALSE
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>buttonLabel</code></td>
+<td>
+<p>the text on the button that hides and unhides the
+table of contents. Defaults to <code>Contents</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>levels</code></td>
+<td>
+<p>the max depth of the table of contents that it is desired to
+have control over the display of.  (defaults to 3)</p>
+</td></tr>
+<tr valign="top"><td><code>tocSide</code></td>
+<td>
+<p>which side of the page should the table of contents be placed
+on. Can be either <code>'right'</code> or <code>'left'</code>. Defaults to
+<code>'right'</code></p>
+</td></tr>
+<tr valign="top"><td><code>buttonSide</code></td>
+<td>
+<p>which side of the page should the button that hides the TOC
+be placed on. Can be either <code>'right'</code> or <code>'left'</code>. Defaults to
+<code>'right'</code></p>
+</td></tr>
+<tr valign="top"><td><code>posCollapse</code></td>
+<td>
+<p>if <code>'margin'</code> then display the depth select buttons
+vertically along the side of the page choosen by <code>buttonSide</code>. If
+<code>'top'</code> then display the depth select buttons horizontally under the
+button that hides the TOC. Defaults to <code>'margin'</code>. <code>'bottom'</code> is
+currently unimplemented.</p>
+</td></tr>
+<tr valign="top"><td><code>hidden</code></td>
+<td>
+<p>Logical should the table of contents be hidden at page load
+Defaults to <code>FALSE</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>hidingTOC</code> creates a table of contents in a Rmd document that
+can be hidden at the press of a button. It also generate buttons that allow
+the hiding or unhiding of the diffrent level depths of the table of
+contents.  For <code>quarto</code>-related methods see <a href="https://stackoverflow.com/questions/73999697">https://stackoverflow.com/questions/73999697</a>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a HTML formated text string to be inserted into an markdown document
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Thomas Dupont
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+hidingTOC()
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

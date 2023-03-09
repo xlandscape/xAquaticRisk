@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Metadata for a Data Frame</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for contents {Hmisc}"><tr><td>contents {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Metadata for a Data Frame</h2>
+
+<h3>Description</h3>
+
+<p><code>contents</code> is a generic method for which <code>contents.data.frame</code>
+is currently the only method.  <code>contents.data.frame</code> creates an
+object containing the following attributes of the variables 
+from a data frame: names, labels (if any), units (if any), number of
+factor levels (if any), factor levels,
+class, storage mode, and number of NAs.  <code>print.contents.data.frame</code>
+will print the results, with options for sorting the variables.
+<code>html.contents.data.frame</code> creates HTML code for displaying the
+results.  This code has hyperlinks so that if the user clicks on the
+number of levels the browser jumps to the correct part of a table of
+factor levels for all the <code>factor</code> variables.  If long labels are
+present (<code>"longlabel"</code> attributes on variables), these are printed
+at the bottom and the <code>html</code> method links to them through the
+regular labels.  Variables having the same <code>levels</code> in the same
+order have the levels factored out for brevity.
+</p>
+<p><code>contents.list</code> prints a directory of datasets when
+<code><a href="../../Hmisc/help/sasxport.get.html">sasxport.get</a></code> imported more than one SAS dataset.
+</p>
+<p>If <code>options(prType='html')</code> is in effect, calling <code>print</code> on
+an object that is the contents of a data frame will result in
+rendering the HTML version.  If run from the console a browser window
+will open.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+contents(object, ...)
+## S3 method for class 'data.frame'
+contents(object, sortlevels=FALSE, id=NULL,
+  range=NULL, values=NULL, ...)
+## S3 method for class 'contents.data.frame'
+print(x,
+    sort=c('none','names','labels','NAs'), prlevels=TRUE, maxlevels=Inf,
+    number=FALSE, ...) 
+## S3 method for class 'contents.data.frame'
+html(object,
+           sort=c('none','names','labels','NAs'), prlevels=TRUE, maxlevels=Inf,
+           levelType=c('list','table'),
+           number=FALSE, nshow=TRUE, ...)
+## S3 method for class 'list'
+contents(object, dslabels, ...)
+## S3 method for class 'contents.list'
+print(x,
+    sort=c('none','names','labels','NAs','vars'), ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>a data frame.  For <code>html</code> is an object created by
+<code>contents</code>.  For <code>contents.list</code> is a list of data frames.
+</p>
+</td></tr>
+<tr valign="top"><td><code>sortlevels</code></td>
+<td>
+<p>set to <code>TRUE</code> to sort levels of all factor
+variables into alphabetic order.  This is especially useful when two
+variables use the same levels but in different orders.  They will
+still be recognized by the <code>html</code> method as having identical
+levels if sorted.</p>
+</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+<p>an optional subject ID variable name that if present in
+<code>object</code> will cause the number of unique IDs to be printed in
+the contents header</p>
+</td></tr>
+<tr valign="top"><td><code>range</code></td>
+<td>
+<p>an optional variable name that if present in <code>object</code>
+will cause its range to be printed in the contents header</p>
+</td></tr>
+<tr valign="top"><td><code>values</code></td>
+<td>
+<p>an optional variable name that if present in
+<code>object</code> will cause its unique values to be printed in the
+contents header</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>an object created by <code>contents</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>sort</code></td>
+<td>
+
+<p>Default is to print the variables in their original order in the
+data frame.  Specify one of 
+<code>"names"</code>, <code>"labels"</code>, or <code>"NAs"</code> to sort the variables by,
+respectively, alphabetically by names, alphabetically by labels, or by
+increaseing order of number of missing values.  For
+<code>contents.list</code>, <code>sort</code> may also be the value
+<code>"vars"</code> to cause sorting by the number of variables in the dataset.
+</p>
+</td></tr>
+<tr valign="top"><td><code>prlevels</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to not print all levels of <code>factor</code> variables
+</p>
+</td></tr>
+<tr valign="top"><td><code>maxlevels</code></td>
+<td>
+<p>maximum number of levels to print for a <code>factor</code> variable</p>
+</td></tr>
+<tr valign="top"><td><code>number</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have the <code>print</code> and <code>latex</code> methods
+number the variables by their order in the data frame
+</p>
+</td></tr>
+<tr valign="top"><td><code>nshow</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress outputting number of
+observations and number of <code>NA</code>s; useful when these counts
+would unblind information to blinded reviewers</p>
+</td></tr>
+<tr valign="top"><td><code>levelType</code></td>
+<td>
+
+<p>By default, bullet lists of category levels are
+constructed in html.  Set <code>levelType='table'</code> to put levels in
+html table format.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>arguments passed from <code>html</code> to <code>format.df</code>,
+unused otherwise
+</p>
+</td></tr>
+<tr valign="top"><td><code>dslabels</code></td>
+<td>
+
+<p>named vector of SAS dataset labels, created for
+example by <code><a href="../../Hmisc/help/sasdsLabels.html">sasdsLabels</a></code>
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>an object of class <code>"contents.data.frame"</code> or
+<code>"contents.list"</code>.  For the <code>html</code> method is an <code>html</code>
+character vector object.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/describe.html">describe</a></code>, <code><a href="../../Hmisc/help/html.html">html</a></code>, <code><a href="../../Hmisc/help/upData.html">upData</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+dfr &lt;- data.frame(x=rnorm(400),y=sample(c('male','female'),400,TRUE),
+                  stringsAsFactors=TRUE)
+contents(dfr)
+dfr &lt;- upData(dfr, labels=c(x='Label for x', y='Label for y'))
+attr(dfr$x, 'longlabel') &lt;-
+ 'A very long label for x that can continue onto multiple long lines of text'
+
+k &lt;- contents(dfr)
+print(k, sort='names', prlevels=FALSE)
+## Not run: 
+html(k)
+html(contents(dfr))            # same result
+latex(k$contents)              # latex.default just the main information
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

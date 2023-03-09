@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Selectively Print Lines of a Text Vector</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for prselect {Hmisc}"><tr><td>prselect {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Selectively Print Lines of a Text Vector</h2>
+
+<h3>Description</h3>
+
+<p>Given one or two regular expressions or exact text matches, removes
+elements of the input vector that match these specifications. Omitted
+lines are replaced by ....  This is useful for selectively
+suppressing some of the printed output of R functions such as
+regression fitting functions, especially in the context of making
+statistical reports using Sweave or Odfweave.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+prselect(x, start = NULL, stop = NULL, i = 0, j = 0, pr = TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>input character vector
+</p>
+</td></tr>
+<tr valign="top"><td><code>start</code></td>
+<td>
+
+<p>text or regular expression to look for starting line to omit.  If
+omitted, deletions start at the first line.
+</p>
+</td></tr>
+<tr valign="top"><td><code>stop</code></td>
+<td>
+
+<p>text or regular expression to look for ending line to omit. If
+omitted, deletions proceed until the last line.
+</p>
+</td></tr>
+<tr valign="top"><td><code>i</code></td>
+<td>
+
+<p>increment in number of first line to delete after match is found
+</p>
+</td></tr>
+<tr valign="top"><td><code>j</code></td>
+<td>
+
+<p>increment in number of last line to delete after match is found
+</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress printing
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>an invisible vector of retained lines of text</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../utils/help/Sweave.html">Sweave</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- c('the','cat','ran','past','the','dog')
+prselect(x, 'big','bad')     # omit nothing- no match
+prselect(x, 'the','past')    # omit first 4 lines
+prselect(x,'the','junk')     # omit nothing- no match for stop
+prselect(x,'ran','dog')      # omit last 4 lines
+prselect(x,'cat')            # omit lines 2-
+prselect(x,'cat',i=1)        # omit lines 3-
+prselect(x,'cat','past')     # omit lines 2-4
+prselect(x,'cat','past',j=1) # omit lines 2-5
+prselect(x,'cat','past',j=-1)# omit lines 2-3
+prselect(x,'t$','dog')       # omit lines 2-6; t must be at end
+
+# Example for Sweave: run a regression analysis with the rms package
+# then selectively output only a portion of what print.ols prints.
+# (Thanks to \email{romain.francois@dbmail.com})
+# &lt;&lt;z,eval=FALSE,echo=T&gt;&gt;=
+# library(rms)
+# y &lt;- rnorm(20); x1 &lt;- rnorm(20); x2 &lt;- rnorm(20)
+# ols(y ~ x1 + x2)
+# &lt;&lt;echo=F&gt;&gt;=
+# z &lt;- capture.output( {
+# &lt;&lt;z&gt;&gt;
+#    } )
+# prselect(z, 'Residuals:') # keep only summary stats; or:
+# prselect(z, stop='Coefficients', j=-1)  # keep coefficients, rmse, R^2; or:
+# prselect(z, 'Coefficients', 'Residual standard error', j=-1) # omit coef
+# @
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

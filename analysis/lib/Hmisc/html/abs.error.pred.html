@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Indexes of Absolute Prediction Error for Linear Models</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for abs.error.pred {Hmisc}"><tr><td>abs.error.pred {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Indexes of Absolute Prediction Error for Linear Models
+</h2>
+
+<h3>Description</h3>
+
+<p>Computes the mean and median of various absolute errors related to
+ordinary multiple regression models.  The mean and median absolute
+errors correspond to the mean square due to regression, error, and
+total. The absolute errors computed are derived from <i>Yhat - median(Yhat)</i>,
+<i>Yhat - Y</i>, and <i>Y - median(Y)</i>.  The function also
+computes ratios that correspond to <i>R^2</i> and <i>1 - R^2</i> (but
+these ratios do not add to 1.0); the <i>R^2</i> measure is the ratio of
+mean or median absolute <i>Yhat
+    - median(Yhat)</i> to the mean or median absolute <i>Y - median(Y)</i>. The <i>1 - R^2</i> or SSE/SST
+measure is the mean or median absolute <i>Yhat - Y</i>
+divided by the mean or median absolute <i>Y - median(Y)</i>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+abs.error.pred(fit, lp=NULL, y=NULL)
+
+## S3 method for class 'abs.error.pred'
+print(x, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>fit</code></td>
+<td>
+
+<p>a fit object typically from <code><a href="../../stats/html/lm.html">lm</a></code> or <code><a href="../../rms/help/ols.html">ols</a></code>
+that contains a y vector (i.e., you should have specified
+<code>y=TRUE</code> to the fitting function) unless the <code>y</code> argument
+is given to <code>abs.error.pred</code>.  If you do not specify the
+<code>lp</code> argument, <code>fit</code> must contain <code>fitted.values</code> or
+<code>linear.predictors</code>.  You must specify <code>fit</code> or both of
+<code>lp</code> and <code>y</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lp</code></td>
+<td>
+
+<p>a vector of predicted values (Y hat above) if <code>fit</code> is not given
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a vector of response variable values if <code>fit</code> (with
+<code>y=TRUE</code> in effect) is not given
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>abs.error.pred</code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>unused</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a list of class <code>abs.error.pred</code> (used by
+<code>print.abs.error.pred</code>) containing two matrices:
+<code>differences</code> and <code>ratios</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell<br />
+Department of Biostatistics<br />
+Vanderbilt University School of Medicine<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Schemper M (2003): Stat in Med 22:2299-2308.
+</p>
+<p>Tian L, Cai T, Goetghebeur E, Wei LJ (2007): Biometrika 94:297-311.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/lm.html">lm</a></code>, <code><a href="../../rms/help/ols.html">ols</a></code>, <code><a href="../../stats/html/cor.html">cor</a></code>,
+<code><a href="../../rms/help/validate.ols.html">validate.ols</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)         # so can regenerate results
+x1 &lt;- rnorm(100)
+x2 &lt;- rnorm(100)
+y  &lt;- exp(x1+x2+rnorm(100))
+f &lt;- lm(log(y) ~ x1 + poly(x2,3), y=TRUE)
+abs.error.pred(lp=exp(fitted(f)), y=y)
+rm(x1,x2,y,f)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

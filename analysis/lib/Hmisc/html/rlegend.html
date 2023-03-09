@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Special Version of legend for R</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for rlegend {Hmisc}"><tr><td>rlegend {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Special Version of legend for R</h2>
+
+<h3>Description</h3>
+
+<p><code>rlegend</code> is a version of <code><a href="../../graphics/html/legend.html">legend</a></code> for <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> that implements
+<code>plot=FALSE</code>, adds <code>grid=TRUE</code>, and defaults <code>lty</code>,
+<code>lwd</code>, <code>pch</code> to <code>NULL</code> and checks for <code>length&gt;0</code>
+rather than <code>missing()</code>, so it's easier to deal with
+non-applicable parameters.  But when <span class="pkg">grid</span> is in effect, the
+preferred function to use is <code>rlegendg</code>, which calls the
+<span class="pkg">lattice</span> <code><a href="../../lattice/html/draw.key.html">draw.key</a></code> function.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rlegend(x, y, legend, fill, col = "black", lty = NULL, lwd = NULL,
+        pch = NULL, angle = NULL, density = NULL, bty = "o",
+        bg = par("bg"), pt.bg = NA, cex = 1, xjust = 0, yjust = 1,
+        x.intersp = 1, y.intersp = 1, adj = 0, text.width = NULL,
+        merge = do.lines &amp;&amp; has.pch, trace = FALSE, ncol = 1,
+        horiz = FALSE, plot = TRUE, grid = FALSE, ...)
+
+rlegendg(x, y, legend, col=pr$col[1], lty=NULL,
+         lwd=NULL, pch=NULL, cex=pr$cex[1], other=NULL) 
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x,y,legend,fill,col,lty,lwd,pch,angle,density,bty,bg,pt.bg,cex,xjust,
+yjust,x.intersp,y.intersp,adj,text.width,merge,trace,ncol,horiz</code></td>
+<td>
+
+<p>see <code><a href="../../graphics/html/legend.html">legend</a></code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>plot</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress drawing the legend.  This
+is used the compute the size needed for when the legend is drawn
+with a later call to <code>rlegend</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>grid</code></td>
+<td>
+<p>set to <code>TRUE</code> if the <span class="pkg">grid</span> package is in effect</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>see <code><a href="../../graphics/html/legend.html">legend</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>other</code></td>
+<td>
+
+<p>a list containing other arguments to pass to
+<code>draw.key</code>.  See the help file for <code><a href="../../lattice/html/xyplot.html">xyplot</a></code>.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a list with elements <code>rect</code> and <code>text</code>.  <code>rect</code> has
+elements <code>w, h, left, top</code> with size/position information.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell and R-Core</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/legend.html">legend</a></code>, <code><a href="../../lattice/help/draw.key.html">draw.key</a></code>, <code><a href="../../lattice/html/xyplot.html">xyplot</a></code>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

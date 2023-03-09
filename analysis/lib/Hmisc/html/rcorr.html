@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Matrix of Correlations and P-values</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for rcorr {Hmisc}"><tr><td>rcorr {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Matrix of Correlations and P-values</h2>
+
+<h3>Description</h3>
+
+<p><code>rcorr</code> Computes a matrix of Pearson's <code>r</code> or Spearman's
+<code>rho</code> rank correlation coefficients for all possible pairs of
+columns of a matrix.  Missing values are deleted in pairs rather than
+deleting all rows of <code>x</code> having any missing variables.  Ranks are
+computed using efficient algorithms (see reference 2), using midranks
+for ties.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rcorr(x, y, type=c("pearson","spearman"))
+
+## S3 method for class 'rcorr'
+print(x, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a numeric matrix with at least 5 rows and at least 2 columns (if
+<code>y</code> is absent).  For <code>print</code>, <code>x</code> is an object
+produced by <code>rcorr</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a numeric vector or matrix which will be concatenated to <code>x</code>.  If
+<code>y</code> is omitted for <code>rcorr</code>, <code>x</code> must be a matrix.
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>specifies the type of correlations to compute.  Spearman correlations
+are the Pearson linear correlations computed on the ranks of non-missing
+elements, using midranks for ties.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>argument for method compatiblity.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Uses midranks in case of ties, as described by Hollander and Wolfe.
+P-values are approximated by using the <code>t</code> or <code>F</code> distributions.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>rcorr</code> returns a list with elements <code>r</code>, the
+matrix of correlations, <code>n</code> the
+matrix of number of observations used in analyzing each pair of variables,
+and <code>P</code>, the asymptotic P-values.
+Pairs with fewer than 2 non-missing values have the r values set to NA.
+The diagonals of <code>n</code> are the number of non-NAs for the single variable
+corresponding to that row and column.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Hollander M. and Wolfe D.A. (1973).  Nonparametric Statistical Methods.
+New York: Wiley.
+</p>
+<p>Press WH, Flannery BP, Teukolsky SA, Vetterling, WT (1988): Numerical
+Recipes in C.  Cambridge: Cambridge University Press.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/hoeffd.html">hoeffd</a></code>, <code><a href="../../stats/html/cor.html">cor</a></code>, <code><a href="../../Hmisc/help/combine.levels.html">combine.levels</a></code>,
+<code><a href="../../Hmisc/help/varclus.html">varclus</a></code>, <code><a href="../../Hmisc/help/dotchart3.html">dotchart3</a></code>, <code><a href="../../Hmisc/help/impute.html">impute</a></code>,
+<code><a href="../../stats/html/chisq.test.html">chisq.test</a></code>, <code><a href="../../Hmisc/help/cut2.html">cut2</a></code>.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- c(-2, -1, 0, 1, 2)
+y &lt;- c(4,   1, 0, 1, 4)
+z &lt;- c(1,   2, 3, 4, NA)
+v &lt;- c(1,   2, 3, 4, 5)
+rcorr(cbind(x,y,z,v))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

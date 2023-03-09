@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>R: SAGA Geoprocessing and Terrain Analysis</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+<h1> SAGA Geoprocessing and Terrain Analysis
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;RSAGA&rsquo; version 1.4.0</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+<li><a href="../doc/index.html">User guides, package vignettes and other documentation.</a></li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="RSAGA-package.html">RSAGA-package</a></td>
+<td>RSAGA: SAGA Geoprocessing and Terrain Analysis in R</td></tr>
+<tr><td style="width: 25%;"><a href="centervalue.html">centervalue</a></td>
+<td>Pick Center Value from Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="create.variable.name.html">create.variable.name</a></td>
+<td>Convert file name to variable name</td></tr>
+<tr><td style="width: 25%;"><a href="set.file.extension.html">default.file.extension</a></td>
+<td>Determine or modify file name extensions</td></tr>
+<tr><td style="width: 25%;"><a href="landslides.html">dem</a></td>
+<td>Landslide inventory, study area mask and DEM</td></tr>
+<tr><td style="width: 25%;"><a href="focal.function.html">focal.function</a></td>
+<td>Local and Focal Grid Functions</td></tr>
+<tr><td style="width: 25%;"><a href="focal.function.html">gapply</a></td>
+<td>Local and Focal Grid Functions</td></tr>
+<tr><td style="width: 25%;"><a href="set.file.extension.html">get.file.extension</a></td>
+<td>Determine or modify file name extensions</td></tr>
+<tr><td style="width: 25%;"><a href="grid.predict.html">grid.predict</a></td>
+<td>Helper function for applying predict methods to stacks of grids.</td></tr>
+<tr><td style="width: 25%;"><a href="grid.to.xyz.html">grid.to.xyz</a></td>
+<td>Convert Grid Matrix to (x,y,z) data.frame</td></tr>
+<tr><td style="width: 25%;"><a href="pick.from.points.html">internal.pick.from.ascii.grid</a></td>
+<td>Pick Variable from Spatial Dataset</td></tr>
+<tr><td style="width: 25%;"><a href="landslides.html">landslides</a></td>
+<td>Landslide inventory, study area mask and DEM</td></tr>
+<tr><td style="width: 25%;"><a href="focal.function.html">local.function</a></td>
+<td>Local and Focal Grid Functions</td></tr>
+<tr><td style="width: 25%;"><a href="match.arg.ext.html">match.arg.ext</a></td>
+<td>Extended Argument Matching</td></tr>
+<tr><td style="width: 25%;"><a href="multi.focal.function.html">multi.focal.function</a></td>
+<td>Local and Focal Grid Function with Multiple Grids as Inputs</td></tr>
+<tr><td style="width: 25%;"><a href="multi.focal.function.html">multi.local.function</a></td>
+<td>Local and Focal Grid Function with Multiple Grids as Inputs</td></tr>
+<tr><td style="width: 25%;"><a href="pick.from.points.html">pick.from.ascii.grid</a></td>
+<td>Pick Variable from Spatial Dataset</td></tr>
+<tr><td style="width: 25%;"><a href="pick.from.points.html">pick.from.ascii.grids</a></td>
+<td>Pick Variable from Spatial Dataset</td></tr>
+<tr><td style="width: 25%;"><a href="pick.from.points.html">pick.from.points</a></td>
+<td>Pick Variable from Spatial Dataset</td></tr>
+<tr><td style="width: 25%;"><a href="pick.from.points.html">pick.from.saga.grid</a></td>
+<td>Pick Variable from Spatial Dataset</td></tr>
+<tr><td style="width: 25%;"><a href="pick.from.points.html">pick.from.shapefile</a></td>
+<td>Pick Variable from Spatial Dataset</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">read.ascii.grid</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">read.ascii.grid.header</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">read.Rd.grid</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">read.sgrd</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+<tr><td style="width: 25%;"><a href="relative.position.html">relative.position</a></td>
+<td>Relative Topographic Position</td></tr>
+<tr><td style="width: 25%;"><a href="relative.position.html">relative.rank</a></td>
+<td>Relative Topographic Position</td></tr>
+<tr><td style="width: 25%;"><a href="resid.median.html">resid.median</a></td>
+<td>Residual Median and Quantile Filters for Grids</td></tr>
+<tr><td style="width: 25%;"><a href="resid.median.html">resid.minmedmax</a></td>
+<td>Residual Median and Quantile Filters for Grids</td></tr>
+<tr><td style="width: 25%;"><a href="resid.median.html">resid.quantile</a></td>
+<td>Residual Median and Quantile Filters for Grids</td></tr>
+<tr><td style="width: 25%;"><a href="resid.median.html">resid.quartiles</a></td>
+<td>Residual Median and Quantile Filters for Grids</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.add.grid.values.to.points.html">rsaga.add.grid.values.to.points</a></td>
+<td>Add Grid Values to Point Shapefile</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.local.morphometry.html">rsaga.aspect</a></td>
+<td>Local Morphometry</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.close.gaps.html">rsaga.close.gaps</a></td>
+<td>SAGA Modules Close Gaps and Close One Cell Gaps</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.close.gaps.html">rsaga.close.one.cell.gaps</a></td>
+<td>SAGA Modules Close Gaps and Close One Cell Gaps</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.contour.html">rsaga.contour</a></td>
+<td>Contour Lines from a Grid</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.copy.sgrd.html">rsaga.copy.sgrd</a></td>
+<td>Create a copy of a SAGA grid file</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.local.morphometry.html">rsaga.curvature</a></td>
+<td>Local Morphometry</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.env.html">rsaga.env</a></td>
+<td>Function to set up RSAGA geoprocessing environment: Set up the RSAGA Geoprocessing Environment</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.esri.to.sgrd.html">rsaga.esri.to.sgrd</a></td>
+<td>Convert ESRI ASCII/binary grids to SAGA grids</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.esri.wrapper.html">rsaga.esri.wrapper</a></td>
+<td>Use RSAGA functions for ESRI grids</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.fill.sinks.html">rsaga.fill.sinks</a></td>
+<td>Fill Sinks</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.filter.gauss.html">rsaga.filter.gauss</a></td>
+<td>Gauss Filter</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.filter.simple.html">rsaga.filter.simple</a></td>
+<td>Simple Filters</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.geoprocessor.html">rsaga.geoprocessor</a></td>
+<td>Generic R interface for SAGA modules</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.modules.html">rsaga.get.lib.modules</a></td>
+<td>Find SAGA libraries and modules</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.modules.html">rsaga.get.libraries</a></td>
+<td>Find SAGA libraries and modules</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.modules.html">rsaga.get.modules</a></td>
+<td>Find SAGA libraries and modules</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.modules.path.html">rsaga.get.modules.path</a></td>
+<td>Internal functions that determine OS-specific path in which modules might be located.</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.usage.html">rsaga.get.usage</a></td>
+<td>Usage of SAGA command line modules</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.version.html">rsaga.get.version</a></td>
+<td>Determine SAGA GIS version</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.grid.calculus.html">rsaga.grid.calculus</a></td>
+<td>SAGA Module Grid Calculus</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.grid.to.points.html">rsaga.grid.to.points</a></td>
+<td>Convert SAGA grid file to point shapefile</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.grid.to.points.html">rsaga.grid.to.points.randomly</a></td>
+<td>Convert SAGA grid file to point shapefile</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.hillshade.html">rsaga.hillshade</a></td>
+<td>Analytical hillshading Analytical hillshading calculation.</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.html.help.html">rsaga.html.help</a></td>
+<td>HTML help on a SAGA module or library</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.import.gdal.html">rsaga.import.gdal</a></td>
+<td>Import Grid Files to SAGA grid format using GDAL</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.insolation.html">rsaga.insolation</a></td>
+<td>Incoming Solar Radiation (Insolation)</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.intersect.polygons.html">rsaga.intersect.polygons</a></td>
+<td>Spatial intersection of two polygon layers</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.inverse.distance.html">rsaga.inverse.distance</a></td>
+<td>Spatial Interpolation Methods</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.lib.prefix.html">rsaga.lib.prefix</a></td>
+<td>Determine prefix for SAGA GIS library names</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.grid.calculus.html">rsaga.linear.combination</a></td>
+<td>SAGA Module Grid Calculus</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.local.morphometry.html">rsaga.local.morphometry</a></td>
+<td>Local Morphometry</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.inverse.distance.html">rsaga.modified.quadratic.shephard</a></td>
+<td>Spatial Interpolation Methods</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.modules.html">rsaga.module.exists</a></td>
+<td>Find SAGA libraries and modules</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.inverse.distance.html">rsaga.nearest.neighbour</a></td>
+<td>Spatial Interpolation Methods</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.parallel.processing.html">rsaga.parallel.processing</a></td>
+<td>Parallel Processing</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.pisr.html">rsaga.pisr</a></td>
+<td>Potential incoming solar radiation</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.pisr2.html">rsaga.pisr2</a></td>
+<td>Potential incoming solar radiation SAGA 2.2.2+</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.local.morphometry.html">rsaga.plan.curvature</a></td>
+<td>Local Morphometry</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.local.morphometry.html">rsaga.profile.curvature</a></td>
+<td>Local Morphometry</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.get.modules.html">rsaga.search.modules</a></td>
+<td>Find SAGA libraries and modules</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.set.env.html">rsaga.set.env</a></td>
+<td>Internal function that sets the RSAGA Geoprocessing Evironment manually</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.sgrd.to.esri.html">rsaga.sgrd.to.esri</a></td>
+<td>Convert SAGA grids to ESRI ASCII/binary grids</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.sink.removal.html">rsaga.sink.removal</a></td>
+<td>Sink Removal Remove sinks from a digital elevation model by deepening drainage routes or filling sinks.</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.sink.route.html">rsaga.sink.route</a></td>
+<td>Sink Drainage Route Detection</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.local.morphometry.html">rsaga.slope</a></td>
+<td>Local Morphometry</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.slope.asp.curv.html">rsaga.slope.asp.curv</a></td>
+<td>Slope, Aspect, Curvature</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.solar.radiation.html">rsaga.solar.radiation</a></td>
+<td>Potential incoming solar radiation</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.target.html">rsaga.target</a></td>
+<td>Define target grid for interpolation</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.topdown.processing.html">rsaga.topdown.processing</a></td>
+<td>Top-Down Processing</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.inverse.distance.html">rsaga.triangulation</a></td>
+<td>Spatial Interpolation Methods</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.union.polygons.html">rsaga.union.polygons</a></td>
+<td>Spatial union of two polygon layers</td></tr>
+<tr><td style="width: 25%;"><a href="rsaga.wetness.index.html">rsaga.wetness.index</a></td>
+<td>SAGA Modules SAGA Wetness Index</td></tr>
+<tr><td style="width: 25%;"><a href="set.file.extension.html">set.file.extension</a></td>
+<td>Determine or modify file name extensions</td></tr>
+<tr><td style="width: 25%;"><a href="landslides.html">study_area</a></td>
+<td>Landslide inventory, study area mask and DEM</td></tr>
+<tr><td style="width: 25%;"><a href="wind.shelter.html">wind.shelter</a></td>
+<td>Wind Shelter Index</td></tr>
+<tr><td style="width: 25%;"><a href="wind.shelter.html">wind.shelter.prep</a></td>
+<td>Wind Shelter Index</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">write.ascii.grid</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">write.ascii.grid.header</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">write.Rd.grid</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+<tr><td style="width: 25%;"><a href="read.ascii.grid.html">write.sgrd</a></td>
+<td>Read/write ASCII, SAGA and Rd Grid Files</td></tr>
+</table>
+</div></body></html>

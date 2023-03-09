@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Enhanced Importing of SAS Transport Files using read.xport</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for sasxport.get {Hmisc}"><tr><td>sasxport.get {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Enhanced Importing of SAS Transport Files using read.xport</h2>
+
+<h3>Description</h3>
+
+<p>Uses the <code>read.xport</code> and <code>lookup.xport</code> functions in the
+<code>foreign</code> library to import SAS datasets.  SAS date, time, and
+date/time variables are converted respectively to <code>Date</code>, 
+POSIX, or <code>POSIXct</code> objects in <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, 
+variable names are converted to lower case, SAS labels are associated
+with variables, and (by default) integer-valued variables are converted
+from storage mode <code>double</code> to <code>integer</code>.  If the user ran
+<code>PROC FORMAT CNTLOUT=</code> in SAS and included the resulting dataset in
+the SAS version 5 transport file, variables having customized formats
+that do not include any ranges (i.e., variables having standard
+<code>PROC FORMAT; VALUE</code> label formats) will have their format labels looked
+up, and these variables are converted to S <code>factor</code>s.
+</p>
+<p>For those users having access to SAS, <code>method='csv'</code> is preferred
+when importing several SAS datasets.
+Run SAS macro <code>exportlib.sas</code> available from
+<a href="https://github.com/harrelfe/Hmisc/blob/master/src/sas/exportlib.sas">https://github.com/harrelfe/Hmisc/blob/master/src/sas/exportlib.sas</a>
+to convert all SAS datasets in a SAS data library (from any engine
+supported by your system) into <code>CSV</code> files.  If any customized
+formats are used, it is assumed that the <code>PROC FORMAT CNTLOUT=</code>
+dataset is in the data library as a regular SAS dataset, as above.
+</p>
+<p><code>SASdsLabels</code> reads a file containing <code>PROC CONTENTS</code>
+printed output to parse dataset labels, assuming that <code>PROC
+CONTENTS</code> was run on an entire library.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sasxport.get(file, lowernames=TRUE, force.single = TRUE,
+             method=c('read.xport','dataload','csv'), formats=NULL, allow=NULL,
+             out=NULL, keep=NULL, drop=NULL, as.is=0.5, FUN=NULL)
+sasdsLabels(file)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>name of a file containing the SAS transport file.
+<code>file</code> may be a URL beginning with <code>https://</code>.  For
+<code>sasdsLabels</code>, <code>file</code> is the name of a file containing a
+<code>PROC CONTENTS</code> output listing.  For <code>method='csv'</code>,
+<code>file</code> is the name of the directory containing all the <code>CSV</code>
+files created by running the <code>exportlib</code> SAS macro.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lowernames</code></td>
+<td>
+<p>set to <code>FALSE</code> to keep from converting SAS
+variable names to lower case</p>
+</td></tr>
+<tr valign="top"><td><code>force.single</code></td>
+<td>
+<p>set to <code>FALSE</code> to keep integer-valued
+variables not exceeding <i>2^31-1</i> in value from being converted to
+<code>integer</code> storage mode</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+<p>set to <code>"dataload"</code> if you have the <code>dataload</code>
+executable installed and want to use it instead of
+<code>read.xport</code>.  This seems to correct some errors in which
+rarely some factor variables are always missing when read by
+<code>read.xport</code> when in fact they have some non-missing values.</p>
+</td></tr>
+<tr valign="top"><td><code>formats</code></td>
+<td>
+<p>a data frame or list (like that created by
+<code>read.xport</code>) containing <code>PROC FORMAT</code>
+output, if such output is not stored in the main transport file.</p>
+</td></tr>
+<tr valign="top"><td><code>allow</code></td>
+<td>
+<p>a vector of characters allowed by <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> that should not be
+converted to periods in variable names.  By default, underscores in
+variable names are converted to periods as with <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> before version 1.9.</p>
+</td></tr>
+<tr valign="top"><td><code>out</code></td>
+<td>
+<p>a character string specifying a directory in which to write
+separate <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> <code>save</code> files (<code>.rda</code> files) for each regular
+dataset.  Each file and the data frame inside it is named with the
+SAS dataset name translated to lower case and with underscores
+changed to periods.  The default <code>NULL</code> value of <code>out</code>
+results in a data frame or a list of data frames being returned.
+When <code>out</code> is given, <code>sasxport.get</code> returns only metadata (see
+below), invisibly.
+<code>out</code> only works with <code>methods='csv'</code>.  <code>out</code> should
+not have a trailing slash.</p>
+</td></tr>
+<tr valign="top"><td><code>keep</code></td>
+<td>
+<p>a vector of names of SAS datasets to process (original SAS
+upper case names).  Must include <code>PROC FORMAT</code> dataset if it
+exists, and if the kept datasets use any of its value label formats.</p>
+</td></tr>
+<tr valign="top"><td><code>drop</code></td>
+<td>
+<p>a vector of names of SAS datasets to ignore (original SAS
+upper case names)</p>
+</td></tr>
+<tr valign="top"><td><code>as.is</code></td>
+<td>
+
+<p>SAS character variables are converted to S factor
+objects if <code>as.is=FALSE</code> or if <code>as.is</code> is a number between
+0 and 1 inclusive and the number of unique values of the variable is
+less than the number of observations (<code>n</code>) times <code>as.is</code>.
+The default if <code>as.is</code> is .5, so character variables are
+converted to factors only if they have fewer than <code>n/2</code> unique
+values.  The primary purpose of this is to keep unique
+identification variables as character values in the data frame
+instead of using more space to store both the integer factor codes
+and the factor labels.
+</p>
+</td></tr>
+<tr valign="top"><td><code>FUN</code></td>
+<td>
+<p>an optional function that will be run on each data frame
+created, when <code>method='csv'</code> and <code>out</code> are specified.  The
+result of all the <code>FUN</code> calls is made into a list corresponding
+to the SAS datasets that are read.  This list is the <code>FUN</code>
+attribute of the result returned by <code>sasxport.get</code>.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>See <code><a href="../../Hmisc/help/contents.list.html">contents.list</a></code> for a way to print the
+directory of SAS datasets when more than one was imported.</p>
+
+
+<h3>Value</h3>
+
+<p>If there is more than one dataset in the transport file other than the
+<code>PROC FORMAT</code> file, the result is a list of data frames
+containing all the non-<code>PROC FORMAT</code> datasets.  Otherwise the
+result is the single data frame.  There is an exception if <code>out</code>
+is specified; that causes separate <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> <code>save</code> files to be written
+and the returned value to be a list corresponding to the SAS datasets,
+with key <code>PROC CONTENTS</code> information in a data frame making up
+each part of the list.
+<code>sasdsLabels</code> returns a named
+vector of dataset labels, with names equal to the dataset names.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E Harrell Jr</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../foreign/help/read.xport.html">read.xport</a></code>,<code><a href="../../Hmisc/help/label.html">label</a></code>,<code><a href="../../Hmisc/help/sas.get.html">sas.get</a></code>,
+<code><a href="../../base/html/Dates.html">Dates</a></code>,<code><a href="../../base/html/DateTimeClasses.html">DateTimeClasses</a></code>,
+<code><a href="../../foreign/help/lookup.xport.html">lookup.xport</a></code>,<code><a href="../../Hmisc/help/contents.html">contents</a></code>,<code><a href="../../Hmisc/help/describe.html">describe</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+# SAS code to generate test dataset:
+# libname y SASV5XPT "test2.xpt";
+#
+# PROC FORMAT; VALUE race 1=green 2=blue 3=purple; RUN;
+# PROC FORMAT CNTLOUT=format;RUN;  * Name, e.g. 'format', unimportant;
+# data test;
+# LENGTH race 3 age 4;
+# age=30; label age="Age at Beginning of Study";
+# race=2;
+# d1='3mar2002'd ;
+# dt1='3mar2002 9:31:02'dt;
+# t1='11:13:45't;
+# output;
+#
+# age=31;
+# race=4;
+# d1='3jun2002'd ;
+# dt1='3jun2002 9:42:07'dt;
+# t1='11:14:13't;
+# output;
+# format d1 mmddyy10. dt1 datetime. t1 time. race race.;
+# run;
+# data z; LENGTH x3 3 x4 4 x5 5 x6 6 x7 7 x8 8;
+#    DO i=1 TO 100;
+#        x3=ranuni(3);
+#        x4=ranuni(5);
+#        x5=ranuni(7);
+#        x6=ranuni(9);
+#        x7=ranuni(11);
+#        x8=ranuni(13);
+#        output;
+#        END;
+#    DROP i;
+#    RUN;
+# PROC MEANS; RUN;
+# PROC COPY IN=work OUT=y;SELECT test format z;RUN; *Creates test2.xpt;
+w &lt;- sasxport.get('test2.xpt')
+# To use an existing copy of test2.xpt available on the web:
+w &lt;- sasxport.get('https://github.com/harrelfe/Hmisc/raw/master/inst/tests/test2.xpt')
+
+describe(w$test)   # see labels, format names for dataset test
+# Note: if only one dataset (other than format) had been exported,
+# just do describe(w) as sasxport.get would not create a list for that
+lapply(w, describe)# see descriptive stats for both datasets
+contents(w$test)   # another way to see variable attributes
+lapply(w, contents)# show contents of both datasets
+options(digits=7)  # compare the following matrix with PROC MEANS output
+t(sapply(w$z, function(x)
+ c(Mean=mean(x),SD=sqrt(var(x)),Min=min(x),Max=max(x))))
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

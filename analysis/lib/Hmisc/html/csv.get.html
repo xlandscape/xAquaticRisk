@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Read Comma-Separated Text Data Files</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for csv.get {Hmisc}"><tr><td>csv.get {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Read Comma-Separated Text Data Files</h2>
+
+<h3>Description</h3>
+
+<p>Read comma-separated text data files, allowing optional translation
+to lower case for variable names after making them valid S names.
+There is a facility for reading long variable labels as one of the
+rows.  If labels are not specified and a final variable name is not
+the same as that in the header, the original variable name is saved as
+a variable label.  Uses <code>read.csv</code> if the <code>data.table</code>
+package is not in effect, otherwise calls <code>fread</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
+        dateformat='%F',
+        fixdates=c('none','year'), comment.char="", autodates=TRUE,
+        allow=NULL, charfactor=FALSE,
+        sep=',', skip=0, vnames=NULL, labels=NULL, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>the file name for import.</p>
+</td></tr>
+<tr valign="top"><td><code>lowernames</code></td>
+<td>
+<p>set this to <code>TRUE</code> to change variable names to
+lower case.</p>
+</td></tr>
+<tr valign="top"><td><code>datevars</code></td>
+<td>
+<p>character vector of names (after <code>lowernames</code> is
+applied) of variables to consider as a factor or character vector
+containing dates in a format matching <code>dateformat</code>.  The
+default is <code>"%F"</code> which uses the yyyy-mm-dd format.</p>
+</td></tr>
+<tr valign="top"><td><code>datetimevars</code></td>
+<td>
+<p>character vector of names (after <code>lowernames</code>
+is applied) of variables to consider to be date-time variables, with
+date formats as described under <code>datevars</code> followed by a space
+followed by time in hh:mm:ss format.  <code>chron</code> is used to store
+such variables.  If all times in the variable
+are 00:00:00 the variable will be converted to an ordinary date variable.</p>
+</td></tr>
+<tr valign="top"><td><code>dateformat</code></td>
+<td>
+<p>for <code>cleanup.import</code> is the input format (see
+<code><a href="../../base/html/strptime.html">strptime</a></code>)</p>
+</td></tr>
+<tr valign="top"><td><code>fixdates</code></td>
+<td>
+<p>for any of the variables listed in <code>datevars</code>
+that have a <code>dateformat</code> that <code>cleanup.import</code> understands,
+specifying <code>fixdates</code> allows corrections of certain formatting
+inconsistencies before the fields are attempted to be converted to
+dates (the default is to assume that the <code>dateformat</code> is followed
+for all observation for <code>datevars</code>).  Currently
+<code>fixdates='year'</code> is implemented, which will cause 2-digit or
+4-digit years to be shifted to the alternate number of digits when
+<code>dateform</code> is the default <code>"%F"</code> or is <code>"%y-%m-%d"</code>,
+<code>"%m/%d/%y"</code>, or <code>"%m/%d/%Y"</code>.  Two-digits years are
+padded with <code>20</code> on the left.  Set <code>dateformat</code> to the
+desired format, not the exceptional format.</p>
+</td></tr>
+<tr valign="top"><td><code>comment.char</code></td>
+<td>
+<p>a character vector of length one containing a
+single character or an empty string.  Use '&quot;&quot;' to turn off the
+interpretation of comments altogether.</p>
+</td></tr>
+<tr valign="top"><td><code>autodates</code></td>
+<td>
+<p>Set to true to allow function to guess at which
+variables are dates</p>
+</td></tr>
+<tr valign="top"><td><code>allow</code></td>
+<td>
+<p>a vector of characters allowed by <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> that should not be
+converted to periods in variable names.  By default, underscores in
+variable names are converted to periods as with <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> before version
+1.9.</p>
+</td></tr>
+<tr valign="top"><td><code>charfactor</code></td>
+<td>
+<p>set to <code>TRUE</code> to change character variables to
+factors if they have fewer than n/2 unique values.  Blanks and null
+strings are converted to <code>NA</code>s.</p>
+</td></tr>
+<tr valign="top"><td><code>sep</code></td>
+<td>
+<p>field separator, defaults to comma</p>
+</td></tr>
+<tr valign="top"><td><code>skip</code></td>
+<td>
+<p>number of records to skip before data start.  Required if
+<code>vnames</code> or <code>labels</code> is given.</p>
+</td></tr>
+<tr valign="top"><td><code>vnames</code></td>
+<td>
+<p>number of row containing variable names, default is one</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+<p>number of row containing variable labels, default is no labels</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments to pass to <code>read.csv</code> other than
+<code>skip</code> and <code>sep</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>csv.get</code> reads comma-separated text data files, allowing optional
+translation to lower case for variable names after making them valid S
+names.  Original possibly non-legal names are taken to be variable
+labels if <code>labels</code> is not specified.  Character or factor
+variables containing dates can be converted to date variables.
+<code>cleanup.import</code> is invoked to finish the job.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a new data frame.</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell, Vanderbilt University</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/sas.get.html">sas.get</a></code>, <code><a href="../../base/html/data.frame.html">data.frame</a></code>,
+<code><a href="../../Hmisc/help/cleanup.import.html">cleanup.import</a></code>, <code><a href="../../utils/html/read.table.html">read.csv</a></code>,
+<code><a href="../../base/html/strptime.html">strptime</a></code>, <code><a href="../../base/html/DateTimeClasses.html">POSIXct</a></code>, <code><a href="../../base/html/Dates.html">Date</a></code>,
+<code><a href="../../data.table/help/fread.html">fread</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+dat &lt;- csv.get('myfile.csv')
+
+# Read a csv file with junk in the first row, variable names in the
+# second, long variable labels in the third, and junk in the 4th row
+dat &lt;- csv.get('myfile.csv', vnames=2, labels=3, skip=4)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

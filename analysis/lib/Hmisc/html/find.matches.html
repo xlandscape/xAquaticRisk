@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Find Close Matches</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for find.matches {Hmisc}"><tr><td>find.matches {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Find Close Matches
+</h2>
+
+<h3>Description</h3>
+
+<p>Compares each row in <code>x</code> against all the rows in <code>y</code>, finding rows in
+<code>y</code> with all columns within a tolerance of the values a given row of
+<code>x</code>.  The default tolerance
+<code>tol</code> is zero, i.e., an exact match is required on all columns.
+For qualifying matches, a distance measure is computed.  This is
+the sum of squares of differences between <code>x</code> and <code>y</code> after scaling
+the columns.  The default scaling values are <code>tol</code>, and for columns
+with <code>tol=1</code> the scale values are set to 1.0 (since they are ignored
+anyway).  Matches (up to <code>maxmatch</code> of them) are stored and listed in order of 
+increasing distance.
+<br />
+The <code>summary</code> method prints a frequency distribution of the
+number of matches per observation in <code>x</code>, the median of the minimum
+distances for all matches per <code>x</code>, as a function of the number of matches,
+and the frequency of selection of duplicate observations as those having
+the smallest distance.  The <code>print</code> method prints the entire <code>matches</code>
+and <code>distance</code> components of the result from <code>find.matches</code>.
+<br />
+<code>matchCases</code> finds all controls that match cases on a single variable
+<code>x</code> within a tolerance of <code>tol</code>.  This is intended for prospective
+cohort studies that use matching for confounder adjustment (even
+though regression models usually work better).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+find.matches(x, y, tol=rep(0, ncol(y)), scale=tol, maxmatch=10)
+## S3 method for class 'find.matches'
+summary(object, ...)
+## S3 method for class 'find.matches'
+print(x, digits, ...)
+
+matchCases(xcase,    ycase,    idcase=names(ycase),
+           xcontrol, ycontrol, idcontrol=names(ycontrol),
+           tol=NULL,
+           maxobs=max(length(ycase),length(ycontrol))*10,
+           maxmatch=20, which=c('closest','random'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a numeric matrix or the result of <code>find.matches</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a numeric matrix with same number of columns as <code>x</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>xcase</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>xcontrol</code></td>
+<td>
+
+<p>vectors, not necessarily of the same length, specifying a numeric
+variable used to match cases and control
+</p>
+</td></tr>
+<tr valign="top"><td><code>ycase</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>ycontrol</code></td>
+<td>
+
+<p>vectors or matrices, not necessarily having the same number of rows,
+specifying a variable to carry along from cases and matching
+controls.  If you instead want to carry along rows from a data frame,
+let <code>ycase</code> and <code>ycontrol</code> be non-overlapping integer subscripts of
+the donor data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>tol</code></td>
+<td>
+
+<p>a vector of tolerances with number of elements the same as the number
+of columns of <code>y</code>, for <code>find.matches</code>.  For <code>matchCases</code>
+is a scalar tolerance.
+</p>
+</td></tr>
+<tr valign="top"><td><code>scale</code></td>
+<td>
+
+<p>a vector of scaling constants with number of elements the same as the
+number of columns of <code>y</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>maxmatch</code></td>
+<td>
+
+<p>maximum number of matches to allow.  For <code>matchCases</code>,
+maximum number of controls to match with a case (default is 20).  If more than
+<code>maxmatch</code> matching controls are available, a random sample without
+replacement of <code>maxmatch</code> controls is used (if <code>which="random"</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>an object created by <code>find.matches</code></p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>number of digits to use in printing distances
+</p>
+</td></tr>
+<tr valign="top"><td><code>idcase</code></td>
+<td>
+
+</td></tr>
+<tr valign="top"><td><code>idcontrol</code></td>
+<td>
+
+<p>vectors the same length as <code>xcase</code> and <code>xcontrol</code> respectively,
+specifying the id of cases and controls.  Defaults are integers
+specifying original element positions within each of cases and
+controls.
+</p>
+</td></tr>
+<tr valign="top"><td><code>maxobs</code></td>
+<td>
+
+<p>maximum number of cases and all matching controls combined (maximum
+dimension of data frame resulting from <code>matchControls</code>).  Default is
+ten times the maximum of the number of cases and number of controls.
+<code>maxobs</code> is used to allocate space for the resulting data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+
+<p>set to <code>"closest"</code> (the default) to match cases with up to <code>maxmatch</code>
+controls that most closely match on <code>x</code>.  Set <code>which="random"</code> to use
+randomly chosen controls.  In either case, only those controls within
+<code>tol</code> on <code>x</code> are allowed to be used.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>unused</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>find.matches</code> returns a list of class <code>find.matches</code> with elements
+<code>matches</code> and <code>distance</code>. 
+Both elements are matrices with the number of rows equal to the number
+of rows in <code>x</code>, and with <code>k</code> columns, where <code>k</code> is the maximum number of
+matches (<code>&lt;= maxmatch</code>) that occurred.  The elements of <code>matches</code>
+are row identifiers of <code>y</code> that match, with zeros if fewer than
+<code>maxmatch</code> matches are found (blanks if <code>y</code> had row names).
+<code>matchCases</code> returns a data frame with variables <code>idcase</code> (id of case
+currently being matched), <code>type</code> (factor variable with levels <code>"case"</code>
+and <code>"control"</code>), <code>id</code> (id of case if case row, or id of matching
+case), and <code>y</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Ming K, Rosenbaum PR (2001): A note on optimal matching with variable
+controls using the assignment algorithm.  J Comp Graph Stat
+10:455&ndash;463.
+</p>
+<p>Cepeda MS, Boston R, Farrar JT, Strom BL (2003): Optimal matching with a
+variable number of controls vs. a fixed number of controls for a cohort
+study: trade-offs.  J Clin Epidemiology 56:230-237.
+Note: These papers were not used for the functions here but
+probably should have been.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/scale.html">scale</a></code>, <code><a href="../../base/html/apply.html">apply</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+y &lt;- rbind(c(.1, .2),c(.11, .22), c(.3, .4), c(.31, .41), c(.32, 5))
+x &lt;- rbind(c(.09,.21), c(.29,.39))
+y
+x
+w &lt;- find.matches(x, y, maxmatch=5, tol=c(.05,.05))
+
+
+set.seed(111)       # so can replicate results
+x &lt;- matrix(runif(500), ncol=2)
+y &lt;- matrix(runif(2000), ncol=2)
+w &lt;- find.matches(x, y, maxmatch=5, tol=c(.02,.03))
+w$matches[1:5,]
+w$distance[1:5,]
+# Find first x with 3 or more y-matches
+num.match &lt;- apply(w$matches, 1, function(x)sum(x &gt; 0))
+j &lt;- ((1:length(num.match))[num.match &gt; 2])[1]
+x[j,]
+y[w$matches[j,],]
+
+
+summary(w)
+
+
+# For many applications would do something like this:
+# attach(df1)
+# x &lt;- cbind(age, sex) # Just do as.matrix(df1) if df1 has no factor objects
+# attach(df2)
+# y &lt;- cbind(age, sex)
+# mat &lt;- find.matches(x, y, tol=c(5,0)) # exact match on sex, 5y on age
+
+
+# Demonstrate matchCases
+xcase     &lt;- c(1,3,5,12)
+xcontrol  &lt;- 1:6
+idcase    &lt;- c('A','B','C','D')
+idcontrol &lt;- c('a','b','c','d','e','f')
+ycase     &lt;- c(11,33,55,122)
+ycontrol  &lt;- c(11,22,33,44,55,66)
+matchCases(xcase, ycase, idcase,
+           xcontrol, ycontrol, idcontrol, tol=1)
+
+
+# If y is a binary response variable, the following code
+# will produce a Mantel-Haenszel summary odds ratio that 
+# utilizes the matching.
+# Standard variance formula will not work here because
+# a control will match more than one case
+# WARNING: The M-H procedure exemplified here is suspect 
+# because of the small strata and widely varying number
+# of controls per case.
+
+
+x    &lt;- c(1, 2, 3, 3, 3, 6, 7, 12,  1, 1:7)
+y    &lt;- c(0, 0, 0, 1, 0, 1, 1,  1,  1, 0, 0, 0, 0, 1, 1, 1)
+case &lt;- c(rep(TRUE, 8), rep(FALSE, 8))
+id   &lt;- 1:length(x)
+
+
+m &lt;- matchCases(x[case],  y[case],  id[case],
+                x[!case], y[!case], id[!case], tol=1)
+iscase &lt;- m$type=='case'
+# Note: the first tapply on insures that event indicators are
+# sorted by case id.  The second actually does something.
+event.case    &lt;- tapply(m$y[iscase],  m$idcase[iscase],  sum)
+event.control &lt;- tapply(m$y[!iscase], m$idcase[!iscase], sum)
+n.control     &lt;- tapply(!iscase,      m$idcase,          sum)
+n             &lt;- tapply(m$y,          m$idcase,          length)
+or &lt;- sum(event.case * (n.control - event.control) / n) /
+      sum(event.control * (1 - event.case) / n)
+or
+
+
+# Bootstrap this estimator by sampling with replacement from
+# subjects.  Assumes id is unique when combine cases+controls
+# (id was constructed this way above).  The following algorithms
+# puts all sampled controls back with the cases to whom they were
+# originally matched.
+
+
+ids &lt;- unique(m$id)
+idgroups &lt;- split(1:nrow(m), m$id)
+B   &lt;- 50   # in practice use many more
+ors &lt;- numeric(B)
+# Function to order w by ids, leaving unassigned elements zero
+align &lt;- function(ids, w) {
+  z &lt;- structure(rep(0, length(ids)), names=ids)
+  z[names(w)] &lt;- w
+  z
+}
+for(i in 1:B) {
+  j &lt;- sample(ids, replace=TRUE)
+  obs &lt;- unlist(idgroups[j])
+  u &lt;- m[obs,]
+  iscase &lt;- u$type=='case'
+  n.case &lt;- align(ids, tapply(u$type, u$idcase, 
+                              function(v)sum(v=='case')))
+  n.control &lt;- align(ids, tapply(u$type, u$idcase,
+                                 function(v)sum(v=='control')))
+  event.case &lt;- align(ids, tapply(u$y[iscase],  u$idcase[iscase],  sum))
+  event.control &lt;- align(ids, tapply(u$y[!iscase], u$idcase[!iscase], sum))
+  n &lt;- n.case + n.control
+  # Remove sets having 0 cases or 0 controls in resample
+  s             &lt;- n.case &gt; 0 &amp; n.control &gt; 0
+  denom &lt;- sum(event.control[s] * (n.case[s] - event.case[s]) / n[s])
+  or &lt;- if(denom==0) NA else 
+   sum(event.case[s] * (n.control[s] - event.control[s]) / n[s]) / denom
+  ors[i] &lt;- or
+}
+describe(ors)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

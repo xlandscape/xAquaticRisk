@@ -1,0 +1,902 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Convert an S object to LaTeX, and Related Utilities</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for latex {Hmisc}"><tr><td>latex {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Convert an S object to LaTeX, and Related Utilities
+</h2>
+
+<h3>Description</h3>
+
+<p><code>latex</code> converts its argument to a &lsquo;<span class="file">.tex</span>&rsquo; file appropriate
+for inclusion in a LaTeX2e document.  <code>latex</code> is a generic
+function that calls one of <code>latex.default</code>,
+<code>latex.function</code>, <code>latex.list</code>. 
+</p>
+<p><code>latex.default</code>
+does appropriate rounding and decimal alignment and produces a
+file containing a LaTeX tabular environment to print the matrix or data.frame
+<code>x</code> as a table.
+</p>
+<p><code>latex.function</code> prepares an S function for printing by issuing <code>sed</code>
+commands that are similar to those in the
+<code>S.to.latex</code> procedure in the <code>s.to.latex</code> package (Chambers
+and Hastie, 1993).  <code>latex.function</code> can also produce
+<code>verbatim</code> output or output that works with the <code>Sweavel</code>
+LaTeX style at <a href="https://biostat.app.vumc.org/wiki/Main/SweaveTemplate">https://biostat.app.vumc.org/wiki/Main/SweaveTemplate</a>.
+</p>
+<p><code>latex.list</code> calls <code>latex</code> recursively for each element in the argument.
+</p>
+<p><code>latexTranslate</code> translates particular items in character
+strings to LaTeX format, e.g., makes <span class="samp">a^2 = a\$^2\$</span> for superscript within
+variable labels.   LaTeX names of greek letters (e.g., <code>"alpha"</code>)
+will have backslashes added if <code>greek==TRUE</code>.  Math mode is
+inserted as needed. 
+<code>latexTranslate</code> assumes that input text always has matches,
+e.g. <code>[) [] (] ()</code>, and that surrounding  by <span class="samp">\$\$</span> is OK.
+</p>
+<p><code>htmlTranslate</code> is similar to <code>latexTranslate</code> but for html
+translation.  It doesn't need math mode and assumes dollar signs are
+just that.
+</p>
+<p><code>latexSN</code> converts a vector floating point numbers to character
+strings using LaTeX exponents.  Dollar signs to enter math mode are not
+added.  Similarly, <code>htmlSN</code> converts to scientific notation in html.
+</p>
+<p><code>latexVerbatim</code> on an object executes the object's <code>print</code> method,
+capturing the output for a file inside a LaTeX verbatim environment.
+</p>
+<p><code>dvi</code> uses the system <code>latex</code> command to compile LaTeX code produced
+by <code>latex</code>, including any needed styles.  <code>dvi</code>
+will put a <span class="samp">\documentclass{report}</span> and <span class="samp">\end{document}</span> wrapper
+around a file produced by <code>latex</code>.  By default, the <span class="samp">geometry</span> LaTeX package is
+used to omit all margins and to set the paper size to a default of
+5.5in wide by 7in tall.  The result of <code>dvi</code> is a .dvi file.  To both
+format and screen display a non-default size, use for example
+<code>print(dvi(latex(x), width=3, height=4),width=3,height=4)</code>.  Note that
+you can use something like <span class="samp">xdvi -geometry 460x650 -margins 2.25in
+file</span> without changing LaTeX defaults to emulate this.
+</p>
+<p><code>dvips</code> will use the system <code>dvips</code> command to print the .dvi file to
+the default system printer, or create a postscript file if <code>file</code>
+is specified.
+</p>
+<p><code>dvigv</code> uses the system <code>dvips</code> command to convert the input object
+to a .dvi file, and uses the system <code>dvips</code> command to convert it to
+postscript.  Then the postscript file is displayed using Ghostview
+(assumed to be the system command <code>gv</code>).
+</p>
+<p>There are <code>show</code> methods for displaying typeset LaTeX
+on the screen using the system <code>xdvi</code>
+command.   If you <code>show</code> a LaTeX file created by
+<code>latex</code> without running it through <code>dvi</code> using
+<code>show.dvi(object)</code>, the 
+<code>show</code> method will run it through <code>dvi</code> automatically.
+These <code>show</code> 
+methods are not S Version 4 methods so you have to use full names such
+as <code>show.dvi</code> and <code>show.latex</code>.  Use the <code>print</code> methods for
+more automatic display of typesetting, e.g. typing <code>latex(x)</code> will
+invoke xdvi to view the typeset document.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+latex(object, ...)
+
+## Default S3 method:
+latex(object,
+    title=first.word(deparse(substitute(object))),
+    file=paste(title, ".tex", sep=""),
+    append=FALSE, label=title,
+    rowlabel=title, rowlabel.just="l",
+    cgroup=NULL, n.cgroup=NULL,
+    rgroup=NULL, n.rgroup=NULL,
+    cgroupTexCmd="bfseries",
+    rgroupTexCmd="bfseries",
+    rownamesTexCmd=NULL,
+    colnamesTexCmd=NULL,
+    cellTexCmds=NULL,
+    rowname, cgroup.just=rep("c",length(n.cgroup)),
+    colheads=NULL,
+    extracolheads=NULL, extracolsize='scriptsize',
+    dcolumn=FALSE, numeric.dollar=!dcolumn, cdot=FALSE,
+    longtable=FALSE, draft.longtable=TRUE, ctable=FALSE, booktabs=FALSE,
+    table.env=TRUE, here=FALSE, lines.page=40,
+    caption=NULL, caption.lot=NULL, caption.loc=c('top','bottom'),
+    star=FALSE,
+    double.slash=FALSE,
+    vbar=FALSE, collabel.just=rep("c",nc), na.blank=TRUE,
+    insert.bottom=NULL, insert.bottom.width=NULL,
+    insert.top=NULL,
+    first.hline.double=!(booktabs | ctable),
+    where='!tbp', size=NULL,
+    center=c('center','centering','centerline','none'),
+    landscape=FALSE,
+    multicol=TRUE,
+    math.row.names=FALSE, already.math.row.names=FALSE,
+    math.col.names=FALSE, already.math.col.names=FALSE,
+    hyperref=NULL, continued='continued',
+    ...) # x is a matrix or data.frame
+
+## S3 method for class 'function'
+latex(
+	object,
+	title=first.word(deparse(substitute(object))),
+	file=paste(title, ".tex", sep=""),
+	append=FALSE,
+	assignment=TRUE,  type=c('example','verbatim','Sinput'),
+    width.cutoff=70, size='', ...)
+
+## S3 method for class 'list'
+latex(
+           object,
+           title=first.word(deparse(substitute(object))),
+           file=paste(title, ".tex", sep=""),
+           append=FALSE,
+           label,
+           caption,
+           caption.lot,
+           caption.loc=c('top','bottom'),
+           ...)
+
+## S3 method for class 'latex'
+print(x, ...)
+
+latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, na='',
+               ...)
+
+htmlTranslate(object, inn=NULL, out=NULL, greek=FALSE, na='',
+              code=htmlSpecialType(), ...)
+
+latexSN(x)
+
+htmlSN(x, pretty=TRUE, ...)
+
+latexVerbatim(x, title=first.word(deparse(substitute(x))),
+    file=paste(title, ".tex", sep=""),
+    append=FALSE, size=NULL, hspace=NULL,
+    width=.Options$width, length=.Options$length, ...)
+
+dvi(object, ...)
+## S3 method for class 'latex'
+dvi(object, prlog=FALSE, nomargins=TRUE, width=5.5, height=7, ...)
+## S3 method for class 'dvi'
+print(x, ...)
+dvips(object, ...)
+## S3 method for class 'latex'
+dvips(object, ...)
+## S3 method for class 'dvi'
+dvips(object, file, ...)
+## S3 method for class 'latex'
+show(object)  # or show.dvi(object) or just object
+dvigv(object, ...)
+## S3 method for class 'latex'
+dvigv(object, ...)       # or gvdvi(dvi(object))
+## S3 method for class 'dvi'
+dvigv(object, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>For <code>latex</code>, any S object.  For <code>dvi</code> or <code>dvigv</code>, an object
+created by <code>latex</code>.  For <code>latexTranslate</code> is a vector of
+character strings to translate.  Any <code>NA</code>s are set to blank
+strings before conversion.
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>any object to be <code>print</code>ed verbatim for <code>latexVerbatim</code>.  For
+<code>latexSN</code> or <code>htmlSN</code>, <code>x</code> is a numeric vector.
+</p>
+</td></tr>
+<tr valign="top"><td><code>title</code></td>
+<td>
+
+<p>name of file to create without the <span class="samp">.tex</span> extension.  If this
+option is not set, value/string of <code>x</code> (see above) is printed
+in the top left corner of the table.  Set <code>title=''</code> to
+suppress this output.
+</p>
+</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+
+<p>name of the file to create.  The default file name is &lsquo;<span class="file">x.tex</span>&rsquo; where
+<code>x</code> is the first word in the name of the argument for <code>x</code>.
+Set <code>file=""</code> to have the generated LaTeX code just printed to
+standard output.  This is especially useful when running under Sweave in
+R using its <span class="samp">results=tex</span> tag, to save having to manage many
+small external files.  When <code>file=""</code>, <code>latex</code> keeps track of
+LaTeX styles that are called for by creating or modifying an object
+<code>latexStyles</code> (in <code>.GlobalTemp</code> in R or in frame 0 in
+S-Plus).  <code>latexStyles</code> is a vector containing the base names of
+all the unique LaTeX styles called for so far in the current session.
+See the end of the examples section for a way to use this object to good
+effect.  For <code>dvips</code>, <code>file</code> is the name of an output
+postscript file.
+</p>
+</td></tr>
+<tr valign="top"><td><code>append</code></td>
+<td>
+
+<p>defaults to <code>FALSE</code>. Set to <code>TRUE</code> to append output to an existing file.
+</p>
+</td></tr>
+<tr valign="top"><td><code>label</code></td>
+<td>
+
+<p>a text string representing a symbolic label for the table for referencing
+in the LaTeX <span class="samp">\label</span> and <span class="samp">\ref</span> commands.
+<code>label</code> is only used if <code>caption</code> is given.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowlabel</code></td>
+<td>
+
+<p>If <code>x</code> has row dimnames, <code>rowlabel</code> is a character string containing the
+column heading for the row dimnames. The default is the name of the
+argument for <code>x</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowlabel.just</code></td>
+<td>
+
+<p>If <code>x</code> has row dimnames, specifies the justification for printing them.
+Possible values are <code>"l"</code>, <code>"r"</code>, <code>"c"</code>. The heading (<code>rowlabel</code>) itself
+is left justified if <code>rowlabel.just="l"</code>, otherwise it is centered.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cgroup</code></td>
+<td>
+
+<p>a vector of character strings defining major column headings. The default is
+to have none.
+</p>
+</td></tr>
+<tr valign="top"><td><code>n.cgroup</code></td>
+<td>
+
+<p>a vector containing the number of columns for which each element in
+cgroup is a heading.  For example, specify <code>cgroup=c("Major 1","Major 2")</code>,
+<code>n.cgroup=c(3,3)</code> if <code>"Major 1"</code> is to span columns 1-3 and <code>"Major 2"</code> is
+to span columns 4-6.  <code>rowlabel</code> does not count in the column numbers.
+You can omit <code>n.cgroup</code> if all groups have the same number of columns.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rgroup</code></td>
+<td>
+
+<p>a vector of character strings containing headings for row groups.
+<code>n.rgroup</code> must be present when <code>rgroup</code> is given. The first <code>n.rgroup[1]</code>
+rows are sectioned off and <code>rgroup[1]</code> is used as a bold heading for
+them. The usual row dimnames (which must be present if <code>rgroup</code> is) are 
+indented. The next <code>n.rgroup[2]</code> rows are treated likewise, etc.
+</p>
+</td></tr>
+<tr valign="top"><td><code>n.rgroup</code></td>
+<td>
+
+<p>integer vector giving the number of rows in each grouping. If <code>rgroup</code>
+is not specified, <code>n.rgroup</code> is just used to divide off blocks of
+rows by horizontal lines. If <code>rgroup</code> is given but <code>n.rgroup</code> is omitted,
+<code>n.rgroup</code> will default so that each row group contains the same number
+of rows.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cgroupTexCmd</code></td>
+<td>
+<p>A character string specifying a LaTeX command to be
+used to format column group labels.  The default, <code>"bfseries"</code>, sets
+the current font to &lsquo;bold&rsquo;.  It is possible to supply a vector of
+strings so that each column group label is formatted differently.
+Please note that the first item of the vector is used to format the
+title (even if a title is not used). Currently the user needs to handle
+these issue.  Multiple effects can be achieved by creating custom
+LaTeX commands; for example,
+<code>"\providecommand{\redscshape}{\color{red}\scshape}"</code> creates a
+LaTeX command called <span class="samp">\redscshape</span> that formats the text in red
+small-caps.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rgroupTexCmd</code></td>
+<td>
+<p>A character string specifying a LaTeX command to be
+used to format row group labels.  The default, <code>"bfseries"</code>, sets the
+current font to &lsquo;bold&rsquo;.  A vector of strings can be supplied to
+format each row group label differently.  Normal recycling applies
+if the vector is shorter than <code>n.rgroups</code>.  See also
+<code>cgroupTexCmd</code> above regarding multiple effects.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rownamesTexCmd</code></td>
+<td>
+<p>A character string specifying a LaTeX
+command to be used to format rownames. The default, <code>NULL</code>, applies no
+command.  A vector of different commands can also be supplied.
+See also <code>cgroupTexCmd</code> above regarding multiple effects.
+</p>
+</td></tr>
+<tr valign="top"><td><code>colnamesTexCmd</code></td>
+<td>
+<p>A character string specifying a LaTeX command to be
+used to format column labels. The default, <code>NULL</code>, applies no command.
+It is possible to supply a vector of strings to format each column
+label differently. If column groups are not used, the first item in
+the vector will be used to format the title. Please note that if
+column groups are used the first item of <code>cgroupTexCmd</code> and not
+<code>colnamesTexCmd</code> is used to format the title. The user needs to allow for
+these issues when supplying a vector of commands.  See also
+<code>cgroupTexCmd</code> above regarding multiple effects.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cellTexCmds</code></td>
+<td>
+<p>A matrix of character strings which are LaTeX
+commands to be
+used to format each element, or cell, of the object.  The matrix
+must have the same <code>NROW()</code> and <code>NCOL()</code> as the object.  The default,
+NULL, applies no formats.  Empty strings also apply no formats, and
+one way to start might be to create a matrix of empty strings with
+<code>matrix(rep("", NROW(x) * NCOL(x)), nrow=NROW(x))</code> and then
+selectively change appropriate elements of the matrix.  Note that
+you might need to set <code>numeric.dollar=FALSE</code> (to disable math
+mode) for some effects to work. See also <code>cgroupTexCmd</code> above
+regarding multiple effects.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.blank</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to use blanks rather than <code>NA</code> for missing values.
+This usually looks better in <code>latex</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>insert.bottom</code></td>
+<td>
+
+<p>an optional character string to typeset at the bottom of the table.
+For <code>"ctable"</code> style tables, this is placed in an unmarked footnote.
+</p>
+</td></tr>
+<tr valign="top"><td><code>insert.bottom.width</code></td>
+<td>
+
+<p>character string; a tex width controlling the width of the
+insert.bottom text.  Currently only does something with using
+<code>longtable=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>insert.top</code></td>
+<td>
+<p>a character string to insert as a heading right
+before beginning <code>tabular</code> environment.  Useful for multiple
+sub-tables.</p>
+</td></tr>
+<tr valign="top"><td><code>first.hline.double</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to use single horizontal rules for styles other than
+<code>"bookmark"</code> or <code>"ctable"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowname</code></td>
+<td>
+
+<p>rownames for <code>tabular</code> environment.  Default is rownames of matrix or
+data.frame.  Specify <code>rowname=NULL</code> to suppress the use of row names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cgroup.just</code></td>
+<td>
+
+<p>justification for labels for column groups.  Defaults to <code>"c"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>colheads</code></td>
+<td>
+<p>a character vector of column headings if you don't want
+to use <code>dimnames(object)[[2]]</code>.  Specify <code>colheads=FALSE</code> to
+suppress column headings.</p>
+</td></tr>
+<tr valign="top"><td><code>extracolheads</code></td>
+<td>
+
+<p>an optional vector of extra column headings that will appear under the
+main headings (e.g., sample sizes).  This character vector does not
+need to include an empty space for any <code>rowname</code> in effect, as
+this will be added automatically.  You can also form subheadings by
+splitting character strings defining the column headings using the
+usual backslash <code>n</code> newline character.</p>
+</td></tr>
+<tr valign="top"><td><code>extracolsize</code></td>
+<td>
+
+<p>size for <code>extracolheads</code> or for any second lines in column names;
+default is <code>"scriptsize"</code> 
+</p>
+</td></tr>
+<tr valign="top"><td><code>dcolumn</code></td>
+<td>
+<p>see <code><a href="../../Hmisc/help/format.df.html">format.df</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>numeric.dollar</code></td>
+<td>
+
+<p>logical, default <code>!dcolumn</code>.  Set to <code>TRUE</code> to place dollar
+signs around numeric values when <code>dcolumn=FALSE</code>.  This 
+assures that <code>latex</code> will use minus signs rather than hyphens to indicate
+negative numbers.  Set to <code>FALSE</code> when <code>dcolumn=TRUE</code>, as
+<code>dcolumn.sty</code> automatically uses minus signs.
+</p>
+</td></tr>
+<tr valign="top"><td><code>math.row.names</code></td>
+<td>
+
+<p>logical, set true to place dollar signs around the row names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>already.math.row.names</code></td>
+<td>
+<p>set to <code>TRUE</code> to prevent any math
+mode changes to row names</p>
+</td></tr>
+<tr valign="top"><td><code>math.col.names</code></td>
+<td>
+
+<p>logical, set true to place dollar signs around the column names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>already.math.col.names</code></td>
+<td>
+<p>set to <code>TRUE</code> to prevent any math
+mode changes to column names</p>
+</td></tr>
+<tr valign="top"><td><code>hyperref</code></td>
+<td>
+<p>if <code>table.env=TRUE</code> is a character string used to
+generate a LaTeX <code>hyperref</code> enclosure</p>
+</td></tr>
+<tr valign="top"><td><code>continued</code></td>
+<td>
+<p>a character string used to indicate pages after the
+first when making a long table</p>
+</td></tr>
+<tr valign="top"><td><code>cdot</code></td>
+<td>
+<p>see <code><a href="../../Hmisc/help/format.df.html">format.df</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>longtable</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to use David Carlisle's LaTeX <code>longtable</code> style, allowing
+long tables to be split over multiple pages with headers repeated on
+each page.
+The <code>"style"</code> element is set to <code>"longtable"</code>. The <code>latex</code> <span class="samp">\usepackage</span>
+must reference <span class="samp">[longtable]</span>.
+The file &lsquo;<span class="file">longtable.sty</span>&rsquo; will
+need to be in a directory in your <span class="env">TEXINPUTS</span> path.
+</p>
+</td></tr>
+<tr valign="top"><td><code>draft.longtable</code></td>
+<td>
+
+<p>I forgot what this does.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ctable</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to use Wybo Dekker's <span class="samp">ctable</span> style from
+<acronym><span class="acronym">CTAN</span></acronym>.  Even though for historical reasons it is not the
+default, it is generally the preferred method.  Thicker but not
+doubled <span class="samp">\hline</span>s are used to start a table when <code>ctable</code> is
+in effect.
+</p>
+</td></tr>
+<tr valign="top"><td><code>booktabs</code></td>
+<td>
+
+<p>set <code>booktabs=TRUE</code> to use the <span class="samp">booktabs</span> style of horizontal
+rules for better tables.  In this case, double <span class="samp">\hline</span>s are not
+used to start a table.
+</p>
+</td></tr>
+<tr valign="top"><td><code>table.env</code></td>
+<td>
+
+<p>Set <code>table.env=FALSE</code> to suppress enclosing the table in a LaTeX
+<span class="samp">table</span> environment.  <code>table.env</code> only applies when
+<code>longtable=FALSE</code>.  You may not specify a <code>caption</code> if
+<code>table.env=FALSE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>here</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> if you are using <code>table.env=TRUE</code> with <code>longtable=FALSE</code> and you
+have installed David Carlisle's &lsquo;<span class="file">here.sty</span>&rsquo; LaTeX style. This will cause
+the LaTeX <span class="samp">table</span> environment to be set up with option <span class="samp">H</span> to guarantee
+that the table will appear exactly where you think it will in the text.
+The <code>"style"</code> element is set to <code>"here"</code>. The <code>latex</code> <span class="samp">\usepackage</span>
+must reference <span class="samp">[here]</span>.  The file &lsquo;<span class="file">here.sty</span>&rsquo; will
+need to be in a directory in your <span class="env">TEXINPUTS</span> path.  <span class="samp">here</span> is
+largely obsolete with LaTeX2e.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lines.page</code></td>
+<td>
+
+<p>Applies if <code>longtable=TRUE</code>. No more than <code>lines.page</code> lines in the body
+of a table will be placed on a single page. Page breaks will only
+occur at <code>rgroup</code> boundaries.
+</p>
+</td></tr>
+<tr valign="top"><td><code>caption</code></td>
+<td>
+
+<p>a text string to use as a caption to print at the top of the first
+page of the table. Default is no caption.
+</p>
+</td></tr>
+<tr valign="top"><td><code>caption.lot</code></td>
+<td>
+
+<p>a text string representing a short caption to be used in the &ldquo;List of Tables&rdquo;.
+By default, LaTeX will use <code>caption</code>.  If you get inexplicable <span class="samp">latex</span> errors,
+you may need to supply <code>caption.lot</code> to make the errors go away.
+</p>
+</td></tr>
+<tr valign="top"><td><code>caption.loc</code></td>
+<td>
+
+<p>set to <code>"bottom"</code> to position a caption below
+the table instead of the default of <code>"top"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>star</code></td>
+<td>
+
+<p>apply the star option for ctables to allow a table to spread over
+two columns when in twocolumn mode.
+</p>
+</td></tr>
+<tr valign="top"><td><code>double.slash</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to output <span class="samp">"\"</span> as <span class="samp">"\\"</span> in LaTeX commands. Useful when you
+are reading the output file back into an S vector for later output.
+</p>
+</td></tr>
+<tr valign="top"><td><code>vbar</code></td>
+<td>
+
+<p>logical. When <code>vbar==TRUE</code>, columns in the tabular environment are separated with
+vertical bar characters.  When <code>vbar==FALSE</code>, columns are separated with white
+space.  The default, <code>vbar==FALSE</code>, produces tables consistent with the style sheet
+for the Journal of the American Statistical Association.
+</p>
+</td></tr>
+<tr valign="top"><td><code>collabel.just</code></td>
+<td>
+
+<p>justification for column labels.
+</p>
+</td></tr>
+<tr valign="top"><td><code>assignment</code></td>
+<td>
+
+<p>logical.  When <code>TRUE</code>, the default, the name of the function
+and the assignment arrow are printed to the file.
+</p>
+</td></tr>
+<tr valign="top"><td><code>where</code></td>
+<td>
+
+<p>specifies placement of floats if a table environment is used.  Default
+is <code>"!tbp"</code>.  To allow tables to appear in the middle of a page of
+text you might specify <code>where="!htbp"</code> to <code>latex.default</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+
+<p>size of table text if a size change is needed (default is no change).
+For example you might specify <code>size="small"</code> to use LaTeX font size
+&ldquo;small&rdquo;.  For <code>latex.function</code> is a character string
+that will be appended to <code>"Sinput"</code> such as <code>"small"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>center</code></td>
+<td>
+
+<p>default is <code>"center"</code> to enclose the table in a <span class="samp">center</span>
+environment.  Use <code>center="centering"</code> or <code>"centerline"</code>
+to instead use LaTeX 
+<span class="samp">centering</span> or <code>centerline</code> directives, or
+<code>center="none"</code> to use no 
+centering.  <code>centerline</code> can be useful when objects besides a
+<code>tabular</code> are enclosed in a single <code>table</code> environment.
+This option was implemented by Markus Jäntti
+<a href="mailto:markus.jantti@iki.fi">markus.jantti@iki.fi</a> of Abo Akademi University.
+</p>
+</td></tr>
+<tr valign="top"><td><code>landscape</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to enclose the table in a <span class="samp">landscape</span>
+environment.  When <code>ctable</code> is <code>TRUE</code>, will use the
+<code>rotate</code> argument to <code>ctable</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>The default uses the S <code>alltt</code> environment for <code>latex.function</code>,
+Set <code>type="verbatim"</code> to instead use the LaTeX <span class="samp">verbatim</span>
+environment.  Use <code>type="Sinput"</code> if using <code>Sweave</code>,
+especially if you have customized the <code>Sinput</code> environment, for
+example using the <code>Sweavel</code> style which uses the
+<code>listings</code> LaTeX package.
+</p>
+</td></tr>
+<tr valign="top"><td><code>width.cutoff</code></td>
+<td>
+<p>width of function text output in columns; see
+<code>deparse</code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>other arguments are accepted and ignored except that <code>latex</code>
+passes arguments to <code>format.df</code> (e.g., <code>col.just</code> and other
+formatting options like <code>dec</code>, <code>rdec</code>, and <code>cdec</code>).  For
+<code>latexVerbatim</code> these arguments are passed to the <code>print</code>
+function.  Ignored for <code>latexTranslate</code> and
+<code>htmlTranslate</code>.  For <code>htmlSN</code>, these arguments are passed
+to <code>prettyNum</code> or <code>format</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>inn, out</code></td>
+<td>
+
+<p>specify additional input and translated strings over the usual
+defaults
+</p>
+</td></tr>
+<tr valign="top"><td><code>pb</code></td>
+<td>
+
+<p>If <code>pb=TRUE</code>, <code>latexTranslate</code> also translates <span class="samp">[()]</span>
+to math mode using <span class="samp">\left, \right</span>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>greek</code></td>
+<td>
+<p>set to <code>TRUE</code> to have <code>latexTranslate</code> put names
+for greek letters in math mode and add backslashes. For
+<code>htmlTranslate</code>, translates greek letters to corresponding html
+characters, ignoring &quot;modes&quot;.</p>
+</td></tr>
+<tr valign="top"><td><code>na</code></td>
+<td>
+<p>single character string to translate <code>NA</code> values to for
+<code>latexTranslate</code> and <code>htmlTranslate</code></p>
+</td></tr>
+<tr valign="top"><td><code>code</code></td>
+<td>
+<p>set to <code>'unicode'</code> to use HTML unicode characters
+or <code>'&amp;'</code> to use the ampersand pound number format</p>
+</td></tr>
+<tr valign="top"><td><code>pretty</code></td>
+<td>
+<p>set to <code>FALSE</code> to have <code>htmlSN</code> use
+<code>format</code> instead of <code>prettyNum</code></p>
+</td></tr>
+<tr valign="top"><td><code>hspace</code></td>
+<td>
+
+<p>horizontal space, e.g., extra left margin for verbatim text.  Default
+is none.  Use e.g. <code>hspace="10ex"</code> to add 10 extra spaces to the left
+of the text.
+</p>
+</td></tr>
+<tr valign="top"><td><code>length</code></td>
+<td>
+<p>for S-Plus only; is the length of the output page for
+printing and capturing verbatim text</p>
+</td></tr>
+<tr valign="top"><td><code>width,height</code></td>
+<td>
+
+<p>are the <code>options( )</code> to have in effect only for when <code>print</code> is
+executed.  Defaults are current <code>options</code>.  For <code>dvi</code> these specify
+the paper width and height in inches if <code>nomargins=TRUE</code>, with
+defaults of 5.5 and 7, respectively.
+</p>
+</td></tr>
+<tr valign="top"><td><code>prlog</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have <code>dvi</code> print, to the S-Plus session, the LaTeX .log
+file.
+</p>
+</td></tr>
+<tr valign="top"><td><code>multicol</code></td>
+<td>
+
+<p>set  to <code>FALSE</code> to not use <span class="samp">\multicolumn</span> in header
+of table
+</p>
+</td></tr>
+<tr valign="top"><td><code>nomargins</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to use default LaTeX margins when making the .dvi file
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>latex.default</code> optionally outputs a LaTeX comment containing the calling
+statement.  To output this comment, run
+<code>options(omitlatexcom=FALSE)</code> before running.  The default behavior or suppressing the comment is helpful
+when running RMarkdown to produce pdf output using LaTeX, as this uses
+<code>pandoc</code> which is fooled into try to escape the percent
+comment symbol.
+</p>
+<p>If running under Windows and using MikTeX, <code>latex</code> and <code>yap</code>
+must be in your system path, and <code>yap</code> is used to browse
+&lsquo;<span class="file">.dvi</span>&rsquo; files created by <code>latex</code>.  You should install the
+&lsquo;<span class="file">geometry.sty</span>&rsquo; and &lsquo;<span class="file">ctable.sty</span>&rsquo; styles in MikTeX to make optimum use
+of <code>latex()</code>.
+</p>
+<p>On Mac OS X, you may have to append the &lsquo;<span class="file">/usr/texbin</span>&rsquo; directory to the
+system path.  Thanks to Kevin Thorpe
+(<a href="mailto:kevin.thorpe@utoronto.ca">kevin.thorpe@utoronto.ca</a>) one way to set up Mac OS X is
+to install <span class="samp">X11</span> and <span class="samp">X11SDK</span> if not already installed,
+start <span class="samp">X11</span> within the R GUI, and issue the command
+<code>Sys.setenv( PATH=paste(Sys.getenv("PATH"),"/usr/texbin",sep=":")
+  )</code>.  To avoid any complications of using <span class="samp">X11</span> under MacOS, users
+can install the <span class="samp">TeXShop</span> package, which will associate
+&lsquo;<span class="file">.dvi</span>&rsquo; files with a viewer that displays a &lsquo;<span class="file">pdf</span>&rsquo; version of
+the file after a hidden conversion from &lsquo;<span class="file">dvi</span>&rsquo; to &lsquo;<span class="file">pdf</span>&rsquo;.
+</p>
+<p>System options can be used to specify external commands to be used.
+Defaults are given by <code>options(xdvicmd='xdvi')</code> or
+<code>options(xdvicmd='yap')</code>, <code>options(dvipscmd='dvips')</code>,
+<code>options(latexcmd='latex')</code>.  For MacOS specify
+<code>options(xdvicmd='MacdviX')</code> or if TeXShop is installed,
+<code>options(xdvicmd='open')</code>.
+</p>
+<p>To use <span class="samp">pdflatex</span> rather than <span class="samp">latex</span>, set
+<code>options(latexcmd='pdflatex')</code>,
+<code>options(dviExtension='pdf')</code>, and set
+<code>options('xdvicmd')</code> to your chosen PDF previewer.
+</p>
+<p>If running S-Plus and your directory for temporary files is not
+&lsquo;<span class="file">/tmp</span>&rsquo; (Unix/Linux) or &lsquo;<span class="file">\windows\temp</span>&rsquo; (Windows), add your
+own <code>tempdir</code> function such as <code>
+	tempdir &lt;- function() "/yourmaindirectory/yoursubdirectory"</code>
+</p>
+<p>To prevent the latex file from being displayed store the result of
+<code>latex</code> in an object, e.g. <code>w &lt;- latex(object, file='foo.tex')</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>latex</code> and <code>dvi</code> return a
+list of class <code>latex</code> or <code>dvi</code> containing character string
+elements <code>file</code> and <code>style</code>.  <code>file</code> contains the name of the
+generated file, and <code>style</code> is a vector (possibly empty) of styles to
+be included using the LaTeX2e <span class="samp">\usepackage</span> command.
+</p>
+<p><code>latexTranslate</code> returns a vector of character strings
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>creates various system files and runs various Linux/UNIX system
+commands which are assumed to be in the system path.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E. Harrell, Jr.,<br />
+Department of Biostatistics,<br />
+Vanderbilt University,<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+<p>Richard M. Heiberger,<br />
+Department of Statistics,<br />
+Temple University, Philadelphia, PA.<br />
+<a href="mailto:rmh@temple.edu">rmh@temple.edu</a>
+</p>
+<p>David R. Whiting,<br />
+School of Clinical Medical Sciences (Diabetes),<br />
+University of Newcastle upon Tyne, UK.<br />
+<a href="mailto:david.whiting@ncl.ac.uk">david.whiting@ncl.ac.uk</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/html.html">html</a></code>, <code><a href="../../Hmisc/help/format.df.html">format.df</a></code>, <code><a href="../../tools/help/texi2dvi.html">texi2dvi</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','this that')))
+## Not run: 
+latex(x)   # creates x.tex in working directory
+# The result of the above command is an object of class "latex"
+# which here is automatically printed by the latex print method.
+# The latex print method prepends and appends latex headers and
+# calls the latex program in the PATH.  If the latex program is
+# not in the PATH, you will get error messages from the operating
+# system.
+
+w &lt;- latex(x, file='/tmp/my.tex')
+# Does not call the latex program as the print method was not invoked
+print.default(w)
+# Shows the contents of the w variable without attempting to latex it.
+
+d &lt;- dvi(w)  # compile LaTeX document, make .dvi
+             # latex assumed to be in path
+d            # or show(d) : run xdvi (assumed in path) to display
+w            # or show(w) : run dvi then xdvi
+dvips(d)     # run dvips to print document
+dvips(w)     # run dvi then dvips
+library(tools)
+texi2dvi('/tmp/my.tex')   # compile and produce pdf file in working dir.
+
+## End(Not run)
+latex(x, file="")   # just write out LaTeX code to screen
+
+## Not run: 
+# Use paragraph formatting to wrap text to 3 in. wide in a column
+d &lt;- data.frame(x=1:2,
+                y=c(paste("a",
+                    paste(rep("very",30),collapse=" "),"long string"),
+                "a short string"))
+latex(d, file="", col.just=c("l", "p{3in}"), table.env=FALSE)
+
+## End(Not run)
+
+## Not run: 
+# After running latex( ) multiple times with different special styles in
+# effect, make a file that will call for the needed LaTeX packages when
+# latex is run (especially when using Sweave with R)
+if(exists(latexStyles))
+  cat(paste('\usepackage{',latexStyles,'}',sep=''),
+      file='stylesused.tex', sep='\n')
+# Then in the latex job have something like:
+# \documentclass{article}
+# \input{stylesused}
+# \begin{document}
+# ...
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

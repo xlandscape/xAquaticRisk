@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Apply a Function to Rows of a Matrix or Vector</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for mApply {Hmisc}"><tr><td>mApply {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Apply a Function to Rows of a Matrix or Vector</h2>
+
+<h3>Description</h3>
+
+<p><code>mApply</code> is like <code>tapply</code> except that the first argument can
+be a matrix or a vector, and the output is cleaned up if <code>simplify=TRUE</code>.
+It uses code adapted from Tony Plate (<a href="mailto:tplate@blackmesacapital.com">tplate@blackmesacapital.com</a>) to
+operate on grouped submatrices.
+</p>
+<p>As <code>mApply</code> can be much faster than using <code>by</code>, it is often
+worth the trouble of converting a data frame to a numeric matrix for
+processing by <code>mApply</code>.  <code>asNumericMatrix</code> will do this, and
+<code>matrix2dataFrame</code> will convert a numeric matrix back into a data
+frame.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mApply(X, INDEX, FUN, ..., simplify=TRUE, keepmatrix=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>X</code></td>
+<td>
+
+<p>a vector or matrix capable of being operated on by the
+function specified as the <code>FUN</code> argument
+</p>
+</td></tr>
+<tr valign="top"><td><code>INDEX</code></td>
+<td>
+
+<p>list of factors, each of same number of rows as 'X' has.
+</p>
+</td></tr>
+<tr valign="top"><td><code>FUN</code></td>
+<td>
+
+<p>the function to be applied.  In the case of functions like
+'+', '
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>optional arguments to 'FUN'.
+</p>
+</td></tr>
+<tr valign="top"><td><code>simplify</code></td>
+<td>
+
+<p>set to 'FALSE' to suppress simplification of the result in to
+an array, matrix, etc.
+</p>
+</td></tr>
+<tr valign="top"><td><code>keepmatrix</code></td>
+<td>
+<p>set to <code>TRUE</code> to keep result as a matrix even if
+<code>simplify</code> is <code>TRUE</code>, in the case of only one stratum
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>For <code>mApply</code>, the returned value is a vector, matrix, or list.
+If <code>FUN</code> returns more than one number, the result is an array if
+<code>simplify=TRUE</code> and is a list otherwise.  If a matrix is returned,
+its rows correspond to unique combinations of <code>INDEX</code>.  If
+<code>INDEX</code> is a list with more than one vector, <code>FUN</code> returns
+more than one number, and <code>simplify=FALSE</code>, the returned value is a
+list that is an array with the first dimension corresponding to the last
+vector in <code>INDEX</code>, the second dimension corresponding to the next
+to last vector in <code>INDEX</code>, etc., and the elements of the list-array
+correspond to the values computed by <code>FUN</code>.  In this situation the
+returned value is a regular array if <code>simplify=TRUE</code>.   The order
+of dimensions is as previously but the additional (last) dimension
+corresponds to values computed by <code>FUN</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/asNumericMatrix.html">asNumericMatrix</a></code>, <code><a href="../../Hmisc/help/matrix2dataFrame.html">matrix2dataFrame</a></code>, <code><a href="../../base/html/tapply.html">tapply</a></code>,
+<code><a href="../../base/html/lapply.html">sapply</a></code>, <code><a href="../../base/html/lapply.html">lapply</a></code>, <code><a href="../../base/html/mapply.html">mapply</a></code>, <code><a href="../../base/html/by.html">by</a></code>.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+require(datasets, TRUE)
+a &lt;- mApply(iris[,-5], iris$Species, mean)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

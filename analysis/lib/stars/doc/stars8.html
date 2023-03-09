@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="David Blodgett" />
+
+
+<title>8. NetCDF Proxy Workflows</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">8. NetCDF Proxy Workflows</h1>
+<h4 class="author">David Blodgett</h4>
+
+
+
+<p><strong>For a better version of the stars vignettes see</strong> <a href="https://r-spatial.github.io/stars/articles/" class="uri">https://r-spatial.github.io/stars/articles/</a></p>
+<p>NetCDF data sources are available via more <em>and</em> less granular
+files and/or OPeNDAP endpoints. This article demonstrates how
+<code>stars</code> enables discovery, access, and processing of NetCDF
+data across a wide range of such source-data organization schemes.</p>
+<p>We’ll start with some basics using datasets included with the
+<code>stars</code> installation. A call to <code>read_ncdf()</code>, for
+a dataset smaller than the default threshold, will just read in all the
+data. Below we read in and display the <code>reduced.nc</code> NetCDF
+file.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;nc/reduced.nc&quot;</span>, <span class="at">package =</span> <span class="st">&quot;stars&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>(nc <span class="ot">&lt;-</span> <span class="fu">read_ncdf</span>(f))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; no &#39;var&#39; specified, using sst, anom, err, ice</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; other available variables:</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  lon, lat, zlev, time</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0-360 longitude crossing the international dateline encountered.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Longitude coordinates will be0-360 in output.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Will return stars object with 16200 cells.</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No projection information found in nc file. </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Coordinate variable units found to be degrees, </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  assuming WGS84 Lat/Lon.</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; stars object with 4 dimensions and 4 attributes</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attribute(s):</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Min. 1st Qu. Median       Mean 3rd Qu.  Max.  NA&#39;s</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sst [°C]      -1.80   -0.03 13.655 12.9940841 24.8125 32.97  4448</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; anom [°C]     -7.95   -0.58 -0.080 -0.1847324  0.2100  2.99  4449</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; err [°C]       0.11    0.16  0.270  0.2626872  0.3200  0.84  4448</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ice [percent]  0.01    0.47  0.920  0.7178118  0.9600  1.00 13266</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dimension(s):</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      from  to offset delta  refsys         values x/y</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lon     1 180     -1     2  WGS 84           NULL [x]</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lat     1  90    -90     2  WGS 84           NULL [y]</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zlev    1   1     NA    NA      NA              0    </span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; time    1   1     NA    NA POSIXct 1981-12-31 UTC</span></span></code></pre></div>
+<p>Let’s assume <code>reduced.nc</code> was 10 years of hourly data,
+rather than 1 time step. It would be over 10GB rather than about 130KB
+and we would not be able to just read it all into memory. In this case,
+we need a way to read the file’s metadata such that we could iterate
+over it in a way that meets the needs of our workflow objectives. This
+is where <code>proxy = TRUE</code> comes in. Below, we’ll lower the
+option that controls whether <code>read_ncdf()</code> defaults to proxy
+<em>and</em> use <code>proxy = TRUE</code> to show both ways of getting
+the same result.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>old_options <span class="ot">&lt;-</span> <span class="fu">options</span>(<span class="st">&quot;stars.n_proxy&quot;</span> <span class="ot">=</span> <span class="dv">100</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>(nc <span class="ot">&lt;-</span> <span class="fu">read_ncdf</span>(f, <span class="at">proxy =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; no &#39;var&#39; specified, using sst, anom, err, ice</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; other available variables:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  lon, lat, zlev, time</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0-360 longitude crossing the international dateline encountered.</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Longitude coordinates will be0-360 in output.</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No projection information found in nc file. </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Coordinate variable units found to be degrees, </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  assuming WGS84 Lat/Lon.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; netcdf source stars proxy object from:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;[...]/reduced.nc&quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Available nc variables:</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sst</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; anom</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; err</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ice</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dimension(s):</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      from  to offset delta  refsys         values x/y</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lon     1 180     -1     2  WGS 84           NULL [x]</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lat     1  90    -90     2  WGS 84           NULL [y]</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zlev    1   1     NA    NA      NA              0    </span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; time    1   1     NA    NA POSIXct 1981-12-31 UTC</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(old_options)</span></code></pre></div>
+<p>The above shows that we have a NetCDF sourced stars proxy derived
+from the <code>reduced.nc</code> file. We see it has four variables and
+their units are displayed. The normal <code>stars</code>
+<code>dimension(s)</code> are available and a <code>nc_request</code>
+object is also available. The <code>nc_request</code> object contains
+the information needed to make requests for data according to the
+dimensions of the NetCDF data source. With this information, we have
+what we need to request a chunk of data that is what we want and not too
+large.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(nc <span class="ot">&lt;-</span> <span class="fu">read_ncdf</span>(f, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">var =</span> <span class="st">&quot;sst&quot;</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ncsub =</span> <span class="fu">cbind</span>(<span class="at">start =</span> <span class="fu">c</span>(<span class="dv">90</span>, <span class="dv">45</span>, <span class="dv">1</span> , <span class="dv">1</span>), </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">count =</span> <span class="fu">c</span>(<span class="dv">90</span>, <span class="dv">45</span>, <span class="dv">1</span>, <span class="dv">1</span>))))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0-360 longitude crossing the international dateline encountered.</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Longitude coordinates will be0-360 in output.</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Will return stars object with 4050 cells.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No projection information found in nc file. </span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Coordinate variable units found to be degrees, </span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  assuming WGS84 Lat/Lon.</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; stars object with 4 dimensions and 1 attribute</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attribute(s):</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Min. 1st Qu. Median     Mean 3rd Qu.  Max. NA&#39;s</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sst [°C] -1.8   -1.04     14 12.92722   25.13 29.81  757</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dimension(s):</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      from to offset delta  refsys         values x/y</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lon     1 90    177     2  WGS 84           NULL [x]</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lat     1 45     -2     2  WGS 84           NULL [y]</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zlev    1  1     NA    NA      NA              0    </span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; time    1  1     NA    NA POSIXct 1981-12-31 UTC</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nc)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The ability to view NetCDF metadata so we can make well formed
+requests against the data is useful, but the real power of a proxy
+object is that we can use it in a “lazy evaluation” coding style. That
+is, we can do virtual operations on the object, like subsetting with
+another dataset, prior to actually accessing the data volume.</p>
+<p>Lazy operations.</p>
+<p>There are two kinds of lazy operations possible with
+<code>stars_proxy</code> objects. Some can be applied to the
+<code>stars_proxy</code> object itself without accessing underlying
+data. Others must be composed as a chain of calls that will be applied
+when data is actually required.</p>
+<p>Methods applied to a <code>stars_proxy</code> object:</p>
+<ul>
+<li><code>[</code> - Nearly the same as stars_proxy</li>
+<li><code>[[&lt;-</code> - stars_proxy method works</li>
+<li><code>print</code> - unique method for nc_proxy to facilitate unique
+workflows</li>
+<li><code>dim</code> - stars_proxy method works</li>
+<li><code>c</code> - stars_proxy method works</li>
+<li><code>st_redimension</code> - Not sure what this entails but it
+might not make sense for nc_proxy.</li>
+<li><code>st_mosaic</code> * Calls read_stars on assembled list. Not
+supported for now.</li>
+<li><code>st_set_bbox</code></li>
+</ul>
+<p>Methods that add a call to the <code>call_list</code>.</p>
+<ul>
+<li><code>[&lt;-</code></li>
+<li><code>adrop</code></li>
+<li><code>aperm</code></li>
+<li><code>is.na</code></li>
+<li><code>split</code></li>
+<li><code>st_apply</code></li>
+<li><code>predict</code></li>
+<li><code>merge</code></li>
+<li><code>st_crop</code></li>
+<li><code>drop_levels</code></li>
+<li><code>Ops</code> (group generic for +, -, etc.)</li>
+<li><code>Math</code> (group generic for abs, sqrt, tan, etc.)</li>
+<li><code>filter</code></li>
+<li><code>mutate</code></li>
+<li><code>tansmute</code></li>
+<li><code>select</code></li>
+<li><code>rename</code></li>
+<li><code>pull</code></li>
+<li><code>slice</code> * hyperslabbing for NetCDF could be as
+above?</li>
+<li><code>pull</code></li>
+<li><code>replace_na</code></li>
+</ul>
+<p>Methods that cause a <code>stars_proxy</code> object to be fetched
+and turned into a <code>stars</code> object.</p>
+<ul>
+<li><code>as.data.frame</code></li>
+<li><code>plot</code></li>
+<li><code>st_as_stars</code></li>
+<li><code>aggregate</code></li>
+<li><code>st_dimensions&lt;-</code> * <a href="https://github.com/r-spatial/stars/issues/494" class="uri">https://github.com/r-spatial/stars/issues/494</a></li>
+<li><code>hist</code></li>
+<li><code>st_downsample</code></li>
+<li><code>st_sample</code></li>
+<li><code>st_as_sf</code></li>
+<li><code>write_stars</code></li>
+</ul>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

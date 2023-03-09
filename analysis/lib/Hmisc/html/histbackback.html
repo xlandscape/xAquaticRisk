@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Back to Back Histograms</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for histbackback {Hmisc}"><tr><td>histbackback {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Back to Back Histograms
+</h2>
+
+<h3>Description</h3>
+
+<p>Takes two vectors or a list with <code>x</code> and <code>y</code> components, and produces 
+back to back histograms of the two datasets.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+histbackback(x, y, brks=NULL, xlab=NULL, axes=TRUE, probability=FALSE,
+             xlim=NULL, ylab='', ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x,y</code></td>
+<td>
+
+<p>either two vectors or a list given as <code>x</code> with two components.  If the
+components have names, they will be used to label the axis
+(modification FEH).
+</p>
+</td></tr>
+<tr valign="top"><td><code>brks</code></td>
+<td>
+
+<p>vector of the desired breakpoints for the histograms.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>a vector of two character strings naming the two datasets.
+</p>
+</td></tr>
+<tr valign="top"><td><code>axes</code></td>
+<td>
+
+<p>logical flag stating whether or not to label the axes.
+</p>
+</td></tr>
+<tr valign="top"><td><code>probability</code></td>
+<td>
+
+<p>logical flag: if <code>TRUE</code>, then the x-axis corresponds to the units for a
+density.  If <code>FALSE</code>, then the units are counts.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+
+<p>x-axis limits.  First value must be negative, as the left histogram is
+placed at negative x-values.  Second value must be positive, for the
+right histogram.  To make the limits symmetric, use e.g. <code>ylim=c(-20,20)</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>label for y-axis.  Default is no label.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>additional graphics parameters may be given.
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>a list is returned invisibly with the following components:
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>left</code></td>
+<td>
+
+<p>the counts for the dataset plotted on the left.
+</p>
+</td></tr>
+<tr valign="top"><td><code>right</code></td>
+<td>
+
+<p>the counts for the dataset plotted on the right.
+</p>
+</td></tr>
+<tr valign="top"><td><code>breaks</code></td>
+<td>
+
+<p>the breakpoints used.
+</p>
+</td></tr></table>
+
+
+<h3>Side Effects</h3>
+
+<p>a plot is produced on the current graphics device.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Pat Burns
+<br />
+Salomon Smith Barney
+<br />
+London
+<br />
+<a href="mailto:pburns@dorado.sbi.com">pburns@dorado.sbi.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/hist.html">hist</a></code>, <code><a href="../../lattice/help/histogram.html">histogram</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+options(digits=3)
+set.seed(1)
+histbackback(rnorm(20), rnorm(30))
+
+
+fool &lt;- list(x=rnorm(40), y=rnorm(40))
+histbackback(fool)
+age &lt;- rnorm(1000,50,10)
+sex &lt;- sample(c('female','male'),1000,TRUE)
+histbackback(split(age, sex))
+agef &lt;- age[sex=='female']; agem &lt;- age[sex=='male']
+histbackback(list(Female=agef,Male=agem), probability=TRUE, xlim=c(-.06,.06))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

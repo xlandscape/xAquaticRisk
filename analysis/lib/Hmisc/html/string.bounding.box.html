@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Determine Dimensions of Strings</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for string.bounding.box {Hmisc}"><tr><td>string.bounding.box {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Determine Dimensions of Strings</h2>
+
+<h3>Description</h3>
+
+<p>This determines the number of rows and maximum number of columns of
+each string in a vector.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+string.bounding.box(string, type = c("chars", "width"))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>string</code></td>
+<td>
+<p>vector of strings</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+<p>character: whether to count characters or screen columns</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<table summary="R valueblock">
+<tr valign="top"><td><code>rows</code></td>
+<td>
+<p>vector containing the number of character rows in each string</p>
+</td></tr>
+<tr valign="top"><td><code>columns</code></td>
+<td>
+<p>vector containing the maximum number of character
+columns in each string</p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Charles Dupont</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/nchar.html">nchar</a></code>, <code><a href="../../Hmisc/help/stringDims.html">stringDims</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+a &lt;- c("this is a single line string", "This is a\nmulti-line string")
+stringDims(a)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,71 @@
+RSAGA-package           RSAGA: SAGA Geoprocessing and Terrain Analysis
+                        in R
+centervalue             Pick Center Value from Matrix
+create.variable.name    Convert file name to variable name
+focal.function          Local and Focal Grid Functions
+grid.predict            Helper function for applying predict methods to
+                        stacks of grids.
+grid.to.xyz             Convert Grid Matrix to (x,y,z) data.frame
+landslides              Landslide inventory, study area mask and DEM
+match.arg.ext           Extended Argument Matching
+multi.focal.function    Local and Focal Grid Function with Multiple
+                        Grids as Inputs
+pick.from.points        Pick Variable from Spatial Dataset
+read.ascii.grid         Read/write ASCII, SAGA and Rd Grid Files
+relative.position       Relative Topographic Position
+resid.median            Residual Median and Quantile Filters for Grids
+rsaga.add.grid.values.to.points
+                        Add Grid Values to Point Shapefile
+rsaga.close.gaps        SAGA Modules Close Gaps and Close One Cell Gaps
+rsaga.contour           Contour Lines from a Grid
+rsaga.copy.sgrd         Create a copy of a SAGA grid file
+rsaga.env               Function to set up RSAGA geoprocessing
+                        environment: Set up the RSAGA Geoprocessing
+                        Environment
+rsaga.esri.to.sgrd      Convert ESRI ASCII/binary grids to SAGA grids
+rsaga.esri.wrapper      Use RSAGA functions for ESRI grids
+rsaga.fill.sinks        Fill Sinks
+rsaga.filter.gauss      Gauss Filter
+rsaga.filter.simple     Simple Filters
+rsaga.geoprocessor      Generic R interface for SAGA modules
+rsaga.get.modules       Find SAGA libraries and modules
+rsaga.get.modules.path
+                        Internal functions that determine OS-specific
+                        path in which modules might be located.
+rsaga.get.usage         Usage of SAGA command line modules
+rsaga.get.version       Determine SAGA GIS version
+rsaga.grid.calculus     SAGA Module Grid Calculus
+rsaga.grid.to.points    Convert SAGA grid file to point shapefile
+rsaga.hillshade         Analytical hillshading Analytical hillshading
+                        calculation.
+rsaga.html.help         HTML help on a SAGA module or library
+rsaga.import.gdal       Import Grid Files to SAGA grid format using
+                        GDAL
+rsaga.insolation        Incoming Solar Radiation (Insolation)
+rsaga.intersect.polygons
+                        Spatial intersection of two polygon layers
+rsaga.inverse.distance
+                        Spatial Interpolation Methods
+rsaga.lib.prefix        Determine prefix for SAGA GIS library names
+rsaga.local.morphometry
+                        Local Morphometry
+rsaga.parallel.processing
+                        Parallel Processing
+rsaga.pisr              Potential incoming solar radiation
+rsaga.pisr2             Potential incoming solar radiation SAGA 2.2.2+
+rsaga.set.env           Internal function that sets the RSAGA
+                        Geoprocessing Evironment manually
+rsaga.sgrd.to.esri      Convert SAGA grids to ESRI ASCII/binary grids
+rsaga.sink.removal      Sink Removal Remove sinks from a digital
+                        elevation model by deepening drainage routes or
+                        filling sinks.
+rsaga.sink.route        Sink Drainage Route Detection
+rsaga.slope.asp.curv    Slope, Aspect, Curvature
+rsaga.solar.radiation   Potential incoming solar radiation
+rsaga.target            Define target grid for interpolation
+rsaga.topdown.processing
+                        Top-Down Processing
+rsaga.union.polygons    Spatial union of two polygon layers
+rsaga.wetness.index     SAGA Modules SAGA Wetness Index
+set.file.extension      Determine or modify file name extensions
+wind.shelter            Wind Shelter Index

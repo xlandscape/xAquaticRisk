@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Redundancy Analysis</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for redun {Hmisc}"><tr><td>redun {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Redundancy Analysis</h2>
+
+<h3>Description</h3>
+
+<p>Uses flexible parametric additive models (see <code><a href="../../Hmisc/help/areg.html">areg</a></code> and its
+use of regression splines) to
+determine how well each variable can be predicted from the remaining
+variables.  Variables are dropped in a stepwise fashion, removing the
+most predictable variable at each step. The remaining variables are used
+to predict.  The process continues until no variable still in the list
+of predictors can be predicted with an <i>R^2</i> or adjusted <i>R^2</i>
+of at least <code>r2</code> or until dropping the variable with the highest
+<i>R^2</i> (adjusted or ordinary) would cause a variable that was dropped
+earlier to no longer be predicted at least at the <code>r2</code> level from
+the now smaller list of predictors.  
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+redun(formula, data=NULL, subset=NULL, r2 = 0.9,
+      type = c("ordinary", "adjusted"), nk = 3, tlinear = TRUE,
+      allcat=FALSE, minfreq=0, iterms=FALSE, pc=FALSE, pr = FALSE, ...)
+## S3 method for class 'redun'
+print(x, digits=3, long=TRUE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula.  Enclose a variable in <code>I()</code> to force
+linearity.</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a data frame</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>usual subsetting expression</p>
+</td></tr>
+<tr valign="top"><td><code>r2</code></td>
+<td>
+<p>ordinary or adjusted <i>R^2</i> cutoff for redundancy</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+<p>specify <code>"adjusted"</code> to use adjusted <i>R^2</i></p>
+</td></tr>
+<tr valign="top"><td><code>nk</code></td>
+<td>
+<p>number of knots to use for continuous variables.  Use
+<code>nk=0</code> to force linearity for all variables.</p>
+</td></tr>
+<tr valign="top"><td><code>tlinear</code></td>
+<td>
+<p>set to <code>FALSE</code> to allow a variable to be automatically
+nonlinearly transformed (see <code>areg</code>) while being predicted.  By
+default, only continuous variables on the right hand side (i.e., while
+they are being predictors) are automatically transformed, using
+regression splines.  Estimating transformations for target (dependent)
+variables causes more overfitting than doing so for predictors.</p>
+</td></tr>
+<tr valign="top"><td><code>allcat</code></td>
+<td>
+<p>set to <code>TRUE</code> to ensure that all categories of
+categorical variables having more than two categories are redundant
+(see details below)</p>
+</td></tr>
+<tr valign="top"><td><code>minfreq</code></td>
+<td>
+<p>For a binary or categorical variable, there must be at
+least two categories with at least <code>minfreq</code> observations or
+the variable will be dropped and not checked for redundancy against
+other variables.  <code>minfreq</code> also specifies the minimum
+frequency of a category or its complement 
+before that category is considered when <code>allcat=TRUE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>iterms</code></td>
+<td>
+<p>set to <code>TRUE</code> to consider derived terms (dummy
+variables and nonlinear spline components) as separate variables.
+This will perform a redundancy analysis on pieces of the variables.</p>
+</td></tr>
+<tr valign="top"><td><code>pc</code></td>
+<td>
+<p>if <code>iterms=TRUE</code> you can set <code>pc</code> to <code>TRUE</code>
+to replace the submatrix of terms corresponding to each variable
+with the orthogonal principal components before doing the redundancy
+analysis.  The components are based on the correlation matrix.</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+<p>set to <code>TRUE</code> to monitor progress of the stepwise algorithm</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments to pass to <code>dataframeReduce</code> to remove
+&quot;difficult&quot; variables from <code>data</code> if <code>formula</code> is
+<code>~.</code> to use all variables in <code>data</code> (<code>data</code> must be
+specified when these arguments are used).  Ignored for <code>print</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>redun</code></p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>number of digits to which to round <i>R^2</i> values when
+printing</p>
+</td></tr>
+<tr valign="top"><td><code>long</code></td>
+<td>
+<p>set to <code>FALSE</code> to prevent the <code>print</code> method
+from printing the <i>R^2</i> history and the original <i>R^2</i> with
+which each variable can be predicted from ALL other variables.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>A categorical variable is deemed
+redundant if a linear combination of dummy variables representing it can
+be predicted from a linear combination of other variables.  For example,
+if there were 4 cities in the data and each city's rainfall was also
+present as a variable, with virtually the same rainfall reported for all
+observations for a city, city would be redundant given rainfall (or
+vice-versa; the one declared redundant would be the first one in the
+formula). If two cities had the same rainfall, <code>city</code> might be
+declared redundant even though tied cities might be deemed non-redundant
+in another setting.  To ensure that all categories may be predicted well
+from other variables, use the <code>allcat</code> option.  To ignore
+categories that are too infrequent or too frequent, set <code>minfreq</code>
+to a nonzero integer.  When the number of observations in the category
+is below this number or the number of observations not in the category
+is below this number, no attempt is made to predict observations being
+in that category individually for the purpose of redundancy detection.</p>
+
+
+<h3>Value</h3>
+
+<p>an object of class <code>"redun"</code></p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/areg.html">areg</a></code>, <code><a href="../../Hmisc/help/dataframeReduce.html">dataframeReduce</a></code>,
+<code><a href="../../Hmisc/help/transcan.html">transcan</a></code>, <code><a href="../../Hmisc/help/varclus.html">varclus</a></code>,
+<code>subselect::genetic</code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+n &lt;- 100
+x1 &lt;- runif(n)
+x2 &lt;- runif(n)
+x3 &lt;- x1 + x2 + runif(n)/10
+x4 &lt;- x1 + x2 + x3 + runif(n)/10
+x5 &lt;- factor(sample(c('a','b','c'),n,replace=TRUE))
+x6 &lt;- 1*(x5=='a' | x5=='c')
+redun(~x1+x2+x3+x4+x5+x6, r2=.8)
+redun(~x1+x2+x3+x4+x5+x6, r2=.8, minfreq=40)
+redun(~x1+x2+x3+x4+x5+x6, r2=.8, allcat=TRUE)
+# x5 is no longer redundant but x6 is
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

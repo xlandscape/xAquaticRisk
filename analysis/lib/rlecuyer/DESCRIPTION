@@ -1,0 +1,27 @@
+Package: rlecuyer
+Version: 0.3-5
+Date: 2019-11-19
+Title: R Interface to RNG with Multiple Streams
+Authors@R: c(
+	person("Hana", "Sevcikova", 
+			email="hanas@uw.edu", role=c("aut", "cre")),
+	person("Tony", "Rossini", 
+			email="anthony.rossini@novartis.com", role="aut"),
+    person("Pierre", "L'Ecuyer", role = "cph", comment="author of the underlying C code"))
+Description: Provides an interface to the C implementation of the
+        random number generator with multiple independent streams
+        developed by L'Ecuyer et al (2002). The main purpose of this
+        package is to enable the use of this random number generator in
+        parallel R applications.
+License: GPL (>= 2)
+URL: http://www.iro.umontreal.ca/~lecuyer/myftp/papers/streams00.pdf
+NeedsCompilation: yes
+Packaged: 2019-11-19 22:57:36 UTC; hana
+Author: Hana Sevcikova [aut, cre],
+  Tony Rossini [aut],
+  Pierre L'Ecuyer [cph] (author of the underlying C code)
+Maintainer: Hana Sevcikova <hanas@uw.edu>
+Repository: CRAN
+Date/Publication: 2019-11-21 22:40:02 UTC
+Built: R 4.1.1; x86_64-w64-mingw32; 2021-09-10 15:55:01 UTC; windows
+Archs: i386, x64

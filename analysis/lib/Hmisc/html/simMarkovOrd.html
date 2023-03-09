@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: simMarkovOrd</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for simMarkovOrd {Hmisc}"><tr><td>simMarkovOrd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>simMarkovOrd</h2>
+
+<h3>Description</h3>
+
+<p>Simulate Ordinal Markov Process
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+simMarkovOrd(
+  n = 1,
+  y,
+  times,
+  initial,
+  X = NULL,
+  absorb = NULL,
+  intercepts,
+  g,
+  carry = FALSE,
+  rdsample = NULL,
+  ...
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>number of subjects to simulate</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>vector of possible y values in order (numeric, character, factor)</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p>vector of measurement times</p>
+</td></tr>
+<tr valign="top"><td><code>initial</code></td>
+<td>
+<p>initial value of <code>y</code> (baseline state; numeric, character, or factor matching <code>y</code>).  If length 1 this value is used for all subjects, otherwise it is a vector of length <code>n</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>X</code></td>
+<td>
+<p>an optional vector of matrix of baseline covariate values passed to <code>g</code>.  If a vector, <code>X</code> represents a set of single values for all the covariates and those values are used for every subject.  Otherwise <code>X</code> is a matrix with rows corresponding to subjects and columns corresponding to covariates which <code>g</code> must know how to handle.  <code>g</code> only sees one row of <code>X</code> at a time.</p>
+</td></tr>
+<tr valign="top"><td><code>absorb</code></td>
+<td>
+<p>vector of absorbing states, a subset of <code>y</code> (numeric, character, or factor matching <code>y</code>).  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.</p>
+</td></tr>
+<tr valign="top"><td><code>intercepts</code></td>
+<td>
+<p>vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of <code>y</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>g</code></td>
+<td>
+<p>a user-specified function of three or more arguments which in order are <code>yprev</code> - the value of <code>y</code> at the previous time, the current time <code>t</code>, the <code>gap</code> between the previous time and the current time, an optional (usually named) covariate vector <code>X</code>, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow <code>yprev</code> to be a vector and <code>yprev</code> must not include any absorbing states.  The <code>g</code> function returns the linear predictor for the proportional odds model aside from <code>intercepts</code>.  The returned value must be a matrix with row names taken from <code>yprev</code>.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to <code>intercepts</code>. The different columns are used for <code>y</code>-specific contributions to the linear predictor (aside from <code>intercepts</code>) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.</p>
+</td></tr>
+<tr valign="top"><td><code>carry</code></td>
+<td>
+<p>set to <code>TRUE</code> to carry absorbing state forward after it is first hit; the default is to end records for the subject once the absorbing state is hit</p>
+</td></tr>
+<tr valign="top"><td><code>rdsample</code></td>
+<td>
+<p>an optional function to do response-dependent sampling.  It is a function of these arguments, which are vectors that stop at any absorbing state: <code>times</code> (ascending measurement times for one subject), <code>y</code> (vector of ordinal outcomes at these times for one subject.  The function returns <code>NULL</code> if no observations are to be dropped, returns the vector of new times to sample.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>additional arguments to pass to <code>g</code> such as a regresson coefficient</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Simulates longitudinal data for subjects following a first-order Markov process under a proportional odds model.  Optionally, response-dependent sampling can be done, e.g., if a subject hits a specified state at time t, measurements are removed for times t+1, t+3, t+5, ...  This is applicable when for example a study of hospitalized patients samples every day, Y=1 denotes patient discharge to home, and sampling is less frequent outside the hospital.  This example assumes that arriving home is not an absorbing state, i.e., a patient could return to the hospital.
+</p>
+
+
+<h3>Value</h3>
+
+<p>data frame with one row per subject per time, and columns id, time, yprev, y, values in ...
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>See Also</h3>
+
+<p><a href="https://hbiostat.org/R/Hmisc/markov/">https://hbiostat.org/R/Hmisc/markov/</a>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

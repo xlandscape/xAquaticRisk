@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Additive Regression with Optimal Transformations on Both...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for areg {Hmisc}"><tr><td>areg {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Additive Regression with Optimal Transformations on Both Sides using
+Canonical Variates</h2>
+
+<h3>Description</h3>
+
+<p>Expands continuous variables into restricted cubic spline bases and
+categorical variables into dummy variables and fits a multivariate
+equation using canonical variates.  This finds optimum transformations
+that maximize <i>R^2</i>.  Optionally, the bootstrap is used to estimate
+the covariance matrix of both left- and right-hand-side transformation
+parameters, and to estimate the bias in the <i>R^2</i> due to overfitting
+and compute the bootstrap optimism-corrected <i>R^2</i>.
+Cross-validation can also be used to get an unbiased estimate of
+<i>R^2</i> but this is not as precise as the bootstrap estimate.  The
+bootstrap and cross-validation may also used to get estimates of mean
+and median absolute error in predicted values on the original <code>y</code>
+scale.  These two estimates are perhaps the best ones for gauging the
+accuracy of a flexible model, because it is difficult to compare
+<i>R^2</i> under different y-transformations, and because <i>R^2</i>
+allows for an out-of-sample recalibration (i.e., it only measures
+relative errors).
+</p>
+<p>Note that uncertainty about the proper transformation of <code>y</code> causes
+an enormous amount of model uncertainty.  When the transformation for
+<code>y</code> is estimated from the data a high variance in predicted values
+on the original <code>y</code> scale may result, especially if the true
+transformation is linear.  Comparing bootstrap or cross-validated mean
+absolute errors with and without restricted the <code>y</code> transform to be
+linear (<code>ytype='l'</code>) may help the analyst choose the proper model
+complexity.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
+     B = 0, na.rm = TRUE, tolerance = NULL, crossval = NULL)
+
+## S3 method for class 'areg'
+print(x, digits=4, ...)
+
+## S3 method for class 'areg'
+plot(x, whichx = 1:ncol(x$x), ...)
+
+## S3 method for class 'areg'
+predict(object, x, type=c('lp','fitted','x'),
+                       what=c('all','sample'), ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>A single predictor or a matrix of predictors.  Categorical
+predictors are required to be coded as integers (as <code>factor</code>
+does internally).
+For <code>predict</code>, <code>x</code> is a data matrix with the same integer
+codes that were originally used for categorical variables.
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>a <code>factor</code>, categorical, character, or numeric response
+variable</p>
+</td></tr>
+<tr valign="top"><td><code>xtype</code></td>
+<td>
+
+<p>a vector of one-letter character codes specifying how each predictor
+is to be modeled, in order of columns of <code>x</code>.  The codes are
+<code>"s"</code> for smooth function (using restricted cubic splines),
+<code>"l"</code> for no transformation (linear), or <code>"c"</code> for
+categorical (to cause expansion into dummy variables).  Default is
+<code>"s"</code> if <code>nk &gt; 0</code> and <code>"l"</code> if <code>nk=0</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ytype</code></td>
+<td>
+<p>same coding as for <code>xtype</code>.  Default is <code>"s"</code>
+for a numeric variable with more than two unique values, <code>"l"</code>
+for a binary numeric variable, and <code>"c"</code> for a factor,
+categorical, or character variable.</p>
+</td></tr>
+<tr valign="top"><td><code>nk</code></td>
+<td>
+<p>number of knots, 0 for linear, or 3 or more.  Default is 4
+which will fit 3 parameters to continuous variables (one linear term
+and two nonlinear terms)</p>
+</td></tr>
+<tr valign="top"><td><code>B</code></td>
+<td>
+<p>number of bootstrap resamples used to estimate covariance
+matrices of transformation parameters.  Default is no bootstrapping.</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p>set to <code>FALSE</code> if you are sure that observations
+with <code>NA</code>s have already been removed</p>
+</td></tr>
+<tr valign="top"><td><code>tolerance</code></td>
+<td>
+<p>singularity tolerance.  List source code for
+<code>lm.fit.qr.bare</code> for details.</p>
+</td></tr>
+<tr valign="top"><td><code>crossval</code></td>
+<td>
+<p>set to a positive integer k to compute k-fold
+cross-validated R-squared (square of first canonical correlation)
+and mean and median absolute error of predictions on the original scale</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>number of digits to use in formatting for printing</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>an object created by <code>areg</code></p>
+</td></tr>
+<tr valign="top"><td><code>whichx</code></td>
+<td>
+<p>integer or character vector specifying which predictors
+are to have their transformations plotted (default is all).  The
+<code>y</code> transformation is always plotted.</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+<p>tells <code>predict</code> whether to obtain predicted
+untransformed <code>y</code> (<code>type='lp'</code>, the default) or predicted
+<code>y</code> on the original scale (<code>type='fitted'</code>), or the design
+matrix for the right-hand side (<code>type='x'</code>).</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+<p>When the <code>y</code>-transform is non-monotonic you may
+specify <code>what='sample'</code> to <code>predict</code> to obtain a random
+sample of <code>y</code> values on the original scale instead of a matrix
+of all <code>y</code>-inverses.  See <code><a href="../../Hmisc/help/inverseFunction.html">inverseFunction</a></code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments passed to the plot function.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>areg</code> is a competitor of <code>ace</code> in the <code>acepack</code>
+package.  Transformations from <code>ace</code> are seldom smooth enough and
+are often overfitted.  With <code>areg</code> the complexity can be controlled
+with the <code>nk</code> parameter, and predicted values are easy to obtain
+because parametric functions are fitted.
+</p>
+<p>If one side of the equation has a categorical variable with more than
+two categories and the other side has a continuous variable not assumed
+to act linearly, larger sample sizes are needed to reliably estimate
+transformations, as it is difficult to optimally score categorical
+variables to maximize <i>R^2</i> against a simultaneously optimally
+transformed continuous variable.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a list of class <code>"areg"</code> containing many objects
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Breiman and Friedman, Journal of the American Statistical
+Association (September, 1985).</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/cancor.html">cancor</a></code>,<code><a href="../../acepack/help/ace.html">ace</a></code>, <code><a href="../../Hmisc/help/transcan.html">transcan</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+
+ns &lt;- c(30,300,3000)
+for(n in ns) {
+  y &lt;- sample(1:5, n, TRUE)
+  x &lt;- abs(y-3) + runif(n)
+  par(mfrow=c(3,4))
+  for(k in c(0,3:5)) {
+    z &lt;- areg(x, y, ytype='c', nk=k)
+    plot(x, z$tx)
+	title(paste('R2=',format(z$rsquared)))
+    tapply(z$ty, y, range)
+    a &lt;- tapply(x,y,mean)
+    b &lt;- tapply(z$ty,y,mean)
+    plot(a,b)
+	abline(lsfit(a,b))
+    # Should get same result to within linear transformation if reverse x and y
+    w &lt;- areg(y, x, xtype='c', nk=k)
+    plot(z$ty, w$tx)
+    title(paste('R2=',format(w$rsquared)))
+    abline(lsfit(z$ty, w$tx))
+ }
+}
+
+par(mfrow=c(2,2))
+# Example where one category in y differs from others but only in variance of x
+n &lt;- 50
+y &lt;- sample(1:5,n,TRUE)
+x &lt;- rnorm(n)
+x[y==1] &lt;- rnorm(sum(y==1), 0, 5)
+z &lt;- areg(x,y,xtype='l',ytype='c')
+z
+plot(z)
+z &lt;- areg(x,y,ytype='c')
+z
+plot(z)
+
+## Not run: 		
+# Examine overfitting when true transformations are linear
+par(mfrow=c(4,3))
+for(n in c(200,2000)) {
+  x &lt;- rnorm(n); y &lt;- rnorm(n) + x
+    for(nk in c(0,3,5)) {
+    z &lt;- areg(x, y, nk=nk, crossval=10, B=100)
+    print(z)
+    plot(z)
+    title(paste('n=',n))
+  }
+}
+par(mfrow=c(1,1))
+
+# Underfitting when true transformation is quadratic but overfitting
+# when y is allowed to be transformed
+set.seed(49)
+n &lt;- 200
+x &lt;- rnorm(n); y &lt;- rnorm(n) + .5*x^2
+#areg(x, y, nk=0, crossval=10, B=100)
+#areg(x, y, nk=4, ytype='l', crossval=10, B=100)
+z &lt;- areg(x, y, nk=4) #, crossval=10, B=100)
+z
+# Plot x vs. predicted value on original scale.  Since y-transform is
+# not monotonic, there are multiple y-inverses
+xx &lt;- seq(-3.5,3.5,length=1000)
+yhat &lt;- predict(z, xx, type='fitted')
+plot(x, y, xlim=c(-3.5,3.5))
+for(j in 1:ncol(yhat)) lines(xx, yhat[,j], col=j)
+# Plot a random sample of possible y inverses
+yhats &lt;- predict(z, xx, type='fitted', what='sample')
+points(xx, yhats, pch=2)
+
+## End(Not run)
+
+# True transformation of x1 is quadratic, y is linear
+n &lt;- 200
+x1 &lt;- rnorm(n); x2 &lt;- rnorm(n); y &lt;- rnorm(n) + x1^2
+z &lt;- areg(cbind(x1,x2),y,xtype=c('s','l'),nk=3)
+par(mfrow=c(2,2))
+plot(z)
+
+# y transformation is inverse quadratic but areg gets the same answer by
+# making x1 quadratic
+n &lt;- 5000
+x1 &lt;- rnorm(n); x2 &lt;- rnorm(n); y &lt;- (x1 + rnorm(n))^2
+z &lt;- areg(cbind(x1,x2),y,nk=5)
+par(mfrow=c(2,2))
+plot(z)
+
+# Overfit 20 predictors when no true relationships exist
+n &lt;- 1000
+x &lt;- matrix(runif(n*20),n,20)
+y &lt;- rnorm(n)
+z &lt;- areg(x, y, nk=5)  # add crossval=4 to expose the problem
+
+# Test predict function
+n &lt;- 50
+x &lt;- rnorm(n)
+y &lt;- rnorm(n) + x
+g &lt;- sample(1:3, n, TRUE)
+z &lt;- areg(cbind(x,g),y,xtype=c('s','c'))
+range(predict(z, cbind(x,g)) - z$linear.predictors)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

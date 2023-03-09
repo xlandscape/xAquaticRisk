@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Weighted Statistical Estimates</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for wtd.stats {Hmisc}"><tr><td>wtd.stats {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Weighted Statistical Estimates
+</h2>
+
+<h3>Description</h3>
+
+<p>These functions compute various weighted versions of standard
+estimators.  In most cases the <code>weights</code> vector is a vector the same
+length of <code>x</code>, containing frequency counts that in effect expand <code>x</code>
+by these counts.  <code>weights</code> can also be sampling weights, in which
+setting <code>normwt</code> to <code>TRUE</code> will often be appropriate.  This results in
+making <code>weights</code> sum to the length of the non-missing elements in
+<code>x</code>.  <code>normwt=TRUE</code> thus reflects the fact that the true sample size is
+the length of the <code>x</code> vector and not the sum of the original values of
+<code>weights</code> (which would be appropriate had <code>normwt=FALSE</code>).  When <code>weights</code>
+is all ones, the estimates are all identical to unweighted estimates
+(unless one of the non-default quantile estimation options is
+specified to <code>wtd.quantile</code>).  When missing data have already been
+deleted for, <code>x</code>, <code>weights</code>, and (in the case of <code>wtd.loess.noiter</code>) <code>y</code>,
+specifying <code>na.rm=FALSE</code> will save computation time.  Omitting the
+<code>weights</code> argument or specifying <code>NULL</code> or a zero-length vector will
+result in the usual unweighted estimates.
+</p>
+<p><code>wtd.mean</code>, <code>wtd.var</code>, and <code>wtd.quantile</code> compute
+weighted means, variances, and quantiles, respectively.  <code>wtd.Ecdf</code>
+computes a weighted empirical distribution function.  <code>wtd.table</code>
+computes a weighted frequency table (although only one stratification
+variable is supported at present).  <code>wtd.rank</code> computes weighted
+ranks, using mid&ndash;ranks for ties.  This can be used to obtain Wilcoxon
+tests and rank correlation coefficients.  <code>wtd.loess.noiter</code> is a
+weighted version of <code>loess.smooth</code> when no iterations for outlier
+rejection are desired. This results in especially good smoothing when
+<code>y</code> is binary.  <code>wtd.quantile</code> removes any observations with
+zero weight at the beginning.  Previously, these were changing the
+quantile estimates.
+</p>
+<p><code>num.denom.setup</code> is a utility function that allows one to deal with
+observations containing numbers of events and numbers of trials, by
+outputting two observations when the number of events and non-events
+(trials - events) exceed zero.  A vector of subscripts is generated
+that will do the proper duplications of observations, and a new binary
+variable <code>y</code> is created along with usual cell frequencies (<code>weights</code>)
+for each of the <code>y=0</code>, <code>y=1</code> cells per observation.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+wtd.mean(x, weights=NULL, normwt="ignored", na.rm=TRUE)
+wtd.var(x, weights=NULL, normwt=FALSE, na.rm=TRUE,
+        method=c('unbiased', 'ML'))
+wtd.quantile(x, weights=NULL, probs=c(0, .25, .5, .75, 1), 
+             type=c('quantile','(i-1)/(n-1)','i/(n+1)','i/n'), 
+             normwt=FALSE, na.rm=TRUE)
+wtd.Ecdf(x, weights=NULL, 
+         type=c('i/n','(i-1)/(n-1)','i/(n+1)'), 
+         normwt=FALSE, na.rm=TRUE)
+wtd.table(x, weights=NULL, type=c('list','table'), 
+          normwt=FALSE, na.rm=TRUE)
+wtd.rank(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
+wtd.loess.noiter(x, y, weights=rep(1,n),
+                 span=2/3, degree=1, cell=.13333, 
+                 type=c('all','ordered all','evaluate'), 
+                 evaluation=100, na.rm=TRUE)
+num.denom.setup(num, denom)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a numeric vector (may be a character or <code>category</code> or <code>factor</code> vector
+for <code>wtd.table</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>num</code></td>
+<td>
+
+<p>vector of numerator frequencies
+</p>
+</td></tr>
+<tr valign="top"><td><code>denom</code></td>
+<td>
+
+<p>vector of denominators (numbers of trials)
+</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>a numeric vector of weights
+</p>
+</td></tr>
+<tr valign="top"><td><code>normwt</code></td>
+<td>
+
+<p>specify <code>normwt=TRUE</code> to make <code>weights</code> sum to
+<code>length(x)</code> after deletion of <code>NA</code>s.  If <code>weights</code> are
+frequency weights, then <code>normwt</code> should be <code>FALSE</code>, and if
+<code>weights</code> are normalization (aka reliability) weights, then
+<code>normwt</code> should be <code>TRUE</code>. In the case of the former, no check
+is made that <code>weights</code> are valid frequencies. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress checking for NAs
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+<p>determines the estimator type; if <code>'unbiased'</code> (the
+default) then the usual unbiased estimate (using Bessel's correction)
+is returned, if <code>'ML'</code> then it is the maximum likelihood estimate
+for a Gaussian distribution. In the case of the latter, the
+<code>normwt</code> argument has no effect.  Uses <code>stats:cov.wt</code> for
+both methods.</p>
+</td></tr>
+<tr valign="top"><td><code>probs</code></td>
+<td>
+
+<p>a vector of quantiles to compute.  Default is 0 (min), .25, .5, .75, 1
+(max).
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>For <code>wtd.quantile</code>, <code>type</code> defaults to <code>quantile</code> to use the same
+interpolated order statistic method as <code>quantile</code>.  Set <code>type</code> to 
+<code>"(i-1)/(n-1)"</code>,<code>"i/(n+1)"</code>, or <code>"i/n"</code> to use the inverse of the
+empirical distribution function, using, respectively, (wt - 1)/T,
+wt/(T+1), or wt/T, where wt is the cumulative weight and T is the
+total weight (usually total sample size).  These three values of
+<code>type</code> are the possibilities for <code>wtd.Ecdf</code>.  For <code>wtd.table</code> the
+default <code>type</code> is <code>"list"</code>, meaning that the function is to return a
+list containing two vectors: <code>x</code> is the sorted unique values of <code>x</code>
+and <code>sum.of.weights</code> is the sum of weights for that <code>x</code>.  This is the
+default so that you don't have to convert the <code>names</code> attribute of the
+result that can be obtained with <code>type="table"</code> to a numeric variable
+when <code>x</code> was originally numeric.  <code>type="table"</code> for <code>wtd.table</code>
+results in an object that is the same structure as those returned from
+<code>table</code>.  For <code>wtd.loess.noiter</code> the default <code>type</code> is <code>"all"</code>,
+indicating that the function is to return a list containing all the
+original values of <code>x</code> (including duplicates and without sorting) and
+the smoothed <code>y</code> values corresponding to them.  Set <code>type="ordered
+all"</code> to sort by <code>x</code>, and <code>type="evaluate"</code> to evaluate the smooth
+only at <code>evaluation</code> equally spaced points between the observed limits
+of <code>x</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>a numeric vector the same length as <code>x</code></p>
+</td></tr>
+<tr valign="top"><td><code>span, degree, cell, evaluation</code></td>
+<td>
+
+<p>see <code>loess.smooth</code>.  The default is linear (<code>degree</code>=1) and 100 points
+to evaluation (if <code>type="evaluate"</code>).
+</p>
+</td></tr></table>
+
+
+<h3>Details</h3>
+
+<p>The functions correctly combine weights of observations having
+duplicate values of <code>x</code> before computing estimates.
+</p>
+<p>When <code>normwt=FALSE</code> the weighted variance will not equal the
+unweighted variance even if the weights are identical.  That is because
+of the subtraction of 1 from the sum of the weights in the denominator
+of the variance formula.  If you want the weighted variance to equal the
+unweighted variance when weights do not vary, use <code>normwt=TRUE</code>.
+The articles by Gatz and Smith discuss alternative approaches, to arrive
+at estimators of the standard error of a weighted mean.
+</p>
+<p><code>wtd.rank</code> does not handle NAs as elegantly as <code>rank</code> if
+<code>weights</code> is specified.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>wtd.mean</code> and <code>wtd.var</code> return scalars.  <code>wtd.quantile</code> returns a
+vector the same length as <code>probs</code>.  <code>wtd.Ecdf</code> returns a list whose
+elements <code>x</code> and <code>Ecdf</code> correspond to unique sorted values of <code>x</code>.
+If the first CDF estimate is greater than zero, a point (min(x),0) is
+placed at the beginning of the estimates.
+See above for <code>wtd.table</code>.  <code>wtd.rank</code> returns a vector the same
+length as <code>x</code> (after removal of NAs, depending on <code>na.rm</code>).  See above
+for <code>wtd.loess.noiter</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+<br />
+Benjamin Tyner
+<br />
+<a href="mailto:btyner@gmail.com">btyner@gmail.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Research Triangle Institute (1995): SUDAAN User's Manual, Release
+6.40, pp. 8-16 to 8-17.
+</p>
+<p>Gatz DF, Smith L (1995): The standard error of a weighted mean
+concentration&ndash;I.  Bootstrapping vs other methods.  Atmospheric Env
+11:1185-1193.
+</p>
+<p>Gatz DF, Smith L (1995): The standard error of a weighted mean
+concentration&ndash;II.  Estimating confidence intervals.  Atmospheric Env
+29:1195-1200.
+</p>
+<p>https://en.wikipedia.org/wiki/Weighted_arithmetic_mean
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/mean.html">mean</a></code>, <code><a href="../../stats/html/cor.html">var</a></code>, <code><a href="../../stats/html/quantile.html">quantile</a></code>, <code><a href="../../base/html/table.html">table</a></code>, <code><a href="../../base/html/rank.html">rank</a></code>, <code><a href="../../stats/html/scatter.smooth.html">loess.smooth</a></code>, <code><a href="../../stats/html/lowess.html">lowess</a></code>,
+<code><a href="../../Hmisc/help/plsmo.html">plsmo</a></code>, <code><a href="../../Hmisc/help/Ecdf.html">Ecdf</a></code>, <code><a href="../../Hmisc/help/somers2.html">somers2</a></code>, <code><a href="../../Hmisc/help/describe.html">describe</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- runif(500)
+wts &lt;- sample(1:6, 500, TRUE)
+std.dev &lt;- sqrt(wtd.var(x, wts))
+wtd.quantile(x, wts)
+death &lt;- sample(0:1, 500, TRUE)
+plot(wtd.loess.noiter(x, death, wts, type='evaluate'))
+describe(~x, weights=wts)
+# describe uses wtd.mean, wtd.quantile, wtd.table
+xg &lt;- cut2(x,g=4)
+table(xg)
+wtd.table(xg, wts, type='table')
+
+# Here is a method for getting stratified weighted means
+y &lt;- runif(500)
+g &lt;- function(y) wtd.mean(y[,1],y[,2])
+summarize(cbind(y, wts), llist(xg), g, stat.name='y')
+
+# Empirically determine how methods used by wtd.quantile match with
+# methods used by quantile, when all weights are unity
+set.seed(1)
+u &lt;-  eval(formals(wtd.quantile)$type)
+v &lt;- as.character(1:9)
+r &lt;- matrix(0, nrow=length(u), ncol=9, dimnames=list(u,v))
+
+for(n in c(8, 13, 22, 29))
+  {
+    x &lt;- rnorm(n)
+    for(i in 1:5) {
+      probs &lt;- sort( runif(9))
+      for(wtype in u) {
+        wq &lt;- wtd.quantile(x, type=wtype, weights=rep(1,length(x)), probs=probs)
+        for(qtype in 1:9) {
+          rq &lt;- quantile(x, type=qtype, probs=probs)
+          r[wtype, qtype] &lt;- max(r[wtype,qtype], max(abs(wq-rq)))
+        }
+      }
+    }
+  }
+
+r
+
+# Restructure data to generate a dichotomous response variable
+# from records containing numbers of events and numbers of trials
+num   &lt;- c(10,NA,20,0,15)   # data are 10/12 NA/999 20/20 0/25 15/35
+denom &lt;- c(12,999,20,25,35)
+w     &lt;- num.denom.setup(num, denom)
+w
+# attach(my.data.frame[w$subs,])
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

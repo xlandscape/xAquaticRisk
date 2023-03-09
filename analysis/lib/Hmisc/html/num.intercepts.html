@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Extract number of intercepts</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for num.intercepts {Hmisc}"><tr><td>num.intercepts {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Extract number of intercepts</h2>
+
+<h3>Description</h3>
+
+<p>Extract the number of intercepts from a model
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+num.intercepts(fit, type=c('fit', 'var', 'coef'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>fit</code></td>
+<td>
+<p>a model fit object</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>the default is to return the formal number of intercepts used when fitting
+the model.  Set <code>type='var'</code> to return the actual number of
+intercepts stored in the <code>var</code> object, or <code>type='coef'</code> to
+return the actual number in the fitted coefficients.  The former will be
+less than the number fitted for <code><a href="../../rms/help/orm.html">orm</a></code> fits, and the
+latter for <code>orm</code> fits passed through
+<code><a href="../../Hmisc/help/fit.mult.impute.html">fit.mult.impute</a></code>
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>num.intercepts</code> returns an integer with the number of intercepts
+in the model.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../rms/help/orm.html">orm</a></code>, <code><a href="../../Hmisc/help/fit.mult.impute.html">fit.mult.impute</a></code>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

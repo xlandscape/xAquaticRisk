@@ -1,0 +1,44 @@
+# Export all names from PBSmapping
+# exportPattern(".") # temporary default
+
+exportPattern("^[^\\.]")
+exportPattern("^\\.PBS")
+exportPattern("^\\.add")
+exportPattern("^\\.calc")
+exportPattern("^\\.check")
+exportPattern("^\\.clip")
+exportPattern("^\\.closest")
+exportPattern("^\\.create")
+exportPattern("^\\.expand")
+exportPattern("^\\.fix")
+exportPattern("^\\.get")
+exportPattern("^\\.init")
+exportPattern("^\\.insert")
+exportPattern("^\\.plot")
+exportPattern("^\\.prepare")
+exportPattern("^\\.rollup")
+exportPattern("^\\.validate")
+
+export(.is.in)
+export(.mat2df)
+
+S3method(print, EventData)
+S3method(print, LocationSet)
+S3method(print, PolyData)
+S3method(print, PolySet)
+S3method(print, summary.PBS)
+S3method(summary, EventData)
+S3method(summary, LocationSet)
+S3method(summary, PolyData)
+S3method(summary, PolySet)
+
+# Import all packages listed as Imports or Depends
+# import( some package )
+
+importFrom("grDevices", "col2rgb", "colorRamp", "contourLines", "dev.list", "dev.new", "extendrange", "rgb")
+importFrom("graphics", "abline", "axis", "box", "frame", "legend",
+           "lines", "locator", "par", "points", "polygon", "strheight",
+           "strwidth", "symbols", "text", "title")
+importFrom("stats", "median", "na.omit", "quantile", "runif")
+importFrom("utils", "data", "flush.console", "read.table")
+

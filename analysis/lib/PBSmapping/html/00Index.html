@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>R: Mapping Fisheries Data and Spatial Analysis Tools</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+<h1> Mapping Fisheries Data and Spatial Analysis Tools
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;PBSmapping&rsquo; version 2.73.2</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+<li><a href="../doc/index.html">User guides, package vignettes and other documentation.</a></li>
+<li><a href="../demo">Code demos</a>.  Use <a href="../../utils/help/demo">demo()</a> to run them.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="PBSmapping.html">PBSmapping-package</a></td>
+<td>PBS Mapping: Draw Maps and Implement Other GIS Procedures</td></tr>
+<tr><td style="width: 25%;"><a href="addBubbles.html">addBubbles</a></td>
+<td>Add Bubbles to Maps</td></tr>
+<tr><td style="width: 25%;"><a href="addCompass.html">addCompass</a></td>
+<td>Add Compass Rose to Map</td></tr>
+<tr><td style="width: 25%;"><a href="addLabels.html">addLabels</a></td>
+<td>Add Labels to an Existing Plot</td></tr>
+<tr><td style="width: 25%;"><a href="addLines.html">addLines</a></td>
+<td>Add a PolySet to an Existing Plot as Polylines</td></tr>
+<tr><td style="width: 25%;"><a href="addPoints.html">addPoints</a></td>
+<td>Add EventData/PolyData to an Existing Plot as Points</td></tr>
+<tr><td style="width: 25%;"><a href="addPolys.html">addPolys</a></td>
+<td>Add a PolySet to an Existing Plot as Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="addStipples.html">addStipples</a></td>
+<td>Add Stipples to an Existing Plot</td></tr>
+<tr><td style="width: 25%;"><a href="appendPolys.html">appendPolys</a></td>
+<td>Append a Two-Column Matrix to a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="EventData.html">as.EventData</a></td>
+<td>EventData Objects</td></tr>
+<tr><td style="width: 25%;"><a href="LocationSet.html">as.LocationSet</a></td>
+<td>LocationSet Objects</td></tr>
+<tr><td style="width: 25%;"><a href="PolyData.html">as.PolyData</a></td>
+<td>PolyData Objects</td></tr>
+<tr><td style="width: 25%;"><a href="PolySet.html">as.PolySet</a></td>
+<td>PolySet Objects</td></tr>
+<tr><td style="width: 25%;"><a href="bcBathymetry.html">bcBathymetry</a></td>
+<td>Data: Bathymetry Spanning BC Coast</td></tr>
+<tr><td style="width: 25%;"><a href="calcArea.html">calcArea</a></td>
+<td>Calculate the Areas of Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="calcCentroid.html">calcCentroid</a></td>
+<td>Calculate the Centroids of Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="calcConvexHull.html">calcConvexHull</a></td>
+<td>Calculate the Convex Hull for a Set of Points</td></tr>
+<tr><td style="width: 25%;"><a href="calcGCdist.html">calcGCdist</a></td>
+<td>Calculate Great-Circle Distance</td></tr>
+<tr><td style="width: 25%;"><a href="calcLength.html">calcLength</a></td>
+<td>Calculate the Length of Polylines</td></tr>
+<tr><td style="width: 25%;"><a href="calcMidRange.html">calcMidRange</a></td>
+<td>Calculate the Midpoint of the X/Y Ranges of Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="calcSummary.html">calcSummary</a></td>
+<td>Apply Functions to Polygons in a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="calcVoronoi.html">calcVoronoi</a></td>
+<td>Calculate the Voronoi (Dirichlet) Tesselation for a Set of Points</td></tr>
+<tr><td style="width: 25%;"><a href="clipLines.html">clipLines</a></td>
+<td>Clip a PolySet as Polylines</td></tr>
+<tr><td style="width: 25%;"><a href="clipPolys.html">clipPolys</a></td>
+<td>Clip a PolySet as Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="closePolys.html">closePolys</a></td>
+<td>Close a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="combineEvents.html">combineEvents</a></td>
+<td>Combine Measurements of Events</td></tr>
+<tr><td style="width: 25%;"><a href="combinePolys.html">combinePolys</a></td>
+<td>Combine Several Polygons into a Single Polygon</td></tr>
+<tr><td style="width: 25%;"><a href="convCP.html">convCP</a></td>
+<td>Convert Contour Lines into a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="convDP.html">convDP</a></td>
+<td>Convert EventData/PolyData into a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="convLP.html">convLP</a></td>
+<td>Convert Polylines into a Polygon</td></tr>
+<tr><td style="width: 25%;"><a href="convUL.html">convUL</a></td>
+<td>Convert Coordinates between UTM and Lon/Lat</td></tr>
+<tr><td style="width: 25%;"><a href="dividePolys.html">dividePolys</a></td>
+<td>Divide a Single Polygon into Several Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="EventData.html">EventData</a></td>
+<td>EventData Objects</td></tr>
+<tr><td style="width: 25%;"><a href="extractPolyData.html">extractPolyData</a></td>
+<td>Extract PolyData from a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="findCells.html">findCells</a></td>
+<td>Find Grid Cells that Contain Events</td></tr>
+<tr><td style="width: 25%;"><a href="findPolys.html">findPolys</a></td>
+<td>Find Polygons that Contain Events</td></tr>
+<tr><td style="width: 25%;"><a href="fixBound.html">fixBound</a></td>
+<td>Fix the Boundary Points of a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="fixPOS.html">fixPOS</a></td>
+<td>Fix the POS Column of a PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="importEvents.html">importEvents</a></td>
+<td>Import EventData from a Text File</td></tr>
+<tr><td style="width: 25%;"><a href="importGSHHS.html">importGSHHS</a></td>
+<td>Import Data from a GSHHS Database</td></tr>
+<tr><td style="width: 25%;"><a href="importLocs.html">importLocs</a></td>
+<td>Import LocationSet from a text file</td></tr>
+<tr><td style="width: 25%;"><a href="importPolys.html">importPolys</a></td>
+<td>Import PolySet from a text file</td></tr>
+<tr><td style="width: 25%;"><a href="importShapefile.html">importShapefile</a></td>
+<td>Import an ESRI Shapefile</td></tr>
+<tr><td style="width: 25%;"><a href="EventData.html">is.EventData</a></td>
+<td>EventData Objects</td></tr>
+<tr><td style="width: 25%;"><a href="LocationSet.html">is.LocationSet</a></td>
+<td>LocationSet Objects</td></tr>
+<tr><td style="width: 25%;"><a href="PolyData.html">is.PolyData</a></td>
+<td>PolyData Objects</td></tr>
+<tr><td style="width: 25%;"><a href="PolySet.html">is.PolySet</a></td>
+<td>PolySet Objects</td></tr>
+<tr><td style="width: 25%;"><a href="isConvex.html">isConvex</a></td>
+<td>Determine Whether Polygons are Convex</td></tr>
+<tr><td style="width: 25%;"><a href="isIntersecting.html">isIntersecting</a></td>
+<td>Determine Whether Polygons are Self-Intersecting</td></tr>
+<tr><td style="width: 25%;"><a href="joinPolys.html">joinPolys</a></td>
+<td>Join One or Two PolySets using a Logic Operation</td></tr>
+<tr><td style="width: 25%;"><a href="locateEvents.html">locateEvents</a></td>
+<td>Locate Events on the Current Plot</td></tr>
+<tr><td style="width: 25%;"><a href="locatePolys.html">locatePolys</a></td>
+<td>Locate Polygons on the Current Plot</td></tr>
+<tr><td style="width: 25%;"><a href="LocationSet.html">LocationSet</a></td>
+<td>LocationSet Objects</td></tr>
+<tr><td style="width: 25%;"><a href="makeGrid.html">makeGrid</a></td>
+<td>Make a Grid of Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="makeProps.html">makeProps</a></td>
+<td>Make Polygon Properties</td></tr>
+<tr><td style="width: 25%;"><a href="makeTopography.html">makeTopography</a></td>
+<td>Make Topography Data from Online Source</td></tr>
+<tr><td style="width: 25%;"><a href="nepacLL.html">nepacLL</a></td>
+<td>Data: Shorelines of the NE Pacific Ocean and of the World</td></tr>
+<tr><td style="width: 25%;"><a href="nepacLL.html">nepacLLhigh</a></td>
+<td>Data: Shorelines of the NE Pacific Ocean and of the World</td></tr>
+<tr><td style="width: 25%;"><a href="PBSmapping.html">PBSmapping</a></td>
+<td>PBS Mapping: Draw Maps and Implement Other GIS Procedures</td></tr>
+<tr><td style="width: 25%;"><a href="PBSprint.html">PBSprint</a></td>
+<td>Specify Whether to Print Summaries</td></tr>
+<tr><td style="width: 25%;"><a href="placeHoles.html">placeHoles</a></td>
+<td>Place Holes Under Solids</td></tr>
+<tr><td style="width: 25%;"><a href="plotLines.html">plotLines</a></td>
+<td>Plot a PolySet as Polylines</td></tr>
+<tr><td style="width: 25%;"><a href="plotMap.html">plotMap</a></td>
+<td>Plot a PolySet as a Map</td></tr>
+<tr><td style="width: 25%;"><a href="plotPoints.html">plotPoints</a></td>
+<td>Plot EventData/PolyData as Points</td></tr>
+<tr><td style="width: 25%;"><a href="plotPolys.html">plotPolys</a></td>
+<td>Plot a PolySet as Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="PolyData.html">PolyData</a></td>
+<td>PolyData Objects</td></tr>
+<tr><td style="width: 25%;"><a href="PolySet.html">PolySet</a></td>
+<td>PolySet Objects</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.EventData</a></td>
+<td>Print PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.LocationSet</a></td>
+<td>Print PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.PolyData</a></td>
+<td>Print PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.PolySet</a></td>
+<td>Print PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.summary.PBS</a></td>
+<td>Print PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="pythagoras.html">pythagoras</a></td>
+<td>Data: Pythagoras' Theorem Diagram PolySet</td></tr>
+<tr><td style="width: 25%;"><a href="refocusWorld.html">refocusWorld</a></td>
+<td>Refocus the 'worldLL'/'worldLLhigh' Data Sets</td></tr>
+<tr><td style="width: 25%;"><a href="RGB2RYB.html">RGB2RYB</a></td>
+<td>Convert RGB to RYB and RYB to RGB</td></tr>
+<tr><td style="width: 25%;"><a href="rotatePolys.html">rotateEvents</a></td>
+<td>Rotate Polygons and Events</td></tr>
+<tr><td style="width: 25%;"><a href="rotatePolys.html">rotatePolys</a></td>
+<td>Rotate Polygons and Events</td></tr>
+<tr><td style="width: 25%;"><a href="RGB2RYB.html">RYB2RGB</a></td>
+<td>Convert RGB to RYB and RYB to RGB</td></tr>
+<tr><td style="width: 25%;"><a href="summary.html">summary.EventData</a></td>
+<td>Summarize PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="summary.html">summary.LocationSet</a></td>
+<td>Summarize PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="summary.html">summary.PolyData</a></td>
+<td>Summarize PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="summary.html">summary.PolySet</a></td>
+<td>Summarize PBS Mapping Objects</td></tr>
+<tr><td style="width: 25%;"><a href="surveyData.html">surveyData</a></td>
+<td>Data: Tow Information from Pacific Ocean Perch Survey</td></tr>
+<tr><td style="width: 25%;"><a href="thickenPolys.html">thickenPolys</a></td>
+<td>Thicken a PolySet of Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="thinPolys.html">thinPolys</a></td>
+<td>Thin a PolySet of Polygons</td></tr>
+<tr><td style="width: 25%;"><a href="towData.html">towData</a></td>
+<td>Data: Tow Information from Longspine Thornyhead Survey</td></tr>
+<tr><td style="width: 25%;"><a href="towTracks.html">towTracks</a></td>
+<td>Data: Tow Track Polylines from Longspine Thornyhead Survey</td></tr>
+<tr><td style="width: 25%;"><a href="nepacLL.html">worldLL</a></td>
+<td>Data: Shorelines of the NE Pacific Ocean and of the World</td></tr>
+<tr><td style="width: 25%;"><a href="nepacLL.html">worldLLhigh</a></td>
+<td>Data: Shorelines of the NE Pacific Ocean and of the World</td></tr>
+</table>
+</div></body></html>

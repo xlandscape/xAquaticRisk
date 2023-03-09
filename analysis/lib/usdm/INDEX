@@ -1,0 +1,14 @@
+RasterVariogram-class   RasterVariogram class
+VIF-class               VIF class
+Variogram               Empirical variogram for raster data
+exclude                 Excluding variables specified in a VIF object
+lisa                    Local indicators of spatial association
+plot.RasterVariogram    Plot variogram or variogram cloud or boxplot
+                        based on variogram cloud
+plot.speciesLISA        Plot positional uncertainty based on LISA
+speciesLISA-class       speciesLISA class
+speciesLisa             LISA in predictors at species occurrence
+                        locations
+usdm-package            Uncertainty analysis for SDMs
+vif                     Variance Inflation Factor and test for
+                        multicollinearity

@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Plot Error Bars</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for errbar {Hmisc}"><tr><td>errbar {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Plot Error Bars</h2>
+
+<h3>Description</h3>
+
+<p>Add vertical error bars to an existing plot or makes a new
+plot with error bars.  
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
+       sub=NULL, xlab=as.character(substitute(x)),
+       ylab=if(is.factor(x) || is.character(x)) ""
+           else as.character(substitute(y)),
+       add=FALSE, lty=1, type='p', ylim=NULL,
+       lwd=1, pch=16, errbar.col, Type=rep(1, length(y)), 
+       ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>vector of numeric x-axis values (for vertical error bars) or a factor or
+character variable (for horizontal error bars, <code>x</code> representing the
+group labels)
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>vector of y-axis values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>yplus</code></td>
+<td>
+
+<p>vector of y-axis values: the tops of the error bars.
+</p>
+</td></tr>
+<tr valign="top"><td><code>yminus</code></td>
+<td>
+
+<p>vector of y-axis values: the bottoms of the error bars.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cap</code></td>
+<td>
+
+<p>the width of the little lines at the tops and bottoms of the error bars
+in units of the width of the plot.  Defaults to <code>0.015</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>main</code></td>
+<td>
+
+<p>a main title for the plot, passed to <code>plot</code>, see also <code><a href="../../graphics/html/title.html">title</a></code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>sub</code></td>
+<td>
+
+<p>a sub title for the plot, passed to <code>plot</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>optional x-axis labels if <code>add=FALSE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>optional y-axis labels if <code>add=FALSE</code>.  Defaults to blank for horizontal charts.
+</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to add bars to an existing plot (available only for vertical
+error bars)
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+
+<p>type of line for error bars
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>type of point.  Use <code>type="b"</code> to connect dots.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+
+<p>y-axis limits.  Default is to use range of <code>y</code>, <code>yminus</code>, and <code>yplus</code>.  For
+horizonal charts, <code>ylim</code> is really the <code>x</code>-axis range, excluding
+differences.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+
+<p>line width for line segments (not main line)
+</p>
+</td></tr>
+<tr valign="top"><td><code>pch</code></td>
+<td>
+
+<p>character to use as the point.
+</p>
+</td></tr>
+<tr valign="top"><td><code>errbar.col</code></td>
+<td>
+
+<p>color to use for drawing error bars.
+</p>
+</td></tr>
+<tr valign="top"><td><code>Type</code></td>
+<td>
+
+<p>used for horizontal bars only.  Is an integer vector with values <code>1</code>
+if corresponding values represent simple estimates, <code>2</code> if they
+represent differences.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>other parameters passed to all graphics functions.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>errbar</code> adds vertical error bars to an existing plot or makes a new
+plot with error bars.  It can also make a horizontal error bar plot
+that shows error bars for group differences as well as bars for
+groups.  For the latter type of plot, the lower x-axis scale
+corresponds to group estimates and the upper scale corresponds to
+differences.  The spacings of the two scales are identical but the
+scale for differences has its origin shifted so that zero may be
+included.  If at least one of the confidence intervals includes zero,
+a vertical dotted reference line at zero is drawn.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Charles Geyer, University of Chicago.  Modified by Frank Harrell,
+Vanderbilt University, to handle missing data, to add the parameters
+<code>add</code> and <code>lty</code>, and to implement horizontal charts with differences.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x &lt;- 1:10
+y &lt;- x + rnorm(10)
+delta &lt;- runif(10)
+errbar( x, y, y + delta, y - delta )
+
+
+# Show bootstrap nonparametric CLs for 3 group means and for
+# pairwise differences on same graph
+group &lt;- sample(c('a','b','d'), 200, TRUE)
+y     &lt;- runif(200) + .25*(group=='b') + .5*(group=='d')
+cla &lt;- smean.cl.boot(y[group=='a'],B=100,reps=TRUE)  # usually B=1000
+a   &lt;- attr(cla,'reps')
+clb &lt;- smean.cl.boot(y[group=='b'],B=100,reps=TRUE)
+b   &lt;- attr(clb,'reps')
+cld &lt;- smean.cl.boot(y[group=='d'],B=100,reps=TRUE)
+d   &lt;- attr(cld,'reps')
+a.b &lt;- quantile(a-b,c(.025,.975))
+a.d &lt;- quantile(a-d,c(.025,.975))
+b.d &lt;- quantile(b-d,c(.025,.975))
+errbar(c('a','b','d','a - b','a - d','b - d'),
+       c(cla[1],clb[1],cld[1],cla[1]-clb[1],cla[1]-cld[1],clb[1]-cld[1]),
+       c(cla[3],clb[3],cld[3],a.b[2],a.d[2],b.d[2]),
+       c(cla[2],clb[2],cld[2],a.b[1],a.d[1],b.d[1]),
+       Type=c(1,1,1,2,2,2), xlab='', ylab='')
+       
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

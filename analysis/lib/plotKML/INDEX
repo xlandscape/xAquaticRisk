@@ -1,0 +1,102 @@
+HRprec08                Daily precipitation for Croatia for year 2008
+HRtemp08                Daily temperatures for Croatia for year 2008
+LST                     Time series of MODIS LST images
+RasterBrickSimulations-class
+                        A class for spatial simulations containing
+                        equiprobable gridded features
+RasterBrickTimeSeries-class
+                        A class for a time series of regular grids
+SAGA_pal                Colour palettes for numeric variables
+SpatialMaxEntOutput-class
+                        A class for outputs of analysis produced using
+                        the dismo package (MaxEnt)
+SpatialMetadata-class   A class for spatial metadata
+SpatialPhotoOverlay-class
+                        A class for Spatial PhotoOverlay
+SpatialPredictions-class
+                        A class for spatial predictions produced using
+                        'gstat' package
+SpatialSamplingPattern-class
+                        A class for spatial samples produced using
+                        various 'spsample' methods
+SpatialVectorsSimulations-class
+                        A class for spatial simulations containing
+                        equiprobable line, point or polygon features
+aesthetics              Plotting aesthetics parameters
+barxyz                  Baranja hill case study
+bigfoot                 Bigfoot reports (USA)
+check_projection        Extracts the proj4 parameters and checks if the
+                        projection matches the referent CRS
+col2kml                 Convert a color strings to the KML format
+count.GridTopology      Counts the number of occurrences of a list of
+                        vector object over a GridTopology
+display.pal             Display a color palette
+eberg                   Ebergotzen - soil mapping case study
+fmd                     2001 food-and-mouth epidemic, north Cumbria
+                        (UK)
+geopath                 Geopath - shortest trajectory line between two
+                        geographic locations
+getCRS                  Methods to get the proj4 string
+getWikiMedia.ImageInfo
+                        Gets EXIF information
+gpxbtour                GPS log of a bike tour
+grid2poly               Converts a gridded map to a polygon map
+kml-methods             Write to a KML file
+kml.tiles               Write vector object as tiled KML
+kml_compress            Compress a KML file with auxiliary files
+kml_description         Generate a table description from a data frame
+kml_layer               Write objects to a KML connection
+kml_layer.Raster        Writes raster objects to KML
+kml_layer.RasterBrick   Export a time series of images to KML
+kml_layer.STIDF         Write irregular spatio-temporal observations
+                        (points, lines and polygons) to KML
+kml_layer.STTDF         Write a space-time trajectory to KML
+kml_layer.SoilProfileCollection
+                        Writes a list of soil profiles to KML
+kml_layer.SpatialLines
+                        Writes spatial lines to KML
+kml_layer.SpatialPhotoOverlay
+                        Exports objects of type SpatialPhotoOverlay to
+                        KML
+kml_layer.SpatialPixels
+                        Writes SpatialPixels or SpatialGrid objects to
+                        KML
+kml_layer.SpatialPoints
+                        Writes spatial points to KML
+kml_layer.SpatialPolygons
+                        Writes spatial polygons to KML
+kml_legend.bar          Generates a legend bar (PNG file)
+kml_legend.whitening    Whitening legend (PNG)
+kml_metadata            Add metadata table to the active layer
+kml_open                Open / close a KML file connection
+kml_screen              Add a screen overlay
+makeCOLLADA             Generate a COLLADA file representing the 3D
+                        model of a rectangle
+metadata2SLD-methods    Methods to create a Styled Layer Description
+                        (*SLD*) file
+metadata2SLD.SpatialPixels
+                        Writes a Styled Layer Description (*SLD*) file
+normalizeFilename       Normalize filename string
+northcumbria            Polygon boundary of north Cumbria
+plotKML-method          Methods for plotting results of spatial
+                        analysis in Google Earth
+plotKML-package         Visualization of spatial and spatio-temporal
+                        objects in Google Earth
+plotKML.GDALobj         Write tiled objects to KML
+plotKML.env             plotKML specific environmental variables /
+                        paths
+readGPX                 Import GPX (GPS track) files
+readKML.GBIFdensity     Imports GBIF cell density records
+reproject               Methods to reproject maps to a referent
+                        coordinate system (WGS84)
+sp.palette-class        A class for color palette
+spMetadata              Methods to generate spatial metadata
+spPhoto                 Generate an object of class
+                        '"SpatialPhotoOverlay"'
+vect2rast               Convert points, lines and/or polygons to
+                        rasters
+vect2rast.SpatialPoints
+                        Converts points to rasters
+whitening               whitening
+worldgrids_pal          Standard global color palettes for factor
+                        variables

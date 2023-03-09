@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Power and Sample Size for Ordinal Response</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for popower {Hmisc}"><tr><td>popower {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Power and Sample Size for Ordinal Response</h2>
+
+<h3>Description</h3>
+
+<p><code>popower</code> computes the power for a two-tailed two sample comparison
+of ordinal outcomes under the proportional odds ordinal logistic
+model.  The power is the same as that of the Wilcoxon test but with
+ties handled properly.  <code>posamsize</code> computes the total sample size
+needed to achieve a given power.  Both functions compute the efficiency
+of the design compared with a design in which the response variable
+is continuous.  <code>print</code> methods exist for both functions.  Any of the
+input arguments may be vectors, in which case a vector of powers or
+sample sizes is returned.  These functions use the methods of
+Whitehead (1993).
+</p>
+<p><code>pomodm</code> is a function that assists in translating odds ratios to
+differences in mean or median on the original scale.
+</p>
+<p><code>simPOcuts</code> simulates simple unadjusted two-group comparisons under
+a PO model to demonstrate the natural sampling variability that causes
+estimated odds ratios to vary over cutoffs of Y.
+</p>
+<p><code>propsPO</code> uses <code><a href="../../ggplot2/html/ggplot2-package.html">ggplot2</a></code> to plot a stacked bar chart of
+proportions stratified by a grouping variable (and optionally a stratification variable), with an optional
+additional graph showing what the proportions would be had proportional
+odds held and an odds ratio was applied to the proportions in a
+reference group.  If the result is passed to <code>ggplotly</code>, customized
+tooltip hover text will appear.
+</p>
+<p><code>propsTrans</code> uses <code><a href="../../ggplot2/html/ggplot2-package.html">ggplot2</a></code> to plot all successive
+transition proportions.  <code>formula</code> has the state variable on the
+left hand side, the first right-hand variable is time, and the second
+right-hand variable is a subject ID variable.\
+</p>
+<p><code>multEventChart</code> uses <code><a href="../../ggplot2/html/ggplot2-package.html">ggplot2</a></code> to plot event charts
+showing state transitions, account for absorbing states/events.  It is
+based on code written by Lucy D'Agostino McGowan posted at <a href="https://livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/">https://livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/</a>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+popower(p, odds.ratio, n, n1, n2, alpha=0.05)
+## S3 method for class 'popower'
+print(x, ...)
+posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
+## S3 method for class 'posamsize'
+print(x, ...)
+pomodm(x=NULL, p, odds.ratio=1)
+simPOcuts(n, nsim=10, odds.ratio=1, p)
+propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
+propsTrans(formula, data=NULL, labels=NULL, arrow='\u2794',
+           maxsize=12, ncol=NULL, nrow=NULL)
+multEventChart(formula, data=NULL, absorb=NULL, sortbylast=FALSE,
+   colorTitle=label(y), eventTitle='Event',
+   palette='OrRd',
+   eventSymbols=c(15, 5, 1:4, 6:10),
+   timeInc=min(diff(unique(x))/2))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>p</code></td>
+<td>
+
+<p>a vector of marginal cell probabilities which must add up to one.
+For <code>popower</code> and <code>posamsize</code>, The <code>i</code>th element specifies the probability that a patient will be
+in response level <code>i</code>, averaged over the two treatment groups.  For
+<code>pomodm</code> and <code>simPOcuts</code>, <code>p</code> is the vector of cell
+probabilities to be translated under a given odds ratio.  For
+<code>simPOcuts</code>, if <code>p</code> has names, those names are taken as the
+ordered distinct Y-values.  Otherwise Y-values are taken as the integers
+1, 2, ... up to the length of <code>p</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>odds.ratio</code></td>
+<td>
+
+<p>the odds ratio to be able to detect.  It doesn't
+matter which group is in the numerator.  For <code>propsPO</code>,
+<code>odds.ratio</code> is a function of the grouping (right hand side)
+variable value.  The value of the function specifies the odds ratio to
+apply to the refernce group to get all other group's expected proportions
+were proportional odds to hold against the first group.  Normally the
+function should return 1.0 when its <code>x</code> argument corresponds to the
+<code>ref</code> group.  For <code>pomodm</code> and <code>simPOcuts</code> is the odds
+ratio to apply to convert the given cell probabilities.</p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+
+<p>total sample size for <code>popower</code>.  You must specify either <code>n</code> or
+<code>n1</code> and <code>n2</code>.  If you specify <code>n</code>, <code>n1</code> and
+<code>n2</code> are set to <code>n/2</code>. For <code>simPOcuts</code> is a single number
+equal to the combined sample sizes of two groups.
+</p>
+</td></tr>
+<tr valign="top"><td><code>n1</code></td>
+<td>
+<p>for <code>popower</code>, the number of subjects in treatment group 1</p>
+</td></tr>
+<tr valign="top"><td><code>n2</code></td>
+<td>
+<p>for <code>popower</code>, the number of subjects in group 2</p>
+</td></tr>
+<tr valign="top"><td><code>nsim</code></td>
+<td>
+<p>number of simulated studies to create by <code>simPOcuts</code></p>
+</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+<p>type I error</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>popower</code> or <code>posamsize</code>, or a
+vector of data values given to <code>pomodm</code> that corresponds to the
+vector <code>p</code> of probabilities.  If <code>x</code> is omitted for
+<code>pomodm</code>, the <code>odds.ratio</code> will be applied and the new
+vector of individual probabilities will be returned.  Otherwise if
+<code>x</code> is given to <code>pomodm</code>, a 2-vector with the mean and
+median <code>x</code> after applying the odds ratio is returned.</p>
+</td></tr>
+<tr valign="top"><td><code>fraction</code></td>
+<td>
+
+<p>for <code>posamsize</code>, the fraction of subjects that will be allocated to group 1
+</p>
+</td></tr>
+<tr valign="top"><td><code>power</code></td>
+<td>
+
+<p>for <code>posamsize</code>, the desired power (default is 0.8)
+</p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>an R formula expressure for <code>proposPO</code> where the
+outcome categorical variable is on the left hand side and the grouping
+variable is on the right.  It is assumed that the left hand variable is
+either already a factor or will have its levels in the right order for
+an ordinal model when it is converted to factor.  For
+<code>multEventChart</code> the left hand variable is a categorial status
+variable, the first right hand side variable represents time, and the
+second right side variable is a unique subject ID.  One line is
+produced per subject.</p>
+</td></tr>
+<tr valign="top"><td><code>ref</code></td>
+<td>
+<p>for <code>propsPO</code> specifies the reference group (value of
+the right hand side <code>formula</code> variable) to use in computing
+proportions on which too translate proportions in other groups, under
+the proportional odds assumption.</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a data frame or <code>data.table</code></p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+<p>for <code>propsTrans</code> is an optional character vector
+corresponding to y=1,2,3,... that is used to construct <code>plotly</code>
+hovertext as a <code>label</code> attribute in the <code>ggplot2</code>
+aesthetic.  Used with y is integer on axes but you want long labels in
+hovertext.</p>
+</td></tr>
+<tr valign="top"><td><code>arrow</code></td>
+<td>
+<p>character to use as the arrow symbol for transitions in
+<code>propsTrans.  The default is the dingbats heavy wide-headed
+		rightwards arror.</code></p>
+</td></tr>
+<tr valign="top"><td><code>nrow,ncol</code></td>
+<td>
+<p>see <code><a href="../../ggplot2/help/facet_wrap.html">facet_wrap</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>maxsize</code></td>
+<td>
+<p>maximum symbol size</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>unused</p>
+</td></tr>
+<tr valign="top"><td><code>absorb</code></td>
+<td>
+<p>character vector specifying the subset of levels of the
+left hand side variable that are absorbing states such as death or
+hospital discharge</p>
+</td></tr>
+<tr valign="top"><td><code>sortbylast</code></td>
+<td>
+<p>set to <code>TRUE</code> to sort the subjects by the
+severity of the status at the last time point</p>
+</td></tr>
+<tr valign="top"><td><code>colorTitle</code></td>
+<td>
+<p>label for legend for status</p>
+</td></tr>
+<tr valign="top"><td><code>eventTitle</code></td>
+<td>
+<p>label for legend for <code>absorb</code></p>
+</td></tr>
+<tr valign="top"><td><code>palette</code></td>
+<td>
+<p>a single character string specifying the
+<code><a href="../../ggplot2/help/scale_fill_brewer.html">scale_fill_brewer</a></code> color palette</p>
+</td></tr>
+<tr valign="top"><td><code>eventSymbols</code></td>
+<td>
+<p>vector of symbol codes.  Default for first two
+symbols is a solid square and an open diamond.</p>
+</td></tr>
+<tr valign="top"><td><code>timeInc</code></td>
+<td>
+<p>time increment for the x-axis.  Default is 1/2 the
+shortest gap between any two distincttimes in the data.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a list containing <code>power</code>, <code>eff</code> (relative efficiency), and
+<code>approx.se</code> (approximate standard error of log odds ratio) for
+<code>popower</code>, or containing <code>n</code> and <code>eff</code> for <code>posamsize</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Whitehead J (1993): Sample size calculations for ordered categorical
+data.  Stat in Med 12:2257&ndash;2271.
+</p>
+<p>Julious SA, Campbell MJ (1996): Letter to the Editor.  Stat in Med 15:
+1065&ndash;1066.  Shows accuracy of formula for binary response case.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/simRegOrd.html">simRegOrd</a></code>, <code><a href="../../Hmisc/help/bpower.html">bpower</a></code>, <code><a href="../../Hmisc/help/cpower.html">cpower</a></code>, <code><a href="../../rms/help/impactPO.html">impactPO</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# For a study of back pain (none, mild, moderate, severe) here are the
+# expected proportions (averaged over 2 treatments) that will be in
+# each of the 4 categories:
+
+
+p &lt;- c(.1,.2,.4,.3)
+popower(p, 1.2, 1000)   # OR=1.2, total n=1000
+posamsize(p, 1.2)
+popower(p, 1.2, 3148)
+# If p was the vector of probabilities for group 1, here's how to
+# compute the average over the two groups:
+# p2   &lt;- pomodm(p=p, odds.ratio=1.2)
+# pavg &lt;- (p + p2) / 2
+
+# Compare power to test for proportions for binary case,
+# proportion of events in control group of 0.1
+p &lt;- 0.1; or &lt;- 0.85; n &lt;- 4000
+popower(c(1 - p, p), or, n)    # 0.338
+bpower(p, odds.ratio=or, n=n)  # 0.320
+# Add more categories, starting with 0.1 in middle
+p &lt;- c(.8, .1, .1)
+popower(p, or, n)   # 0.543
+p &lt;- c(.7, .1, .1, .1)
+popower(p, or, n)   # 0.67
+# Continuous scale with final level have prob. 0.1
+p &lt;- c(rep(1 / n, 0.9 * n), 0.1)
+popower(p, or, n)   # 0.843
+
+# Compute the mean and median x after shifting the probability
+# distribution by an odds ratio under the proportional odds model
+x &lt;- 1 : 5
+p &lt;- c(.05, .2, .2, .3, .25)
+# For comparison make up a sample that looks like this
+X &lt;- rep(1 : 5, 20 * p)
+c(mean=mean(X), median=median(X))
+pomodm(x, p, odds.ratio=1)  # still have to figure out the right median
+pomodm(x, p, odds.ratio=0.5)
+
+# Show variation of odds ratios over possible cutoffs of Y even when PO
+# truly holds.  Run 5 simulations for a total sample size of 300.
+# The two groups have 150 subjects each.
+s &lt;- simPOcuts(300, nsim=5, odds.ratio=2, p=p)
+round(s, 2)
+
+# An ordinal outcome with levels a, b, c, d, e is measured at 3 times
+# Show the proportion of values in each outcome category stratified by
+# time.  Then compute what the proportions would be had the proportions
+# at times 2 and 3 been the proportions at time 1 modified by two odds ratios 
+
+set.seed(1)
+d   &lt;- expand.grid(time=1:3, reps=1:30)
+d$y &lt;- sample(letters[1:5], nrow(d), replace=TRUE)
+propsPO(y ~ time, data=d, odds.ratio=function(time) c(1, 2, 4)[time])
+# To show with plotly, save previous result as object p and then:
+# plotly::ggplotly(p, tooltip='label')
+
+# Add a stratification variable and don't consider an odds ratio
+d   &lt;- expand.grid(time=1:5, sex=c('female', 'male'), reps=1:30)
+d$y &lt;- sample(letters[1:5], nrow(d), replace=TRUE)
+propsPO(y ~ time + sex, data=d)  # may add nrow= or ncol=
+
+# Show all successive transition proportion matrices
+d   &lt;- expand.grid(id=1:30, time=1:10)
+d$state &lt;- sample(LETTERS[1:4], nrow(d), replace=TRUE)
+propsTrans(state ~ time + id, data=d)
+
+pt1 &lt;- data.frame(pt=1, day=0:3,
+   status=c('well', 'well', 'sick', 'very sick'))
+pt2 &lt;- data.frame(pt=2, day=c(1,2,4,6),
+   status=c('sick', 'very sick', 'coma', 'death'))
+pt3 &lt;- data.frame(pt=3, day=1:5,
+   status=c('sick', 'very sick', 'sick', 'very sick', 'discharged'))
+pt4 &lt;- data.frame(pt=4, day=c(1:4, 10),
+   status=c('well', 'sick', 'very sick', 'well', 'discharged'))
+d &lt;- rbind(pt1, pt2, pt3, pt4)
+d$status &lt;- factor(d$status, c('discharged', 'well', 'sick',
+                               'very sick', 'coma', 'death'))
+label(d$day) &lt;- 'Day'
+multEventChart(status ~ day + pt, data=d,
+               absorb=c('death', 'discharged'),
+               colorTitle='Status', sortbylast=TRUE) +
+theme_classic() +
+theme(legend.position='bottom')
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

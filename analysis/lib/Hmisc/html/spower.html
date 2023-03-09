@@ -1,0 +1,574 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Simulate Power of 2-Sample Test for Survival under Complex...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for spower {Hmisc}"><tr><td>spower {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Simulate Power of 2-Sample Test for Survival under Complex Conditions
+</h2>
+
+<h3>Description</h3>
+
+<p>Given functions to generate random variables for survival times and
+censoring times, <code>spower</code> simulates the power of a user-given
+2-sample test for censored data.  By default, the logrank (Cox
+2-sample) test is used, and a <code>logrank</code> function for comparing 2
+groups is provided. Optionally a Cox model is fitted for each each
+simulated dataset and the log hazard ratios are saved (this requires
+the <code>survival</code> package). A <code>print</code> method prints various
+measures from these.  For composing <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> functions to generate random
+survival times under complex conditions, the <code>Quantile2</code> function
+allows the user to specify the intervention:control hazard ratio as a
+function of time, the probability of a control subject actually
+receiving the intervention (dropin) as a function of time, and the
+probability that an intervention subject receives only the control
+agent as a function of time (non-compliance, dropout).
+<code>Quantile2</code> returns a function that generates either control or
+intervention uncensored survival times subject to non-constant
+treatment effect, dropin, and dropout.  There is a <code>plot</code> method
+for plotting the results of <code>Quantile2</code>, which will aid in
+understanding the effects of the two types of non-compliance and
+non-constant treatment effects.  <code>Quantile2</code> assumes that the
+hazard function for either treatment group is a mixture of the control
+and intervention hazard functions, with mixing proportions defined by
+the dropin and dropout probabilities.  It computes hazards and
+survival distributions by numerical differentiation and integration
+using a grid of (by default) 7500 equally-spaced time points.
+</p>
+<p>The <code>logrank</code> function is intended to be used with <code>spower</code>
+but it can be used by itself.  It returns the 1 degree of freedom
+chi-square statistic, with the hazard ratio estimate as an attribute.
+</p>
+<p>The <code>Weibull2</code> function accepts as input two vectors, one
+containing two times and one containing two survival probabilities, and
+it solves for the scale and shape parameters of the Weibull distribution
+(<i>S(t) = exp(-&alpha;*t^&gamma;)</i>)
+which will yield
+those estimates.  It creates an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> function to evaluate survival
+probabilities from this Weibull distribution.  <code>Weibull2</code> is
+useful in creating functions to pass as the first argument to
+<code>Quantile2</code>.
+</p>
+<p>The <code>Lognorm2</code> and <code>Gompertz2</code> functions are similar to
+<code>Weibull2</code> except that they produce survival functions for the
+log-normal and Gompertz distributions.
+</p>
+<p>When <code>cox=TRUE</code> is specified to <code>spower</code>, the analyst may wish
+to extract the two margins of error by using the <code>print</code> method
+for <code>spower</code> objects (see example below) and take the maximum of
+the two.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+spower(rcontrol, rinterv, rcens, nc, ni, 
+       test=logrank, cox=FALSE, nsim=500, alpha=0.05, pr=TRUE)
+
+## S3 method for class 'spower'
+print(x, conf.int=.95, ...)
+
+Quantile2(scontrol, hratio, 
+          dropin=function(times)0, dropout=function(times)0,
+          m=7500, tmax, qtmax=.001, mplot=200, pr=TRUE, ...)
+
+## S3 method for class 'Quantile2'
+print(x, ...)
+
+## S3 method for class 'Quantile2'
+plot(x, 
+     what=c("survival", "hazard", "both", "drop", "hratio", "all"),
+     dropsep=FALSE, lty=1:4, col=1, xlim, ylim=NULL,
+     label.curves=NULL, ...)
+
+logrank(S, group)
+
+Gompertz2(times, surv)
+Lognorm2(times, surv)
+Weibull2(times, surv)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>rcontrol</code></td>
+<td>
+
+<p>a function of n which returns n random uncensored
+failure times for the control group.  <code>spower</code> assumes that
+non-compliance (dropin) has been taken into account by this
+function.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rinterv</code></td>
+<td>
+
+<p>similar to <code>rcontrol</code> but for the intervention group
+</p>
+</td></tr>
+<tr valign="top"><td><code>rcens</code></td>
+<td>
+
+<p>a function of n which returns n random censoring times.
+It is assumed that both treatment groups have the same censoring
+distribution.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nc</code></td>
+<td>
+
+<p>number of subjects in the control group
+</p>
+</td></tr>
+<tr valign="top"><td><code>ni</code></td>
+<td>
+
+<p>number in the intervention group
+</p>
+</td></tr>
+<tr valign="top"><td><code>scontrol</code></td>
+<td>
+
+<p>a function of a time vector which returns the survival probabilities
+for the control group at those times assuming that all patients are
+compliant.
+</p>
+</td></tr>
+<tr valign="top"><td><code>hratio</code></td>
+<td>
+
+<p>a function of time which specifies the intervention:control hazard
+ratio (treatment effect)
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>an object of class &ldquo;Quantile2&rdquo; created by <code>Quantile2</code>,
+or of class &ldquo;spower&rdquo; created by <code>spower</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+
+<p>confidence level for determining fold-change margins of error in
+estimating the hazard ratio
+</p>
+</td></tr>
+<tr valign="top"><td><code>S</code></td>
+<td>
+
+<p>a <code>Surv</code> object or other two-column matrix for right-censored
+survival times 
+</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+
+<p>group indicators have length equal to the number of rows in <code>S</code>
+argument.
+</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+
+<p>a vector of two times
+</p>
+</td></tr>
+<tr valign="top"><td><code>surv</code></td>
+<td>
+
+<p>a vector of two survival probabilities
+</p>
+</td></tr>
+<tr valign="top"><td><code>test</code></td>
+<td>
+
+<p>any function of a <code>Surv</code> object and a grouping variable which
+computes a chi-square for a two-sample censored data test.  The
+default is <code>logrank</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cox</code></td>
+<td>
+
+<p>If true <code>TRUE</code> the two margins of error are available by using
+the <code>print</code> method for <code>spower</code> objects (see example
+below) and taking the maximum of the two.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nsim</code></td>
+<td>
+
+<p>number of simulations to perform (default=500)
+</p>
+</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+
+<p>type I error (default=.05)
+</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+
+<p>If <code>FALSE</code> prevents <code>spower</code> from printing progress notes for
+simulations. 
+If <code>FALSE</code> prevents <code>Quantile2</code> from printing <code>tmax</code>
+when it calculates <code>tmax</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>dropin</code></td>
+<td>
+
+<p>a function of time specifying the probability that a control subject
+actually is treated with the new intervention at the corresponding
+time
+</p>
+</td></tr>
+<tr valign="top"><td><code>dropout</code></td>
+<td>
+
+<p>a function of time specifying the probability of an intervention
+subject dropping out to control conditions.  As a function of time,
+<code>dropout</code> specifies the probability that a patient is treated
+with the control therapy at time t.  <code>dropin</code> and
+<code>dropout</code> form mixing proportions for control and intervention
+hazard functions.
+</p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+
+<p>number of time points used for approximating functions (default is
+7500)
+</p>
+</td></tr>
+<tr valign="top"><td><code>tmax</code></td>
+<td>
+
+<p>maximum time point to use in the grid of <code>m</code> times.  Default is
+the time such that <code>scontrol(time)</code> is <code>qtmax</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>qtmax</code></td>
+<td>
+
+<p>survival probability corresponding to the last time point used for
+approximating survival and hazard functions.  Default is 0.001.  For
+<code>qtmax</code> of the time for which a simulated time is needed which
+corresponds to a survival probability of less than <code>qtmax</code>, the
+simulated value will be <code>tmax</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>mplot</code></td>
+<td>
+
+<p>number of points used for approximating functions for use in
+plotting (default is 200 equally spaced points)
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>optional arguments passed to the <code>scontrol</code> function when it's
+evaluated by <code>Quantile2</code>.  Unused for <code>print.spower</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+
+<p>a single character constant (may be abbreviated) specifying which
+functions to plot.  The default is <span class="samp">"both"</span> meaning both
+survival and hazard functions.  Specify <code>what="drop"</code> to just
+plot the dropin and dropout functions, <code>what="hratio"</code> to plot
+the hazard ratio functions, or <span class="samp">"all"</span> to make 4 separate plots
+showing all functions (6 plots if <code>dropsep=TRUE</code>).
+</p>
+</td></tr>
+<tr valign="top"><td><code>dropsep</code></td>
+<td>
+
+<p>If <code>TRUE</code> makes <code>plot.Quantile2</code> separate pure and
+contaminated functions onto separate plots
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+
+<p>vector of line types
+</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+
+<p>vector of colors
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+
+<p>optional x-axis limits
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+
+<p>optional y-axis limits
+</p>
+</td></tr>
+<tr valign="top"><td><code>label.curves</code></td>
+<td>
+
+<p>optional list which is passed as the <code>opts</code> argument to
+<code><a href="../../Hmisc/help/labcurve.html">labcurve</a></code>.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>spower</code> returns the power estimate (fraction of simulated
+chi-squares greater than the alpha-critical value).  If
+<code>cox=TRUE</code>, <code>spower</code> returns an object of class
+&ldquo;spower&rdquo; containing the power and various other quantities.
+</p>
+<p><code>Quantile2</code> returns an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> function of class &ldquo;Quantile2&rdquo;
+with attributes that drive the <code>plot</code> method.  The major
+attribute is a list containing several lists.  Each of these sub-lists
+contains a <code>Time</code> vector along with one of the following:
+survival probabilities for either treatment group and with or without
+contamination caused by non-compliance, hazard rates in a similar way,
+intervention:control hazard ratio function with and without
+contamination, and dropin and dropout functions.
+</p>
+<p><code>logrank</code> returns a single chi-square statistic.
+</p>
+<p><code>Weibull2</code>, <code>Lognorm2</code> and <code>Gompertz2</code> return an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>
+function with three arguments, only the first of which (the vector of
+<code>times</code>) is intended to be specified by the user.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p><code>spower</code> prints the interation number every 10 iterations if
+<code>pr=TRUE</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Lakatos E (1988): Sample sizes based on the log-rank statistic in complex
+clinical trials.  Biometrics 44:229&ndash;241 (Correction 44:923).
+</p>
+<p>Cuzick J, Edwards R, Segnan N (1997): Adjusting for non-compliance and 
+contamination in randomized clinical trials. Stat in Med 16:1017&ndash;1029.
+</p>
+<p>Cook, T (2003): Methods for mid-course corrections in clinical trials
+with survival outcomes.  Stat in Med 22:3431&ndash;3447.
+</p>
+<p>Barthel FMS, Babiker A et al (2006): Evaluation of sample size and power
+for multi-arm survival trials allowing for non-uniform accrual,
+non-proportional hazards, loss to follow-up and cross-over.  Stat in Med
+25:2521&ndash;2542.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/cpower.html">cpower</a></code>, <code><a href="../../Hmisc/help/ciapower.html">ciapower</a></code>, <code><a href="../../Hmisc/help/bpower.html">bpower</a></code>,
+<code><a href="../../rms/help/cph.html">cph</a></code>, <code><a href="../../survival/help/coxph.html">coxph</a></code>,
+<code><a href="../../Hmisc/help/labcurve.html">labcurve</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Simulate a simple 2-arm clinical trial with exponential survival so
+# we can compare power simulations of logrank-Cox test with cpower()
+# Hazard ratio is constant and patients enter the study uniformly
+# with follow-up ranging from 1 to 3 years
+# Drop-in probability is constant at .1 and drop-out probability is
+# constant at .175.  Two-year survival of control patients in absence
+# of drop-in is .8 (mortality=.2).  Note that hazard rate is -log(.8)/2
+# Total sample size (both groups combined) is 1000
+# % mortality reduction by intervention (if no dropin or dropout) is 25
+# This corresponds to a hazard ratio of 0.7283 (computed by cpower)
+
+
+cpower(2, 1000, .2, 25, accrual=2, tmin=1, 
+       noncomp.c=10, noncomp.i=17.5)
+
+
+ranfun &lt;- Quantile2(function(x)exp(log(.8)/2*x),
+                    hratio=function(x)0.7283156,
+                    dropin=function(x).1,
+                    dropout=function(x).175)
+
+
+rcontrol &lt;- function(n) ranfun(n, what='control')
+rinterv  &lt;- function(n) ranfun(n, what='int')
+rcens    &lt;- function(n) runif(n, 1, 3)
+
+
+set.seed(11)   # So can reproduce results
+spower(rcontrol, rinterv, rcens, nc=500, ni=500, 
+       test=logrank, nsim=50)  # normally use nsim=500 or 1000
+
+## Not run: 
+# Run the same simulation but fit the Cox model for each one to
+# get log hazard ratios for the purpose of assessing the tightness
+# confidence intervals that are likely to result
+
+set.seed(11)
+u &lt;- spower(rcontrol, rinterv, rcens, nc=500, ni=500, 
+       test=logrank, nsim=50, cox=TRUE)
+u
+v &lt;- print(u)
+v[c('MOElower','MOEupper','SE')]
+
+## End(Not run)
+
+# Simulate a 2-arm 5-year follow-up study for which the control group's
+# survival distribution is Weibull with 1-year survival of .95 and
+# 3-year survival of .7.  All subjects are followed at least one year,
+# and patients enter the study with linearly increasing probability  after that
+# Assume there is no chance of dropin for the first 6 months, then the
+# probability increases linearly up to .15 at 5 years
+# Assume there is a linearly increasing chance of dropout up to .3 at 5 years
+# Assume that the treatment has no effect for the first 9 months, then
+# it has a constant effect (hazard ratio of .75)
+
+
+# First find the right Weibull distribution for compliant control patients
+sc &lt;- Weibull2(c(1,3), c(.95,.7))
+sc
+
+
+# Inverse cumulative distribution for case where all subjects are followed
+# at least a years and then between a and b years the density rises
+# as (time - a) ^ d is a + (b-a) * u ^ (1/(d+1))
+
+
+rcens &lt;- function(n) 1 + (5-1) * (runif(n) ^ .5)
+# To check this, type hist(rcens(10000), nclass=50)
+
+
+# Put it all together
+
+
+f &lt;- Quantile2(sc, 
+      hratio=function(x)ifelse(x&lt;=.75, 1, .75),
+      dropin=function(x)ifelse(x&lt;=.5, 0, .15*(x-.5)/(5-.5)),
+      dropout=function(x).3*x/5)
+
+
+par(mfrow=c(2,2))
+# par(mfrow=c(1,1)) to make legends fit
+plot(f, 'all', label.curves=list(keys='lines'))
+
+
+rcontrol &lt;- function(n) f(n, 'control')
+rinterv  &lt;- function(n) f(n, 'intervention')
+
+
+set.seed(211)
+spower(rcontrol, rinterv, rcens, nc=350, ni=350, 
+       test=logrank, nsim=50)  # normally nsim=500 or more
+par(mfrow=c(1,1))
+
+# Compose a censoring time generator function such that at 1 year
+# 5% of subjects are accrued, at 3 years 70% are accured, and at 10
+# years 100% are accrued.  The trial proceeds two years past the last
+# accrual for a total of 12 years of follow-up for the first subject.
+# Use linear interporation between these 3 points
+
+rcens &lt;- function(n)
+{
+  times &lt;- c(0,1,3,10)
+  accrued &lt;- c(0,.05,.7,1)
+  # Compute inverse of accrued function at U(0,1) random variables
+  accrual.times &lt;- approx(accrued, times, xout=runif(n))$y
+  censor.times &lt;- 12 - accrual.times
+  censor.times
+}
+
+censor.times &lt;- rcens(500)
+# hist(censor.times, nclass=20)
+accrual.times &lt;- 12 - censor.times
+# Ecdf(accrual.times)
+# lines(c(0,1,3,10), c(0,.05,.7,1), col='red')
+# spower(..., rcens=rcens, ...)
+
+## Not run: 
+# To define a control survival curve from a fitted survival curve
+# with coordinates (tt, surv) with tt[1]=0, surv[1]=1:
+
+Scontrol &lt;- function(times, tt, surv) approx(tt, surv, xout=times)$y
+tt &lt;- 0:6
+surv &lt;- c(1, .9, .8, .75, .7, .65, .64)
+formals(Scontrol) &lt;- list(times=NULL, tt=tt, surv=surv)
+
+# To use a mixture of two survival curves, with e.g. mixing proportions
+# of .2 and .8, use the following as a guide:
+#
+# Scontrol &lt;- function(times, t1, s1, t2, s2)
+#  .2*approx(t1, s1, xout=times)$y + .8*approx(t2, s2, xout=times)$y
+# t1 &lt;- ...; s1 &lt;- ...; t2 &lt;- ...; s2 &lt;- ...;
+# formals(Scontrol) &lt;- list(times=NULL, t1=t1, s1=s1, t2=t2, s2=s2)
+
+# Check that spower can detect a situation where generated censoring times
+# are later than all failure times
+
+rcens &lt;- function(n) runif(n, 0, 7)
+f &lt;- Quantile2(scontrol=Scontrol, hratio=function(x).8, tmax=6)
+cont &lt;- function(n) f(n, what='control')
+int  &lt;- function(n) f(n, what='intervention')
+spower(rcontrol=cont, rinterv=int, rcens=rcens, nc=300, ni=300, nsim=20)
+
+# Do an unstratified logrank test
+library(survival)
+# From SAS/STAT PROC LIFETEST manual, p. 1801
+days &lt;- c(179,256,262,256,255,224,225,287,319,264,237,156,270,257,242,
+          157,249,180,226,268,378,355,319,256,171,325,325,217,255,256,
+          291,323,253,206,206,237,211,229,234,209)
+status &lt;- c(1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,0,
+            0,rep(1,19))
+treatment &lt;- c(rep(1,10), rep(2,10), rep(1,10), rep(2,10))
+sex &lt;- Cs(F,F,M,F,M,F,F,M,M,M,F,F,M,M,M,F,M,F,F,M,
+          M,M,M,M,F,M,M,F,F,F,M,M,M,F,F,M,F,F,F,F)
+data.frame(days, status, treatment, sex)
+table(treatment, status)
+logrank(Surv(days, status), treatment)  # agrees with p. 1807
+# For stratified tests the picture is puzzling.
+# survdiff(Surv(days,status) ~ treatment + strata(sex))$chisq
+# is 7.246562, which does not agree with SAS (7.1609)
+# But summary(coxph(Surv(days,status) ~ treatment + strata(sex)))
+# yields 7.16 whereas summary(coxph(Surv(days,status) ~ treatment))
+# yields 5.21 as the score test, not agreeing with SAS or logrank() (5.6485)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

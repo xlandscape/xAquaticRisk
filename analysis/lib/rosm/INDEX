@@ -1,0 +1,17 @@
+as.tile_source          Tile Sources
+bmaps.plot              Plot Bing Maps
+bmaps.types             List types of Bing Maps
+extract_bbox            Extract a bounding box from an object
+has_internet            Check for Internet
+osm.image               Get Open Street Map Tiles As A RasterStack
+osm.lines               Overlay lines on an OSM plot
+osm.plot                Plot Open Street Map Tiles
+osm.points              Overlay points on an OSM plot
+osm.polygon             Overlay a polygon on an OSM plot
+osm.segments            Overlay segments on an OSM plot
+osm.text                Overlay text on an OSM plot
+osm.types               Get List of Valid Tile Sources
+register_tile_source    Register Tile Sources
+rosm                    Plot Raster Map Tiles From Open Street Map and
+                        Other Sources
+set_default_cachedir    Set/Get the Default Tile Cache Location

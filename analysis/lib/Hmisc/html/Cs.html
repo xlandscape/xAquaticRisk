@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Character strings from unquoted names</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for Cs {Hmisc}"><tr><td>Cs {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Character strings from unquoted names
+</h2>
+
+<h3>Description</h3>
+
+<p><code>Cs</code> makes a vector of character strings from a list of valid R
+names.  <code>.q</code> is similar but also makes uses of names of arguments.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Cs(...)
+.q(...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>any number of names separated by commas.  For <code>.q</code> any names of
+arguments will be used.
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>character string vector.  For <code>.q</code> there will be a <code>names</code>
+attribute to the vector if any names appeared in ....
+</p>
+
+
+<h3>See Also</h3>
+
+<p>sys.frame, deparse
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+Cs(a,cat,dog)
+# subset.data.frame &lt;- dataframe[,Cs(age,sex,race,bloodpressure,height)]
+.q(a, b, c, 'this and that')
+.q(dog=a, giraffe=b, cat=c)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

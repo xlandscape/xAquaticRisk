@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Interact with github rscripts Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for getRs {Hmisc}"><tr><td>getRs {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Interact with github rscripts Project</h2>
+
+<h3>Description</h3>
+
+<p>The github rscripts project at
+<a href="https://github.com/harrelfe/rscripts">https://github.com/harrelfe/rscripts</a> contains R scripts that are
+primarily analysis templates for teaching with RStudio.  This function
+allows the user to print an organized list of available scripts, to
+download a script and <code>source()</code> it into the current session (the
+default), to
+download a script and load it into an RStudio script editor window, to
+list scripts whose major category contains a given string (ignoring
+case), or to list all major and minor categories.  If
+<code>options(localHfiles=TRUE)</code> the scripts are read from local directory
+<code>~/R/rscripts</code> instead of from github.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+getRs(file=NULL, guser='harrelfe', grepo='rscripts', gdir='raw/master',
+      dir=NULL, browse=c('local', 'browser'), cats=FALSE,
+      put=c('source', 'rstudio'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>a character string containing a script file name.
+Omit <code>file</code> to obtain a list of available scripts with major
+and minor categories.</p>
+</td></tr>
+<tr valign="top"><td><code>guser</code></td>
+<td>
+<p>GitHub user name, default is <code>'harrelfe'</code></p>
+</td></tr>
+<tr valign="top"><td><code>grepo</code></td>
+<td>
+<p>Github repository name, default is <code>'rscripts'</code></p>
+</td></tr>
+<tr valign="top"><td><code>gdir</code></td>
+<td>
+<p>Github directory under which to find retrievable files</p>
+</td></tr>
+<tr valign="top"><td><code>dir</code></td>
+<td>
+<p>directory under <code>grepo</code> in which to find files</p>
+</td></tr>
+<tr valign="top"><td><code>browse</code></td>
+<td>
+<p>When showing the rscripts contents directory, the
+default is to list in tabular form in the console.  Specify
+<code>browse='browser'</code> to open the online contents in a web
+browser.</p>
+</td></tr>
+<tr valign="top"><td><code>cats</code></td>
+<td>
+<p>Leave at the default (<code>FALSE</code>) to list whole contents
+or download a script.  Specify <code>cats=TRUE</code> to list major and
+minor categories available.  Specify a character string to list
+all scripts whose major category contains the string (ignoring
+case).</p>
+</td></tr>
+<tr valign="top"><td><code>put</code></td>
+<td>
+<p>Leave at the default (<code>'source'</code>) to <code>source()</code> the file.  This is useful when the file just defines a function you want to use in the session. Use load <code>put='rstudio'</code> to load the file into the RStudio script editor window using the <code>rstudioapi</code> <code>navigateToFile</code> function.  If RStudio is not running, <code>file.edit()</code> is used instead.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a data frame or list, depending on arguments</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell and Cole Beck</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../utils/html/download.file.html">download.file</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+getRs()             # list available scripts
+scripts &lt;- getRs()  # likewise, but store in an object that can easily
+                    # be viewed on demand in RStudio
+getRs('introda.r')  # download introda.r and put in script editor
+getRs(cats=TRUE)    # list available major and minor categories
+categories &lt;- getRs(cats=TRUE)
+# likewise but store results in a list for later viewing
+getRs(cats='reg')   # list all scripts in a major category containing 'reg'
+getRs('importREDCap.r')   # source() to define a function
+# source() a new version of the Hmisc package's cut2 function:
+getRs('cut2.s', grepo='Hmisc', dir='R')
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

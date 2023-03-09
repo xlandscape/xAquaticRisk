@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Interface to Tabular Function</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for tabulr {Hmisc}"><tr><td>tabulr {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Interface to Tabular Function</h2>
+
+<h3>Description</h3>
+
+<p><code><a href="../../Hmisc/help/tabulr.html">tabulr</a></code> is a front-end to the <code>tables</code> package's
+<code><a href="../../tables/help/tabular.html">tabular</a></code> function so that the user can take
+advantage of variable annotations used by the <code>Hmisc</code> package,
+particular those created by the <code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../Hmisc/help/units.html">units</a></code>, and
+<code><a href="../../Hmisc/help/upData.html">upData</a></code> functions.  When a variable appears in a
+<code><a href="../../tables/help/tabular.html">tabular</a></code> function, the 
+variable <code>x</code> is found in the <code>data</code> argument or in the parent
+environment, and the <code><a href="../../Hmisc/help/labelLatex.html">labelLatex</a></code> function is used to create
+a LaTeX label.  By default any units of measurement are right justified
+in the current LaTeX tabular field using <code>hfill</code>; use <code>nofill</code>
+to list variables for which <code>units</code> are not right-justified with
+<code>hfill</code>.  Once the label is constructed, the variable name is
+preceeded by <code>Heading("LaTeX label")*x</code> in the formula before it is
+passed to <code><a href="../../tables/help/tabular.html">tabular</a></code>.  <code>nolabel</code> can be used to
+specify variables for which labels are ignored.
+</p>
+<p><code>tabulr</code> also replaces <code>trio</code> with <code>table_trio</code>, <code>N</code>
+with <code>table_N</code>,  and <code>freq</code> with <code>table_freq</code> in the
+formula.  
+</p>
+<p><code>table_trio</code> is a function that takes a numeric vector and computes
+the three quartiles and optionally the mean and standard deviation, and
+outputs a LaTeX-formatted character string representing the results.  By
+default, calculated statistics are formatted with 3 digits to the left
+and 1 digit to the right of the decimal point.  Running
+<code><a href="../../tables/help/table_options.html">table_options</a>(left=l, right=r)</code> will use <code>l</code>
+and <code>r</code> digits instead.  Other options that can be given to
+<code>table_options</code> are <code>prmsd=TRUE</code> to add mean +/- standard
+deviation to the result, <code>pn=TRUE</code> to add the sample size,
+<code>bold=TRUE</code> to set the median in bold face, <code>showfreq='all',
+	'low', 'high'</code> used by the <code>table_freq</code> function, <code>pctdec</code>,
+specifying the number of places to the right of the decimal point for
+percentages (default is zero), and
+<code>npct='both','numerator','denominator','none'</code> used by
+<code>table_formatpct</code> to control what appears after the percent.
+Option <code>pnformat</code> may be specified to control the formatting for
+<code>pn</code>.  The default is <code>"(n=..)"</code>.  Specify
+<code>pnformat="non"</code> to suppress <code>"n="</code>.  <code>pnwhen</code> specifies
+when to print the number of observations.  The default is
+<code>"always"</code>.  Specify <code>pnwhen="ifna"</code> to include <code>n</code> only
+if there are missing values in the vector being processed.
+</p>
+<p><code>tabulr</code> substitutes <code>table_N</code> for <code>N</code> in the formula.
+This is used to create column headings for the number of observations,
+without a row label.
+</p>
+<p><code>table_freq</code> analyzes a character variable to compute, for a single
+output cell, the percents, numerator, and denominator for each category,
+or optimally just the maximum or minimum, as specified by
+<code>table_options(showfreq)</code>. 
+</p>
+<p><code>table_formatpct</code> is a function that formats percents depending on
+settings of options in <code>table_options</code>.
+</p>
+<p><code>nFm</code> is a function that calls <code><a href="../../base/html/sprintf.html">sprintf</a></code> to format
+numeric values to have a specific number of digits to the <code>left</code>
+and to the <code>right</code> of the point.
+</p>
+<p><code>table_latexdefs</code> writes (by default) to the console a set of LaTeX
+definitions that can be invoked at any point thereafter in a <code>knitr</code> or
+<code>sweave</code> document by naming the macro, preceeded by a single
+slash.  The <code>blfootnote</code> macro is called with a single LaTeX
+argument which will appear as a footnote without a number.
+<code>keytrio</code> invokes <code>blfootnote</code> to define the output of
+<code>table_trio</code> if mean and SD are not included.  If mean and SD are
+included, use <code>keytriomsd</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+tabulr(formula, data = NULL, nolabel=NULL, nofill=NULL, ...)
+table_trio(x)
+table_freq(x)
+table_formatpct(num, den)
+nFm(x, left, right, neg=FALSE, pad=FALSE, html=FALSE)
+table_latexdefs(file='')
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula suitable for <code><a href="../../tables/help/tabular.html">tabular</a></code>
+except for the addition of <code>.(variable name)</code>,
+<code>.n()</code>, <code>trio</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a data frame or list.  If omitted, the parent environment
+is assumed to contain the variables.</p>
+</td></tr>
+<tr valign="top"><td><code>nolabel</code></td>
+<td>
+<p>a formula such as <code>~ x1 + x2</code> containing the list
+of variables for which labels are to be ignored, forcing use of the
+variable name</p>
+</td></tr>
+<tr valign="top"><td><code>nofill</code></td>
+<td>
+<p>a formula such as <code>~ x1 + x2</code> contaning the list of
+variables for which units of measurement are not to be
+right-justified in the field using the LaTeX <code>hfill</code> directive</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other arguments to <code>tabular</code></p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a numeric vector</p>
+</td></tr>
+<tr valign="top"><td><code>num</code></td>
+<td>
+<p>a single numerator or vector of numerators</p>
+</td></tr>
+<tr valign="top"><td><code>den</code></td>
+<td>
+<p>a single denominator</p>
+</td></tr>
+<tr valign="top"><td><code>left, right</code></td>
+<td>
+<p>number of places to the left and right of the
+decimal point, respectively</p>
+</td></tr>
+<tr valign="top"><td><code>neg</code></td>
+<td>
+<p>set to <code>TRUE</code> if negative <code>x</code> values are allowed,
+to add one more space to the left of the decimal place</p>
+</td></tr>
+<tr valign="top"><td><code>pad</code></td>
+<td>
+<p>set to <code>TRUE</code> to replace blanks with the LaTeX tilde
+placeholder</p>
+</td></tr>
+<tr valign="top"><td><code>html</code></td>
+<td>
+<p>set to <code>TRUE</code> to make <code>pad</code> use an HTML space
+character instead of a LaTeX tilde space</p>
+</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>location of output of <code>table_latexdefs</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>tabulr</code> returns an object of class <code>"tabular"</code></p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../tables/help/tabular.html">tabular</a></code>, <code><a href="../../Hmisc/help/label.html">label</a></code>,
+<code><a href="../../Hmisc/help/latex.html">latex</a></code>, <code><a href="../../Hmisc/help/summaryM.html">summaryM</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+n &lt;- 400
+set.seed(1)
+d &lt;- data.frame(country=factor(sample(c('US','Canada','Mexico'), n, TRUE)),
+                sex=factor(sample(c('Female','Male'), n, TRUE)),
+                age=rnorm(n, 50, 10),
+                sbp=rnorm(n, 120, 8))
+d &lt;- upData(d,
+            preghx=ifelse(sex=='Female', sample(c('No','Yes'), n, TRUE), NA),
+            labels=c(sbp='Systolic BP', age='Age', preghx='Pregnancy History'),
+            units=c(sbp='mmHg', age='years'))
+contents(d)
+require(tables)
+invisible(booktabs())  # use booktabs LaTeX style for tabular
+g &lt;- function(x) {
+  x &lt;- x[!is.na(x)]
+  if(length(x) == 0) return('')
+  paste(latexNumeric(nFm(mean(x), 3, 1)),
+        ' \hfill{\smaller[2](', length(x), ')}', sep='')
+}
+tab &lt;- tabulr((age + Heading('Females')*(sex == 'Female')*sbp)*
+              Heading()*g + (age + sbp)*Heading()*trio ~ 
+              Heading()*country*Heading()*sex, data=d)
+# Formula after interpretation by tabulr:
+# (Heading('Age\hfill {\smaller[2] years}') * age + Heading("Females")
+# * (sex == "Female") * Heading('Systolic BP {\smaller[2] mmHg}') * sbp)
+# * Heading() * g + (age + sbp) * Heading() * table_trio ~ Heading()
+# * country * Heading() * sex
+cat('\begin{landscape}\n')
+cat('\begin{minipage}{\textwidth}\n')
+cat('\keytrio\n')
+latex(tab)
+cat('\end{minipage}\end{landscape}\n')
+
+getHdata(pbc)
+pbc &lt;- upData(pbc, moveUnits=TRUE)
+# Convert to character to prevent tabular from stratifying
+for(x in c('sex', 'stage', 'spiders')) {
+  pbc[[x]] &lt;- as.character(pbc[[x]])
+  label(pbc[[x]]) &lt;- paste(toupper(substring(x, 1, 1)), substring(x, 2), sep='')
+}
+table_options(pn=TRUE, showfreq='all')
+tab &lt;- tabulr((bili + albumin + protime + age) *
+              Heading()*trio +
+              (sex + stage + spiders)*Heading()*freq ~ drug, data=pbc)
+latex(tab)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

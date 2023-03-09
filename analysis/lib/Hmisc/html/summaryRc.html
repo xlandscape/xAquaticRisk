@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Graphical Summarization of Continuous Variables Against a...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for summaryRc {Hmisc}"><tr><td>summaryRc {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Graphical Summarization of Continuous Variables Against a Response</h2>
+
+<h3>Description</h3>
+
+<p><code>summaryRc</code> is a continuous version of <code><a href="../../Hmisc/help/summary.formula.html">summary.formula</a></code>
+with <code>method='response'</code>.  It uses the <code><a href="../../Hmisc/help/plsmo.html">plsmo</a></code>
+function to compute the possibly stratified <code><a href="../../stats/html/lowess.html">lowess</a></code>
+nonparametric regression estimates, and plots them along with the data
+density, with selected quantiles of the overall distribution (over
+strata) of each <code>x</code> shown as arrows on top of the graph.  All the
+<code>x</code> variables must be numeric and continuous or nearly continuous.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+summaryRc(formula, data=NULL, subset=NULL,
+          na.action=NULL, fun = function(x) x,
+          na.rm = TRUE, ylab=NULL, ylim=NULL, xlim=NULL,
+          nloc=NULL, datadensity=NULL,
+          quant = c(0.05, 0.1, 0.25, 0.5, 0.75,
+                    0.90, 0.95), quantloc=c('top','bottom'),
+          cex.quant=.6, srt.quant=0,
+          bpplot = c('none', 'top', 'top outside', 'top inside', 'bottom'),
+          height.bpplot=0.08,
+          trim=NULL, test = FALSE, vnames = c('labels', 'names'), ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+
+<p>An <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> formula with additive effects.  The <code>formula</code> may contain
+one or more invocations of the <code>stratify</code> function whose
+arguments are defined below.  This causes 
+the entire analysis to be stratified by cross-classifications of the
+combined list of stratification factors.  This stratification will be
+reflected as separate <code>lowess</code> curves.</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+
+<p>name or number of a data frame.  Default is the current frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>a logical vector or integer vector of subscripts used to specify the
+subset of data to use in the analysis.  The default is to use all
+observations in the data frame.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+
+<p>function for handling missing data in the input data.  The default is
+a function defined here called <code>na.retain</code>, which keeps all
+observations for processing, with missing variables or not.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>function for transforming <code>lowess</code> estimates.  Default is the
+identity function.</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+
+<p><code>TRUE</code> (the default) to exclude <code>NA</code>s before passing data to
+<code>fun</code> to compute statistics, <code>FALSE</code> otherwise.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+<p><code>y</code>-axis label.  Default is label attribute of
+<code>y</code> variable, or its name.</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+<p><code>y</code>-axis limits.  By default each graph is scaled on
+its own.</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+<p>a list with elements named as the variable names appearing
+on the <code>x</code>-axis, with each element being a 2-vector specifying
+lower and upper limits.  Any variable not appearing in the list will
+have its limits computed and possibly <code>trim</code>med.</p>
+</td></tr>
+<tr valign="top"><td><code>nloc</code></td>
+<td>
+<p>location for sample size.  Specify <code>nloc=FALSE</code> to
+suppress, or <code>nloc=list(x=,y=)</code> where <code>x,y</code> are relative
+coordinates in the data window.  Default position is in the largest
+empty space.</p>
+</td></tr>
+<tr valign="top"><td><code>datadensity</code></td>
+<td>
+<p>see <code><a href="../../Hmisc/help/plsmo.html">plsmo</a></code>.  Defaults to <code>TRUE</code>
+if there is a <code>stratify</code> variable, <code>FALSE</code> otherwise.</p>
+</td></tr>
+<tr valign="top"><td><code>quant</code></td>
+<td>
+
+<p>vector of quantiles to use for summarizing the marginal distribution
+of each <code>x</code>. This must be numbers between 0 and 1
+inclusive.  Use <code>NULL</code> to omit quantiles.
+</p>
+</td></tr>
+<tr valign="top"><td><code>quantloc</code></td>
+<td>
+<p>specify <code>quantloc='bottom'</code> to place at the
+bottom of each plot rather than the default</p>
+</td></tr>
+<tr valign="top"><td><code>cex.quant</code></td>
+<td>
+<p>character size for writing which quantiles are
+represented.  Set to <code>0</code> to suppress quantile labels.</p>
+</td></tr>
+<tr valign="top"><td><code>srt.quant</code></td>
+<td>
+<p>angle for text for quantile labels</p>
+</td></tr>
+<tr valign="top"><td><code>bpplot</code></td>
+<td>
+<p>if not <code>'none'</code> will draw extended box plot at
+location given by <code>bpplot</code>, and quantiles discussed above will
+be suppressed.  Specifying <code>bpplot='top'</code> is the same as
+specifying <code>bpplot='top inside'</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>height.bpplot</code></td>
+<td>
+<p>height in inches of the horizontal extended box plot</p>
+</td></tr>
+<tr valign="top"><td><code>trim</code></td>
+<td>
+<p>The default is to plot from the 10th smallest to the 10th
+largest <code>x</code> if the number of non-NAs exceeds 200, otherwise to
+use the entire range of <code>x</code>.  Specify another quantile to use
+other limits, e.g.,  <code>trim=0.01</code> will use the first and last
+percentiles</p>
+</td></tr>
+<tr valign="top"><td><code>test</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to plot test statistics (not yet implemented).
+</p>
+</td></tr>
+<tr valign="top"><td><code>vnames</code></td>
+<td>
+
+<p>By default, plots are usually labeled with variable labels
+(see the <code>label</code> and <code>sas.get</code> functions).  To use the shorter
+variable names, specify <code>vnames="names"</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments passed to <code><a href="../../Hmisc/help/plsmo.html">plsmo</a></code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>no value is returned</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell<br />
+Department of Biostatistics<br />
+Vanderbilt University<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/plsmo.html">plsmo</a></code>, <code><a href="../../Hmisc/help/stratify.html">stratify</a></code>,
+<code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../stats/html/formula.html">formula</a></code>, <code><a href="../../Hmisc/help/panel.bpplot.html">panel.bpplot</a></code> 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+options(digits=3)
+set.seed(177)
+sex &lt;- factor(sample(c("m","f"), 500, rep=TRUE))
+age &lt;- rnorm(500, 50, 5)
+bp  &lt;- rnorm(500, 120, 7)
+units(age) &lt;- 'Years'; units(bp) &lt;- 'mmHg'
+label(bp) &lt;- 'Systolic Blood Pressure'
+L &lt;- .5*(sex == 'm') + 0.1 * (age - 50)
+y &lt;- rbinom(500, 1, plogis(L))
+par(mfrow=c(1,2))
+summaryRc(y ~ age + bp)
+# For x limits use 1st and 99th percentiles to frame extended box plots
+summaryRc(y ~ age + bp, bpplot='top', datadensity=FALSE, trim=.01)
+summaryRc(y ~ age + bp + stratify(sex),
+          label.curves=list(keys='lines'), nloc=list(x=.1, y=.05))
+y2 &lt;- rbinom(500, 1, plogis(L + .5))
+Y &lt;- cbind(y, y2)
+summaryRc(Y ~ age + bp + stratify(sex),
+          label.curves=list(keys='lines'), nloc=list(x=.1, y=.05))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

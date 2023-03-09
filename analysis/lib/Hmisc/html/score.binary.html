@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Score a Series of Binary Variables</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for score.binary {Hmisc}"><tr><td>score.binary {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Score a Series of Binary Variables
+</h2>
+
+<h3>Description</h3>
+
+<p>Creates a new variable from a series of logical conditions.  The new
+variable can be a hierarchical category or score derived from considering
+the rightmost <code>TRUE</code> value among the input variables, an additive point
+score, a union, or any of several others by specifying a function using the
+<code>fun</code> argument.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+score.binary(..., fun=max, points=1:p, 
+             na.rm=funtext == "max", retfactor=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>a list of variables or expressions which are considered to be binary
+or logical
+</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>a function to compute on each row of the matrix represented by
+a specific observation of all the variables in <code>...</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>points</code></td>
+<td>
+
+<p>points to assign to successive elements of <code>...</code> .  The default is
+<code>1, 2, ..., p</code>, where <code>p</code> is the number of elements.  If you specify
+one number for <code>points</code>, that number will be duplicated (i.e., equal weights
+are assumed).
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to remove <code>NA</code>s from consideration when processing
+each row of the matrix of variables in <code>...</code> .  For <code>fun=max</code>,
+<code>na.rm=TRUE</code> is the default since <code>score.binary</code> assumes that a
+hierarchical scale is based on available information.  Otherwise,
+<code>na.rm=FALSE</code> is assumed.  For <code>fun=mean</code> you may want to specify
+<code>na.rm=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>retfactor</code></td>
+<td>
+
+<p>applies if <code>fun=max</code>, in which case <code>retfactor=TRUE</code> makes <code>score.binary</code>
+return a <code>factor</code> object since a hierarchical scale implies
+a unique choice.
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>a <code>factor</code> object if <code>retfactor=TRUE</code> and <code>fun=max</code> or a numeric vector
+otherwise.  Will not contain NAs if <code>na.rm=TRUE</code> unless every variable in
+a row is <code>NA</code>.  If a <code>factor</code> object
+is returned, it has levels <code>"none"</code> followed by character
+string versions of the arguments given in <code>...</code> .
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/any.html">any</a></code>, <code><a href="../../base/html/sum.html">sum</a></code>, <code><a href="../../base/html/Extremes.html">max</a></code>, <code><a href="../../base/html/factor.html">factor</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+age &lt;- rnorm(25, 70, 15)
+previous.disease &lt;- sample(0:1, 25, TRUE)
+#Hierarchical scale, highest of 1:age&gt;70  2:previous.disease
+score.binary(age&gt;70, previous.disease, retfactor=FALSE)
+#Same as above but return factor variable with levels "none" "age&gt;70" 
+# "previous.disease"
+score.binary(age&gt;70, previous.disease)
+
+
+#Additive scale with weights 1:age&gt;70  2:previous.disease
+score.binary(age&gt;70, previous.disease, fun=sum)
+#Additive scale, equal weights
+score.binary(age&gt;70, previous.disease, fun=sum, points=c(1,1))
+#Same as saying points=1
+
+
+#Union of variables, to create a new binary variable
+score.binary(age&gt;70, previous.disease, fun=any)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

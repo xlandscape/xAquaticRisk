@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Plot Restricted Cubic Spline Function</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for rcspline.plot {Hmisc}"><tr><td>rcspline.plot {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Plot Restricted Cubic Spline Function
+</h2>
+
+<h3>Description</h3>
+
+<p>Provides plots of the estimated restricted cubic spline function
+relating a single predictor to the response for a logistic or Cox
+model. The <code>rcspline.plot</code> function does not allow for
+interactions as do <code><a href="../../rms/help/lrm.html">lrm</a></code> and <code><a href="../../rms/help/cph.html">cph</a></code>, but it can
+provide detailed output for checking spline fits. This function uses
+the <code><a href="../../Hmisc/help/rcspline.eval.html">rcspline.eval</a></code>, <code><a href="../../rms/help/lrm.fit.html">lrm.fit</a></code>, and Therneau's
+<code><a href="../../survival/html/agreg.fit.html">coxph.fit</a></code> functions and plots the estimated spline
+regression and confidence limits, placing summary statistics on the
+graph. If there are no adjustment variables, <code>rcspline.plot</code> can
+also plot two alternative estimates of the regression function when
+<code>model="logistic"</code>: proportions or logit proportions on grouped
+data, and a nonparametric estimate. The nonparametric regression
+estimate is based on smoothing the binary responses and taking the
+logit transformation of the smoothed estimates, if desired. The
+smoothing uses <code><a href="../../stats/html/supsmu.html">supsmu</a></code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rcspline.plot(x,y,model=c("logistic", "cox", "ols"), xrange, event, nk=5,
+              knots=NULL, show=c("xbeta","prob"), adj=NULL, xlab, ylab,
+              ylim, plim=c(0,1), plotcl=TRUE, showknots=TRUE, add=FALSE,
+              subset, lty=1, noprint=FALSE, m, smooth=FALSE, bass=1,
+              main="auto", statloc)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a numeric predictor
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a numeric response. For binary logistic regression, <code>y</code> should
+be either 0 or 1.
+</p>
+</td></tr>
+<tr valign="top"><td><code>model</code></td>
+<td>
+
+<p><code>"logistic"</code> or <code>"cox"</code>. For <code>"cox"</code>, uses the
+<code>coxph.fit</code> function with <code>method="efron"</code> arguement set.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xrange</code></td>
+<td>
+
+<p>range for evaluating <code>x</code>, default is f and
+<i>1 - f</i> quantiles of <code>x</code>, where
+<i>f = 10/max(n, 200)</i>
+</p>
+</td></tr>
+<tr valign="top"><td><code>event</code></td>
+<td>
+
+<p>event/censoring indicator if <code>model="cox"</code>. If <code>event</code> is
+present, <code>model</code> is assumed to be <code>"cox"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>nk</code></td>
+<td>
+
+<p>number of knots
+</p>
+</td></tr>
+<tr valign="top"><td><code>knots</code></td>
+<td>
+
+<p>knot locations, default based on quantiles of <code>x</code> (by
+<code><a href="../../Hmisc/help/rcspline.eval.html">rcspline.eval</a></code>) 
+</p>
+</td></tr>
+<tr valign="top"><td><code>show</code></td>
+<td>
+
+<p><code>"xbeta"</code> or <code>"prob"</code> - what is plotted on <code style="white-space: pre;">y</code>-axis
+</p>
+</td></tr>
+<tr valign="top"><td><code>adj</code></td>
+<td>
+
+<p>optional matrix of adjustment variables
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p><code style="white-space: pre;">x</code>-axis label, default is the &ldquo;label&rdquo; attribute of
+<code>x</code> 
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p><code style="white-space: pre;">y</code>-axis label, default is the &ldquo;label&rdquo; attribute of
+<code>y</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+
+<p><code style="white-space: pre;">y</code>-axis limits for logit or log hazard
+</p>
+</td></tr>
+<tr valign="top"><td><code>plim</code></td>
+<td>
+
+<p><code style="white-space: pre;">y</code>-axis limits for probability scale
+</p>
+</td></tr>
+<tr valign="top"><td><code>plotcl</code></td>
+<td>
+
+<p>plot confidence limits
+</p>
+</td></tr>
+<tr valign="top"><td><code>showknots</code></td>
+<td>
+
+<p>show knot locations with arrows
+</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>add this plot to an already existing plot
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>subset of observations to process, e.g. <code>sex == "male"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+
+<p>line type for plotting estimated spline function
+</p>
+</td></tr>
+<tr valign="top"><td><code>noprint</code></td>
+<td>
+
+<p>suppress printing regression coefficients and standard errors
+</p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+
+<p>for <code>model="logistic"</code>, plot grouped estimates with
+triangles. Each group contains <code>m</code> ordered observations on
+<code>x</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>smooth</code></td>
+<td>
+
+<p>plot nonparametric estimate if <code>model="logistic"</code> and
+<code>adj</code> is not specified
+</p>
+</td></tr>
+<tr valign="top"><td><code>bass</code></td>
+<td>
+
+<p>smoothing parameter (see <code>supsmu</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>main</code></td>
+<td>
+
+<p>main title, default is <code>"Estimated Spline Transformation"</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>statloc</code></td>
+<td>
+
+<p>location of summary statistics. Default positioning by clicking left
+mouse button where upper left corner of statistics should
+appear. Alternative is <code>"ll"</code> to place below the graph on the
+lower left, or the actual <code>x</code> and <code>y</code> coordinates. Use
+<code>"none"</code> to suppress statistics.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>list with components (<span class="samp">knots</span>, <span class="samp">x</span>, <span class="samp">xbeta</span>,
+<span class="samp">lower</span>, <span class="samp">upper</span>) which are respectively the knot locations,
+design matrix, linear predictor, and lower and upper confidence limits
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell  <br />
+Department of Biostatistics, Vanderbilt University  <br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../rms/help/lrm.html">lrm</a></code>, <code><a href="../../rms/help/cph.html">cph</a></code>, <code><a href="../../Hmisc/help/rcspline.eval.html">rcspline.eval</a></code>,
+<code><a href="../../graphics/help/plot.html">plot</a></code>, <code><a href="../../stats/html/supsmu.html">supsmu</a></code>,
+<code><a href="../../survival/help/survival-internal.html">coxph.fit</a></code>,
+<code><a href="../../rms/help/lrm.fit.html">lrm.fit</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+#rcspline.plot(cad.dur, tvdlm, m=150)
+#rcspline.plot(log10(cad.dur+1), tvdlm, m=150)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

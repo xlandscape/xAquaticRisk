@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: prints a list of lists in a visually readable format.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for print.char.list {Hmisc}"><tr><td>print.char.list {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> prints a list of lists in a visually readable format. </h2>
+
+<h3>Description</h3>
+
+<p>Takes a list that is composed of other lists and matrixes and prints
+it in a visually readable format.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'char.list'
+print(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"), print.it = TRUE,
+                rowname.halign = c("left", "centre", "right"),
+                rowname.valign = c("top", "centre", "bottom"),
+                colname.halign = c("centre", "left", "right"),
+                colname.valign = c("centre", "top", "bottom"),
+                text.halign = c("right", "centre", "left"),
+                text.valign = c("top", "centre", "bottom"),
+                rowname.width, rowname.height,
+                min.colwidth = .Options$digits, max.rowheight = NULL,
+                abbreviate.dimnames = TRUE, page.width = .Options$width,
+                colname.width, colname.height, prefix.width,
+                superprefix.width = prefix.width)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>list object to be printed
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>place for extra arguments to reside.
+</p>
+</td></tr>
+<tr valign="top"><td><code>hsep</code></td>
+<td>
+
+<p>character used to separate horizontal fields
+</p>
+</td></tr>
+<tr valign="top"><td><code>vsep</code></td>
+<td>
+
+<p>character used to separate veritcal feilds
+</p>
+</td></tr>
+<tr valign="top"><td><code>csep</code></td>
+<td>
+
+<p>character used where horizontal and veritcal separators meet.
+</p>
+</td></tr>
+<tr valign="top"><td><code>print.it</code></td>
+<td>
+
+<p>should the value be printed to the console or returned as a string.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowname.halign</code></td>
+<td>
+
+<p>horizontal justification of row names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowname.valign</code></td>
+<td>
+
+<p>verical justification of row names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>colname.halign</code></td>
+<td>
+
+<p>horizontal justification of column names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>colname.valign</code></td>
+<td>
+
+<p>verical justification of column names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>text.halign</code></td>
+<td>
+
+<p>horizontal justification of cell text.
+</p>
+</td></tr>
+<tr valign="top"><td><code>text.valign</code></td>
+<td>
+
+<p>vertical justification of cell text.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowname.width</code></td>
+<td>
+
+<p>minimum width of row name strings.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowname.height</code></td>
+<td>
+
+<p>minimum height of row name strings.
+</p>
+</td></tr>
+<tr valign="top"><td><code>min.colwidth</code></td>
+<td>
+
+<p>minimum column width.
+</p>
+</td></tr>
+<tr valign="top"><td><code>max.rowheight</code></td>
+<td>
+
+<p>maximum row height.
+</p>
+</td></tr>
+<tr valign="top"><td><code>abbreviate.dimnames</code></td>
+<td>
+
+<p>should the row and column names be abbreviated.
+</p>
+</td></tr>
+<tr valign="top"><td><code>page.width</code></td>
+<td>
+
+<p>width of the page being printed on.
+</p>
+</td></tr>
+<tr valign="top"><td><code>colname.width</code></td>
+<td>
+
+<p>minimum width of the column names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>colname.height</code></td>
+<td>
+
+<p>minimum height of the column names
+</p>
+</td></tr>
+<tr valign="top"><td><code>prefix.width</code></td>
+<td>
+
+<p>maximum width of the rowname columns
+</p>
+</td></tr>
+<tr valign="top"><td><code>superprefix.width</code></td>
+<td>
+
+<p>maximum width of the super rowname columns
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>String that formated table of the list object.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Charles Dupont </p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

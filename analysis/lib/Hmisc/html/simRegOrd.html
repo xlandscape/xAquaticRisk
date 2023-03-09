@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Simulate Power for Adjusted Ordinal Regression Two-Sample...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for simRegOrd {Hmisc}"><tr><td>simRegOrd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Simulate Power for Adjusted Ordinal Regression Two-Sample Test</h2>
+
+<h3>Description</h3>
+
+<p>This function simulates the power of a two-sample test from a
+proportional odds ordinal logistic model for a continuous response
+variable- a generalization of the Wilcoxon test.  The continuous data
+model is normal with equal variance.  Nonlinear covariate
+adjustment is allowed, and the user can optionally specify discrete
+ordinal level overrides to the continuous response.  For example, if
+the main response is systolic blood pressure, one can add two ordinal
+categories higher than the highest observed blood pressure to capture
+heart attack or death.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+simRegOrd(n, nsim=1000, delta=0, odds.ratio=1, sigma,
+          p=NULL, x=NULL, X=x, Eyx, alpha=0.05, pr=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>combined sample size (both groups combined)</p>
+</td></tr>
+<tr valign="top"><td><code>nsim</code></td>
+<td>
+<p>number of simulations to run</p>
+</td></tr>
+<tr valign="top"><td><code>delta</code></td>
+<td>
+<p>difference in means to detect, for continuous portion of
+response variable</p>
+</td></tr>
+<tr valign="top"><td><code>odds.ratio</code></td>
+<td>
+<p>odds ratio to detect for ordinal overrides of
+continuous portion</p>
+</td></tr>
+<tr valign="top"><td><code>sigma</code></td>
+<td>
+<p>standard deviation for continuous portion of response</p>
+</td></tr>
+<tr valign="top"><td><code>p</code></td>
+<td>
+<p>a vector of marginal cell probabilities which must add up to one.
+The <code>i</code>th element specifies the probability that a patient will be
+in response level <code>i</code> for the control arm for the discrete
+ordinal overrides.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>optional covariate to adjust for - a vector of length
+<code>n</code></p>
+</td></tr>
+<tr valign="top"><td><code>X</code></td>
+<td>
+<p>a design matrix for the adjustment covariate <code>x</code> if
+present.  This could represent for example <code>x</code> and <code>x^2</code>
+or cubic spline components.</p>
+</td></tr>
+<tr valign="top"><td><code>Eyx</code></td>
+<td>
+<p>a function of <code>x</code> that provides the mean response for
+the control arm treatment</p>
+</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+<p>type I error</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+<p>set to <code>TRUE</code> to see iteration progress</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a list containing <code>n, delta, sigma, power, betas, se, pvals</code> where
+<code>power</code> is the estimated power (scalar), and <code>betas, se,
+	pvals</code> are <code>nsim</code>-vectors containing, respectively, the ordinal
+model treatment effect estimate, standard errors, and 2-tailed
+p-values.  When a model fit failed, the corresponding entries in
+<code>betas, se, pvals</code> are <code>NA</code> and <code>power</code> is the proportion
+of non-failed iterations for which the treatment p-value is significant
+at the <code>alpha</code> level.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/popower.html">popower</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+## First use no ordinal high-end category overrides, and compare power
+## to t-test when there is no covariate
+
+n &lt;- 100
+delta &lt;- .5
+sd &lt;- 1
+require(pwr)
+power.t.test(n = n / 2, delta=delta, sd=sd, type='two.sample')  # 0.70
+set.seed(1)
+w &lt;- simRegOrd(n, delta=delta, sigma=sd, pr=TRUE)     # 0.686
+
+## Now do ANCOVA with a quadratic effect of a covariate
+n &lt;- 100
+x &lt;- rnorm(n)
+w &lt;- simRegOrd(n, nsim=400, delta=delta, sigma=sd, x=x,
+               X=cbind(x, x^2),
+               Eyx=function(x) x + x^2, pr=TRUE)
+w$power  # 0.68
+
+## Fit a cubic spline to some simulated pilot data and use the fitted
+## function as the true equation in the power simulation
+require(rms)
+N &lt;- 1000
+set.seed(2)
+x &lt;- rnorm(N)
+y &lt;- x + x^2 + rnorm(N, 0, sd=sd)
+f &lt;- ols(y ~ rcs(x, 4), x=TRUE)
+
+n &lt;- 100
+j &lt;- sample(1 : N, n, replace=n &gt; N)
+x &lt;-   x[j]
+X &lt;- f$x[j,]
+w &lt;- simRegOrd(n, nsim=400, delta=delta, sigma=sd, x=x,
+               X=X,
+               Eyx=Function(f), pr=TRUE)
+w$power  ## 0.70
+
+## Finally, add discrete ordinal category overrides and high end of y
+## Start with no effect of treatment on these ordinal event levels (OR=1.0)
+
+w &lt;- simRegOrd(n, nsim=400, delta=delta, odds.ratio=1, sigma=sd,
+               x=x, X=X, Eyx=Function(f),
+               p=c(.98, .01, .01),
+               pr=TRUE)
+w$power  ## 0.61   (0.3 if p=.8 .1 .1, 0.37 for .9 .05 .05, 0.50 for .95 .025 .025)
+
+## Now assume that odds ratio for treatment is 2.5
+## First compute power for clinical endpoint portion of Y alone
+or &lt;- 2.5
+p &lt;- c(.9, .05, .05)
+popower(p, odds.ratio=or, n=100)   # 0.275
+## Compute power of t-test on continuous part of Y alone
+power.t.test(n = 100 / 2, delta=delta, sd=sd, type='two.sample')  # 0.70
+## Note this is the same as the p.o. model power from simulation above
+## Solve for OR that gives the same power estimate from popower
+popower(rep(.01, 100), odds.ratio=2.4, n=100)   # 0.706
+## Compute power for continuous Y with ordinal override
+w &lt;- simRegOrd(n, nsim=400, delta=delta, odds.ratio=or, sigma=sd,
+               x=x, X=X, Eyx=Function(f),
+               p=c(.9, .05, .05),
+               pr=TRUE)
+w$power  ## 0.72
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

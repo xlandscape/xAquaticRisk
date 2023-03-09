@@ -1,0 +1,448 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Representative Curves</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for curveRep {Hmisc}"><tr><td>curveRep {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Representative Curves</h2>
+
+<h3>Description</h3>
+
+<p><code>curveRep</code> finds representative curves from a
+relatively large collection of curves.  The curves usually represent
+time-response profiles as in serial (longitudinal or repeated) data
+with possibly unequal time points and greatly varying sample sizes per
+subject.  After excluding records containing missing <code>x</code> or
+<code>y</code>, records are first stratified into <code>kn</code> groups having similar
+sample sizes per curve (subject).  Within these strata, curves are
+next stratified according to the distribution of <code>x</code> points per
+curve (typically measurement times per subject).  The
+<code><a href="../../cluster/help/clara.html">clara</a></code> clustering/partitioning function is used
+to do this, clustering on one, two, or three <code>x</code> characteristics
+depending on the minimum sample size in the current interval of sample
+size.  If the interval has a minimum number of unique <code>values</code> of
+one, clustering is done on the single <code>x</code> values.  If the minimum
+number of unique <code>x</code> values is two, clustering is done to create
+groups that are similar on both <code>min(x)</code> and <code>max(x)</code>.  For
+groups containing no fewer than three unique <code>x</code> values,
+clustering is done on the trio of values <code>min(x)</code>, <code>max(x)</code>,
+and the longest gap between any successive <code>x</code>.  Then within
+sample size and <code>x</code> distribution strata, clustering of
+time-response profiles is based on <code>p</code> values of <code>y</code> all
+evaluated at the same <code>p</code> equally-spaced <code>x</code>'s within the
+stratum.  An option allows per-curve data to be smoothed with
+<code><a href="../../stats/html/lowess.html">lowess</a></code> before proceeding.  Outer <code>x</code> values are
+taken as extremes of <code>x</code> across all curves within the stratum.
+Linear interpolation within curves is used to estimate <code>y</code> at the
+grid of <code>x</code>'s.  For curves within the stratum that do not extend
+to the most extreme <code>x</code> values in that stratum, extrapolation
+uses flat lines from the observed extremes in the curve unless
+<code>extrap=TRUE</code>. The <code>p</code> <code>y</code> values are clustered using
+<code><a href="../../cluster/help/clara.html">clara</a></code>.
+</p>
+<p><code>print</code> and <code>plot</code> methods show results.  By specifying an
+auxiliary <code>idcol</code> variable to <code>plot</code>, other variables such
+as treatment may be depicted to allow the analyst to determine for
+example whether subjects on different treatments are assigned to
+different time-response profiles.  To write the frequencies of a
+variable such as treatment in the upper left corner of each panel
+(instead of the grand total number of clusters in that panel), specify
+<code>freq</code>.
+</p>
+<p><code>curveSmooth</code> takes a set of curves and smooths them using
+<code><a href="../../stats/html/lowess.html">lowess</a></code>.  If the number of unique <code>x</code> points in a curve is
+less than <code>p</code>, the smooth is evaluated at the unique <code>x</code>
+values.  Otherwise it is evaluated at an equally spaced set of
+<code>x</code> points over the observed range.  If fewer than 3 unique
+<code>x</code> values are in a curve, those points are used and smoothing is not done.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
+         force1 = TRUE, metric = c("euclidean", "manhattan"),
+         smooth=FALSE, extrap=FALSE, pr=FALSE)
+
+## S3 method for class 'curveRep'
+print(x, ...)
+
+## S3 method for class 'curveRep'
+plot(x, which=1:length(res),
+                        method=c('all','lattice','data'),
+                        m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
+                        idcol=NULL, freq=NULL, plotfreq=FALSE,
+                        xlim=range(x), ylim=range(y),
+                        xlab='x', ylab='y', colorfreq=FALSE, ...)
+curveSmooth(x, y, id, p=NULL, pr=TRUE)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a numeric vector, typically measurement times.
+For <code>plot.curveRep</code> is an object created by <code>curveRep</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>a numeric vector of response values</p>
+</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+<p>a vector of curve (subject) identifiers, the same length as
+<code>x</code> and <code>y</code></p>
+</td></tr>
+<tr valign="top"><td><code>kn</code></td>
+<td>
+<p>number of curve sample size groups to construct.
+<code>curveRep</code> tries to divide the data into equal numbers of
+curves across sample size intervals.</p>
+</td></tr>
+<tr valign="top"><td><code>kxdist</code></td>
+<td>
+<p>maximum number of x-distribution clusters to derive
+using <code>clara</code></p>
+</td></tr>
+<tr valign="top"><td><code>k</code></td>
+<td>
+<p>maximum number of x-y profile clusters to derive using <code>clara</code></p>
+</td></tr>
+<tr valign="top"><td><code>p</code></td>
+<td>
+<p>number of <code>x</code> points at which to interpolate <code>y</code>
+for profile clustering.  For <code>curveSmooth</code> is the number of
+equally spaced points at which to evaluate the lowess smooth, and if
+<code>p</code> is omitted the smooth is evaluated at the original <code>x</code>
+values (which will allow <code>curveRep</code> to still know the <code>x</code>
+distribution</p>
+</td></tr>
+<tr valign="top"><td><code>force1</code></td>
+<td>
+<p>By default if any curves have only one point, all curves
+consisting of one point will be placed in a separate stratum.  To
+prevent this separation, set <code>force1 = FALSE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>metric</code></td>
+<td>
+<p>see <code><a href="../../cluster/help/clara.html">clara</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>smooth</code></td>
+<td>
+<p>By default, linear interpolation is used on raw data to
+obtain <code>y</code> values to cluster to determine x-y profiles.
+Specify <code>smooth = TRUE</code> to replace observed points with
+<code><a href="../../stats/html/lowess.html">lowess</a></code> before computing <code>y</code> points on the grid.
+Also, when <code>smooth</code> is used, it may be desirable to use
+<code>extrap=TRUE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>extrap</code></td>
+<td>
+<p>set to <code>TRUE</code> to use linear extrapolation to
+evaluate <code>y</code> points for x-y clustering.  Not recommended unless
+smoothing has been or is being done.</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+<p>set to <code>TRUE</code> to print progress notes</p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+<p>an integer vector specifying which sample size intervals
+to plot.  Must be specified if <code>method='lattice'</code> and must be a
+single number in that case.</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+<p>The default makes individual plots of possibly all
+x-distribution by sample size by cluster combinations.  Fewer may be
+plotted by specifying <code>which</code>.  Specify <code>method='lattice'</code>
+to show a lattice <code>xyplot</code> of a single sample size interval,
+with x distributions going across and clusters going down.  To not
+plot but instead return a data frame for a single sample size
+interval, specify <code>method='data'</code></p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+<p>the number of curves in a cluster to randomly sample if there
+are more than <code>m</code> in a cluster.  Default is to draw all curves
+in a cluster.  For <code>method = "lattice"</code> you can specify
+<code>m = "quantiles"</code> to use the <code>xYplot</code> function to show
+quantiles of <code>y</code> as a function of <code>x</code>, with the quantiles
+specified by the <code>probs</code> argument.  This cannot be used to draw
+a group containing <code>n = 1</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>nx</code></td>
+<td>
+<p>applies if <code>m = "quantiles"</code>.  See <code><a href="../../Hmisc/help/xYplot.html">xYplot</a></code>.</p>
+</td></tr>
+<tr valign="top"><td><code>probs</code></td>
+<td>
+<p>3-vector of probabilities with the central quantile
+first.  Default uses quartiles.</p>
+</td></tr>
+<tr valign="top"><td><code>fill</code></td>
+<td>
+<p>for <code>method = "all"</code>, by default if a sample size
+x-distribution stratum did not have enough curves to stratify into
+<code>k</code> x-y profiles, empty graphs are drawn so that a matrix of
+graphs will have the next row starting with a different sample size
+range or x-distribution.  See the example below.</p>
+</td></tr>
+<tr valign="top"><td><code>idcol</code></td>
+<td>
+<p>a named vector to be used as a table lookup for color
+assignments (does not apply when <code>m = "quantile"</code>).  The names of
+this vector are curve <code>id</code>s and the values are color names or
+numbers.</p>
+</td></tr>
+<tr valign="top"><td><code>freq</code></td>
+<td>
+<p>a named vector to be used as a table lookup for a grouping
+variable such as treatment.  The names are curve <code>id</code>s and
+values are any values useful for grouping in a frequency tabulation.</p>
+</td></tr>
+<tr valign="top"><td><code>plotfreq</code></td>
+<td>
+<p>set to <code>TRUE</code> to plot the frequencies from the
+<code>freq</code> variable as horizontal bars instead of printing them.
+Applies only to <code>method = "lattice"</code>.  By default the largest bar
+is 0.1 times the length of a panel's x-axis.  Specify
+<code>plotfreq = 0.5</code> for example to make the longest bar half this long.</p>
+</td></tr>
+<tr valign="top"><td><code>colorfreq</code></td>
+<td>
+<p>set to <code>TRUE</code> to color the frequencies printed by 
+<code>plotfreq</code> using the colors provided by <code>idcol</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>xlim, ylim, xlab, ylab</code></td>
+<td>
+<p>plotting parameters.  Default ranges are
+the ranges in the entire set of raw data given to <code>curveRep</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments passed to other functions.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>In the graph titles for the default graphic output, <code>n</code> refers to the
+minimum sample size, <code>x</code> refers to the sequential x-distribution
+cluster, and <code>c</code> refers to the sequential x-y profile cluster.  Graphs
+from <code>method = "lattice"</code> are produced by
+<code><a href="../../lattice/help/xyplot.html">xyplot</a></code> and in the panel titles
+<code>distribution</code> refers to the x-distribution stratum and
+<code>cluster</code> refers to the x-y profile cluster.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a list of class <code>"curveRep"</code> with the following elements
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>res</code></td>
+<td>
+<p>a hierarchical list first split by sample size intervals,
+then by x distribution clusters, then containing a vector of cluster
+numbers with <code>id</code> values as a names attribute</p>
+</td></tr>
+<tr valign="top"><td><code>ns</code></td>
+<td>
+<p>a table of frequencies of sample sizes per curve after
+removing <code>NA</code>s</p>
+</td></tr>
+<tr valign="top"><td><code>nomit</code></td>
+<td>
+<p>total number of records excluded due to <code>NA</code>s</p>
+</td></tr>
+<tr valign="top"><td><code>missfreq</code></td>
+<td>
+<p>a table of frequencies of number of <code>NA</code>s
+excluded per curve</p>
+</td></tr>
+<tr valign="top"><td><code>ncuts</code></td>
+<td>
+<p>cut points for sample size intervals</p>
+</td></tr>
+<tr valign="top"><td><code>kn</code></td>
+<td>
+<p>number of sample size intervals</p>
+</td></tr>
+<tr valign="top"><td><code>kxdist</code></td>
+<td>
+<p>number of clusters on x distribution</p>
+</td></tr>
+<tr valign="top"><td><code>k</code></td>
+<td>
+<p>number of clusters of curves within sample size and
+distribution groups</p>
+</td></tr>
+<tr valign="top"><td><code>p</code></td>
+<td>
+<p>number of points at which to evaluate each curve for clustering</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+<p>input data after removing <code>NA</code>s</p>
+</td></tr>
+</table>
+<p><code>curveSmooth</code> returns a list with elements <code>x,y,id</code>.
+</p>
+
+
+<h3>Note</h3>
+
+<p>The references describe other methods for deriving
+representative curves, but those methods were not used here.  The last
+reference which used a cluster analysis on principal components
+motivated <code>curveRep</code> however.  The <code>kml</code> package does k-means clustering of longitudinal data with imputation.</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell<br />
+Department of Biostatistics<br />
+Vanderbilt University<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Segal M. (1994): Representative curves for longitudinal data via
+regression trees.  J Comp Graph Stat 3:214-233.
+</p>
+<p>Jones MC, Rice JA (1992): Displaying the important features of large
+collections of similar curves.  Am Statistician 46:140-145.
+</p>
+<p>Zheng X, Simpson JA, et al (2005): Data from a study of effectiveness
+suggested potential prognostic factors related to the patterns of
+shoulder pain.  J Clin Epi 58:823-830.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../cluster/help/clara.html">clara</a></code>,<code><a href="../help/dataRep.html">dataRep</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+# Simulate 200 curves with per-curve sample sizes ranging from 1 to 10
+# Make curves with odd-numbered IDs have an x-distribution that is random
+# uniform [0,1] and those with even-numbered IDs have an x-dist. that is
+# half as wide but still centered at 0.5.  Shift y values higher with
+# increasing IDs
+set.seed(1)
+N &lt;- 200
+nc &lt;- sample(1:10, N, TRUE)
+id &lt;- rep(1:N, nc)
+x &lt;- y &lt;- id
+for(i in 1:N) {
+  x[id==i] &lt;- if(i %% 2) runif(nc[i]) else runif(nc[i], c(.25, .75))
+  y[id==i] &lt;- i + 10*(x[id==i] - .5) + runif(nc[i], -10, 10)
+}
+
+w &lt;- curveRep(x, y, id, kxdist=2, p=10)
+w
+par(ask=TRUE, mfrow=c(4,5))
+plot(w)                # show everything, profiles going across
+par(mfrow=c(2,5))
+plot(w,1)              # show n=1 results
+# Use a color assignment table, assigning low curves to green and
+# high to red.  Unique curve (subject) IDs are the names of the vector.
+cols &lt;- c(rep('green', N/2), rep('red', N/2))
+names(cols) &lt;- as.character(1:N)
+plot(w, 3, idcol=cols)
+par(ask=FALSE, mfrow=c(1,1))
+
+plot(w, 1, 'lattice')  # show n=1 results
+plot(w, 3, 'lattice')  # show n=4-5 results
+plot(w, 3, 'lattice', idcol=cols)  # same but different color mapping
+plot(w, 3, 'lattice', m=1)  # show a single "representative" curve
+# Show median, 10th, and 90th percentiles of supposedly representative curves
+plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9))
+# Same plot but with much less grouping of x variable
+plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9), nx=2)
+
+# Use ggplot2 for one sample size interval
+z &lt;- plot(w, 2, 'data')
+ggplot(z, aes(x, y, color=curve)) + geom_line() +
+       facet_grid(distribution ~ cluster) +
+       theme(legend.position='none') +
+       labs(caption=z$ninterval[1])
+
+
+# Smooth data before profiling.  This allows later plotting to plot
+# smoothed representative curves rather than raw curves (which
+# specifying smooth=TRUE to curveRep would do, if curveSmooth was not used)
+d &lt;- curveSmooth(x, y, id)
+w &lt;- with(d, curveRep(x, y, id))
+
+# Example to show that curveRep can cluster profiles correctly when
+# there is no noise.  In the data there are four profiles - flat, flat
+# at a higher mean y, linearly increasing then flat, and flat at the
+# first height except for a sharp triangular peak
+
+set.seed(1)
+x &lt;- 0:100
+m &lt;- length(x)
+profile &lt;- matrix(NA, nrow=m, ncol=4)
+profile[,1] &lt;- rep(0, m)
+profile[,2] &lt;- rep(3, m)
+profile[,3] &lt;- c(0:3, rep(3, m-4))
+profile[,4] &lt;- c(0,1,3,1,rep(0,m-4))
+col &lt;- c('black','blue','green','red')
+matplot(x, profile, type='l', col=col)
+xeval &lt;- seq(0, 100, length.out=5)
+s &lt;- x 
+matplot(x[s], profile[s,], type='l', col=col)
+
+id &lt;- rep(1:100, each=m)
+X &lt;- Y &lt;- id
+cols &lt;- character(100)
+names(cols) &lt;- as.character(1:100)
+for(i in 1:100) {
+  s &lt;- id==i
+  X[s] &lt;- x
+  j &lt;- sample(1:4,1)
+  Y[s] &lt;- profile[,j]
+  cols[i] &lt;- col[j]
+}
+table(cols)
+yl &lt;- c(-1,4)
+w &lt;- curveRep(X, Y, id, kn=1, kxdist=1, k=4)
+plot(w, 1, 'lattice', idcol=cols, ylim=yl)
+# Found 4 clusters but two have same profile
+w &lt;- curveRep(X, Y, id, kn=1, kxdist=1, k=3)
+plot(w, 1, 'lattice', idcol=cols, freq=cols, plotfreq=TRUE, ylim=yl)
+# Incorrectly combined black and red because default value p=5 did
+# not result in different profiles at x=xeval
+w &lt;- curveRep(X, Y, id, kn=1, kxdist=1, k=4, p=40)
+plot(w, 1, 'lattice', idcol=cols, ylim=yl)
+# Found correct clusters because evaluated curves at 40 equally
+# spaced points and could find the sharp triangular peak in profile 4
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

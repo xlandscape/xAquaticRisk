@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Check if All Elements in Character Vector are Numeric</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for all.is.numeric {Hmisc}"><tr><td>all.is.numeric {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Check if All Elements in Character Vector are Numeric</h2>
+
+<h3>Description</h3>
+
+<p>Tests, without issuing warnings, whether all elements of a character
+vector are legal numeric values, or optionally converts the vector to a
+numeric vector.  Leading and trailing blanks in <code>x</code> are ignored.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+all.is.numeric(x, what = c("test", "vector", "nonnum"), extras=c('.','NA'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a character vector</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+<p>specify <code>what="vector"</code> to return a numeric vector if
+it passes the test, or the original character vector otherwise, the
+default <code>"test"</code> to return <code>FALSE</code> if there are no
+non-missing non-<code>extra</code> values of <code>x</code> or there is at least
+one non-numeric value of <code>x</code>, or <code>"nonnum"</code> to return the
+vector of non-<code>extra</code>, non-NA, non-numeric values of <code>x</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>extras</code></td>
+<td>
+<p>a vector of character strings to count as numeric
+values, other than <code>""</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a logical value if <code>what="test"</code> or a vector otherwise</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/numeric.html">as.numeric</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+all.is.numeric(c('1','1.2','3'))
+all.is.numeric(c('1','1.2','3a'))
+all.is.numeric(c('1','1.2','3'),'vector')
+all.is.numeric(c('1','1.2','3a'),'vector')
+all.is.numeric(c('1','',' .'),'vector')
+all.is.numeric(c('1', '1.2', '3a'), 'nonnum')
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

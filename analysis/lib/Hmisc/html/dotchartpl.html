@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Enhanced Version of dotchart Function for plotly</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for dotchartpl {Hmisc}"><tr><td>dotchartpl {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Enhanced Version of dotchart Function for plotly</h2>
+
+<h3>Description</h3>
+
+<p>This function produces a <code>plotly</code> interactive graphic and accepts
+a different format of data input than the other <code>dotchart</code>x
+functions.  It was written to handle a hierarchical data structure
+including strata that further subdivide the main classes.  Strata,
+indicated by the <code>mult</code> variable, are shown  on the same
+horizontal line, and if the variable <code>big</code> is <code>FALSE</code> will
+appear slightly below the main line, using smaller symbols, and having
+some transparency.  This is intended to handle output such as that
+from the <code>summaryP</code> function when there is a superpositioning
+variable <code>group</code> and a stratification variable <code>mult</code>,
+especially when the data have been run through the <code>addMarginal</code>
+function to create <code>mult</code> categories labelled <code>"All"</code> for
+which the user will specify <code>big=TRUE</code> to indicate non-stratified
+estimates (stratified only on <code>group</code>) to emphasize.
+</p>
+<p>When viewing graphics that used <code>mult</code> and <code>big</code>, the user
+can click on the legends for the small points for <code>group</code>s to
+vanish the finely stratified estimates.
+</p>
+<p>When <code>group</code> is used by <code>mult</code> and <code>big</code> are not, and
+when the <code>group</code> variable has exactly two distinct values, you
+can specify <code>refgroup</code> to get the difference between two
+proportions in addition to the individual proportions.  The individual
+proportions are plotted, but confidence intervals for the difference
+are shown in hover text and half-width confidence intervals for the
+difference, centered at the midpoint of the proportions, are shown.
+These have the property of intersecting the two proportions if and
+only if there is no significant difference at the <code>1 - conf.int</code>
+level.
+</p>
+<p>Specify <code>fun=exp</code> and <code>ifun=log</code> if estimates and confidence
+limits are on the log scale.  Make sure that zeros were prevented in
+the original calculations.  For exponential hazard rates this can be
+accomplished by replacing event counts of 0 with 0.5.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
+           big=NULL, htext=NULL, num=NULL, denom=NULL,
+           numlabel='', denomlabel='',
+           fun=function(x) x, ifun=function(x) x, op='-',
+           lower=NULL, upper=NULL,
+           refgroup=NULL, sortdiff=TRUE, conf.int=0.95,
+           minkeep=NULL, xlim=NULL, xlab='Proportion',
+           tracename=NULL, limitstracename='Limits',
+           nonbigtracename='Stratified Estimates',
+           dec=3, width=800, height=NULL,
+           col=colorspace::rainbow_hcl)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a numeric vector used for values on the <code>x</code>-axis</p>
+</td></tr>
+<tr valign="top"><td><code>major</code></td>
+<td>
+<p>major vertical category, e.g., variable labels</p>
+</td></tr>
+<tr valign="top"><td><code>minor</code></td>
+<td>
+<p>minor vertical category, e.g. category levels within
+variables</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+<p>superpositioning variable such as treatment</p>
+</td></tr>
+<tr valign="top"><td><code>mult</code></td>
+<td>
+<p>strata names for further subdivisions without
+<code>group</code>s</p>
+</td></tr>
+<tr valign="top"><td><code>big</code></td>
+<td>
+<p>omit if all levels of <code>mult</code> are equally important or
+if <code>mult</code> is omitted.  Otherwise denotes major (larger points,
+right on horizontal lines) vs. minor (smaller, transparent points
+slightly below the line).</p>
+</td></tr>
+<tr valign="top"><td><code>htext</code></td>
+<td>
+<p>additional hover text per point</p>
+</td></tr>
+<tr valign="top"><td><code>num</code></td>
+<td>
+<p>if <code>x</code> represents proportions, optionally specifies
+numerators to be used in fractions added to hover text.  When
+<code>num</code> is given, <code>x</code> is automatically added to hover text,
+rounded to 3 digits after the decimal point.</p>
+</td></tr>
+<tr valign="top"><td><code>denom</code></td>
+<td>
+<p>like <code>num</code> but for denominators</p>
+</td></tr>
+<tr valign="top"><td><code>numlabel</code></td>
+<td>
+<p>character string to put to the right of the numerator
+in hover text</p>
+</td></tr>
+<tr valign="top"><td><code>denomlabel</code></td>
+<td>
+<p>character string to put to the right of the
+denominator in hover text</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+<p>a transformation to make when printing estimates.  For
+example, one may specify <code>fun=exp</code> to anti-log estimates and
+confidence limites that were computed on a log basis</p>
+</td></tr>
+<tr valign="top"><td><code>ifun</code></td>
+<td>
+<p>inverse transformation of <code>fun</code></p>
+</td></tr>
+<tr valign="top"><td><code>op</code></td>
+<td>
+<p>set to for example <code>'/'</code> when <code>fun=exp</code> and
+effects are computed as ratios instead of differences.  This is used
+in hover text.</p>
+</td></tr>
+<tr valign="top"><td><code>lower</code></td>
+<td>
+<p>lower limits for optional error bars</p>
+</td></tr>
+<tr valign="top"><td><code>upper</code></td>
+<td>
+<p>upper limits for optional error bars</p>
+</td></tr>
+<tr valign="top"><td><code>refgroup</code></td>
+<td>
+<p>if <code>group</code> is specified and there are exactly two
+groups, specify the character string for the reference group in
+computing difference in proportions.  For example if
+<code>refgroup='A'</code> and the <code>group</code> levels are <code>'A','B'</code>,
+you will get B - A.</p>
+</td></tr>
+<tr valign="top"><td><code>sortdiff</code></td>
+<td>
+<p><code>minor</code> categories are sorted by descending
+values of the difference in proportions when <code>refgroup</code> is used,
+unless you specify <code>sortdiff=FALSE</code></p>
+</td></tr>
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+<p>confidence level for computing confidence intervals
+for the difference in two proportions.  Specify <code>conf.int=FALSE</code>
+to suppress confidence intervals.</p>
+</td></tr>
+<tr valign="top"><td><code>minkeep</code></td>
+<td>
+<p>if <code>refgroup</code> and <code>minkeep</code> are both given,
+observations that are at or above <code>minkeep</code> for at least one of
+the groups are retained.  The defaults to to keep all observations.</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+<p><code>x</code>-axis limits</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+<p><code>x</code>-axis label</p>
+</td></tr>
+<tr valign="top"><td><code>tracename</code></td>
+<td>
+<p><code>plotly</code> trace name if <code>group</code> is not used</p>
+</td></tr>
+<tr valign="top"><td><code>limitstracename</code></td>
+<td>
+<p><code>plotly</code> trace name for <code>lower</code> and
+<code>upper</code> if <code>group</code> is not used</p>
+</td></tr>
+<tr valign="top"><td><code>nonbigtracename</code></td>
+<td>
+<p><code>plotly</code> trace name used for non-big
+elements, which usually represent stratified versions of the &quot;big&quot;
+observations</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>a function or vector of colors to assign to <code>group</code>.
+If a function it will be evaluated with an argument equal to the
+number of distinct groups.</p>
+</td></tr>
+<tr valign="top"><td><code>dec</code></td>
+<td>
+<p>number of places to the right of the decimal place for
+formatting numeric quantities in hover text</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+<p>width of plot in pixels</p>
+</td></tr>
+<tr valign="top"><td><code>height</code></td>
+<td>
+<p>height of plot in pixels; computed from number of strata
+by default</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a <code>plotly</code> object.  An attribute <code>levelsRemoved</code> is
+added if <code>minkeep</code> is used and any categories were omitted from
+the plot as a result.  This is a character vector with categories
+removed.  If <code>major</code> is present, the strings are of the form
+<code>major:minor</code></p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/dotchartp.html">dotchartp</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+set.seed(1)
+d &lt;- expand.grid(major=c('Alabama', 'Alaska', 'Arkansas'),
+                 minor=c('East', 'West'),
+                 group=c('Female', 'Male'),
+                 city=0:2)
+n &lt;- nrow(d)
+d$num   &lt;- round(100*runif(n))
+d$denom &lt;- d$num + round(100*runif(n))
+d$x     &lt;- d$num / d$denom
+d$lower &lt;- d$x - runif(n)
+d$upper &lt;- d$x + runif(n)
+
+with(d,
+ dotchartpl(x, major, minor, group, city, lower=lower, upper=upper,
+            big=city==0, num=num, denom=denom, xlab='x'))
+
+# Show half-width confidence intervals for Female - Male differences
+# after subsetting the data to have only one record per
+# state/region/group
+d &lt;- subset(d, city == 0)
+with(d,
+ dotchartpl(x, major, minor, group, num=num, denom=denom,
+            lower=lower, upper=upper, refgroup='Male')
+)
+
+n &lt;- 500
+set.seed(1)
+d &lt;- data.frame(
+  race         = sample(c('Asian', 'Black/AA', 'White'), n, TRUE),
+  sex          = sample(c('Female', 'Male'), n, TRUE),
+  treat        = sample(c('A', 'B'), n, TRUE),
+  smoking      = sample(c('Smoker', 'Non-smoker'), n, TRUE),
+  hypertension = sample(c('Hypertensive', 'Non-Hypertensive'), n, TRUE),
+  region       = sample(c('North America','Europe','South America',
+                          'Europe', 'Asia', 'Central America'), n, TRUE))
+
+d &lt;- upData(d, labels=c(race='Race', sex='Sex'))
+
+dm &lt;- addMarginal(d, region)
+s &lt;- summaryP(race + sex + smoking + hypertension ~
+                region + treat,  data=dm)
+
+s$region &lt;- ifelse(s$region == 'All', 'All Regions', as.character(s$region))
+
+with(s, 
+ dotchartpl(freq / denom, major=var, minor=val, group=treat, mult=region,
+            big=region == 'All Regions', num=freq, denom=denom)
+)
+
+s2 &lt;- s[- attr(s, 'rows.to.exclude1'), ]
+with(s2, 
+     dotchartpl(freq / denom, major=var, minor=val, group=treat, mult=region,
+                big=region == 'All Regions', num=freq, denom=denom)
+)
+# Note these plots can be created by plot.summaryP when options(grType='plotly')
+
+# Plot hazard rates and ratios with confidence limits, on log scale
+d &lt;- data.frame(tx=c('a', 'a', 'b', 'b'),
+                event=c('MI', 'stroke', 'MI', 'stroke'),
+                count=c(10, 5, 5, 2),
+                exposure=c(1000, 1000, 900, 900))
+# There were no zero event counts in this dataset.  In general we
+# want to handle that, hence the 0.5 below
+d &lt;- upData(d, hazard = pmax(0.5, count) / exposure,
+               selog  = sqrt(1. / pmax(0.5, count)),
+               lower  = log(hazard) - 1.96 * selog,
+               upper  = log(hazard) + 1.96 * selog)
+with(d,
+     dotchartpl(log(hazard), minor=event, group=tx, num=count, denom=exposure,
+                lower=lower, upper=upper,
+                fun=exp, ifun=log, op='/',
+                numlabel='events', denomlabel='years',
+                refgroup='a', xlab='Events Per Person-Year')
+)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

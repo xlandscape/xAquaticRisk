@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Statistics by Categories</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for bystats {Hmisc}"><tr><td>bystats {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Statistics by Categories
+</h2>
+
+<h3>Description</h3>
+
+<p>For any number of cross-classification variables, <code>bystats</code>
+returns a matrix with the sample size, number missing <code>y</code>, and
+<code>fun(non-missing y)</code>, with the cross-classifications designated
+by rows. Uses Harrell's modification of the <code>interaction</code>
+function to produce cross-classifications.  The default <code>fun</code> is
+<code>mean</code>, and if <code>y</code> is binary, the mean is labeled as
+<code>Fraction</code>.  There is a <code>print</code> method as well as a
+<code>latex</code> method for objects created by <code>bystats</code>.
+<code>bystats2</code> handles the special case in which there are 2
+classifcation variables, and places the first one in rows and the
+second in columns.  The <code>print</code> method for <code>bystats2</code> uses
+the <code>print.char.matrix</code> function to organize statistics
+for cells into boxes. </p>
+
+
+<h3>Usage</h3>
+
+<pre>
+bystats(y, ..., fun, nmiss, subset)
+## S3 method for class 'bystats'
+print(x, ...)
+## S3 method for class 'bystats'
+latex(object, title, caption, rowlabel, ...)
+bystats2(y, v, h, fun, nmiss, subset)
+## S3 method for class 'bystats2'
+print(x, abbreviate.dimnames=FALSE,
+   prefix.width=max(nchar(dimnames(x)[[1]])), ...)
+## S3 method for class 'bystats2'
+latex(object, title, caption, rowlabel, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a binary, logical, or continuous variable or a matrix or data frame of
+such variables.  If <code>y</code> is a data frame it is converted to a matrix.
+If <code>y</code> is a data frame or matrix, computations are done on subsets of
+the rows of <code>y</code>, and you should specify <code>fun</code> so as to be able to operate
+on the matrix.  For matrix <code>y</code>, any column with a missing value causes
+the entire row to be considered missing, and the row is not passed to
+<code>fun</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>For <code>bystats</code>, one or more classifcation variables separated by commas.
+For <code>print.bystats</code>, options passed to <code>print.default</code> such as <code>digits</code>.
+For <code>latex.bystats</code>, and <code>latex.bystats2</code>,
+options passed to <code>latex.default</code> such as <code>digits</code>.
+If you pass <code>cdec</code> to <code>latex.default</code>, keep in mind that the first one or
+two positions (depending on <code>nmiss</code>) should have zeros since these
+correspond with frequency counts. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>v</code></td>
+<td>
+
+<p>vertical variable for <code>bystats2</code>.  Will be converted to <code>factor</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>h</code></td>
+<td>
+
+<p>horizontal variable for <code>bystats2</code>.  Will be converted to <code>factor</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>a function to compute on the non-missing <code>y</code> for a given subset.
+You must specify <code>fun=</code> in front of the function name or definition.
+<code>fun</code> may return a single number or a vector or matrix of any length.
+Matrix results are rolled out into a vector, with names preserved.
+When <code>y</code> is a matrix, a common <code>fun</code> is <code>function(y) apply(y, 2, ff)</code>
+where <code>ff</code> is the name of a function which operates on one column of
+<code>y</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nmiss</code></td>
+<td>
+
+<p>A column containing a count of missing values is included if <code>nmiss=TRUE</code>
+or if there is at least one missing value.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+
+<p>a vector of subscripts or logical values indicating the subset of
+data to analyze
+</p>
+</td></tr>
+<tr valign="top"><td><code>abbreviate.dimnames</code></td>
+<td>
+<p>set to <code>TRUE</code> to abbreviate
+<code>dimnames</code> in output</p>
+</td></tr>
+<tr valign="top"><td><code>prefix.width</code></td>
+<td>
+<p>see <code><a href="../../Hmisc/help/print.char.matrix.html">print.char.matrix</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>title</code></td>
+<td>
+
+<p><code>title</code> to pass to <code>latex.default</code>.  Default is the first word of
+the character string version of the first calling argument.
+</p>
+</td></tr>
+<tr valign="top"><td><code>caption</code></td>
+<td>
+
+<p>caption to pass to <code>latex.default</code>.  Default is the <code>heading</code>
+attribute from the object produced by <code>bystats</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rowlabel</code></td>
+<td>
+
+<p><code>rowlabel</code> to pass to <code>latex.default</code>.  Default is the <code>byvarnames</code>
+attribute from the object produced by <code>bystats</code>.  For <code>bystats2</code> the
+default is <code>""</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>bystats</code> or <code>bystats2</code></p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>an object created by <code>bystats</code> or <code>bystats2</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>for <code>bystats</code>, a matrix with row names equal to the classification labels and column
+names <code>N, Missing, funlab</code>, where <code>funlab</code> is determined from <code>fun</code>.
+A row is added to the end with the summary statistics computed 
+on all observations combined.  The class of this matrix is <code>bystats</code>.
+For <code>bystats</code>, returns a 3-dimensional array with the last dimension
+corresponding to statistics being computed.  The class of the array is
+<code>bystats2</code>.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p><code>latex</code> produces a <code>.tex</code> file.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/interaction.html">interaction</a></code>, <code><a href="../../base/html/cut.html">cut</a></code>, <code><a href="../../Hmisc/help/cut2.html">cut2</a></code>, <code><a href="../../Hmisc/help/latex.html">latex</a></code>, <code><a href="../../Hmisc/help/print.char.matrix.html">print.char.matrix</a></code>,
+<code><a href="../../Hmisc/help/translate.html">translate</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+bystats(sex==2, county, city)
+bystats(death, race)
+bystats(death, cut2(age,g=5), race)
+bystats(cholesterol, cut2(age,g=4), sex, fun=median)
+bystats(cholesterol, sex, fun=quantile)
+bystats(cholesterol, sex, fun=function(x)c(Mean=mean(x),Median=median(x)))
+latex(bystats(death,race,nmiss=FALSE,subset=sex=="female"), digits=2)
+f &lt;- function(y) c(Hazard=sum(y[,2])/sum(y[,1]))
+# f() gets the hazard estimate for right-censored data from exponential dist.
+bystats(cbind(d.time, death), race, sex, fun=f)
+bystats(cbind(pressure, cholesterol), age.decile, 
+        fun=function(y) c(Median.pressure   =median(y[,1]),
+                          Median.cholesterol=median(y[,2])))
+y &lt;- cbind(pressure, cholesterol)
+bystats(y, age.decile, 
+        fun=function(y) apply(y, 2, median))   # same result as last one
+bystats(y, age.decile, fun=function(y) apply(y, 2, quantile, c(.25,.75)))
+# The last one computes separately the 0.25 and 0.75 quantiles of 2 vars.
+latex(bystats2(death, race, sex, fun=table))
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>
