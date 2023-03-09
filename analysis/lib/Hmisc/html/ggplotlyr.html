@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: ggplotlyr</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for ggplotlyr {Hmisc}"><tr><td>ggplotlyr {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>ggplotlyr</h2>
+
+<h3>Description</h3>
+
+<p>Render <code>plotly</code> Graphic from a <code>ggplot2</code> Object
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ggplotlyr(ggobject, tooltip = "label", remove = "txt: ", ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>ggobject</code></td>
+<td>
+<p>an object produced by <code>ggplot</code></p>
+</td></tr>
+<tr valign="top"><td><code>tooltip</code></td>
+<td>
+<p>attribute specified to <code>ggplot</code> to hold hover text</p>
+</td></tr>
+<tr valign="top"><td><code>remove</code></td>
+<td>
+<p>extraneous text to remove from hover text.  Default is set to assume <code>tooltip='label'</code> and assumed the user specified <code>aes(..., label=txt)</code>.  If you instead specified <code>aes(..., label=myvar)</code> use <code>remove='myvar: '</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other arguments passed to <code>ggplotly</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Uses <code>plotly::ggplotly()</code> to render a <code>plotly</code> graphic with a specified tooltip attribute, removing extraneous text that <code>ggplotly</code> puts in hover text when <code>tooltip='label'</code>
+</p>
+
+
+<h3>Value</h3>
+
+<p>a <code>plotly</code> object
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

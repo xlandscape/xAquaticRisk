@@ -1,0 +1,1369 @@
+PBSmapping Changes
+===================================
+Authors:  JTS = Jon T. Schnute
+          NB  = Nicholas Boers
+          RH  = Rowan Haigh
+          ACB = Alex Couture-Beil
+          DC  = Denis Chabot
+-----------------------------------
+
+
+2.73.2 (2022-09-06) [Rcheck=T, Rbuild=T]
+  * Documentation
+    + Updated `calcArea.Rd' and `convUL.Rd' so that `\emph' does not appear in math rendering.
+
+2.73.1 (2022-07-12) [Rcheck=T, Rbuild=T]
+  * R code
+    + Modified R function `.addBubblesLegend' to satisfy CRAN
+      - From : if (class(legend.pos) == "numeric") {
+      - To   : if (inherits(legend.pos, "numeric")) {
+  * C code
+    + Modified `clipperWrapper' to bring Sint and Sfloat into scope.
+      - moved `typedef int Sint; typedef double Sfloat;' from `clipperWrapper.cpp' to `clipperWrapper.h'
+    + Updated copyright dates in PBSmapping C source files.
+  * Documentation
+    + Updated a few Rd files with broken hyperlinks to Internet addresses.
+
+2.73.0 (2021-01-11) [Rcheck=T, Rbuild=T]
+  * R code
+    + Modified function `addBubbles' to accept negative data values. (RH 210111)
+    + Added new functions `RGB2RYB' and `RYB2RGB' based on the equations in Sugita and Takahashi (2015,2017). (RH 210106)
+      - Converts between the Red-Green-Blue and Red-Yellow-Blue colour schemes.
+    + Modified function `addCompass' to include magnetic pole positions from the NOAA's IGRF-13 model (1900-2025). (RH 210104)
+
+2.72.1 (2019-03-14) [Rcheck=T, Rbuild=T]
+  * C code
+    + Removed 'undeclared' SEXP variables from `importGSHHS' (see below) because they had been defined on lines 62:63. (RH 190314)
+      - RH fumbling around in C lead to R crashing when importGSHHS() was called.
+    + Changed the PROTECT and UNPROTECT calls in `clipperWrapper.cpp' and `convGSHHS.c'. (RH 190313)
+      - Disabled 'protectCount' in `clipperWrapper.cpp' because CRAN's rchk cannot determine whether stacks are imbalanced.
+      - Added undeclared SEXP variables to function `importGSHHS' in `convGSHHS.c'.
+      - Updated copyright date ranges in relevant C files.
+  * R code
+    + Modified function `refocusWorld' for datasets that don't extend into Antaractica, e.g. borders (RH 190314)
+      - Added line 'if (any(is.Ant)) {' before processing polygons with >100 vertices that lie south of -60 degrees latitude.
+    + Changed `is.na()' to `all(is.na())' in function addBubbles. (RH 190313)
+      - Rdevcheck choked on this example, but this may be only because it is the first example and there is another issue.
+    + Modified function `makeGrid' to create hexagons in a pattern consistent with that of rectangles. (RH 190104)
+      - If argument `byrow=T', rectangles and hexagons have PIDs that increment by column, otherwise by row.
+      - Changed default value of argument `type' from `square' to `rectangle'.
+
+2.72.0 (2018-11-23) [Rcheck=T, Rbuild=T]
+  * R code
+    + Modified function `makeGrid' to alternatively construct a regular hexagonal tesselation. (RH 181120)
+      - Default: type='square'; alternative: type='hexagon'; no triangular tesselation at present.
+      - The hexagonal grid can either be by row (pointy topped) or by column (flat topped).
+    + Add new functions `rotatePolys' and `rotateEvents' to rotate maps clockwise. (RH 181115)
+      - Suggestion from one of the reviewers of the Redstripe Rockfish assessment.
+      - Spurred by implementation of ggplot's annoying ability to rotate maps in PBS groundfish package `gfsynopsis'.
+
+2.71.1 (2018-10-26) [Rcheck=F, Rbuild=F]
+  * R code
+    + Modified function `refocusWorld' (RH 181026)
+      - Added in new code to detect Antarctica, expand it, and clip it.
+
+2.71.0 (2018-09-07) [Rcheck=T, Rbuild=F]
+  * R code
+    + Modified function `.validateData' (RH 180910)
+      - Keys created from > 2 columns (e.g., PID, SID, POS) were no longer being created properly.
+      - Orphaned hole check now only occurs if `polys' is actually a PolySet.
+    + Modified function 'importShapefile' to use the modified function 'placeHoles', if called to do so. (RH 180906)
+    + Modified function '.is.in' to report when all points lies on a boundary (RH 180906)
+      - There are holes is some solids that exactly define solids elsewhere.
+    + Modified function `placeHoles' in 'extraCode.r' (RH 180906)
+      - This function was using '.calcOrientation' inappropriately sometimes because
+      -   PBSmapping outer contours (solids) and inner contours (holes) do not rely on 
+      -   GIS standards of clockwise or counterclockwise tracing to determine the contour type.
+      - Modified function can now use either the orientation method or behaviour documented 
+      -   in the User's Guide: solids have POS increasing, holes have POS decreasing.
+    + Promoted 'is.in' subfunction to a hidden dot function usable by all functions. (RH 180828)
+      - The function now uses the PBSmapping C function 'findPolys' rather than relying on sp::point.in.polygon.
+    + Modified function '.validateData' to check for orphaned holes and to notify the user of their existence. (RH 180828)
+      - Issue arose when user Uli brought to light a set of polygons with 1 solid followed by 5 holes completely outside the solid.
+      - The object most likely was intended to portray 6 solids.
+      - This anomalous polygon came from using Google's OpenStreetMap folowed by a call to maptools::SpatialPolygons2PolySet.
+    + Separated functions into three distinct R files: (RH 180824)
+      - 'PBSmapping.r' contains the original suite of documented functions (more or less) for PBSmapping.
+      - 'extraFuns.r' contains any code that was added to PBSmapping after JTS and NB departed for better places.
+      - 'dotFuns.r' contains all the hidden dot functions (not documented).
+
+## Below: Functional categories for R code follow those in Table F.1 :
+## -- Import, Plotting, Computational, Object-related, Data sets
+
+2.70.5 (2018-06-05) [Rcheck=T, Rbuild=T]
+  * Plotting
+    + Added explicit argument `xpd=TRUE' to polygon commands in `.plotMaps' and `addPolys'. (RH 180605)
+      - The polygon command was not filling in polygons properly on Windows devga device when going through examples in `.PBSfigs'.
+  * C code
+    + Changed line 721 in `clipper.cpp' from `std::memset(e, 0, sizeof(TEdge));' to `*e = { };' on the advice of NB and his C++ wizard friend. (RH 180601)
+      - Response to Ripley's gcc8 check:
+      - clipper.cpp:721:34: warning: 'void* memset(void*, int, size_t)' clearing an object of non-trivial type 'struct ClipperLib::TEdge'; use assignment or value-initialization instead [-Wclass-memaccess]
+  * Documentation
+    + Changed format of ChangeLog to a standard that can be read by the function `readClog' in pkg `PBStools'. (RH 171027)
+    + Replaced `index.html' with `Links.html' in ../inst/doc because R build replaces the former with its own version. (RH 171003)
+
+2.70.4 (2017-06-28)
+  * C code
+    + Made changes to `init.c', 'PBSmapping.h|c', `clipperWrapper.h|cpp', `convGSHHS.c'; added new header file `convGSHHS.h'. (NB 170628)
+  * Examples
+    + Made minor changes to function `.PBSfigs'. (RH 170628)
+  * Computational
+    + Changed call in `calcVoronoi' from  `deldir::deldir' to `deldir' as it seemed to mess up the CRAN check for deldir's registered
+      - Fortran calls when launched from the Rd example for `calcVoronoi'. (RH 170627)
+      - The problem was not reproducible so I'm not sure what happened. 
+      - Potential compatibility issue: a Windows binary for `deldir' was downloaded for R-3.2.2 Patched and used for R-devel
+      - before deldir was downloaded directly through the R-devel update menu.
+
+2.70.3 (2017-06-26)
+  * C code
+    + Registered C routines (new CRAN request) using Roger Bivand's maptools `init.c' as a template. (NB/RH 170626)
+  * Documentation
+    + Updated the User's Guide to use Arial font to be more consistent with DFO CSAS and Canadian Technical Reports. (RH 170622)
+
+2.70.2 (2017-04-10)
+  * Documentation
+    + Updated the User's Guide `PBSmapping-UG.pdf (RH 170410)
+    + Updated the vignette `PBSmappingIntro.Rnw'. (RH 170406)
+    + Changed backticks ` in DESCRIPTION to single quotes ' (Kurt Hornik 2016-09-20)
+    + You need to set the BINPREF variable in etc/.../Makeconf and you can omit the ? (Uwe Ligges 2016-04-18)
+      - Old: BINPREF ?= c:/Rtools/mingw_64/bin/
+      - New: BINPREF = C:/Apps/R/Rtools/mingw_64/bin/
+
+2.70.1 (2016-04-04)
+  * Graphics
+    + Added a new function `addCompass' that can add a compass rose to a map. (RH 160401)
+  * Computational
+    + Added a new function `calcGCdist' to calculate great-circle distance. (RH 160401)
+  * Documentation
+    + Updated `PBSmappingIntro.Rnw' (RH 160331)
+
+2.70.0 (2015-08-12)
+  * Documentation
+    + New version format x.y.z
+    + Changed 2.69 to 2.70.0
+
+2.69  2015-04-23
+  * Documentation
+    + Last minute updates before another attempt to post on CRAN. (RH 150423)
+  * C code
+    + Addressed warning when DEBUG == 1 regarding signed/unsigned comparison. (NB 150409)
+    + Removed use of the token pasting operator (##). (NB 150409)
+  * Documentation
+    + Modified `joinPolys.Rd' to illustrate the `DIFF' operation between polyA (A,B) and polyB (C,D). (RH 150330)
+    + Updated `PBSmapping-UG.pdf' (and no longer includes Rd appendix because easily available on CRAN). (RH 150224)
+    + Declared S3methods for `print' and `summary' in the NAMESPACE file, as required by CRAN. (RH 150217)
+    + Updated `importGSHHS.Rd' to reflect changes made to function and to give 20 examples for various aprts of world. (RH 150216)
+  * Import
+    + Modified extensively `importGSHHS' to deal with various problems encountered by users (wrapping, border problems, etc.). (RH 150212)
+  * Computational
+    + Modified `refocusWorld' to return the `xlim' used in the refocus as an attribute called `rf.xlim' (for use in `importGSHHS'). (RH 150211)
+  * C code
+    + Updated Clipper to 6.2.1 and added (disabled) dbg output to clipperWrapper.cpp. (NB 150207)
+      - We received a bug report regarding joinPolys.  After significant testing/tracing, the bug appears to exist within Clipper 5.1.6.
+      - Rather than revert to 5.1.4, this commit upgrades Clipper to 6.2.1.
+  * Documentation
+    + Bumped up version for next posting to CRAN in 2015.
+
+2.68  2015-01-22
+  * Documentation
+    + Fixed some broken hyperlinks and merged `nepacLL.Rd', `nepacLLhigh.Rd', `worldLL.Rd', and `worldLLhigh.Rd' into `nepacLL.Rd' using aliases. (RH 150122)
+    + Ignored R CMD check: ``... used in a situation where it does not exist'' -- identified as a temporary bug in R-devel by Duncan Murdoch:
+      - http://r.789695.n4.nabble.com/R-CMD-check-quot-quot-used-in-a-situation-where-it-does-not-exist-td4701779.html
+    + Resolved missing line feed in `Makefile'; converted format from DOS to UNIX for `Makefile' and `*.cpp' files in `/inst/Utils'. (NB 150114)
+  * C code
+    + Eliminated warning when compiling `clipper.cpp'. (NB 150112)
+      - Commented out an unused variable declared within `clipper.cpp'. This commit turns that declaration into a comment to eliminate the warning.
+    + Updated clipper library from 5.1.4 to 5.1.6. (NB 150109)
+    + Added `SystemRequirements: C++11' to the DESCRIPTION file to alert user that compilation and linking should be done with a C++11 compiler. (NB 150109)
+      - The clipper library used by PBSmapping operates on coordinates stored as integers, and for those integers, it uses the "long long" type that 
+      - was introduced in the C++11 standard. When an R package requires C++11 features, the DESCRIPTION file must state this requirement.
+  * Documentation
+    + Added namespace when calling `deldir' and `read.dbf'. (NB 150109)
+      - PBSmapping calls `deldir' (package deldir) and `read.dbf' (package foreign),and for each, the code now specifies the namespace.
+    + Bumped up version for next posting to CRAN in 2015.
+
+2.67  2014-12-15
+  * C code
+    + Changed line in `clipperWrapper.cpp' from `ulong64 val = llabs(*f++);' to `ulong64 val = (ulong64)fabs(*f++);' (NB 141217)
+      - The C compiler 'clang' with -Wall reports that PBSmapping is misusing the C function abs in their code: see
+      - http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Portable-C-and-C_002b_002b-code
+  * Documentation
+    + Added Nicholas J. Lewin-Koh and Roger Bivand as authors because we use their C code `Rshapeget' for the function `importShapefile'. (RH 141217)
+  * Computational
+    + Added new argument `includeBdry' to functions `findCells' and `findPolys' -- see Issue 33. (RH 141215)
+  * Import
+    + Incorporated temporary fix for borders in function `importGSHHS' until more robust solution is found. (RH 140623)
+  * Documentation
+    + Jon requested that Rowan becomes the package Maintainer. (RH 140327)
+    + Bumped up version for next posting to CRAN using builds under R-3.0.3 (RH 140320)
+
+2.66  2014-03-10
+  * Computational
+    + Fixed bug in `joinPolys` identified by Andrea Romualdi (see Issue 31). (RH 140310)
+  * C code
+    + Modified gshhs.h to address Issue 30. (JTS 140218)
+  * Import
+    + Modified the function `importShapefile` to treat shape types (5,15,25) like 5, (3,13,23) like 3, and (1,11,21) like 1. (RH 131220)
+      - See `ESRI Shapefile Technical Description: An ESRI White Paper-July 1998` for more details.
+  * Documentation
+    + Updated `PBSmapping-UG.pdf` to reflect the new website for GSHHS, now called GSHHG. (RH 130503)
+    + Added Authors to DESCRIPTION file (based on C source code annotations); updated copyright dates. (RH 130503)
+    + Modified User's Guide. (RH 130501)
+    + Moved `PBSmapping-Intro.Rnw` to `vignettes` directory. (RH 130501)
+
+2.65  2013-04-22
+  * Plotting
+    + Added temporary function `.addAxis2` to address Issue 20 until NB updates code. (RH 130422)
+  * Documentation
+    + Updated the User's Guide. (RH 130411)
+    + Modified the `print` method to look for `.PBSmapEnv$PBSprint` in addition to a global `PBSprint`. (RH 130410)
+    + Added new temporary working environment called `.PBSmapEnv`. (RH 130410)
+  * Examples
+    + Modified example code in Rd files to use the new environment `.PBSmapEnv`. (RH 130410)
+  * C code
+    + Address odd joinPolys output observed in Puget Sound. (NB 130328)
+    + Updated Clipper from 5.1.3 to 5.1.4. (NB 130328)
+    + Change Clipper line endings from DOS (\r\n) to UNIX (\n). (NB 130323)
+    + Replaced the General Polygon Clipper (GPC) library with Clipper. (NB 130323)
+    + Fix compilation problem on Windows. (NB 130323)
+  * Plotting
+    + Support arrows with addLines. (NB 130216)
+    + Support multiple bg colours, min.size arg, ... in addBubbles. (NB 130216)
+    + Support additional fields in polyProps for addLines. (NB 130210)
+  * Documentation
+    + Move start-up message to .onAttach (NB 130210)
+    + In the process, updated copyright dates. (NB 130210)
+    + Updated LICENSE file, based on suggestion from Kurt Hornik. Version advanced slightly. (JTS 121128)
+
+2.64  2012-11-27
+  * Documentation
+    + Finalised some tweaks to the files DESCRIPTION and LICENSE. (RH 121127)
+    + Updated 'PBSmapping-UG.pdf' slightly and set the resolution to 150 dpi. (RH 121126)
+    + Bumped up version for yet another submission to CRAN.
+
+2.63  2012-11-19
+  * Documentation
+    + Submitted to CRAN and rejected by Brian Ripley who wants to see Alan Murta as a co-author. (JTS 121119)
+    + Provided licensing information that protects the General Polygon Clipper (GPC) library. (RH 121116)
+    + Wrapped calls to foreign C code in 'eval(parse(text=""))' to bypass the latest R check nonsense. (RH 121102)
+    + Changed Jon's email address to schnutej-dfo@shaw.ca (RH 121101)
+  * Computational
+    + Modified function 'placeHoles' to .Call("R_point_in_polygon_sp", ..., PACKAGE="sp"); still need to load package 'sp'. (RH 120405)
+    + Added new function 'placeHoles' to fix problem of mismatched holes and solids from ArcView. (RH 120404)
+  * Import
+    + Modified function 'importShapefile' to optionally use 'placeHoles' for fixing mismatched holes and solids. (RH 120404)
+  * Documentation
+    + Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 120404)
+
+2.62  2012-03-01
+  * C code
+    + Fixed source code problems identified by Brian Ripley. (NB 120301)
+      - Compiled code should not call functions which might terminate R nor write to stdout/stderr instead of to the console.
+      - The detected symbols are linked into the code but might come from libraries and not actually be called.
+      - Please fix (especially the call to exit).
+    + Resolved partial argument matching in functions identified by Brian Ripley. (RH 120301)
+  * Documentation
+    + Cleaned up various files in preparation for submission to CRAN. (RH 120229)
+  * C code
+    + Added further conditional compilation to gshhs.[ch] to address warnings in Windows OS. (NB 120228)
+  * Import
+    + Rewrote GSHHS import functionality and revised some related functions. (NB 120225)
+      - This rather large commit completely rewrites GSHHS functionality and provides a number of immediate advantages:
+      -   (a) support for the latest (2.20) GSHHS binary files, 
+      -   (b) support for multiple levels, e.g., lakes, islands, and ponds, within a single import with suitable ordering of polygons and their holes, 
+      -   (c) support for lines, e.g., rivers and borders, 
+      -   (d) more robust support functions, e.g., .fixGSHHSworld, and finally, 
+      -   (e) a more maintainable approach to GSHHS integration.
+      - Some specific changes include:
+      - (1) .fixGSHHSworld (PBSmapping.r)
+      -     -> support world maps centred on 0 in addition to 180 degrees.
+      - (2) importGSHHS (PBSmapping.r)
+      -     -> revised arguments to support the new behaviour (above);
+      -     -> process argument gshhsDB to support paths relative to home directories;
+      -     -> moved handling of minVerts from R to C;
+      -     -> moved clipping from C to R (to simplify C code);
+      -     -> ordered PIDs/SIDs to support holes.
+      - (3) convGSHHS.c
+      -     -> rewrote completely so that it is distinct from gshhs.c.
+      - (4) gshhs.c
+      -     -> added slight revisions to support calls to routines in convGSHHS.c.
+      - (5) gshhs.h
+      -     -> added slight revisions to support calls to routines in convGSHHS.c.
+      - (6) importGSHHS.Rd
+      -     -> revised to match the changes to the code.
+  * C code
+    + Reduced whitespace and break long lines in 'convGSHHS.c'. (NB 120224)
+  * Documentation
+    + Corrected spelling mistakes in Rd documentation. (NB 120224)
+  * Computational
+    + Added support for S hemisphere to LL <=> UTM conversion (convUL). (NB 120224)
+      - Added support for the southern hemisphere to convUL (and supporting functions) by adding a new 
+      - "southern" argument.  By default, the argument is NULL because detection is automatic when the 
+      - source is LL. For UTM source data, the default is FALSE because we typically work within the northern hemisphere.
+      - Added the ability to compile conversions.c (the supporting C code) as a stand-alone application.  
+      - When executed, the stand-alone executable performs a number of conversions that help validate the algorithm.
+    + Improved long/lat <=> UTM conversions; updated documentation ( Issue #9 ). (NB 120223)
+      - Issue #9  noted erroneous results given data that spanned more than one zone to the right/left 
+      - of the intended central zone.  This update improves our implementation by correcting a number of 
+      - (implementation) errors (described below), but the problem still persists.
+      - The earlier (2001) implementation had a number of optimizations that made it terribly difficult 
+      - to verify the code against the published algorithm and inspecting the implementation revealed some errors:
+      - (1) the calculation of 'n' used scaled 'a'/'b' rather than original 'a'/'b',
+      - (2) the calculation of 'e^2' used scaled 'a'/'b' rather than original 'a'/'b', and
+      - (3) the calculation of 'm' was not iterative as suggested in the algorithm.
+      - This new version more closely matches the published algorithm and is consequently easy to verify.
+      - The performance is similar to the old algorithm (faster in some cases, slower in others).
+  * Data sets
+    + Re-compressed rda files; changed namespace to explicitly export; changed dependency to R (>= 2.10). (RH 111221)
+  * Plotting
+    + Fixed missing longitude/latitude X/Y labels on Mac OS X. (NB 111220)
+      - When plotting a longitude/latitude PolySet on Mac OS X, the X/Y labels wouldn't plot.
+      - Our earlier use of \260 for the degree sign depends on the underlying character set, so it isn't sufficiently portable.
+      - Let's hope the current approach works a little better...
+    + Updated .addAxis(...) to address layout(...) incompatibility. (NB 111220)
+      - .addAxis(...) would backup/restore "omi" and "mfg", which would impact how layout(...) handles multiple plots.
+      - This behaviour is unnecessary in the current version of R, so it has been removed.
+    + Added refocusWorld() to help plot maps centred on the mid-Atlantic ( issue #4 ). (NB 111219)
+      - This new function accepts a PolySet containing one or more polygons with X-coordinates that collectively span 
+      - approximately 360 degrees. 
+      - The function effectively joins the PolySet into a cylinder and then splits it at an arbitrary longitude according
+      - to the user-specified limits.  
+      - Modifications in the resulting PolySet are restricted to shifting X-coordinates by +/- multiples of 360 degrees,
+      - and instead of clipping polygons, the return value simply omits out-of-range polygons.
+    + Fixed indenting. (NB 111219)
+  * Documentation
+    + Clarified use of "latter" on page 13 of UG (issue #10). (NB 111214)
+      - Note: someone will need to regenerate the PDF.  I tried to do so using an open-source PDF creator, 
+      - but the resulting file was larger than the one produced by Distiller.
+  * Plotting
+    + Amended r18, which didn't delete addBubbles.r (NB 111214)
+    + Incorporated addBubbles() into PBSmapping.R (NB 111214)
+      - Added addBubbles() to PBSmapping.R and made many changes including completely reformatting all of the code,
+      - improving the comments, changing some of the logic, and addressing bugs.
+      - The bugs included (a) testing floating-point equality using ==, which would result in inconsistent behaviour and 
+      - (b) sizing bubbles in a way that that was inconsistent with the documentation.
+  * C code
+    + Changed EOL character from \r\n to \n for polygons.c (NB 111214)
+      - When running R CMD CHECK, the script complained about the end-of-line character for this particular file.
+      - I've changed the character to eliminate the warning.
+  * Documentation
+    + namespace requires the use of '.onLoad' instead of '.First.lib'. (RH 111109)
+    + R-2.14.0 now requires all packages to have a namespace.  (RH 111109)
+    + Added the UG document (PBSmapping-UG.doc) to a 'documentation' folder under 'trunk' in the SVN repository. (RH 111003)
+    + Changed status of Issue 11 to 'Started'  - incorporate PBSmapping protocols into function 'addBubbles'. (NB 111002)
+    + Changed status of Issue 9  to 'Accepted' - user is possibly talking about 'MGRJ' latitude bands. (NB 111002)
+    + Changed status of Issue 10 to 'Accepted' - word change needed in UG. (NB 111002)
+    + Changed status of Issue 8  to 'Invalid'  - UG appears to be unlocked now. (NB 111002)
+    + Changed status of Issue 1  to 'Invalid'  - segmentation fault not reproducible and user never supplied code. (NB 111002)
+    + Improved path expansion in 'importShapefile' using R's 'path.expand' and ' normalizePath'. (NB 111002)
+    + Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 110908)
+  * Computational
+    + Fixed a bug in appendPolys() and update the function's documentation. (NB 110905)
+      - Within appendPolys(), a reference to polys used parentheses rather than brackets causing R 
+      - to look for a non-existent polys function rather than the argument.
+      - The documentation for the function was also updated to clarify the determination of the polygon's PID.
+
+2.61  2010-06-23  Rowan
+  * Import
+    + Revised 'importShapefile' to fix a small bug associated with reading a shapefile's projection. (RH 100601)
+
+2.60.8  2010-06-22  Jon
+  * C code
+    + Fixed bug related to clipping, found by Denis Chabot
+    + Nick Boers found that "polygons.c" should have *inVerts > 0 in sutherlandHodgmanPolygonClip
+    + Replaced "polygons.c" with the corrected version 
+
+2.60  2010-04-27  Jon
+  * Documentation
+    + New version number, consistent with package building scheme
+  * C code
+    + Added "#include <errno.h>" to "convGSHHS.c", based on a message from Brian Ripley
+
+2.59.02  2010-01-07  Rowan
+  * Plotting
+    + Added new function 'addBubbles' created by Denis Chabot.
+
+2.59.01  2009-07-30  Rowan
+  * Computational
+    + Modified 'makeTopography()' to handle large output matrices better.
+      - Introduced a precision argument to increase the speed of calculations for debugging and draft quality.
+
+2.59  2008-10-07  Rowan
+  * Documentation
+    + Standardised 'ChangeLog.txt' of PBS packages for viewing in HTML.
+      - Header lines comprise:  version  date  builder
+    + Standardised references section in '*.Rd' files.
+    + POSTED ON CRAN.
+
+2.58  2008-08-25  Rowan
+  * Plotting
+    + Modified function '.addLabels()' to NOT allow values in '...' to flow through to 'title()'.
+      - Conflicts with formal arguments like 'xlab'.
+
+2.57  2008-07-24  Rowan
+  * Plotting
+    + Modified function '.addLabels()' to allow values in '...' to flow through to 'title()'.
+  * Documentation
+    + POSTED ON CRAN.
+
+2.56a  2008-07-23  Jon
+  * Documentation
+    + Modified the vignette and changed the file name to 'PBSmappingIntro'.
+
+2.56  2008-07-16  Rowan
+  * Import
+    + Revised 'importShapefile()' and fixed bug when 0-vertex polygons occur.
+  * Documentation
+    + Added '00ReadMe' vignette.
+    + Moved User's Guide and 'ChangeLog.txt' to '../inst/doc'.
+  * Plotting
+    + Removed 'gamma' from 'legalNames' in '.plotMaps'.
+
+2.55  2008-01-22  Rowan
+  * Computational
+    + Revised 'calcConvexHull()' in PBSmapping.r to use 'chull()' in package grDevices
+    + Removed 'calcConvexHull' from PBSmapping.c
+  * C code
+    + Removed 'convUL', 'sortPointList', and 'rightTurn' from polygons.c (and polygons.h).
+  * Examples
+    + Substituted 'findCells()' for 'findPolys()' in '.PBSfig09()'.
+  * Documentation
+    + Built with R-2.6.1.
+    + POSTED ON CRAN.
+
+2.54  2007-10-03  Rowan
+  * Documentation
+    + Updated User's Guide
+    + Built with R-2.6.0.
+    + POSTED ON CRAN.
+
+2.53  2007-10-01  Nick
+  * C code
+    + src/convGSHHS.c: Modified 'importGSHHS (...)' to remove the local variable 's' 
+      - involved in the call to 'extracGSHHS (...)' in hopes of eliminating a compiler warning.
+    + Modified the 'inFileName' argument of  'extracGSHHS (...)' so that the argument is 
+      - now 'const char *' to eliminate a warning message from the C compiler.
+  * Computational
+    + R/PBSmapping.R: Modified 'combineEvents (...)' to remove code that supported S-PLUS.
+      - The code caused a warning message in the R build because R doesn't support the 'unpaste' function.
+  * Import
+    + Modified 'importPolys (...)', 'importEvents (...)', and 'importLocs (...)' 
+      - to change 'T' to 'TRUE' and '=' to '<-'.
+  * Examples
+    + R/PBSfigs.R: Modified '.initPBS (...)', '.PBSfig05 (...)', and
+      - '.PBSfig10 (...)' to replace 'T'/'F' with 'TRUE'/'FALSE'.
+    + Modified '.initPBS (...)' to replace vectorized (|) with non-vectorized (||) operator.
+
+2.52a  2007-09-30  Nick
+  * C code
+    + src/PBSmapping.c: Modified 'void pnpoly (...)' to address a warning message
+      - about 'limits' being used without initialization.
+    + src/convGSHHS.c: Modified 'convGSHHS (...)' to address a warning
+      - message about C++ style comments and correct a spelling mistake.
+    + Modified in various other places to change C++ style comments to C style.
+
+2.52  2007-08-28  Rowan
+  * Computational
+    + Revised 'makeTopography()' to allow combinations z[x,y] to be NA or duplicated.
+      - If the latter, values of Z for z[x,y] are summarised using the new argument 'func'.
+
+2.51  2007-07-11  Rowan
+  * Examples
+    + Revised example code in .\man\makeTopography.Rd (changed "extra" to "Extra" for UNIX compatibility).
+    + Changed name of "VERSION.TXT" to "GPChistory.txt" and moved from .\src\ to .\R\inst\Extra.
+  * Documentation
+    + POSTED ON CRAN.
+
+2.50  2007-06-29  Rowan
+  * Documentation
+    + Revised the User's Guide & Rd files. Bumped up version for release.
+
+2.17  2007-06-06  Rowan
+  * Examples
+    + Changed code for '.PBSfig08()' in .\R\PBSfigs.r to account for new PIDs in revised nepacLLhigh.
+    + Removed references to S-PLUS from .\R\PBSfigs.r
+  * Documentation
+    + Revised the UG.
+
+2.16  2007-06-06  Rowan
+  * Documentation
+    + Revised the User's Guide.
+    + Revised Rd files.
+  * Examples
+    + Checked and revised 'aleutian' bathymetry example for Appendix B.
+  * Computational
+    + Removed the function 'outputGSHHS()' from .\R\PBSmapping.r
+
+2.15  2007-06-04  Rowan
+  * Computational
+    + Recoded '.fixGSHHSWorld()'
+  * Import
+    + Added R code to 'importGSHHS()' to activate argument n (in C, SEXP minVerts is not used).
+  * Data sets
+    + Rebuilt data objects: 'nepacLL', 'nepacLLhigh', 'worldLL', 'worldLLhigh' using DB gshhs_1.5.zip
+  * Examples
+    + Extracted and removed figure functions from .\R\PBSmapping.r and placed them into file: .\R\PBSfigs.r 
+  * Documentation
+    + Updated the user guide PBSmapping-UG.pdf
+    + Removed directory .../inst/GSHHS.
+    + Changed the name of 'checkClipLimits()' to '.checkClipLimits()'.
+    + Changed names ('polySet', 'polyData', 'eventData', 'locationSet') to
+      - ('PolySet', 'PolyData', 'EventData', 'LocationSet') in .\R\PBSmapping.r.
+
+2.14  2007-05-29  Alex
+  * C code
+    + Updated GSHHS C code to read new database format:
+      - url: gshhs_1.8_src.zip DB: gshhs_1.5.zip from ftp://ftp.soest.hawaii.edu/pwessel/gshhs
+
+2.13  2007-02-14  Alex
+  * C code
+    + R/PBSmapping.r: Added 'outputGSHHS()', 'importPolys()', 'importEvents()', 'importLocs()'.
+    + src/convGSHHS.c: handles .Call interface
+  * Documentation
+    + man/importGSHHS.Rd: Created documentation
+    + man/outputGSHHS.Rd: Created documentation
+
+2.12  2007-02-08  Alex
+  * Import
+    + R/PBSmapping.r: Added 'importGSHHS()'.
+  * C code
+    + src/convGSHHS.c: Created underlying C code for 'importGSHHS'.
+  * Documentation
+    + man/importGSHHS.Rd: Created documentation
+
+2.11  2007-01-23  Rowan
+  * Documentation
+    + Added two directories under '.../inst':
+      - GSHHS
+      -  Steps to convert GSHHS to PBSmapping format.
+      -  Wessel's C-code for converting binary to ASCII.
+      -  Boers' code to convert ASCII to PBSmapping.
+      -  Boers' code (& Couture-Beil) to clip polygons
+      - Utils
+      -  C-code by Boers and Couture-Beil for 'clipPolys()', 'convUL()', and 'findPolys()'.
+    + Changed 'convUL.Rd' to specify that UTM coordinates are in kilometres.
+  * Data sets
+    + Re-saved the data files using 'save("data",file="data.rda")'.Compresses binary files more than earlier saves.
+
+2.10b  2007-01-03  Jon
+  * Computational
+    + Built for R only, with first attempts to remove traces of S-PLUS.
+
+2.10a  2006-11-14  Nick
+  * Import
+    + R/PBSmapping.R 'importShapefile()': Eliminated a bug that caused some 
+      - "reef" shapefiles not to load.  It occurred when no POS entries needed reversing.
+
+2.10  2006-10-02  Nick
+  * Documentation
+    + R/PBSmapping.R: Added argument 'PACKAGE = "PBSmapping"' to all .C() calls.
+    + man/contourLines.Rd: Removed (only necessary for S-PLUS).
+  * C code
+    + src/gpc.c: Removed "../common/" from #include's.
+    + src/PBSmapping.c: Removed "../common/", "../gpc/", and "../mcd" from #include's.
+
+2.09  2006-09-04  Nick
+  * Computational
+    + RS_Source/PBSmapping '.expandEdges()': Added function to address an issue in 'calcVoronoi()'.
+      - when points appeared outside of the polygons.
+    + 'calcVoronoi()': Updated to use the new function '.expandEdges()' and create a PolySet with the proper extents.
+  * Documentation
+    + RS_Docs/calcArea.Rd: Fixed typo.
+    + RS_Docs/dividePolys.Rd: Fixed typo.
+    + RS_Docs/calcSummary.Rd: Fixed typo.
+    + RS_Docs/importShapefile.Rd: Fixed typo.
+    + RS_Docs/pythagoras.Rd: Fixed typo.
+    + RS_Docs/calcVoronoi.Rd: Fixed typo.
+    + RS_Docs/importShapefile.Rd: Updated to reflect new argument in function.
+    + RS_Source/PBSmapping importShapefile(): Added arguments "projection" and "zone".
+    + RS_Docs/calcVoronoi.Rd: Updated to reflect the new behaviour where it returns a PolySet matching the limits.
+    + POSTED ON CRAN.
+
+2.08g  2006-08-25  Nick
+  * Documentation
+    + RS_Docs/calcVoronoi.Rd: Added comments about setting the "projection" and "zone" attributes.
+  * Computational
+    + RS_Source/PBSmapping 'calcVoronoi()': No longer uses the attributes "projection" and "zone"
+      - from the input data set.  Instead, sets "projection" to 1 and "zone" to NULL; these
+      - values are more appropriate for the result.
+
+2.08f  2006-08-15  Nick
+  * Computational
+    + RS_Source/PBSmapping '.addCorners()': Cleaned up the code. 
+    + 'calcVoronoi()': Cleaned up the code.
+
+2.08e  2006-08-10  Nick
+  * C code
+    + C/common/polygons.c 'convexHull()': Fixed a (trivial) bug in 'calcConvexHull()'
+      - that caused it to produce incorrect (bizarre) results.
+  * Computational
+    + RS_Source/PBSmapping '.addCorners()': Added function.
+
+2.08d  2006-08-04  Nick
+  * Documentation
+    + RS_Docs/calcVoronoi.Rd: Updated to reflect the removed "close" argument.
+  * Computational
+    + RS_Source/PBSmapping 'calcVoronoi()': Removed 'close' argument.
+
+2.08c  2006-07-20  Nick
+  * Documentation
+    + RS_Docs/dividePolys.Rd: Minor updates.
+    + RS_Docs/combinePolys.Rd: Minor updates.
+  * Plotting
+    + RS_Source/PBSmapping 'addPolys()': Identified and corrected two bugs that caused errors 
+      - in S-PLUS re: the "colHoles" argument.  One bug involved a difference between R/S-PLUS
+      - polygon commands, where the S-PLUS version fails when given less than 3 points.
+      - The other involved the code 'pProps$colHoles[is.na(pProps$colHoles)] <- "transparent"';
+      - which would convert the 'colHoles' element to a character vector even if it made no replacements.
+    + '.insertNAs()': Created function with a similar _purpose_ as the old 'insertNAs()' function 
+      - in 'addLines()' and 'addPolys()'.  This function replaces it, operates drastically different, and 
+      - is faster (in one test in R, ~11 seconds for 'plotMap(nepacLLhigh)' compared to ~77 seconds previously).
+
+2.08b  2006-07-19  Nick
+  * Documentation
+    + RS_Docs/calcVoronoi.Rd: Created a better example based on Rowan's code/suggestion.
+  * Computational
+    + RS_Source/PBSmapping 'calcVoronoi()': Corrected bug where the function would fail 
+      - when a polygon contained more than two points on a boundary.
+
+2.08a  2006-07-18  Nick
+  * Computational
+    + RS_Source/PBSmapping '.checkProjection()': Updated error message since it can compare 
+      - the projection of non-PolySet with that of a plot region.
+  * Plotting
+    + 'addLabels()': Identified and fixed bug where EventData containing a PID/SID column 
+      - would incorrectly be recognized as PolyData.
+  * Object-related
+    + Removed message when 'fullValidation' == T : (is.EventData, is.LocationSet, is.PolyData, is.PolySet)
+    + Added a check for "data frames" to better support conversions between PBS Mapping data types:
+      - ('as.EventData()', 'as.LocationSet()', 'as.PolyData()', 'as.PolySet()').
+  * Documentation
+    + RS_Docs/importShapefile.Rd: Cleaned up documentation and expanded it for clarity.
+
+2.08  2006-07-17  Nick
+  * Documentation
+    + R_Other/DESCRIPTION (Suggests): Removed suggests for 'sp' since not (yet) suggested.
+    + RS_Source/PBSmapping '.pbsproj()': Commented out to make release 2.08.
+
+2.07c  2006-07-16  Nick
+  * Documentation
+    + RS_Docs/importShapefile.Rd: Updated to reflect additional argument and ability to import DBFs.
+  * Import
+    + RS_Source/PBSmapping (importShapefileDBF): Removed function.
+    + 'importShapefile()': Updated function to import DBFs.
+
+2.07b  2006-07-13  Nick
+  * Documentation
+    + RS_Docs/calcVoronoi.Rd: Added "close" argument to match code.
+  * Computational
+    + RS_Source/PBSmapping 'calcVoronoi()': Added warning for data of an "LL" projection.
+    + RS_Source/PBSmapping 'calcVoronoi()': Added argument "close = TRUE".
+      - When TRUE, calls "closePolys" to close the polygons (i.e., corners).
+
+2.07a  2006-07-10  Nick
+  * Documentation
+    + RS_Docs/combinePolys.Rd: Created documentation for new function.
+  * Computational
+    + RS_Source/PBSmapping 'dividePolys()': Created new function.
+    + RS_Source/PBSmapping 'calcVoronoi()': Added code to add attributes to the result as well as close the polygons.
+    + 'combinePolys()': Created new function.
+
+2.07  2006-07-07  Nick
+  * Computational
+    + RS_Source/PBSmapping 'SpatialPolygons2PolySet()': Commented out to make release 2.07.
+    + 'SpatialLines2PolySet()': Commented out to make release 2.07.
+    + 'SpatialPoints2EventData()': Commented out to make release 2.07.
+    + RS_Source/PBSmapping '.checkRDeps()': Made hidden by renaming from 'checkRDeps()'; 
+      - updated other functions to reflect the change.
+  * Documentation
+    + RS_Docs/importShapefileDBF.Rd: Created.
+    + RS_Docs/importShapefile.Rd: Created.
+    + RS_Docs/calcConvexHull.Rd: Updated description of "xydata" to improve clarity.
+    + RS_Docs/calcVoronoi.Rd: Created.
+  * Import
+    + 'importShapefile()': Rewrote so that it depends only on the C code included with  "maptools" and nothing else.
+      - It's now much faster as it no longer converts to Spatial classes first. It still supports holes for PolySets.
+    + 'importShapefileDBF()': Updated/simplified since DBF files contain one record per PID/EID.
+      - No longer reads in the shapefile to create the indices.
+
+2.06f  2006-07-06  Nick
+  * Computational
+    + RS_Source/PBSmapping 'calcVoronoi()': Updated to create a consistent interface with other PBS Mapping functions.
+    + 'calcVoronoi()': Resolved issue re: ordering of points.
+
+2.06e  2006-07-05  Nick
+  * Computational
+    + RS_Source/PBSmapping 'calcVoronoi()': Added preliminary version of new "calcVoronoi" function.
+    + 'locatePolys()': If a variable named "SID" existed before the call, it would break the function. Fixed.
+  * Plotting
+    + RS_Source/PBSmapping (addPolys): Finished adding a first version of the "colHoles" argument.
+  * Documentation
+    + RS_Docs/addPolys.Rd: Added "colHoles" argument.
+    + RS_Docs/plotPolys.Rd: Added "colHoles" argument.
+    + RS_Docs/plotMap.Rd: Added "colHoles" argument.
+
+2.06d  2006-07-04  Nick
+  * Computational
+    + RS_Source/PBSmapping 'findCells()': Removed final call to 'as.LocationSet()' to 
+      - improve performance and added code to manually set the class.
+    + '.preparePolyProps()': Simplified the code.
+  * Plotting
+    + 'plotMap()': Added "colHoles" argument for hole colours and included it in the call to '.plotMaps()'.
+    + 'plotPolys()': Added "colHoles" argument and added it in the call to '.plotMaps()'.
+    + '.plotMaps()': Added "colHoles" argument and included it in the call to 'addPolys()'.
+    + 'addPolys()': Added "colHoles" argument.
+
+2.06c  2006-06-21  Nick
+  * Documentation
+    + R_Other/DESCRIPTION (Suggests): Added suggests for "foreign",
+      - "sp", and "maptools" to use the new import functionality.
+
+2.06b  2006-06-19  Nick
+  * Computational
+    + RS_Source/PBSmapping '.pbsproj()': Created function.
+    + 'SpatialPolygons2PolySet()': Created function.
+    + 'SpatialLines2PolySet()': Created function.
+    + 'SpatialPoints2PolySet()': Created function.
+  * Import
+    + 'importShapefile()': Created function.
+    + 'importShapefileDBF()': Created function.
+    + '.getBasename()': Created function.
+
+2.06a  2006-05-24  Nick
+  * C code
+    + C/Makefile: Added code that attempts to detect R < 2.3.0  to account for 
+      - the new DLL build procedure. No longer defines the CYG_DIR and R_DIR variables;
+      - instead, it expects them to be set in an environment variable.
+    + Added new targets (depR and depCygwin) to check whether the appropriate environment variables are defined.
+
+2.06  2006-05-17  Nick
+  * Computational
+    + RS_Source/PBSmapping '.getGridPars()': Replaced the call to 'identical()' with
+      - '!is.character(all.equal())' because S-PLUS 2000 lacks an 'identical' function.
+  * Documentation
+    + SPLUS6.sh: Added the path to the S-PLUS 6.2 CHAPTER command.
+    + POSTED ON CRAN.
+
+2.05  2006-05-10  Nick
+  * Computational
+    + RS_Source/PBSmapping 'findPolys()': Renamed the argument 'avg' to 'maxRows' so that 
+      - the user can now enter the estimated number of  rows in the output. 
+      - Behavior is consistent with 'joinPolys()', which has a 'maxVerts' argument.
+    + 'findPolys()': Updated the error messages to match the 'maxRows' argument.
+    + 'joinPolys()': Updated the error messages to match the 'maxVerts' argument.
+    + 'joinPolys()': Removed dead code where it formerly calculated 'outCapacity'.
+  * Documentation
+    + RS_Docs/makeGrid.Rd: Clarified the meaning of 'i' and 'j' in the details section.
+      - Corrected an off-by-one error with 'm' and 'n' in the details section.
+    + RS_Docs/findPolys.Rd: Updated to reflect renaming the 'avg' argument to 'maxRows'.
+    + POSTED ON CRAN.
+
+2.04  2004-11-14  Nick
+  * C code
+    + Replaced all instances of long with PBSINT to quickly support R's use of 'int' rather than 'long'.
+      - Will make similar replacements in the dependent files.
+    + Checked GPC functions to ensure appropriate types were being passed into the GPC,
+      - because I won't make similar replacements within that module
+  * Documentation
+    + POSTED ON CRAN.
+
+2.03  2005-06-01  Nick
+  * Documentation
+    + POSTED ON CRAN.
+
+2.02  2004-11-18  Nick
+  * Documentation
+    + POSTED ON CRAN.
+
+2.01  2004-09-22  Nick
+  * Documentation
+    + POSTED ON CRAN.
+
+2.00  2004-08-23  Nick
+  * Documentation
+    + de nada
+
+1.99b  2004-08-16  Nick
+  * C code
+    + Moved 'isPolyConvex()' to polygons.c
+    + Moved 'nPolyIntersects()' to polygons.c
+    + Moved 'isRetrace()' to polygons.c
+    + Moved 'linesIntersect()' to polygons.c
+
+1.99a  2004-08-03  Nick
+  * Object-related
+    + Added note to 'isPolyConvex()'
+  * Documentation
+    + POSTED ON CRAN.
+
+1.99  2004-07-29  Nick
+  * Computational
+    + Updated 'joinPolys()' to use existing PIDs when either 'polysA' or 'polysB' contains only one "generic" polygon
+
+1.98  2004-07-28  Nick
+  * Computational
+    + Rewrote 'joinPolys()' and added several functions ('gpcOutputPoly()', 'gpcCreatePoly()')
+      - to support it; the code is much cleaner (and more powerful now).
+
+1.93  2004-07-21  Nick
+  * Documentation
+    + de nada
+
+1.92  2004-07-18  Nick
+  * Documentation
+    + de nada
+
+1.91  2004-07-12  Nick
+  * Documentation
+    + de nada
+
+1.90d  2004-07-05  Nick
+  * Computational
+    + Renamed 'convexHull()' to 'calcConvexHull()';
+      - it called 'calcConvexHull()', and renamed this call to 'convexHull()'.
+
+1.90c  2004-06-30  Nick
+  * Computational
+    + Added 'isConvex()'
+    + Added 'nPolyIntersects()'
+
+1.90b  2004-06-29  Nick
+  * Computational
+    + Added 'isRetrace()' to support 'isIntersecting()'.
+    + Added 'lineIntersect()' to support 'isIntersecting()'.
+
+1.90a  2004-06-28  Nick
+  * Computational
+    + Added 'isIntersecting()' to determine if a polygon is self-intersecting.
+
+1.90  2004-06-22  Nick
+  * Documentation
+    + de nada
+
+1.80  2004-06-21  Nick
+  * Computational
+    + Changed 'calcArea()' to match new interface for 'calcPolyArea()'; 
+      - can now return negative areas for holes; substantially simplified function.
+
+1.70  2004-06-18  Nick
+  * Computational
+    + Removed 'fixPOS()' and 'integrateHoles()'.
+
+1.60  2004-06-17  Nick
+  * Documentation
+    + Cleaning
+  * Computational
+    + Added 'rollupPolys()' to replace 'fixPOS()' and 'integrateHoles()' - but it does much more than those two.
+
+1.50  2004-06-16  Nick
+  * C code
+    + Adjusted paths to #include's
+
+1.40  2004-06-15  Nick
+  * Computational
+    + Renamed 'integrateHoles()' to 'mergePolys()';
+      - now merges in all SIDs when specified as well as those representing holes.
+  * C code
+    + Fixed huge memory leak and bug in 'joinPolys()' -- the clip polygon wasn't handled correctly.
+
+1.30  2004-06-14  Nick
+  * Documentation
+    + de nada
+
+1.20d  2004-06-10  Nick
+  * Computational
+    + Gave 'fixPOS()' the ability to update X/Y values so that it can make polygons that follow
+      - the GIS standards for clockwise/counter-clockwise.
+    + Renamed 'calcPolygonArea()' to 'calcPolyArea()'
+
+1.20c  2004-06-09  Nick
+  * C code
+    + Performed preliminary memory tests on all functions, and none appeared to have memory leaks.
+    + Added 'calcOrientation()' to determine whether vertices are clockwise or counter-clockwise.
+
+1.20b  2004-06-08  Nick
+  * Computational
+    + Added 'thickenPolys()' (only supports UTM).
+
+1.20a  2004-06-02  Nick
+  * Computational
+    + Updated 'thinPolys()' to support UTM.
+
+1.20  2004-05-30  Nick
+  * Documentation
+    + de nada
+
+1.10c  2004-05-26  Nick
+  * C code
+    + Fixed huge memory leaks in 'joinPolys()'.
+    + Added support for all R-accessible functions to interface with MemCheckDeluxe.
+
+1.10b  2004-05-24  Nick
+  * C code
+    + Fixed huge bug in 'joinPolys()', where an error would be signalled where one didn't really exist
+      - (check if all holes were processed was placed in the wrong spot...).
+
+1.10a  2004-05-20  Nick
+  * Computational
+    + Added 'convexHull()'
+
+1.10  2004-05-16  Nick
+  * Documentation
+    + de nada
+
+1.00e  2004-05-12  Nick
+  * Computational
+    + Renamed 'clipToPoly()' to 'joinPolys()'.
+    + Extensively cleaned up 'joinPolys()' code.
+  * C code
+    + Added 'extern gpc_success' to catch errors that occur within GPC.
+    + Discovered setjmp.h (setjmp() and longjmp())!!!
+      - Now I can reliably detect memory allocation errors that occur in GPC!!!
+
+1.00d  2004-05-11  Nick
+  * Computational
+    + Renamed 'clipPoly()' to 'clipToPoly()'.
+
+1.00c  2004-05-10  Nick
+  * C code
+    + Continued use of the Greiner/Hormann polygon clip routine would require accounting for numerous special cases;
+      - switching to the gpc (General Polygon Clipper) library.
+    + Fully implemented an interface to the gpc library (holes and all).
+  * Documentation
+    + We will need to rename the R function from 'clipPoly' to something more intuitive.
+
+1.00b  2004-05-08  Nick
+  * Computational
+    + Added 'clipPoly()' function to clip a polygon against another polygon.
+
+1.00a  2004-05-04  Nick
+  * Computational
+    + Added 'thinPolys()' function.
+
+1.00  2004-01-04  Nick
+  * Computational
+    + Cosmetic changes to the code.
+
+0.99  2003-12-22  Nick
+  * Computational
+    + Bug fix: previously, 'clip()' assumed that if the first vertex in a polygon was not equal to 1, then the 
+      - polygon must be a hole; now, it looks at the first two vertices to determine increasing or decreasing order.
+
+0.98  2003-08-15  Nick
+  * Computational
+    + Renamed functions:
+      - 'ulConv()' --> 'convUL()'
+      - 'locateEvents()' --> 'findPolys()'
+      - 'clipPolys()' --> 'clip()'
+
+0.97  2003-08-14  Nick
+  * Computational
+    + Fixed bug in 'calcArea()' where polygons with multiple components were not being summed.
+
+0.96  2003-08-05  Nick
+  * Computational
+    + Fixed epsilon.
+
+0.95  2003-07-27  Nick
+  * Computational
+    + Rewrote 'closePolys()'
+
+0.94  2003-07-23  Nick
+  * C code
+    + Moved 'pointInPolygon' to polygons.c/.h
+    + Renamed ulconv.c/.h to conversions.c/.h (in case we add more conversions).
+    + Creating a "floating.h" for floating point equality test, etc.
+    + Moved 'clipPolygon' to polygons.c/.h
+
+0.93  2003-07-21  Nick
+  * Computational
+    + Removed 'lines_intersect()' from the file (not used).
+  * C code
+    + Moved 'calcPolygonArea' to its own files, polygons.c/.h
+    + In time, polygon clipping should be moved to the polygons.c/.h files.
+
+0.92  2003-07-16  Nick
+  * Computational
+    + Changed the interface to 'fixPOS()' so that it will take floating-point POSs as input.
+    + Moved 'fixBound()' to R.
+
+0.91  2003-07-14  Nick
+  * Documentation
+    + Started the change log
+
+
+To integrate with stuff above:
+# Change Log:
+#   27 Jun 2003 [Nicholas Boers]
+#     - created empty functions, started to fill them
+#   30 Jun 2003 [Nicholas Boers]
+#     - continued to fill functions, and get the interaction between
+#       the S-Plus/R and C code working correctly (fixBounds, fixPOS,
+#       ...)
+#   02 Jul 2003 [Nicholas Boers]
+#     - continued to fill functions (clipLines, clipPolys, ...)
+#   03 Jul 2003 [Nicholas Boers]
+#     - continued to fill functions (addLines, addPolys, ...)
+#   04 Jul 2003 [Nicholas Boers]
+#     - continued to fill functions (closePolys, locateEvents,
+#       combineEvents, ...)
+#   07 Jul 2003 [Nicholas Boers]
+#     - cleaned up some functions
+#     - changed PolyChar (an instance of PolyChar) back to the strict
+#       definition from the specifications
+#   08 Jul 2003 [Nicholas Boers]
+#     - verified the "correction" of PolyChar
+#     - corrected a bug showing up in R
+#     - renamed polyChar to polyProps
+#   09 Jul 2003 [Nicholas Boers]
+#     - fixed various bugs such as incorrectly scaled axis ticks
+#     - made locateEvents aware of holes
+#     - renamed "proj" to "projection"
+#     - increased efficiency of pnpoly
+#     - generated skeletons for new functions
+#   10 Jul 2003 [Nicholas Boers]
+#     - implemented makeGrid and makeProps
+#   11 Jul 2003 [Nicholas Boers]
+#     - implemented convUL and calcArea
+#   14 Jul 2003 [Nicholas Boers]
+#     - fixed a bug in all the C-function wrappers so that they work
+#       when one row is returned
+#     - fixed numerous other bugs
+#   15 Jul 2003 [Nicholas Boers]
+#     - fixed bug in .createPolyProps, where elements in the PID/SID
+#       columns could be factors (and this would result in wrong
+#       polygons being plotted in S-Plus)
+#     - fixed numerous other bugs
+#   16 Jul 2003 [Nicholas Boers]
+#     - updated locatePoints() to test the polyset before locator() is
+#       called
+#       - made it hidden
+#     - renamed OLDPOS to oldPOS (to match documentation)
+#     - improved validation of data types: checking for NAs, rewrote
+#       validate routines
+#   17 Jul 2003 [Nicholas Boers]
+#     - finished updating the validate routines
+#     - read through the complete code looking for bugs
+#     - started to optimize the plotting routines...
+#   18 Jul 2003 [Nicholas Boers]
+#     - continue working on those plotting routines...
+#     - rewrote portions of .createPolyProps to support more efficient
+#       plotting
+#       - made it so polyProps always contains an SID column
+#   21 Jul 2003 [Nicholas Boers]
+#     - fixed addPolys so it takes advantage of the new polyProps
+#       structure
+#     - renamed locateEvents --> findPolys
+#     - implemented locateEvents and locatePolys
+#   22 Jul 2003 [Nicholas Boers]
+#     - fixed several bugs
+#     - rearranged the source file into alphabetical order
+#     - cleaned up several inconsistencies
+#   29 Jul 2003 [Nicholas Boers]
+#     - working on cleaning up the labelling of the axis
+#   30 Jul 2003 [Nicholas Boers]
+#     - cleaned up the .addAxis and .addLabels functions: now labels
+#       are moved depending on the lengths of the tick marks
+#   01 Aug 2003 [Nicholas Boers]
+#     - minor changes to .addLabels and .addAxis
+#   06 Aug 2003 [Nicholas Boers]
+#     - minor changes to addPolys to allow for different line types
+#       for shading lines
+#   12 Aug 2003 [Nicholas Boers]
+#     - minor bug corrected in combineEvents in S (but not R)
+#   15 Aug 2003 [Nicholas Boers]
+#     - tckMajor renamed to tck
+#     - tckMinor is now based on tck, rather than the other way around
+#   18 Aug 2003 [Nicholas Boers]
+#     - added an internal ".fixGSHHSWorld" function for closing
+#       Antarctica from the GSHHS data
+#     - made it so calcArea, etc. don't use "invisible" (or such) to
+#       return objects
+#     - fixed default colours (polygons or polylines determines
+#       default `col')
+#   19 Aug 2003 [Nicholas Boers]
+#     - added an `axes' parameter to the plot functions, to disable
+#       the plotting of the axis
+#   21 Aug 2003 [Nicholas Boers]
+#     - C functions renamed:
+#       - ulConv --> convUL
+#       - locateEvents --> findPolys
+#     - added a .checkDots function to look for mai in dots (may
+#       conflict with plt)
+#   22 Aug 2003 [Nicholas Boers]
+#     - removed the .checkDots function because it didn't seem
+#       necessary
+#     - removed a secton in .addAxis that was setting mex to 0
+#   20 Dec 2003 [Nicholas Boers]
+#     - in .createPolyProps(), changed codes(ordered(...)) to
+#       as.integer(ordered(...)) to stop the related 'deprecated' error
+#       message
+#   28 Dec 2003 [Nicholas Boers]
+#     - removed automatic calculation of `mgp' from .addAxis and
+#       .addLabels
+#     - added support for a user-passed `mgp' parameter
+#     - `mgp' should now be set to a default value, such as c(1.9,
+#       0.2, 0) when the package is loaded
+#   01 Jan 2004 [Nicholas Boers]
+#     - corrected handling of text in the margins
+#     - fixed bug in .createPolyProps(); removal of factors was
+#       failing because of NAs
+#     - corrected insertNAs() to prevent S-PLUS warning message (re:
+#       implied return value)
+#   ## VERSION 1.00 ## 01 Jan 2004 ############################################
+#   03 May 2004 [Nicholas Boers]
+#     - updated addPolys() to eliminate retrace lines when S-PLUS plots
+#       polygons with holes
+#   04 May 2004 [Nicholas Boers]
+#     - updated .addAxis() to fix the bug where the border/axis/etc. would
+#       shift when drawing multiple figures (i.e., mfrow)
+#     - added thinPolys()
+#   05 May 2004 [Nicholas Boers]
+#     - plot*() now recognizes xaxt/yaxt = "n"
+#     - added extractPolyData()
+#     - added support to clipping to maintain "extra" data fields
+#   07 May 2004 [Nicholas Boers]
+#     - added centroid() function; returns PolyData
+#   09 May 2004 [Nicholas Boers]
+#     - added clipPoly() function to clip one polygon against another polygon
+#   10 May 2004 [Nicholas Boers]
+#     - changed clipPoly() so it doesn't indiscriminately drop the SID column
+#   11 May 2004 [Nicholas Boers]
+#     - renamed clipPoly() to clipToPoly()
+#   12 May 2004 [Nicholas Boers]
+#     - renamed clipToPoly() to joinPolys()
+#     - added support for more-robust communication between R/S-PLUS and C
+#   16 May 2004 [Nicholas Boers]
+#     - added check on thinPolys() to ensure projection = "LL"
+#     - renamed centroid() to calcCentroid()
+#     - fixed bug in addLines() and addPolys() where xlim/ylim were ignored
+#   ## VERSION 1.10 ## 16 May 2004 ############################################
+#   20 May 2004 [Nicholas Boers]
+#     - added calcConvexHull()
+#   21 May 2004 [Nicholas Boers]
+#     - cleaned up calcConvexHull()
+#     - added support for plotting NULL PolySets (i.e., if the whole PolySet
+#       is clipped
+#     - added "projection" attribute to plotMap(), to allow for plotting
+#       NULL PolySets
+#     - added bgCol argument to plotLines -- I don't know why it wasn't already
+#       there
+#     - increased the robustness of extractPolyData() -- much better now!
+#   23 May 2004 [Nicholas Boers]
+#     - finished addPoints()
+#   26 May 2004 [Nicholas Boers]
+#     - modified all stop()/warning() messages so they don't begin with
+#       a newline
+#     - added calcLength() function
+#     - modifed calcArea() so it produces a warning when given a LL data set
+#   ## VERSION 1.20 ## 30 May 2004 ############################################
+#   02 Jun 2004 [Nicholas Boers]
+#     - fixed bug in calcLength() where floating-point imprecision would cause
+#       calculations outside the domain of acos()
+#     - updated thinPolys() to support UTM
+#   03 Jun 2004 [Nicholas Boers]
+#     - updated calcArea() to handle UTM (via a conversion to LL)
+#   07 Jun 2004 [Nicholas Boers]
+#     - added makePolyFromLines() and makePolysFromData() functions; for
+#       consistency, the base of the names should be makePoly* -- added the
+#       suffix for clarity
+#     - added addLabels() function
+#   08 Jun 2004 [Nicholas Boers]
+#     - added thickenPolys() function
+#   09 Jun 2004 [Nicholas Boers]
+#     - added .calcOrientation() to determine whether vertices are clockwise
+#       or counter-clockwise -- will be used by other functions for exporting
+#       to GIS software (to prepare holes for other interfaces)
+#   10 Jun 2004 [Nicholas Boers]
+#     - updated calcCentroid() to properly handle holes; involved adding an
+#       "integrateHoles" argument and moving the code to C
+#   ## VERSION 1.30 ## 14 June 2004 ###########################################
+#   14 Jun 2004 [Nicholas Boers]
+#     - corrected bug in .createPolyProps() where warnings could be disabled
+#       and then never reenabled; plus, this disabling was being done in the
+#       middle of a loop?  Stupid!
+#     - create .calcDist() from code in calcLength()
+#     - changed the distance formula in calcLength() to the Haversine
+#     - added "intelligent" calculation of `outCapacity' for thickenPolys()
+#       to fix a bug
+#     - fixed bug in calcArea() -- it was calling wrong C function
+#     - started appendPolys() function
+#   15 Jun 2004 [Nicholas Boers]
+#     - finished appendPolys() function
+#     - S-PLUS doesn't have an atan2() function (used in .calcDist()), so
+#       modified to work around it
+#     - renamed .integreateHoles() to .mergePolys() as it now merges in
+#       all SIDs (with retrace lines) as well as merge holes
+#     - locateEvents() and locatePolys() now set their result's attribute
+#       based on the projection of the current plot
+#     - cleaned up locateEvents(); fully tested in R/S-PLUS
+#     - added new `outStatus' value for joinPolys() -- "invalid `singlePoly'"
+#   16 Jun 2004 [Nicholas Boers]
+#     - renamed addStippling() to addStipples() -- looked in a better
+#       dictionary (http://www.webster.com/), and `stipples' appears to
+#       be correct as well
+#     - renamed calcArea()'s `sumPID' argument to `onlyPID'
+#   17 Jun 2004 [Nicholas Boers]
+#     - created empty calcSummary(), calcMean(), and calcMeanRange() functions
+#     - created rollupPolys(), which will assist me in writing the above
+#       functions
+#   18 Jun 2004 [Nicholas Boers]
+#     - any functions that relied on the fixPOS() or integrateHoles() C code
+#       now use a new function, .rollupPolys()
+#     - removed .mergePolys(); replaced by .rollupPolys()
+#     - removed .integrateHoles(); replaced by .rollupPolys()
+#     - given calcSummary(), calcMean() is redundant -- removing it
+#     - finished calcMeanRange()
+#   21 Jun 2004 [Nicholas Boers]
+#     - modified calcArea() to handle the roll-up argument (removed `sumPID'
+#       argument
+#     - changed the area column of calcArea() to "area" rather than "Area"
+#     - removed default of `mean' from combineEvent()'s FUN argument
+#     - added automatic zone calculation for convUL() when proj == "LL"
+#   22 Jun 2004 [Nicholas Boers]
+#     - added `rollup' and `close' arguments to calcLength()
+#     - renamed makePolyFromLines() to makePolysFromL()
+#     - renamed makePolysFromData() to makePolysFromD()
+#   ## VERSION 1.90 ## 22 June 2004 ###########################################
+#   23 Jun 2004 [Nicholas Boers]
+#     - changed interface to calcSummary()
+#     - changed interface to combineEvents()
+#     - renamed arguments for makePolysFromL()
+#     - added `filter' argument to thickenPolys()
+#     - renamed `tolerance' to `tol' for both thickenPolys() and thinPolys()
+#   24 Jun 2004 [Nicholas Boers]
+#     - added `polyProps' to addLabels()
+#     - added `polyProps' to addPoints()
+#     - created .addProps(), which replaced .createPolyProps()
+#     - updated addLines and addPolys so that they call .addProps()
+#   25 Jun 2004 [Nicholas Boers]
+#     - renamed makePolysFromL() to convLP()
+#     - renamed makePolysFromD() to convDP()
+#     - ensured addLines(), addPolys(), plotLines(), plotMap(), plotPolys()
+#       all returned values matching documentation
+#     - removed workarounds for bugs in R versions < 1.9.0
+#   27 Jun 2004 [Nicholas Boers]
+#     - fixed bug in .plotMaps when plotting NULL PolySet (ret not found)
+#     - added convCP() function to convert contourLines() output into a PolySet
+#   29 Jun 2004 [Nicholas Boers]
+#     - fixed return statement in addPolys()
+#     - added Rowan's `contourLines()' function, used only for S-PLUS
+#     - added isIntersecting()
+#   30 Jun 2004 [Nicholas Boers]
+#     - added isConvex()
+#     - decided to move `contourLines()' back to its own file
+#   02 Jul 2004 [Nicholas Boers]
+#     - replaced some apply(..., paste, ...)'s with a single paste()
+#       expression by building the expression at run-time
+#   05 Jul 2004 [Nicholas Boers]
+#     - in calcConvexHull(), renamed C function to `calcConvexHull'
+#   06 Jul 2004 [Nicholas Boers]
+#     - added support for `mai' in plotLines, plotMap, plotPolys
+#   08 Jul 2004 [Nicholas Boers]
+#     - extensive changes to code, including:
+#       - fixed bug where default properties could replace existing
+#         properties in `polyProps'
+#       - renamed `bgCol' argument to `bg' (increase R consistency)
+#       - removed `xlab', `ylab', etc. arguments from `plot*()'
+#       - added support for `type = "n"', and changed colouring behaviour when
+#         plotting a NULL PolySet
+#       - added `projection' argument to all `plot*()' functions: supports
+#         T/F/#/"LL"/"UTM"
+#       - added warnings for when par() paremters are ignored
+#       - with reworking, now `plot*()' accounts for `sub' argument
+#       - simplified the backup/restore of par() arguments across multiple
+#         functions, because .plotMaps() and add*() now does this
+#   10 Jul 2004 [Nicholas Boers]
+#     - removed global setting of `mgp'
+#   ## VERSION 1.91 ## 12 July 2004 ###########################################
+#   13 Jul 2004 [Nicholas Boers]
+#     - sped up `.validateData' by building more expressions at run-time
+#       to prevent using []'s to grab multiple columns from data frames
+#     - bug in .addFeature() -- looking for `polys' when it should have
+#       been looking for `data'
+#     - improved handling of C function results (improved efficiency)
+#     - found serious bug in calcCentroids(); fixed (both at the C level and
+#       in the R/S code); incorrect centroids for holes
+#     - changed the interface to `.validate*', now they return a string
+#       when they fail, rather than stopping
+#     - made it so that when a .validate*() fails, it stops() in the caller
+#       rather than the validation function; improved error messages
+#     - added `.createFastIDdig()', `.createIDs', and `.preparePolyProps'
+#       to reduce redundancy in code (addLines()/addPolys())
+#     - sped up `addLines()' and `addPolys()' with "fast ID" creation
+#     - added as.EventData(), as.LocationSet(), as.PolyData(), and
+#       as.PolySet() to support `class' attribute
+#     - added is.EventData(), is.LocationSet(), is.PolyData(), and
+#       is.PolySet() to support `class' attribute
+#     - added .validateLocationSet()
+#     - added print.EventData(), print.LocationSet(), print.PolyData(), and
+#       print.PolySet() to support `class' attribute
+#     - user-accessible functions now set their output to the appropriate
+#       class
+#   14 Jul 2004 [Nicholas Boers]
+#     - added summary.EventData(), summary.LocationSet(), ... to obtain
+#       summaries, and made print.* point to those functions
+#     - fixed bug in 1.91 where addLines() wasn't creating proper PolyProps
+#       objects
+#   15 Jul 2004 [Nicholas Boers]
+#     - added new variable, `PBSprint' to indicate whether to print our
+#       class objects as summaries or as data frames
+#     - updated .validateData() to use new .createIDs function
+#     - finished all the new functions (.createIDs, etc.), including some
+#       comments
+#     - rearranged addLines() and addPolys() to take better advantage of
+#       new .createIDs, etc. functions
+#   16 Jul 2004 [Nicholas Boers]
+#     - corrected return type of .appendPolys() (it's PolySet rather than
+#       PolyData)
+#   18 Jul 2004 [Nicholas Boers]
+#     - incorporated .createIDs into several more functions
+#     - cleaned up a bunch of code
+#   ## VERSION 1.92 ## 18 July 2004 ###########################################
+#   19 Jul 2004 [Nicholas Boers]
+#     - all summary functions now report extra columns
+#     - added argument `noFactorCols' to .validateData()
+#     - fixed bug in .validateData where a single column wouldn't be tested
+#       for numeric entries
+#     - improved .validateData() by adding checks for an increasing/decreasing
+#       POS column
+#   ## VERSION 1.93 ## 21 July 2004 ###########################################
+#   22 Jul 2004 [Nicholas Boers]
+#     - added `makeTopography' to convert imported topography data into a
+#       format accepted by the `contour' function
+#   23 Jul 2004 [Nicholas Boers]
+#     - fixed bug where addPolys() not recognizing `lwd' -- `...' wasn't being
+#       passed into the `polygon' command
+#   ## VERSION 1.94 ## 25 July 2004 ###########################################
+#   26 Jul 2004 [Nicholas Boers]
+#     - print.* now call appropriate summary.* function, rather than the
+#       generic `summary' function; no functional difference, but now my
+#       scripts for building the tech. report find this dependency
+#   28 Jul 2004 [Nicholas Boers]
+#     - rewrote joinPolys()
+#   29 Jul 2004 [Nicholas Boers]
+#     - in calcLength, rollup = 2 now issues a warning and resets that
+#       argument to 3.
+#   30 Jul 2004 [Nicholas Boers]
+#     - fixed bug in isConvex() where `convex' column would contain factors
+#       in S-PLUS
+#     - fixed bug in addLabels() where it would look at data's projection
+#       for PolyData even if placement != "DATA"
+#   ## VERSION 1.99 ## 30 July 2004 ###########################################
+#   03 Aug 2004 [Nicholas Boers]
+#     - slight modifications to `makeProps'; nothing serious
+#   04 Aug 2004 [Nicholas Boers]
+#     - added .validatePolyProps() to detect factors in PolyProps object
+#     - added call to .validatePolyProps() in .addFeature, addLines, addPolys
+#   11 Aug 2004 [Nicholas Boers]
+#     - rewrote .initPlotRegion so that it only sets directly pin/plt when
+#       necessary; it sets them via mai/mar whenever possible; this fixed a
+#       bug where mai was being ignored after the initial plot
+#   19 Aug 2004 [Nicholas Boers]
+#     - renamed calcMeanRange() to calcMidRange()
+#     - changed Earth radius to 6371.3 km
+#   ## VERSION 2.00 ## 23 Aug 2004 ############################################
+#==============================================================================
+
+
+

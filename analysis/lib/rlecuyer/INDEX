@@ -1,0 +1,13 @@
+.lec.AdvanceState       Advance the state of a stream
+.lec.CreateStream       Spawn new streams
+.lec.CurrentStream      Set/unset the current stream
+.lec.DeleteStream       Remove streams
+.lec.GetState           Return current state of a stream
+.lec.GetStreams         Return names of existing streams
+.lec.IncreasedPrecis    Switch between 32 and 53 bits of resolution
+.lec.ResetNextSubstream
+                        Reset the state of a stream
+.lec.SetAntithetic      Switch between U and 1-U variates
+.lec.SetSeed            Set the initial seed of the package or stream
+.lec.WriteState         Output of the current state of streams
+.lec.uniform            Generate random numbers

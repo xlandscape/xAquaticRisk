@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Create LaTeX Thermometers and Colored Needles</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for latexTherm {Hmisc}"><tr><td>latexTherm {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Create LaTeX Thermometers and Colored Needles</h2>
+
+<h3>Description</h3>
+
+<p><code>latexTherm</code> creates a LaTeX picture environment for drawing a
+series of thermometers 
+whose heights depict the values of a variable <code>y</code> assumed to be
+scaled from 0 to 1.  This is useful for showing fractions of sample
+analyzed in any table or plot, intended for a legend.  For example, four
+thermometers might be used to depict the fraction of enrolled patients
+included in the current analysis, the fraction randomized, the fraction
+of patients randomized to treatment A being analyzed, and the fraction
+randomized to B being analyzed.  The picture is placed
+inside a LaTeX macro definition for macro variable named <code>name</code>, to
+be invoked by the user later in the LaTeX file using <code>name</code>
+preceeded by a backslash.
+</p>
+<p>If <code>y</code> has an attribute <code>"table"</code>, it is assumed to contain a
+character string with LaTeX code.  This code is used as a tooltip popup
+for PDF using the LaTeX <code>ocgtools</code> package or using style
+<code>tooltips</code>.  Typically the code will contain a <code>tabular</code>
+environment.  The user must define a LaTeX macro <code>tooltipn</code> that
+takes two arguments (original object and pop-up object) that does
+the pop-up.
+</p>
+<p><code>latexNeedle</code> is similar to <code>latexTherm</code> except that vertical
+needles are produced and each may have its own color.  A grayscale box
+is placed around the needles and provides the 0-1 <code>y</code>-axis
+reference.  Horizontal grayscale grid lines may be drawn.
+</p>
+<p><code>pngNeedle</code> is similar to <code>latexNeedle</code> but is for generating
+small png graphics.  The full graphics file name is returned invisibly.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+latexTherm(y, name, w = 0.075, h = 0.15, spacefactor = 1/2, extra = 0.07,
+           file = "", append = TRUE)
+
+latexNeedle(y, x=NULL, col='black', href=0.5, name, w=.05, h=.15,
+            extra=0, file = "", append=TRUE)
+
+pngNeedle(y, x=NULL, col='black', href=0.5, lwd=3.5, w=6, h=18,
+          file=tempfile(fileext='.png'))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>a vector of 0-1 scaled values.  Boxes and their frames are
+omitted for <code>NA</code> elements</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a vector corresponding to <code>y</code> giving x-coordinates.
+Scaled accordingly, or defaults to equally-spaced values.</p>
+</td></tr>
+<tr valign="top"><td><code>name</code></td>
+<td>
+<p>name of LaTeX macro variable to be defined</p>
+</td></tr>
+<tr valign="top"><td><code>w</code></td>
+<td>
+<p>width of a single box (thermometer) in inches.  For
+<code>latexNeedle</code> and <code>pngNeedle</code> is the spacing between
+needles, the latter being in pixels.</p>
+</td></tr>
+<tr valign="top"><td><code>h</code></td>
+<td>
+<p>height of a single box in inches.  For <code>latexNeedle</code> and
+<code>pngNeedle</code> is the height of the frame, the latter in pixels.</p>
+</td></tr>
+<tr valign="top"><td><code>spacefactor</code></td>
+<td>
+<p>fraction of <code>w</code> added for extra space between
+boxes for <code>latexTherm</code></p>
+</td></tr>
+<tr valign="top"><td><code>extra</code></td>
+<td>
+<p>extra space in inches to set aside to the right of and
+above the series of boxes or frame</p>
+</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>name of file to which to write LaTeX code.  Default is the
+console.  Also used as base file name for png graphic.  Default for
+that is from <code>tempfile</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>append</code></td>
+<td>
+<p>set to <code>FALSE</code> to write over <code>file</code></p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>a vector of colors corresponding to positions in <code>y</code>.
+<code>col</code> is repeated if too short.</p>
+</td></tr>
+<tr valign="top"><td><code>href</code></td>
+<td>
+<p>values of <code>y</code> (0-1) for which horizontal grayscale
+reference lines are drawn for <code>latexNeedle</code> and
+<code>pngNeedle</code>.  Set to 
+<code>NULL</code> to not draw any reference lines</p>
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+<p>line width of needles for <code>pngNeedle</code></p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+# The following is in the Hmisc tests directory
+# For a knitr example see latexTherm.Rnw in that directory
+ct &lt;- function(...) cat(..., sep='')
+ct('\documentclass{report}\begin{document}\n')
+latexTherm(c(1, 1, 1, 1), name='lta')
+latexTherm(c(.5, .7, .4, .2), name='ltb')
+latexTherm(c(.5, NA, .75, 0), w=.3, h=1, name='ltc', extra=0)
+latexTherm(c(.5, NA, .75, 0), w=.3, h=1, name='ltcc')
+latexTherm(c(0, 0, 0, 0), name='ltd')
+ct('This is a the first:\lta and the second:\ltb\\ and the third
+without extra:\ltc END\\\nThird with extra:\ltcc END\\ 
+\vspace{2in}\\ 
+All data = zero, frame only:\ltd\\
+\end{document}\n')
+w &lt;- pngNeedle(c(.2, .5, .7))
+cat(tobase64image(w))  # can insert this directly into an html file
+
+## End(Not run)</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

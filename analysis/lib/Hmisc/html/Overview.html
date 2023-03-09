@@ -1,0 +1,1048 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Overview of Hmisc Library</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for HmiscOverview {Hmisc}"><tr><td>HmiscOverview {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Overview of Hmisc Library
+</h2>
+
+<h3>Description</h3>
+
+<p>The Hmisc library contains many functions useful for data analysis,
+high-level graphics, utility operations, functions for computing
+sample size and power, translating SAS datasets into <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, imputing
+missing values, advanced table making, variable clustering, character
+string manipulation, conversion of <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> objects to LaTeX code, recoding
+variables, and bootstrap repeated measures analysis.  Most of these
+functions were written by F Harrell, but a few were collected from
+statlib and from s-news; other authors are indicated below.  This
+collection of functions includes all of  Harrell's submissions to
+statlib other than  the functions in the <span class="pkg">rms</span> and display
+libraries.  A few of the functions do not  have &ldquo;Help&rdquo;
+documentation.
+</p>
+<p>To make <span class="pkg">Hmisc</span> load silently, issue
+<code>options(Hverbose=FALSE)</code> before <code>library(Hmisc)</code>.
+</p>
+
+
+<h3>Functions</h3>
+
+
+<table summary="Rd table">
+<tr>
+ <td style="text-align: left;">
+<b>Function Name</b> </td><td style="text-align: left;">  <b>Purpose</b> </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+abs.error.pred  </td><td style="text-align: left;"> Computes various indexes of predictive accuracy based</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+</td><td style="text-align: left;">    on absolute errors, for linear models</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+addMarginal     </td><td style="text-align: left;"> Add marginal observations over selected variables</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+all.is.numeric  </td><td style="text-align: left;"> Check if character strings are legal numerics</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+approxExtrap    </td><td style="text-align: left;"> Linear extrapolation</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+aregImpute      </td><td style="text-align: left;"> Multiple imputation based on additive regression,</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     bootstrapping, and predictive mean matching</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+areg.boot       </td><td style="text-align: left;"> Nonparametrically estimate transformations for both</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     sides of a multiple additive regression, and</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     bootstrap these estimates and <i>R^2</i></td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+ballocation     </td><td style="text-align: left;"> Optimum sample allocations in 2-sample proportion test</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+binconf         </td><td style="text-align: left;"> Exact confidence limits for a proportion and more accurate</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (narrower!) score stat.-based Wilson interval</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Rollin Brant, mod. FEH)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+bootkm          </td><td style="text-align: left;"> Bootstrap Kaplan-Meier survival or quantile estimates</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+bpower          </td><td style="text-align: left;"> Approximate power of 2-sided test for 2 proportions</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Includes bpower.sim for exact power by simulation</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+bpplot          </td><td style="text-align: left;"> Box-Percentile plot </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Jeffrey Banfield, <a href="mailto:umsfjban@bill.oscs.montana.edu">umsfjban@bill.oscs.montana.edu</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+bpplotM         </td><td style="text-align: left;"> Chart extended box plots for multiple variables</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+bsamsize        </td><td style="text-align: left;"> Sample size requirements for test of 2 proportions</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+bystats         </td><td style="text-align: left;"> Statistics on a single variable by levels of &gt;=1 factors</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+bystats2        </td><td style="text-align: left;"> 2-way statistics</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+character.table </td><td style="text-align: left;"> Shows numeric equivalents of all latin characters</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Useful for putting many special chars. in graph titles</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Pierre Joyet, <a href="mailto:pierre.joyet@bluewin.ch">pierre.joyet@bluewin.ch</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+ciapower        </td><td style="text-align: left;"> Power of Cox interaction test</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+cleanup.import  </td><td style="text-align: left;"> More compactly store variables in a data frame, and clean up</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     problem data when e.g. Excel spreadsheet had a non-</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     numeric value in a numeric column</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+combine.levels  </td><td style="text-align: left;"> Combine infrequent levels of a categorical variable</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+confbar         </td><td style="text-align: left;"> Draws confidence bars on an existing plot using multiple</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     confidence levels distinguished using color or gray scale</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+contents        </td><td style="text-align: left;"> Print the contents (variables, labels, etc.) of a data frame</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+cpower          </td><td style="text-align: left;"> Power of Cox 2-sample test allowing for noncompliance</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+Cs              </td><td style="text-align: left;"> Vector of character strings from list of unquoted names</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+csv.get         </td><td style="text-align: left;"> Enhanced importing of comma separated files labels</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+cut2            </td><td style="text-align: left;"> Like cut with better endpoint label construction and allows</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     construction of quantile groups or groups with given n</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+datadensity     </td><td style="text-align: left;"> Snapshot graph of distributions of all variables in</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     a data frame.  For continuous variables uses scat1d.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+dataRep         </td><td style="text-align: left;"> Quantify representation of new observations in a database</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+ddmmmyy         </td><td style="text-align: left;"> SAS &ldquo;date7&rdquo; output format for a chron object</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+deff            </td><td style="text-align: left;"> Kish design effect and intra-cluster correlation</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+describe        </td><td style="text-align: left;"> Function to describe different classes of objects.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Invoke by saying describe(object). It calls one of the</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     following:</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+describe.data.frame
+                </td><td style="text-align: left;"> Describe all variables in a data frame (generalization</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     of SAS UNIVARIATE)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+describe.default
+                </td><td style="text-align: left;"> Describe a variable (generalization of SAS UNIVARIATE)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+dotplot3        </td><td style="text-align: left;"> A more flexible version of dotplot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+Dotplot         </td><td style="text-align: left;"> Enhancement of Trellis dotplot allowing for matrix</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     x-var., auto generation of Key function, superposition</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+drawPlot        </td><td style="text-align: left;"> Simple mouse-driven drawing program, including a function</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     for fitting Bezier curves</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+Ecdf            </td><td style="text-align: left;"> Empirical cumulative distribution function plot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+errbar          </td><td style="text-align: left;"> Plot with error bars (Charles Geyer, U. Chi., mod FEH)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+event.chart     </td><td style="text-align: left;"> Plot general event charts (Jack Lee, <a href="mailto:jjlee@mdanderson.org">jjlee@mdanderson.org</a>, </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Ken Hess, Joel Dubin; Am Statistician 54:63-70,2000)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+event.history	</td><td style="text-align: left;"> Event history chart with time-dependent cov. status</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Joel Dubin, <a href="mailto:jdubin@uwaterloo.ca">jdubin@uwaterloo.ca</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+find.matches    </td><td style="text-align: left;"> Find matches (with tolerances) between columns of 2 matrices</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+first.word      </td><td style="text-align: left;"> Find the first word in an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> expression (R Heiberger)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+fit.mult.impute </td><td style="text-align: left;"> Fit most regression models over multiple transcan imputations,</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     compute imputation-adjusted variances and avg. betas</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+format.df       </td><td style="text-align: left;"> Format a matrix or data frame with much user control</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (R Heiberger and FE Harrell)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+ftupwr          </td><td style="text-align: left;"> Power of 2-sample binomial test using Fleiss, Tytun, Ury</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+ftuss           </td><td style="text-align: left;"> Sample size for 2-sample binomial test using  "  "  "  "</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Both by Dan Heitjan, <a href="mailto:dheitjan@biostats.hmc.psu.edu">dheitjan@biostats.hmc.psu.edu</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+gbayes          </td><td style="text-align: left;"> Bayesian posterior and predictive distributions when both</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> the prior and the likelihood are Gaussian</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+getHdata        </td><td style="text-align: left;"> Fetch and list datasets on our web site</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+hdquantile      </td><td style="text-align: left;"> Harrell-Davis nonparametric quantile estimator with s.e.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+histbackback    </td><td style="text-align: left;"> Back-to-back histograms (Pat Burns, Salomon Smith</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Barney, London, <a href="mailto:pburns@dorado.sbi.com">pburns@dorado.sbi.com</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+hist.data.frame </td><td style="text-align: left;"> Matrix of histograms for all numeric vars. in data frame</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Use hist.data.frame(data.frame.name)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+histSpike       </td><td style="text-align: left;"> Add high-resolution spike histograms or density estimates</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     to an existing plot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+hoeffd          </td><td style="text-align: left;"> Hoeffding's D test (omnibus test of independence of X and Y)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+impute          </td><td style="text-align: left;"> Impute missing data (generic method)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+interaction     </td><td style="text-align: left;"> More flexible version of builtin function</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+is.present      </td><td style="text-align: left;"> Tests for non-blank character values or non-NA numeric values</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+james.stein     </td><td style="text-align: left;"> James-Stein shrinkage estimates of cell means from raw data</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+labcurve        </td><td style="text-align: left;"> Optimally label a set of curves that have been drawn on</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     an existing plot, on the basis of gaps between curves.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Also position legends automatically at emptiest rectangle.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+label           </td><td style="text-align: left;"> Set or fetch a label for an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>-object</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+Lag             </td><td style="text-align: left;"> Lag a vector, padding on the left with NA or ''</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+latex           </td><td style="text-align: left;"> Convert an <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> object to LaTeX (R Heiberger &amp; FE Harrell)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+list.tree       </td><td style="text-align: left;"> Pretty-print the structure of any data object</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Alan Zaslavsky, <a href="mailto:zaslavsk@hcp.med.harvard.edu">zaslavsk@hcp.med.harvard.edu</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+Load            </td><td style="text-align: left;"> Enhancement of <code>load</code></td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+mask            </td><td style="text-align: left;"> 8-bit logical representation of a short integer value</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Rick Becker)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+matchCases      </td><td style="text-align: left;"> Match each case on one continuous variable</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+matxv           </td><td style="text-align: left;"> Fast matrix * vector, handling intercept(s) and NAs</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+mgp.axis        </td><td style="text-align: left;"> Version of axis() that uses appropriate mgp from </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     mgp.axis.labels and gets around bug in axis(2, ...)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     that causes it to assume las=1</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+mgp.axis.labels
+                </td><td style="text-align: left;"> Used by survplot and plot in <span class="pkg">rms</span> library (and other</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     functions in the future) so that different spacing</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     between tick marks and axis tick mark labels may be</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     specified for x- and y-axes.  </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Use mgp.axis.labels('default') to set defaults.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Users can set values manually using </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     mgp.axis.labels(x,y) where x and y are 2nd value of</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     par('mgp') to use.  Use mgp.axis.labels(type=w) to</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     retrieve values, where w='x', 'y', 'x and y', 'xy',</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     to get 3 mgp values (first 3 types) or 2 mgp.axis.labels.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+minor.tick      </td><td style="text-align: left;"> Add minor tick marks to an existing plot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+mtitle          </td><td style="text-align: left;"> Add outer titles and subtitles to a multiple plot layout</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+multLines       </td><td style="text-align: left;"> Draw multiple vertical lines at each x</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> in a line plot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+%nin%         </td><td style="text-align: left;"> Opposite of %in%</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+nobsY           </td><td style="text-align: left;"> Compute no. non-NA observations for left hand formula side</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+nomiss          </td><td style="text-align: left;"> Return a matrix after excluding any row with an NA</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+panel.bpplot    </td><td style="text-align: left;"> Panel function for trellis bwplot - box-percentile plots</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+panel.plsmo     </td><td style="text-align: left;"> Panel function for trellis xyplot - uses plsmo</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+pBlock          </td><td style="text-align: left;"> Block variables for certain lattice charts</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+pc1             </td><td style="text-align: left;"> Compute first prin. component and get coefficients on</td>
+</tr>
+<tr>
+ <td style="text-align: left;"></td><td style="text-align: left;">     original scale of variables</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+plotCorrPrecision  </td><td style="text-align: left;"> Plot precision of estimate of correlation coefficient</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+plsmo           </td><td style="text-align: left;"> Plot smoothed x vs. y with labeling and exclusion of NAs</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Also allows a grouping variable and plots unsmoothed data</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+popower         </td><td style="text-align: left;"> Power and sample size calculations for ordinal responses</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (two treatments, proportional odds model)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+prn             </td><td style="text-align: left;"> prn(expression) does print(expression) but titles the</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     output with 'expression'.  Do prn(expression,txt) to add</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     a heading (&lsquo;txt&rsquo;) before the &lsquo;expression&rsquo; title</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+pstamp          </td><td style="text-align: left;"> Stamp a plot with date in lower right corner (pstamp())</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Add ,pwd=T and/or ,time=T to add current directory </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">      name or time</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Put additional text for label as first argument, e.g.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     pstamp('Figure 1')  will draw 'Figure 1  date'</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+putKey          </td><td style="text-align: left;"> Different way to use key()</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+putKeyEmpty     </td><td style="text-align: left;"> Put key at most empty part of existing plot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rcorr           </td><td style="text-align: left;"> Pearson or Spearman correlation matrix with pairwise deletion</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     of missing data</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rcorr.cens      </td><td style="text-align: left;"> Somers' Dxy rank correlation with censored data</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rcorrp.cens     </td><td style="text-align: left;"> Assess difference in concordance for paired predictors</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rcspline.eval   </td><td style="text-align: left;"> Evaluate restricted cubic spline design matrix</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rcspline.plot   </td><td style="text-align: left;"> Plot spline fit with nonparametric smooth and grouped estimates</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rcspline.restate
+                </td><td style="text-align: left;"> Restate restricted cubic spline in unrestricted form, and</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     create TeX expression to print the fitted function</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+reShape         </td><td style="text-align: left;"> Reshape a matrix into 3 vectors, reshape serial data</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rm.boot         </td><td style="text-align: left;"> Bootstrap spline fit to repeated measurements model,</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     with simultaneous confidence region - least</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     squares using spline function in time</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+rMultinom       </td><td style="text-align: left;"> Generate multinomial random variables with varying prob.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+samplesize.bin  </td><td style="text-align: left;"> Sample size for 2-sample binomial problem</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Rick Chappell, <a href="mailto:chappell@stat.wisc.edu">chappell@stat.wisc.edu</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+sas.get         </td><td style="text-align: left;"> Convert SAS dataset to S data frame</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+sasxport.get    </td><td style="text-align: left;"> Enhanced importing of SAS transport dataset in R</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+Save            </td><td style="text-align: left;"> Enhancement of <code>save</code></td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+scat1d          </td><td style="text-align: left;"> Add 1-dimensional scatterplot to an axis of an existing plot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (like bar-codes, FEH/Martin Maechler, </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     <a href="mailto:maechler@stat.math.ethz.ch">maechler@stat.math.ethz.ch</a>/Jens Oehlschlaegel-Akiyoshi,</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     <a href="mailto:oehl@psyres-stuttgart.de">oehl@psyres-stuttgart.de</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+score.binary    </td><td style="text-align: left;"> Construct a score from a series of binary variables or</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     expressions</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+sedit           </td><td style="text-align: left;"> A set of character handling functions written entirely</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     in <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>.  sedit() does much of what the UNIX sed</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     program does.  Other functions included are</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     substring.location, substring&lt;-, replace.string.wild,</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     and functions to check if a string is numeric or</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     contains only the digits 0-9</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+setTrellis      </td><td style="text-align: left;"> Set Trellis graphics to use blank conditioning panel strips,</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     line thickness 1 for dot plot reference lines: </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     setTrellis(); 3 optional arguments</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+show.col        </td><td style="text-align: left;"> Show colors corresponding to col=0,1,...,99</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+show.pch        </td><td style="text-align: left;"> Show all plotting characters specified by pch=.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Just type show.pch() to draw the table on the </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     current device.  </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+showPsfrag      </td><td style="text-align: left;"> Use LaTeX to compile, and dvips and ghostview to</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">    display a postscript graphic containing psfrag strings</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+solvet          </td><td style="text-align: left;"> Version of solve with argument tol passed to qr</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+somers2         </td><td style="text-align: left;"> Somers' rank correlation and c-index for binary y</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+spearman        </td><td style="text-align: left;"> Spearman rank correlation coefficient  spearman(x,y)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+spearman.test   </td><td style="text-align: left;"> Spearman 1 d.f. and 2 d.f. rank correlation test</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+spearman2       </td><td style="text-align: left;"> Spearman multiple d.f. <i>rho^2</i>, adjusted <i>rho^2</i>, Wilcoxon-Kruskal-</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Wallis test, for multiple predictors</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+spower          </td><td style="text-align: left;"> Simulate power of 2-sample test for survival under</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     complex conditions</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Also contains the Gompertz2,Weibull2,Lognorm2
+functions.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+spss.get        </td><td style="text-align: left;"> Enhanced importing of SPSS files using read.spss
+function </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+src             </td><td style="text-align: left;"> src(name) = source("name.s") with memory</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+store           </td><td style="text-align: left;"> store an object permanently (easy interface to assign function)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+strmatch        </td><td style="text-align: left;"> Shortest unique identifier match </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     (Terry Therneau, <a href="mailto:therneau@mayo.edu">therneau@mayo.edu</a>)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+subset          </td><td style="text-align: left;"> More easily subset a data frame</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+substi          </td><td style="text-align: left;"> Substitute one var for another when observations NA</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+summarize       </td><td style="text-align: left;"> Generate a data frame containing stratified summary</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     statistics.  Useful for passing to trellis.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+summary.formula </td><td style="text-align: left;"> General table making and plotting functions for summarizing</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> data</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+summaryD        </td><td style="text-align: left;"> Summarizing using user-provided formula and dotchart3</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+summaryM        </td><td style="text-align: left;"> Replacement for summary.formula(..., method='reverse')</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+summaryP        </td><td style="text-align: left;"> Multi-panel dot chart for summarizing proportions</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+summaryS        </td><td style="text-align: left;"> Summarize multiple response variables for multi-panel</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> dot chart or scatterplot</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+summaryRc       </td><td style="text-align: left;"> Summary for continuous variables using lowess</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+symbol.freq     </td><td style="text-align: left;"> X-Y Frequency plot with circles' area prop. to frequency</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+sys             </td><td style="text-align: left;"> Execute unix() or dos() depending on what's running</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+tabulr          </td><td style="text-align: left;"> Front-end to tabular function in the tables package</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+tex             </td><td style="text-align: left;"> Enclose a string with the correct syntax for using</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">    with the LaTeX psfrag package, for postscript graphics</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+transace        </td><td style="text-align: left;"> ace() packaged for easily automatically transforming all</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     variables in a matrix</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+transcan        </td><td style="text-align: left;"> automatic transformation and imputation of NAs for a</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     series of predictor variables</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+trap.rule       </td><td style="text-align: left;"> Area under curve defined by arbitrary x and y vectors,</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> using trapezoidal rule</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+trellis.strip.blank
+                </td><td style="text-align: left;"> To make the strip titles in trellis more visible, you can </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     make the backgrounds blank by saying trellis.strip.blank().</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     Use before opening the graphics device.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+t.test.cluster  </td><td style="text-align: left;"> 2-sample t-test for cluster-randomized observations</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+uncbind         </td><td style="text-align: left;"> Form individual variables from a matrix</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+upData          </td><td style="text-align: left;"> Update a data frame (change names, labels, remove vars, etc.)</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+units           </td><td style="text-align: left;"> Set or fetch "units" attribute - units of measurement for var.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+varclus         </td><td style="text-align: left;"> Graph hierarchical clustering of variables using squared</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> Pearson or Spearman correlations or Hoeffding D as similarities</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> Also includes the naclus function for examining similarities in</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;"> patterns of missing values across variables.</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+wtd.mean </td><td style="text-align: left;"> </td>
+</tr>
+<tr>
+ <td style="text-align: left;"> wtd.var </td><td style="text-align: left;"> </td>
+</tr>
+<tr>
+ <td style="text-align: left;">  wtd.quantile </td><td style="text-align: left;"> </td>
+</tr>
+<tr>
+ <td style="text-align: left;">  wtd.Ecdf </td><td style="text-align: left;">
+</td>
+</tr>
+<tr>
+ <td style="text-align: left;"> wtd.table </td><td style="text-align: left;"> </td>
+</tr>
+<tr>
+ <td style="text-align: left;">  wtd.rank </td><td style="text-align: left;"> </td>
+</tr>
+<tr>
+ <td style="text-align: left;"> wtd.loess.noiter </td><td style="text-align: left;"> </td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+num.denom.setup </td><td style="text-align: left;"> Set of function for obtaining weighted estimates</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+xy.group        </td><td style="text-align: left;"> Compute mean x vs. function of y by groups of x</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+xYplot          </td><td style="text-align: left;"> Like trellis xyplot but supports error bars and multiple</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+                </td><td style="text-align: left;">     response variables that are connected as separate lines</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+ynbind          </td><td style="text-align: left;"> Combine a series of yes/no true/false present/absent variables into a matrix</td>
+</tr>
+<tr>
+ <td style="text-align: left;">
+zoom            </td><td style="text-align: left;"> Zoom in on any graphical display</td>
+</tr>
+<tr>
+ <td style="text-align: left;"> </td><td style="text-align: left;">     (Bill Dunlap, <a href="mailto:bill@statsci.com">bill@statsci.com</a>)
+</td>
+</tr>
+
+</table>
+
+
+<h3>Copyright Notice</h3>
+
+<p><b>GENERAL DISCLAIMER</b><br />
+This program is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2, or (at your option) any later version.<br />
+</p>
+<p>This program is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the GNU General Public License for more
+details.<br />
+</p>
+<p>In short: You may use it any way you like, as long as you
+don't charge money for it, remove this notice, or hold anyone liable
+for its results.  Also, please acknowledge the source and communicate
+changes to the author.<br />
+</p>
+<p>If this software is used is work presented for publication, kindly
+reference it using for example:<br />
+Harrell FE (2014): Hmisc: A package of miscellaneous R functions.
+Programs available from <a href="https://hbiostat.org/R/Hmisc/">https://hbiostat.org/R/Hmisc/</a>.<br />
+Be sure to reference <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> itself and other libraries used.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E Harrell Jr<br />
+Professor of Biostatistics<br />
+Vanderbilt University School of Medicine<br />
+Nashville, Tennessee<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>See Alzola CF, Harrell FE (2004): An Introduction to S and the
+Hmisc and Design Libraries at
+<a href="https://hbiostat.org/R/doc/sintro.pdf">https://hbiostat.org/R/doc/sintro.pdf</a>
+for extensive documentation and examples for the Hmisc package.
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

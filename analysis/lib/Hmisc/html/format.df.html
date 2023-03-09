@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Format a Data Frame or Matrix for LaTeX or HTML</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for format.df {Hmisc}"><tr><td>format.df {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Format a Data Frame or Matrix for LaTeX or HTML
+</h2>
+
+<h3>Description</h3>
+
+<p><code>format.df</code> does appropriate rounding and decimal alignment, and outputs
+a character matrix containing the formatted data.  If <code>x</code> is a
+<code>data.frame</code>, then do each component separately.
+If <code>x</code> is a matrix, but not a data.frame, make it a data.frame
+with individual components for the columns.
+If a component <code>x$x</code> is a matrix, then do all columns the same.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
+          numeric.dollar=!dcolumn, na.blank=FALSE, na.dot=FALSE,
+          blank.dot=FALSE, col.just=NULL, cdot=FALSE,
+          dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
+          math.row.names=FALSE, already.math.row.names=FALSE,
+          math.col.names=FALSE, already.math.col.names=FALSE,
+          double.slash=FALSE, format.Date="%m/%d/%Y",
+          format.POSIXt="%m/%d/%Y %H:%M:%OS", ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a matrix (usually numeric) or data frame
+</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>causes all values in the table to be formatted to <code>digits</code> significant
+digits.  <code>dec</code> is usually preferred.
+</p>
+</td></tr>
+<tr valign="top"><td><code>dec</code></td>
+<td>
+
+<p>If <code>dec</code> is a scalar, all elements of the matrix will be rounded
+to <code>dec</code> 
+decimal places to the right of the decimal. <code>dec</code> can also be a matrix 
+whose elements correspond to <code>x</code>, for customized rounding of each element.
+A matrix <code>dec</code> must have number of columns equal to number of columns
+of input <code>x</code>.
+A scalar <code>dec</code> is expanded to a vector <code>cdec</code> with number of
+items equal to number of columns of input <code>x</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rdec</code></td>
+<td>
+
+<p>a vector specifying the number of decimal places to the right for each row 
+(<code>cdec</code> is more commonly used than <code>rdec</code>)
+A vector <code>rdec</code> must have number of items equal to number of rows of input <code>x</code>.
+<code>rdec</code> is expanded to matrix <code>dec</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cdec</code></td>
+<td>
+
+<p>a vector specifying the number of decimal places for each column.
+The vector must have number of items equal to number of columns or components
+of input x.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cdot</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to use centered dots rather than ordinary periods in numbers.
+The output uses a syntax appropriate for <code>latex</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.blank</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to use blanks rather than <code>NA</code> for missing values.
+This usually looks better in <code>latex</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>dcolumn</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to use David Carlisle's dcolumn style for
+decimal alignment in <code>latex</code>.
+Default is <code>FALSE</code>. You will probably want to
+use <code>dcolumn</code> if you use <code>rdec</code>, as a column may then contain varying
+number of places to the right of the decimal. <code>dcolumn</code> can line up
+all such numbers on the decimal point, with integer values right
+justified at the decimal point location of numbers that actually
+contain decimal places.  When you use <code>dcolumn = TRUE</code>, 
+<code>numeric.dollar</code> is set by default to <code>FALSE</code>.  When you
+use <code>dcolumn = TRUE</code>, the
+object attribute <code>"style"</code> set to <span class="samp">dcolumn</span> as the
+<code>latex</code> <code>usepackage</code> must reference <code>[dcolumn]</code>.
+The three files &lsquo;<span class="file">dcolumn.sty</span>&rsquo;, &lsquo;<span class="file">newarray.sty</span>&rsquo;, and
+&lsquo;<span class="file">array.sty</span>&rsquo; will 
+need to be in a directory in your <span class="env">TEXINPUTS</span> path.
+When you use <code>dcolumn=TRUE</code>, <code>numeric.dollar</code> should be set to <code>FALSE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>numeric.dollar</code></td>
+<td>
+
+<p>logical, default <code>!dcolumn</code>.  Set to <code>TRUE</code> to place dollar
+signs around numeric values when <code>dcolumn = FALSE</code>.  This 
+assures that <code>latex</code> will use minus signs rather than hyphens to indicate
+negative numbers.  Set to <code>FALSE</code> when <code>dcolumn = TRUE</code>, as
+<code>dcolumn.sty</code> automatically uses minus signs.
+</p>
+</td></tr>
+<tr valign="top"><td><code>math.row.names</code></td>
+<td>
+
+<p>logical, set true to place dollar signs around the row names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>already.math.row.names</code></td>
+<td>
+<p>set to <code>TRUE</code> to prevent any math
+mode changes to row names</p>
+</td></tr>
+<tr valign="top"><td><code>math.col.names</code></td>
+<td>
+
+<p>logical, set true to place dollar signs around the column names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>already.math.col.names</code></td>
+<td>
+<p>set to <code>TRUE</code> to prevent any math
+mode changes to column names</p>
+</td></tr>
+<tr valign="top"><td><code>na.dot</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to use periods rather than <code>NA</code> for missing
+numeric values. 
+This works with the <acronym><span class="acronym">SAS</span></acronym> convention that periods indicate missing values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>blank.dot</code></td>
+<td>
+
+<p>Set to <code>TRUE</code> to use periods rather than blanks for missing character values.
+This works with the <acronym><span class="acronym">SAS</span></acronym> convention that periods indicate missing values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>col.just</code></td>
+<td>
+
+<p>Input vector <code>col.just</code> must have number of columns equal to
+number of columns of the output matrix.  When <code>NULL</code>, the
+default, the <code>col.just</code> attribute of the result is set to
+<span class="samp">l</span> for character columns and to <span class="samp">r</span> for numeric
+columns.  The user can override the default by an argument vector
+whose length is equal to the number of columns of the result matrix.
+When <code>format.df</code> is called by <code>latex.default</code>, the
+<code>col.just</code> is used as the <code>cols</code> argument to the
+<code>tabular</code> environment and the letters <span class="samp">l</span>, <span class="samp">r</span>,
+and <span class="samp">c</span> are valid values.  When <code>format.df</code> is called by
+<acronym><span class="acronym">SAS</span></acronym>, the <code>col.just</code> is used to determine whether a
+<span class="samp">\$</span> is needed on the <span class="samp">input</span> line of the &lsquo;<span class="file">sysin</span>&rsquo; file,
+and the letters <span class="samp">l</span> and <span class="samp">r</span> are valid values.  You can
+pass specifications other than <code>l,r,c</code> in <code>col.just</code>,
+e.g., <code>"p{3in}"</code> to get paragraph-formatted columns from
+<code>latex()</code>. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>matrix.sep</code></td>
+<td>
+
+<p>When <code>x</code> is a data frame containing a matrix, so that new column names
+are constructed from the name of the matrix object and the names of
+the individual columns of the matrix, <code>matrix.sep</code> specifies the
+character to use to separate object names from individual column
+names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>scientific</code></td>
+<td>
+
+<p>specifies ranges of exponents (or a logical vector) specifying values
+not to convert to scientific notation.  See <code>format.default</code> for details.
+</p>
+</td></tr>
+<tr valign="top"><td><code>double.slash</code></td>
+<td>
+
+<p>should escaping backslashes be themselves escaped.
+</p>
+</td></tr>
+<tr valign="top"><td><code>format.Date</code></td>
+<td>
+
+<p>String used to format objects of the Date class.
+</p>
+</td></tr>
+<tr valign="top"><td><code>format.POSIXt</code></td>
+<td>
+
+<p>String used to format objects of the POSIXt class.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>other arguments are accepted and passed to <code>format.default</code>.
+For <code>latexVerbatim</code> these arguments are passed to the
+<code>print</code> function.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a character matrix with character images of properly rounded <code>x</code>.
+Matrix components of input <code>x</code> are now just sets of columns of
+character matrix.
+Object attribute<code>"col.just"</code> repeats the value of the argument <code>col.just</code> when provided,
+otherwise, it includes the recommended justification for columns of output.
+See the discussion of the argument <code>col.just</code>.
+The default justification is <span class="samp">l</span> for characters and factors,
+<span class="samp">r</span> for numeric.
+When <code>dcolumn==TRUE</code>, numerics will have <span class="samp">.</span> as the justification character.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E. Harrell, Jr.,
+<br />
+Department of Biostatistics,
+<br />
+Vanderbilt University,
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+<p>Richard M. Heiberger,
+<br />
+Department of Statistics,
+<br />
+Temple University, Philadelphia, PA.
+<br />
+<a href="mailto:rmh@temple.edu">rmh@temple.edu</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/latex.html">latex</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+x &lt;- data.frame(a=1:2, b=3:4)
+x$m &lt;- 10000*matrix(5:8,nrow=2)
+names(x)
+dim(x)
+x
+format.df(x, big.mark=",")
+dim(format.df(x))
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

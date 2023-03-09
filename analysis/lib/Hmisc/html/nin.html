@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Find Matching (or Non-Matching) Elements</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for %nin% {Hmisc}"><tr><td>%nin% {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Find Matching (or Non-Matching) Elements
+</h2>
+
+<h3>Description</h3>
+
+<p><code>%nin%</code> is a binary operator, which returns a logical vector indicating
+if there is a match or not for its left operand. A true vector element
+indicates no match in left operand, false indicates a match.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+x %nin% table
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>a vector (numeric, character, factor)
+</p>
+</td></tr>
+<tr valign="top"><td><code>table</code></td>
+<td>
+
+<p>a vector (numeric, character, factor), matching the mode of <code>x</code>
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>vector of logical values with length equal to length of <code>x</code>.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/match.html">match</a></code> <code><a href="../../base/html/match.html">%in%</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+c('a','b','c') %nin% c('a','b')
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

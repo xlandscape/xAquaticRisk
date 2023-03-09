@@ -1,0 +1,12 @@
+addnortharrow           Plot North Arrow
+addscalebar             Auto Plot Scalebar
+clear_geocode_cache     Clear cached results
+geocode                 Geocode Locations
+get_default_geocoder    Get/Set the default geocoder
+makebbox                Create a Bounding Box
+mergebbox               Combine bounding boxes
+plotscalebar            Raw Plot Scale Bar
+prettymap               Plot A Pretty Map
+scalebarparams          Get Scale Bar Parameters
+searchbbox              Query The Interwebs For A Bounding Box
+zoombbox                Zoom the extents of a bounding box

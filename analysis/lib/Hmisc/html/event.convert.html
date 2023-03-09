@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Event Conversion for Time-to-Event Data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for event.convert {Hmisc}"><tr><td>event.convert {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Event Conversion for Time-to-Event Data
+</h2>
+
+<h3>Description</h3>
+
+<p>Convert a two-column data matrix with event time and event code into
+multiple column event time with one event in each column
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+event.convert(data2, event.time = 1, event.code = 2)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data2</code></td>
+<td>
+
+<p>a matrix or dataframe with at least 2 columns; by default, the first
+column contains the event time and the second column contains the k
+event codes (e.g. 1=dead, 0=censord)
+</p>
+</td></tr>
+<tr valign="top"><td><code>event.time</code></td>
+<td>
+
+<p>the column number in data contains the event time
+</p>
+</td></tr>
+<tr valign="top"><td><code>event.code</code></td>
+<td>
+
+<p>the column number in data contains the event code
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>In the survival analysis, the data typically come  in  two
+columns: one column containing survival time and the other
+containing  censoring  indicator  or   event   code.   The
+<code>event.convert</code>  function  converts  this  type of data into
+multiple columns of event times, one column of each  event
+type, suitable for the <code>event.chart</code> function.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>J. Jack Lee and Kenneth R. Hess
+<br />
+Department of Biostatistics
+<br />
+University of Texas
+<br />
+M.D. Anderson Cancer Center
+<br />
+Houston, TX 77030
+<br />
+<a href="mailto:jjlee@mdanderson.org">jjlee@mdanderson.org</a>, <a href="mailto:khess@mdanderson.org">khess@mdanderson.org</a>
+</p>
+<p>Joel A. Dubin
+<br />
+Department of Statistics
+<br />
+University of Waterloo
+<br />
+<a href="mailto:jdubin@uwaterloo.ca">jdubin@uwaterloo.ca</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/event.history.html">event.history</a></code>, <code><a href="../../base/html/Dates.html">Date</a></code>, <code><a href="../../Hmisc/help/event.chart.html">event.chart</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# To convert coded time-to-event data, then, draw an event chart:
+surv.time &lt;- c(5,6,3,1,2)
+cens.ind   &lt;- c(1,0,1,1,0)
+surv.data  &lt;- cbind(surv.time,cens.ind)
+event.data &lt;- event.convert(surv.data)
+event.chart(cbind(rep(0,5),event.data),x.julian=TRUE,x.reference=1)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

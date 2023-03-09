@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Open a Zip File From a URL</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for getZip {Hmisc}"><tr><td>getZip {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Open a Zip File From a URL</h2>
+
+<h3>Description</h3>
+
+<p>Allows downloading and reading of a zip file containing one file
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+getZip(url, password=NULL)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>url</code></td>
+<td>
+<p>either a path to a local file or a valid URL.</p>
+</td></tr>
+<tr valign="top"><td><code>password</code></td>
+<td>
+<p>required to decode password-protected zip files</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Allows downloading and reading of zip file containing one file.
+The file may be password protected.  If a password is needed then one will be requested unless given.
+</p>
+<p>Note: to make password-protected zip file z.zip, do zip -e z myfile
+</p>
+
+
+<h3>Value</h3>
+
+<p>Returns a file O/I pipe.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E. Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/connections.html">pipe</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+read.csv(getZip('http://test.com/z.zip'))
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

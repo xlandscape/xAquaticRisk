@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: soprobMarkovOrdm</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for soprobMarkovOrdm {Hmisc}"><tr><td>soprobMarkovOrdm {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>soprobMarkovOrdm</h2>
+
+<h3>Description</h3>
+
+<p>State Occupancy Probabilities for First-Order Markov Ordinal Model from a Model Fit
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+soprobMarkovOrdm(
+  object,
+  data,
+  times,
+  ylevels,
+  absorb = NULL,
+  tvarname = "time",
+  pvarname = "yprev",
+  gap = NULL
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>a fit object created by <code>blrm</code>, <code>lrm</code>, <code>orm</code>, <code>VGAM::vglm()</code>, or <code>VGAM::vgam()</code></p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a single observation list or data frame with covariate settings, including the initial state for Y</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p>vector of measurement times</p>
+</td></tr>
+<tr valign="top"><td><code>ylevels</code></td>
+<td>
+<p>a vector of ordered levels of the outcome variable (numeric or character)</p>
+</td></tr>
+<tr valign="top"><td><code>absorb</code></td>
+<td>
+<p>vector of absorbing states, a subset of <code>ylevels</code>.  The default is no absorbing states. (numeric, character, factor)</p>
+</td></tr>
+<tr valign="top"><td><code>tvarname</code></td>
+<td>
+<p>name of time variable, defaulting to <code>time</code></p>
+</td></tr>
+<tr valign="top"><td><code>pvarname</code></td>
+<td>
+<p>name of previous state variable, defaulting to <code>yprev</code></p>
+</td></tr>
+<tr valign="top"><td><code>gap</code></td>
+<td>
+<p>name of time gap variable, defaults assuming that gap time is not in the model</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Computes state occupancy probabilities for a single setting of baseline covariates.  If the model fit was from <code>rms::blrm()</code>, these probabilities are from all the posterior draws of the basic model parameters.  Otherwise they are maximum likelihood point estimates.
+</p>
+
+
+<h3>Value</h3>
+
+<p>if <code>object</code> was not a Bayesian model, a matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities.  If <code>object</code> was created by <code>blrm</code>, the result is a 3-dimensional array with the posterior draws as the first dimension.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>See Also</h3>
+
+<p><a href="https://hbiostat.org/R/Hmisc/markov/">https://hbiostat.org/R/Hmisc/markov/</a>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

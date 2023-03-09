@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Date/Time/Directory Stamp the Current Plot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for pstamp {Hmisc}"><tr><td>pstamp {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Date/Time/Directory Stamp the Current Plot</h2>
+
+<h3>Description</h3>
+
+<p>Date-time stamp the current plot in the extreme lower right
+corner. Optionally add the current working directory and arbitrary other
+text to the stamp.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+pstamp(txt, pwd = FALSE, time. = TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>txt</code></td>
+<td>
+<p>an optional single text string</p>
+</td></tr>
+<tr valign="top"><td><code>pwd</code></td>
+<td>
+<p>set to <code>TRUE</code> to add the current working directory
+name to the stamp</p>
+</td></tr>
+<tr valign="top"><td><code>time.</code></td>
+<td>
+<p>set to <code>FALSE</code> to use the date without the time</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Certain functions are not supported for S-Plus under Windows.  For <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>,
+results may not be satisfactory if <code>par(mfrow=)</code> is in effect.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+plot(1:20)
+pstamp(pwd=TRUE, time=FALSE)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

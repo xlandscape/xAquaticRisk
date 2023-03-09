@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Download and Install Datasets for 'Hmisc', 'rms', and...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for getHdata {Hmisc}"><tr><td>getHdata {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Download and Install Datasets for <span class="pkg">Hmisc</span>, <span class="pkg">rms</span>, and Statistical
+Modeling
+</h2>
+
+<h3>Description</h3>
+
+<p>This function downloads and makes ready to use datasets from the main
+web site for the <span class="pkg">Hmisc</span> and <span class="pkg">rms</span> libraries.  For <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, the
+datasets were stored in compressed <code><a href="../../base/html/save.html">save</a></code> format and
+<code>getHdata</code> makes them available by running <code><a href="../../base/html/load.html">load</a></code>
+after download.  For S-Plus, the datasets were stored in
+<code>data.dump</code> format and are made available by running
+<code>data.restore</code> after import.  The dataset is run through the
+<code><a href="../../Hmisc/help/cleanup.import.html">cleanup.import</a></code> function.  Calling <code>getHdata</code> with no
+<code>file</code> argument provides a character vector of names of available
+datasets that are currently on the web site.  For <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>'s default
+browser can optionally be launched to view <code style="white-space: pre;">html</code> files that were
+already prepared using the <span class="pkg">Hmisc</span> command
+<code>html(contents())</code> or to view &lsquo;<span class="file">.txt</span>&rsquo; or &lsquo;<span class="file">.html</span>&rsquo; data
+description files when available.
+</p>
+<p>If <code>options(localHfiles=TRUE)</code> the scripts are read from local directory
+<code>~/web/data/repo</code> instead of from the web server.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+getHdata(file, what = c("data", "contents", "description", "all"),
+         where="https://hbiostat.org/data/repo")
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>file</code></td>
+<td>
+
+<p>an unquoted name of a dataset on the web site, e.g. <span class="samp">prostate</span>.
+Omit <code>file</code> to obtain a list of available datasets.
+</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+
+<p>specify <code>what="contents"</code> to browse the contents (metadata) for
+the dataset rather than fetching the data themselves.  Specify
+<code>what="description"</code> to browse a data description file if
+available.  Specify <code>what="all"</code> to retrieve the data and see
+the metadata and description.
+</p>
+</td></tr>
+<tr valign="top"><td><code>where</code></td>
+<td>
+
+<p><acronym><span class="acronym">URL</span></acronym> containing the data and metadata files
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>getHdata()</code> without a <code>file</code> argument returns a character
+vector of dataset base names.  When a dataset is downloaded, the data
+frame is placed in search position one and is not returned as value of
+<code>getHdata</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../utils/html/download.file.html">download.file</a></code>, <code><a href="../../Hmisc/help/cleanup.import.html">cleanup.import</a></code>,
+<code><a href="../../foreign/help/read.S.html">data.restore</a></code>, <code><a href="../../base/html/load.html">load</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+getHdata()          # download list of available datasets
+getHdata(prostate)  # downloads, load( ) or data.restore( )
+                    # runs cleanup.import for S-Plus 6
+getHdata(valung, "contents")   # open browser (options(browser="whatever"))
+                    # after downloading valung.html
+                    # (result of html(contents()))
+getHdata(support, "all")  # download and open one browser window
+datadensity(support)
+attach(support)     # make individual variables available
+getHdata(plasma,  "all")  # download and open two browser windows
+                          # (description file is available for plasma)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

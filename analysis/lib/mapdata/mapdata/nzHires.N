@@ -1,0 +1,1023 @@
+North Island	1
+South Island	2
+Stewart Island/Rakiura	3
+Norfolk Island:Norfolk Island	4
+Norfolk Island:Nepean Island	5
+Norfolk Island:Philip Island	6
+Kermadec Islands:Napier Island	7
+Kermadec Islands:Raoul Island:Green Lake	8
+Kermadec Islands:Raoul Island	9
+Kermadec Islands:Raoul Island:Blue Lake	10
+Kermadec Islands:Raoul Island:Dougall Rocks	11
+Kermadec Islands:Raoul Island:Milne Islets:	12
+Kermadec Islands:Raoul Island:Milne Islets:	13
+Kermadec Islands:Raoul Island:Egeria Rock	14
+Kermadec Islands:Meyer Islands:	15
+Kermadec Islands:Meyer Islands:	16
+Kermadec Islands:Meyer Islands:	17
+Kermadec Islands:Meyer Islands:	18
+Kermadec Islands:Meyer Islands:	19
+Kermadec Islands:Nugent Island	20
+Kermadec Islands:Herald Islets:West Chanter Island	21
+Kermadec Islands:Herald Islets:Dayrell Island	22
+Kermadec Islands:Herald Islets:North Chanter Island	23
+Kermadec Islands:Herald Islets:South Chanter Island	24
+Kermadec Islands:Herald Islets:	25
+Kermadec Islands:Macauley Island	26
+Kermadec Islands:Macauley Island:Haszard Islet	27
+Kermadec Islands:Curtis Island	28
+Kermadec Islands:Cheeseman Island	29
+Lord Howe Island	30
+Lord Howe Island:Roach Island	31
+Lord Howe Island:Ball's Pyramid	32
+Lord Howe Island:Ball's Pyramid	33
+Lord Howe Island:Ball's Pyramid	34
+Lord Howe Island:Ball's Pyramid	35
+Lord Howe Island:Wheatsheaf Islet	36
+Lord Howe Island:Mutton Bird Island	37
+Kermadec Islands:L'Esperance Rock	38
+Manawatawhi/Three Kings Islands:Princes Islands:West Island	39
+Manawatawhi/Three Kings Islands:Princes Islands:40	40
+Manawatawhi/Three Kings Islands:Princes Islands:41	41
+Manawatawhi/Three Kings Islands:Princes Islands:42	42
+Manawatawhi/Three Kings Islands:Princes Islands:43	43
+Manawatawhi/Three Kings Islands:Princes Islands:44	44
+Manawatawhi/Three Kings Islands:Princes Islands:45	45
+Manawatawhi/Three Kings Islands:Princes Islands:46	46
+Manawatawhi/Three Kings Islands:Princes Islands:47	47
+Manawatawhi/Three Kings Islands:Princes Islands:48	48
+Manawatawhi/Three Kings Islands:Princes Islands:49	49
+Manawatawhi/Three Kings Islands:Princes Islands:Lion Rock	50
+Manawatawhi/Three Kings Islands:Princes Islands:51	51
+Manawatawhi/Three Kings Islands:Princes Islands:South West Island	52
+Manawatawhi/Three Kings Islands:Princes Islands:53	53
+Manawatawhi/Three Kings Islands:Princes Islands:54	54
+Manawatawhi/Three Kings Islands:Princes Islands:55	55
+Manawatawhi/Three Kings Islands:Manawatawhi/Great Island	56
+Manawatawhi/Three Kings Islands:Great Island:57	57
+Manawatawhi/Three Kings Islands:Great Island:58	58
+Manawatawhi/Three Kings Islands:Great Island:59	59
+Manawatawhi/Three Kings Islands:North East Island	60
+North Island:Te Wakatehaua Island	61
+North Island:Matapia Island	62
+North Island:63	63
+North Island:Taupiri Island	64
+North Island:Motuopao Island	65
+North Island:66	66
+North Island:67	67
+North Island:68	68
+North Island:69	69
+North Island:70	70
+North Island:71	71
+North Island:Kaipohue Island	72
+North Island:Murimotu Island	73
+North Island:Motu Puruhi Island	74
+North Island:Terakautuhaka Island	75
+North Island:Omaia Island	76
+North Island:Mangrove Island	77
+North Island:78	78
+North Island:Moturoa Island	79
+North Island:Mokutapu Island	80
+North Island:Sugarloaf Island	81
+North Island:Tuputupungahau Island	82
+North Island:Rocky Island	83
+North Island:Wekarua Island	84
+North Island:Cone Island	85
+North Island:Stephenson Island/Mahinepua	86
+North Island:Motuekaiti Island	87
+North Island:Flat Island	88
+North Island:Cavalli Islands:Motutapere Island	89
+North Island:Cavalli Islands:Hamaruru Island	90
+North Island:Cavalli Islands:Panaki Island	91
+North Island:Cavalli Islands:Nukutaunga Island	92
+North Island:Cavalli Islands:Motutakupu Island	93
+North Island:Cavalli Islands:Haraweka Island	94
+North Island:Cavalli Islands:Motukawanui Island	95
+North Island:Paewhenua Island	96
+North Island:Ohauroro Island	97
+North Island:Wairaupo/Milford Island	98
+North Island:Cavalli Islands:Motuharakeke Island	99
+North Island:Cavalli Islands:Keokeo Island	100
+North Island:Cavalli Islands:Motumuka Island	101
+North Island:Cavalli Islands:Whatupuke Island	102
+North Island:Cavalli Islands:Whatupukeiti Island	103
+North Island:Cavalli Islands:Kahangaro Island	104
+North Island:Cavalli Islands:Piraunui Island	105
+North Island:Cavalli Islands:Motukawaiti	106
+North Island:Harakeke Island	107
+North Island:Wainui Island	108
+North Island:Taranaki Island	109
+North Island:Rahui Islands:	110
+North Island:Rahui Islands:	111
+North Island:Motupapa Island	112
+North Island:Te Pahi Islands:	113
+North Island:Te Pahi Islands:	114
+North Island:Te Pahi Islands:	115
+North Island:Te Pahi Islands:	116
+North Island:117	117
+North Island:118	118
+North Island:119	119
+North Island:120	120
+North Island:121	121
+North Island:122	122
+North Island:Black Rocks:	123
+North Island:Black Rocks:	124
+North Island:Black Rocks:	125
+North Island:Battleship Rock	126
+North Island:Moturoa Island	127
+North Island:Motumaire Island	128
+North Island:Motuarahi Island	129
+North Island:Toretore Island	130
+North Island:Motukauri Island	131
+North Island:Motuarohia/Robertson Island	132
+North Island:Moturua Island	133
+North Island:Motukiekie Island	134
+North Island:Okahu Island	135
+North Island:Waewaetorea Island	136
+North Island:Urupukapuka Island	137
+North Island:Poroporo Island	138
+North Island:Tawiriwiri Island	139
+North Island:140	140
+North Island:Moturahurahu Island	141
+North Island:Motuwheteke Island	142
+North Island:Motukokako/Piercy Island	143
+North Island:Otuwhanga Island	144
+North Island:Motukiore Island	145
+North Island:Motukowhai Island	146
+North Island:Parerangi Island	147
+North Island:Motuhi Island	148
+North Island:Moanarua Island	149
+North Island:Motukauri Island	150
+North Island:Motutara Island	151
+North Island:Motukehua Island	152
+North Island:Motutaniwha Island	153
+North Island:154	154
+North Island:Ngataurua Rock	155
+North Island:Rimariki Island	156
+North Island:Ngataurua Rock	157
+North Island:Motuwhariki Island	158
+North Island:Wide Berth Islands	159
+North Island:160	160
+North Island:Otawhanga Island	161
+Poor Knights Islands:Tawhiti Rahi Island	162
+Poor Knights Islands:Motu Kapiti Island	163
+Poor Knights Islands:Aorangi Island	164
+Poor Knights Islands:Aorangaia Island	165
+North Island:Four Islets	166
+North Island:Motutohe Island	167
+Poor Knights Islands:168	168
+North Island:Kukutaowhao Island	169
+North Island:Goat Island	170
+North Island:171	171
+North Island:Reparapahoe Island	172
+North Island:Motungangara Island	173
+North Island:Otarawa Island	174
+North Island:Mauitaha Island	175
+North Island:176	176
+North Island:Limestone Island	177
+North Island:178	178
+North Island	179
+North Island:Taranga Island	180
+North Island:Mauitaha/West Chicken Island	181
+North Island:Lady Alice Island	182
+North Island:Whatupuku Island	183
+North Island:Coppermine Island	184
+North Island:Taura Rock	185
+North Island:Wareware Island	186
+North Island:Muriwhenua Island	187
+North Island:Pupuha Island	188
+North Island:Araara Island	189
+North Island:Atihau Island	190
+North Island:Burgess Island	191
+North Island:Fanal Island	192
+North Island	193
+North Island:194	194
+North Island:195	195
+North Island:196	196
+North Island:Motuouhi Island	197
+North Island:198	198
+North Island:199	199
+North Island:200	200
+North Island:Manukapua Island	201
+North Island:202	202
+North Island:203	203
+North Island:204	204
+North Island:Moturemu Island	205
+North Island	206
+North Island	207
+North Island:208	208
+North Island:209	209
+North Island:210	210
+North Island:211	211
+North Island:212	212
+North Island:213	213
+North Island:214	214
+North Island:215	215
+North Island:216	216
+North Island:217	217
+North Island:Waikauri Island	218
+North Island:Motukuru Island	219
+North Island:Apahekeheke Island	220
+North Island:Goat Island	221
+North Island:Panetiki Island	222
+North Island:223	223
+North Island:224	224
+North Island:Takangaroa Island	225
+North Island:Kawau Island	226
+North Island:Challenger Island	227
+North Island:Motuketekete Island	228
+North Island:Moturekareka Island	229
+North Island:230	230
+North Island:Motuora Island	231
+North Island:Te Haupa Island	232
+North Island:Casnell Island	233
+North Island:Wooded Island	234
+North Island:Tiritiri Matangi Island	235
+North Island:Oaia Island	236
+North Island:Motutara Island	237
+North Island:Kauwahaia Island	238
+North Island:Ihumoana Island	239
+North Island:240	240
+North Island:241	241
+North Island:Taitomo Island	242
+North Island:Puketutu Island	243
+North Island:Pollen Island	244
+North Island:245	245
+North Island:Herald Island	246
+North Island:Motuhoropapa Island	247
+North Island:Otata Island	248
+North Island:Rakino Island	249
+North Island:250	250
+North Island:251	251
+North Island:Rangitoto & Motutapu Islands	252
+North Island:Motuihe Island	253
+North Island:Papakohatu Island	254
+North Island:Browns Island	255
+North Island:Wade Island	256
+North Island:257	257
+North Island:258	258
+North Island:Motukaraka Island	259
+North Island:Hauturu/Little Barrier Island	260
+North Island:261	261
+North Island:262	262
+North Island:Aiguilles Island	263
+North Island:264	264
+North Island:265	265
+North Island:266	266
+North Island:Rakitu Island	267
+North Island:268	268
+North Island:269	269
+North Island:Okokewa Island	270
+North Island:Wood Island	271
+North Island:Kaikoura Island	272
+North Island:Nelson Island	273
+North Island:274	274
+North Island:275	275
+North Island:Motuhaku Island	276
+North Island:Moturako Island	277
+North Island:278	278
+North Island:279	279
+North Island:280	280
+North Island:281	281
+North Island:282	282
+North Island:283	283
+North Island:Opakau Island	284
+North Island:285	285
+North Island:286	286
+North Island:287	287
+North Island:Ruapuke/Maria Island	288
+North Island:289	289
+North Island:290	290
+North Island:291	291
+North Island:292	292
+North Island:293	293
+North Island:294	294
+North Island:295	295
+North Island:Karamuramu Island	296
+North Island:Pakihi Island	297
+North Island:Ponui Island	298
+North Island:299	299
+North Island:Rotoroa Island	300
+North Island:Pakatoa Island	301
+North Island:Tarahiki Island	302
+North Island:Waiheke Island	303
+North Island	304
+North Island:Nani Island	305
+North Island:306	306
+North Island:307	307
+North Island:308	308
+North Island:Motumakareta Island	309
+North Island:Motukahaua Island	310
+North Island:Motuwhakakewa Island	311
+North Island:Motuwi Island	312
+North Island:Motuwinukenuke Island	313
+North Island:Motukaramarama Island	314
+North Island:Moturua Island	315
+North Island:316	316
+North Island:317	317
+North Island:318	318
+North Island:Motutakupu Island	319
+North Island:Motuoruhi Island	320
+North Island:Motuokino Island	321
+North Island:Motukaramea Island	322
+North Island:Motumorirau Island	323
+North Island:Motukopake Island	324
+North Island:Waimate Island	325
+North Island:Motukakarikitahi Island	326
+North Island:Motupohukuo Island	327
+North Island:Motutapere Island	328
+North Island:Whanganui Island	329
+North Island:Rangipukea Island	330
+North Island:Wekarua Island	331
+North Island:Tataweka Island	332
+North Island:333	333
+North Island:Motutaiko Island	334
+North Island:Papakuri Island	335
+North Island:Rangiahua Island	336
+North Island:Little Mahuki Island	337
+North Island:Mahuki Island	338
+North Island:339	339
+North Island:Great Barrier Island	340
+North Island:341	341
+North Island:Whangara Island	342
+North Island:343	343
+North Island:344	344
+North Island:345	345
+North Island:346	346
+North Island:Palmers Island	347
+North Island:Pitokuku Island	348
+North Island:Cuvier Island	349
+North Island:Great Mercury Island	350
+North Island:Green Island	351
+North Island:Korapuki Island	352
+North Island:Atiu Island	353
+North Island:354	354
+North Island:355	355
+North Island:356	356
+North Island:Kawhitu or Stanley Island	357
+North Island:Double Island	358
+North Island:359	359
+North Island:Red Mercury Island	360
+North Island:Channel Island	361
+North Island:Square Top Island	362
+North Island:363	363
+North Island:The Pinnacles	364
+North Island:Motukokopu Island	365
+North Island	366
+North Island:Motukopu Island	367
+North Island:Pungapunga Island	368
+North Island:369	369
+North Island:370	370
+North Island:371	371
+North Island:372	372
+North Island:373	373
+North Island:374	374
+North Island:Motukoruenga Island	375
+North Island:376	376
+North Island:377	377
+North Island:378	378
+North Island:Flat Island	379
+North Island:Ohinauiti Island	380
+North Island:381	381
+North Island:Ohinau Island	382
+North Island:Motukoranga Island	383
+North Island:384	384
+North Island:The Twins:	385
+North Island:The Twins:	386
+North Island:Mahungarape Island	387
+North Island:Motukorure Island	388
+North Island:Motueka Island	389
+North Island:Mahurangi Island	390
+North Island:Okorotere Island	391
+North Island:392	392
+North Island:Waipapa Island	393
+North Island:Shoe Island	394
+North Island:Hongiora	395
+North Island:Middle Island	396
+North Island:Ruamahuanui Island	397
+North Island:398	398
+North Island:The Spire	399
+North Island:Nga Horo Island	400
+North Island:Ruamahuaiti Island	401
+North Island:Big Hump	402
+North Island:Half Island	403
+North Island:Wiroa Island	404
+North Island:405	405
+North Island	406
+North Island	407
+North Island	408
+North Island:409	409
+North Island:410	410
+North Island:411	411
+North Island:Penguin Island	412
+North Island:Slipper Island	413
+North Island:Hauturu Island	414
+North Island:Whenuakura Island	415
+North Island:Matakana Island	416
+North Island:417	417
+North Island:Motungaio Island	418
+North Island:Rangiwaea Island	419
+North Island:Motuhoa Island	420
+North Island:Motuopae Island	421
+North Island:Motuopuhi Island	422
+North Island:423	423
+North Island:424	424
+North Island:425	425
+North Island:426	426
+North Island:Motiti Island	427
+North Island:Taumaihi Island	428
+North Island:Motukahakaha Island	429
+North Island:Motuputa Island	430
+North Island:Motupatiki Island	431
+North Island:Turitea Island	432
+North Island:433	433
+North Island:434	434
+North Island:435	435
+North Island:436	436
+North Island:437	437
+North Island:438	438
+North Island:439	439
+North Island:Moutohora Island	440
+North Island:Moutoki Island	441
+North Island:Rurima Island	442
+North Island:443	443
+North Island:444	444
+North Island:Karewa/Gannet Island	445
+North Island:Mayor Island	446
+North Island:Tokopapa Island	447
+North Island:448	448
+North Island:Motuoneone Island	449
+North Island:Whakaari/White Island	450
+North Island:Whangakopikopiko Island	451
+North Island:Uretara Island	452
+North Island:453	453
+North Island:Motunui Island	454
+North Island:Motukotare Island	455
+North Island:Te Huka Island	456
+North Island:Motu Papaka Islands	457
+North Island:Motu Kaimeanui Island	458
+North Island:459	459
+North Island:Otarawhata Island	460
+North Island:461	461
+North Island:462	462
+North Island:East Island	463
+North Island	464
+North Island:Te Motu Island	465
+North Island	466
+North Island	467
+North Island:Motuotu Island	468
+North Island:469	469
+North Island:470	470
+North Island:Hokianga Island	471
+North Island:Pataua Island	472
+North Island:473	473
+North Island:474	474
+North Island:Motuaiuri Island	475
+North Island:Moutahiauru Island	476
+North Island:Motuhina Island	477
+North Island:Motuoroi Island	478
+North Island	479
+North Island:480	480
+North Island:481	481
+North Island:482	482
+North Island:Pourewa Island	483
+North Island:484	484
+North Island:485	485
+North Island:486	486
+North Island:487	487
+North Island:488	488
+North Island:Whangara Island	489
+North Island:Tuamotu Island	490
+North Island:Moturoa	491
+North Island:Motumahanga	492
+North Island:493	493
+North Island:494	494
+North Island:495	495
+North Island:496	496
+North Island	497
+North Island:498	498
+North Island:Karamea	499
+North Island:500	500
+North Island:Portland Island	501
+North Island:502	502
+North Island:Motuokura/Bare Island	503
+South Island:504	504
+South Island:505	505
+South Island:506	506
+South Island:507	507
+South Island	508
+South Island:509	509
+South Island:510	510
+South Island:Motu Island	511
+South Island:Ngawhiti Island	512
+South Island:513	513
+South Island:514	514
+South Island:Tonga Island	515
+South Island:Adele Island	516
+South Island:Fisherman Island	517
+South Island:D'Urville Island	518
+South Island:Victory Island	519
+South Island:Stephens Island	520
+South Island:Wakaterepapanui Island	521
+South Island:Puangiangi Island	522
+South Island:Tinui Island	523
+South Island:524	524
+South Island:525	525
+South Island:526	526
+South Island:Karaka Island	527
+North Island:Kapiti Island	528
+North Island:Motungarara Island	529
+North Island:Tahoramaurea Island	530
+South Island:Chetwode Islands:Te Kakaho Island	531
+South Island:Chetwode Islands:	532
+South Island:Forsyth Island	533
+South Island:Titi Island	534
+North Island	535
+North Island	536
+North Island	537
+North Island:538	538
+South Island	539
+South Island:540	540
+South Island:541	541
+South Island:Outer Island	542
+South Island	543
+South Island	544
+South Island	545
+South Island	546
+South Island:Jackett Island	547
+South Island:Best Island	548
+South Island:Bell Island	549
+South Island:550	550
+South Island:Rabbit Island	551
+South Island:Saxton Island	552
+South Island:Haulashore Island	553
+South Island:554	554
+South Island:Motuanauru Island	555
+South Island:Otuhaereroa Island	556
+South Island:557	557
+South Island:Tarakaipa Island	558
+South Island:559	559
+South Island	560
+South Island:Maud Island	561
+South Island:Oukaha Island	562
+North Island:Mana Island	563
+North Island:Taputeranga Island	564
+North Island:Matiu/Somes Island	565
+North Island:Makaro/Ward Island	566
+South Island:Motuara Island	567
+South Island:Allports Island	568
+South Island:Raukawa Rock	569
+South Island:The Brothers:South Brother Island	570
+South Island:The Brothers:North Brother Island	571
+South Island:Arapawa Island	572
+South Island:Blumine Island	573
+South Island:Pickersgill Island	574
+South Island:Long Island	575
+South Island:Motungarara Island	576
+South Island:Moerepo Island	577
+South Island:Budges Island	578
+South Island:579	579
+South Island:580	580
+South Island:581	581
+South Island:582	582
+South Island	583
+South Island	584
+Chatham Islands:Chatham Island	585
+Chatham Islands:Te Whanga Lagoon	586
+Chatham Islands:Lake Huro	587
+Chatham Islands:Pitt Island	588
+Chatham Islands:Mangare Island	589
+Chatham Islands:Little Mangare Island	590
+Chatham Islands:South East Island	591
+Chatham Islands:Lake Rangitai	592
+Chatham Islands:Western Reef	593
+Chatham Islands:The Sisters:	594
+Chatham Islands:The Sisters:	595
+Chatham Islands:The Sisters:	596
+Chatham Islands:Te Whakuru Island	597
+South Island:Taumaka Island	598
+South Island:Popotai Island	599
+South Island:600	600
+South Island:601	601
+South Island:602	602
+South Island:603	603
+South Island:604	604
+South Island:605	605
+South Island:606	606
+South Island:607	607
+South Island:608	608
+South Island:609	609
+South Island:610	610
+South Island:611	611
+South Island:612	612
+South Island:613	613
+South Island:614	614
+South Island:615	615
+South Island:616	616
+South Island:617	617
+South Island:618	618
+South Island:Otamahua/Quail Island	619
+South Island	620
+South Island	621
+South Island:622	622
+South Island:623	623
+South Island:624	624
+South Island:625	625
+South Island:626	626
+South Island:627	627
+South Island:628	628
+South Island:629	629
+South Island:630	630
+South Island:631	631
+South Island:Gorge Islands	632
+Chatham Islands:Ahuru/Eastern Reef	633
+Chatham Islands:Round Island	634
+South Island:635	635
+South Island:John Islands	636
+South Island:637	637
+South Island:638	638
+South Island:Harbour Islands	639
+South Island:640	640
+South Island:Oke Island	641
+South Island:Cooper Island	642
+South Island:643	643
+South Island:644	644
+South Island:645	645
+South Island:646	646
+South Island:647	647
+South Island:648	648
+South Island:649	649
+South Island:650	650
+South Island:Long Island	651
+South Island:652	652
+South Island:Two Sisters	653
+South Island:654	654
+South Island:655	655
+South Island:Curfew Island	656
+South Island:Heron Island	657
+South Island:658	658
+South Island:Indian Island	659
+South Island:Resolution Island	660
+South Island:661	661
+South Island:662	662
+South Island:663	663
+South Island:664	664
+South Island:665	665
+South Island:666	666
+South Island:667	667
+South Island:668	668
+South Island:669	669
+South Island:670	670
+South Island:671	671
+South Island:Pigeon Island	672
+South Island:673	673
+South Island:674	674
+South Island:Parrot Island	675
+South Island:676	676
+South Island:677	677
+South Island:678	678
+South Island:Entry Island	679
+South Island:680	680
+South Island:681	681
+South Island:682	682
+South Island:683	683
+South Island:684	684
+South Island:685	685
+South Island:686	686
+South Island:687	687
+South Island:Hawea Island	688
+South Island:Wairaki Island	689
+South Island:Breaksea Island	690
+South Island:691	691
+South Island:692	692
+South Island:693	693
+South Island:694	694
+South Island:695	695
+South Island:696	696
+South Island:Anchor Island	697
+South Island:698	698
+South Island:699	699
+South Island:Prove Island	700
+South Island:Stop Island	701
+South Island:702	702
+South Island:703	703
+South Island:704	704
+South Island:705	705
+South Island:706	706
+South Island:707	707
+South Island:708	708
+South Island:709	709
+South Island:710	710
+South Island:711	711
+South Island:712	712
+South Island:713	713
+South Island:714	714
+South Island:715	715
+South Island:716	716
+South Island:717	717
+South Island:718	718
+South Island:719	719
+South Island:720	720
+South Island:721	721
+South Island:722	722
+South Island:723	723
+South Island:724	724
+South Island:725	725
+South Island:726	726
+South Island:727	727
+South Island:Little Island	728
+South Island:729	729
+South Island:730	730
+South Island:731	731
+South Island:732	732
+South Island:733	733
+South Island:Great Island	734
+South Island:735	735
+South Island:Utah Island	736
+South Island:Bauza Island	737
+South Island:738	738
+South Island:739	739
+South Island:Nee Island	740
+South Island:Hare's Ears:	741
+South Island:Hare's Ears:	742
+South Island:Hare's Ears:	743
+South Island:Secretary Island	744
+South Island:745	745
+South Island:Elizabeth Island	746
+South Island:Styles Island	747
+South Island:Eleanor Island	748
+South Island:Lloyd Island	749
+South Island:Catherine Island	750
+South Island:Fanny Island	751
+South Island:Entrance Island	752
+South Island:Macdonell Island	753
+South Island:Seymour Island	754
+South Island:755	755
+South Island:Goat Island/Rakiriri	756
+South Island:Quarantine Island/Kamau Taurua	757
+South Island:758	758
+South Island:759	759
+South Island:760	760
+South Island:Passage Islands	762
+South Island:Chalky Island	762
+South Island:763	763
+South Island:764	764
+South Island:765	765
+South Island:766	766
+South Island:767	767
+South Island:768	768
+South Island:769	769
+South Island:770	770
+South Island:771	771
+South Island:Weka Island	772
+South Island:Steep-to Island	773
+South Island:Coal Island	774
+South Island:775	775
+South Island:776	776
+South Island:777	777
+South Island:Raratoka Island	778
+South Island:Escape Reefs:	779
+South Island:Escape Reefs:	780
+South Island:Escape Reefs:	781
+Stewart Island:Ernest Islands:	782
+Stewart Island:Ernest Islands:	783
+Stewart Island:Ernest Islands:	784
+Stewart Island	785
+Stewart Island	786
+Stewart Island:Shark Island	787
+Stewart Island:788	788
+Stewart Island:Codfish Island	789
+Stewart Island:The Knobbies:	790
+Stewart Island:The Knobbies:	791
+Stewart Island:792	792
+Stewart Island:793	793
+Stewart Island:794	794
+Stewart Island:795	795
+Stewart Island:Rugged Islands:	796
+Stewart Island:Rugged Islands:	797
+Stewart Island:Rugged Islands:	798
+Stewart Island:Rugged Islands:	799
+Stewart Island:Bishops and Clerks Islands:	800
+Stewart Island:Bishops and Clerks Islands:	801
+South Island:802	802
+South Island:803	803
+South Island:Pig Island	804
+South Island:805	805
+South Island:806	806
+South Island:Joeys Island	807
+South Island:808	808
+South Island:Colyers Island	809
+South Island:Tikore Island	810
+South Island:Rabbit Island	811
+South Island:812	812
+South Island:Shag Rock	813
+South Island:Omaui Island	814
+South Island:Bombay Rock	815
+South Island:816	816
+South Island:817	817
+South Island:Dog Island	818
+South Island:Lee Island	819
+South Island:South Islets:	820
+South Island:South Islets:	821
+South Island:822	822
+South Island:Ruapuke Island	823
+South Island:White Island	824
+South Island:Topi Island	825
+South Island:Bird Island	826
+South Island:Hazelburgh Group:	827
+South Island:Hazelburgh Group:	828
+South Island:Hazelburgh Group:	829
+South Island:Hazelburgh Group:	830
+South Island:Hazelburgh Group:	831
+South Island:Hazelburgh Group:	832
+South Island:Hazelburgh Group:	833
+South Island:Seal Rocks	834
+South Island:Green Island	835
+South Island:Breaksea Islands:	836
+South Island:Breaksea Islands:	837
+Stewart Island:Nathans Island	838
+Stewart Island:Native Island	839
+Stewart Island:Iona Island	840
+Stewart Island:Faith Hope & Charity	841
+Stewart Island:Faith Hope & Charity	842
+Stewart Island:Faith Hope & Charity	843
+Stewart Island:Mudflat Island	844
+Stewart Island:Ulva Island	845
+Stewart Island:Refuge Island	846
+Stewart Island:Tommy Island	847
+Stewart Island:Crayfish Island	848
+Stewart Island:Groper Island	849
+Stewart Island:Goat Island	850
+Stewart Island:Bravo Island	851
+Stewart Island:852	852
+Stewart Island:853	853
+Stewart Island:854	854
+Stewart Island:Cow Island	855
+Stewart Island:856	856
+Stewart Island:North Island	857
+Stewart Island:Womens Island	858
+Stewart Island:Motunui/Edwards Island	859
+Stewart Island:Pukeokaoka/Jacky Lee Island	860
+Stewart Island:Herekopare Island	861
+Stewart Island:Bunker Islets:	862
+Stewart Island:Bunker Islets:	863
+Stewart Island:Kanetetoe Island	864
+Stewart Island:Flat Rock	865
+Stewart Island:The Haystacks	866
+Stewart Island:Bench Island	867
+South Island:Tuhawaiki Island	868
+South Island:Cosgrove Island	869
+South Island:Kinakina Island	870
+South Island:Taieri Island/Moturata	871
+Stewart Island:Kopeka Island	872
+Stewart Island:The Brothers:	873
+Stewart Island:The Brothers:	874
+Stewart Island:Pearl Island	875
+Stewart Island:Rosa Island	876
+Stewart Island:Burnt Island	877
+Stewart Island:Orphans Rock	878
+Stewart Island:Ernest Island	879
+Stewart Island:Noble Island	880
+Stewart Island:Anchorage Island	881
+Stewart Island:Dryad Island	882
+Stewart Island:883	883
+Stewart Island:Proclamation Islets:	884
+Stewart Island:Proclamation Islets:	885
+Stewart Island:Nelly Island	886
+Stewart Island:887	887
+Stewart Island:Kaninihi Island	888
+Stewart Island:Murphy Island	889
+Stewart Island:890	890
+Stewart Island:Poutama Island	891
+Stewart Island:Taukihepa/Big South Cape Island Island	892
+Stewart Island:893	893
+Stewart Island:894	894
+Stewart Island:895	895
+Stewart Island:896	896
+Stewart Island:Pukeweka Island	897
+Stewart Island:Rerewhakaupoko Island	898
+Stewart Island:899	899
+Stewart Island:Pukuparara Island	900
+Stewart Island:Kaimohu Island	901
+Stewart Island:902	902
+Stewart Island:903	903
+Stewart Island:Putauhina Island	904
+Stewart Island:905	905
+Stewart Island:Huirapa Island	906
+Stewart Island:907	907
+Stewart Island:Putauhina Nuggets	908
+Stewart Island:909	909
+Stewart Island:910	910
+Stewart Island:911	911
+Stewart Island:912	912
+Stewart Island:Pohowaitai Island	913
+Stewart Island:Tamaitemioka Island	914
+Stewart Island:Mokinui/Big Moggy Island	915
+Stewart Island:Mokinui/Big Moggy Island	916
+Stewart Island:Mokiiti/Little Moggy Island	917
+Stewart Island:918	918
+Stewart Island:Timore Island	919
+Stewart Island:Big Island	920
+Stewart Island:Betsy Island	921
+Stewart Island:Kundy Island	922
+Stewart Island:Rat Island	923
+Stewart Island:924	924
+Stewart Island:925	925
+Stewart Island:Goose Island	926
+Stewart Island:The Sisters:	927
+Stewart Island:The Sisters:	928
+Stewart Island:929	929
+Stewart Island:930	930
+Stewart Island:Pihore Island	931
+Stewart Island:932	932
+Stewart Island:Weka Island	933
+Stewart Island:934	934
+Stewart Island:935	935
+Stewart Island:Tia Island	936
+Stewart Island:937	937
+Stewart Island:Rukawahakura Island	938
+Stewart Island:Takawini Island	939
+Stewart Island:Potuatua Island	940
+Stewart Island:Pomatakiarehua Island 	941
+Stewart Island:Kaihuka Island	942
+Stewart Island:Wharepuaitaha Island	943
+Stewart Island:944	944
+Stewart Island:945	945
+Stewart Island:Horomamae/Owen Island	946
+Stewart Island:947	947
+Bounty Islands:Molly Cap	948
+Bounty Islands:North Rock	949
+Bounty Islands:950	950
+Bounty Islands:951	951
+Bounty Islands:Castle Island	952
+Bounty Islands:Prion Island	953
+Bounty Islands:Funnel Island	954
+Bounty Islands:955	955
+Bounty Islands:Lion Island	956
+Bounty Islands:Ranfurly Island	957
+Bounty Islands:Depot Island	958
+Bounty Islands:Ruatara Island	959
+Bounty Islands:960	960
+Bounty Islands:Penguin Island	961
+Bounty Islands:Skua Rock	962
+Bounty Islands:Spider Island	963
+Bounty Islands:964	964
+Bounty Islands:965	965
+Snares Islands:Alert Stack	966
+Snares Islands:North East Island	967
+Snares Islands:968	968
+Snares Islands:North Daption Rock	969
+Snares Islands:South Daption Rock	970
+Snares Islands:971	971
+Snares Islands:972	972
+Snares Islands:973	973
+Snares Islands:974	974
+Snares Islands:975	975
+Snares Islands:976	976
+Snares Islands:977	977
+Snares Islands:Broughton Island	978
+Snares Islands:Tahi/Rua	979
+Snares Islands:Toru	980
+Snares Islands:Wha	981
+Snares Islands:Rima	982
+Antipodes Islands:Antipodes Island	983
+Antipodes Islands:Bollons Island	984
+Antipodes Islands:Leeward Island	985
+Antipodes Islands:Windward Islands:	986
+Antipodes Islands:Windward Islands:	987
+Antipodes Islands:Windward Islands:	988
+Antipodes Islands:Orde Lees Islet	989
+Auckland Island	990
+Auckland Island:Adams Island	991
+Auckland Island:Disappointment Island	992
+Auckland Island:993	993
+Auckland Island:Monumental Island	994
+Auckland Island:Rose Island	995
+Auckland Island:Ewing Island	996
+Auckland Island:Enderby Island	997
+Auckland Island:Figure of Eight Island	998
+Auckland Island:Sugar Loaf Rocks	999
+Auckland Island:Column Rocks	1000
+Auckland Island:Ocean Island	1001
+Auckland Island:Dundas Island	1002
+Auckland Island:Green Island	1003
+Auckland Island:Blanche Rock	1004
+Auckland Island:Compadre Rock	1005
+Campbell Island:Hook Keys:	1006
+Campbell Island:Jacquemart Island	1007
+Campbell Island:Isle de Jeanette Marie	1008
+Campbell Island:Dent Island	1009
+Campbell Island	1010
+Campbell Island:Hook Keys:	1011
+Campbell Island:1012	1012
+Campbell Island:Wasp Island	1013
+Campbell Island:Monowai Island	1014
+Campbell Island:Survey Island	1015
+Campbell Island:Gomez Island	1016
+Campbell Island:Cossack Rock	1017
+Macquarie Island:1018	1018
+Macquarie Island:Judge and Clerk Islets:	1019
+Macquarie Island:Judge and Clerk Islets:	1020
+Macquarie Island:Bishop and Clerk Islets:	1021
+Bounty Islands:Tunnel Island	1022
+Bounty Islands:Proclamation Island	1023

@@ -1,0 +1,78 @@
+EventData               EventData Objects
+LocationSet             LocationSet Objects
+PBSmapping              PBS Mapping: Draw Maps and Implement Other GIS
+                        Procedures
+PBSprint                Specify Whether to Print Summaries
+PolyData                PolyData Objects
+PolySet                 PolySet Objects
+RGB2RYB                 Convert RGB to RYB and RYB to RGB
+addBubbles              Add Bubbles to Maps
+addCompass              Add Compass Rose to Map
+addLabels               Add Labels to an Existing Plot
+addLines                Add a PolySet to an Existing Plot as Polylines
+addPoints               Add EventData/PolyData to an Existing Plot as
+                        Points
+addPolys                Add a PolySet to an Existing Plot as Polygons
+addStipples             Add Stipples to an Existing Plot
+appendPolys             Append a Two-Column Matrix to a PolySet
+bcBathymetry            Data: Bathymetry Spanning BC Coast
+calcArea                Calculate the Areas of Polygons
+calcCentroid            Calculate the Centroids of Polygons
+calcConvexHull          Calculate the Convex Hull for a Set of Points
+calcGCdist              Calculate Great-Circle Distance
+calcLength              Calculate the Length of Polylines
+calcMidRange            Calculate the Midpoint of the X/Y Ranges of
+                        Polygons
+calcSummary             Apply Functions to Polygons in a PolySet
+calcVoronoi             Calculate the Voronoi (Dirichlet) Tesselation
+                        for a Set of Points
+clipLines               Clip a PolySet as Polylines
+clipPolys               Clip a PolySet as Polygons
+closePolys              Close a PolySet
+combineEvents           Combine Measurements of Events
+combinePolys            Combine Several Polygons into a Single Polygon
+convCP                  Convert Contour Lines into a PolySet
+convDP                  Convert EventData/PolyData into a PolySet
+convLP                  Convert Polylines into a Polygon
+convUL                  Convert Coordinates between UTM and Lon/Lat
+dividePolys             Divide a Single Polygon into Several Polygons
+extractPolyData         Extract PolyData from a PolySet
+findCells               Find Grid Cells that Contain Events
+findPolys               Find Polygons that Contain Events
+fixBound                Fix the Boundary Points of a PolySet
+fixPOS                  Fix the POS Column of a PolySet
+importEvents            Import EventData from a Text File
+importGSHHS             Import Data from a GSHHS Database
+importLocs              Import LocationSet from a text file
+importPolys             Import PolySet from a text file
+importShapefile         Import an ESRI Shapefile
+isConvex                Determine Whether Polygons are Convex
+isIntersecting          Determine Whether Polygons are
+                        Self-Intersecting
+joinPolys               Join One or Two PolySets using a Logic
+                        Operation
+locateEvents            Locate Events on the Current Plot
+locatePolys             Locate Polygons on the Current Plot
+makeGrid                Make a Grid of Polygons
+makeProps               Make Polygon Properties
+makeTopography          Make Topography Data from Online Source
+nepacLL                 Data: Shorelines of the NE Pacific Ocean and of
+                        the World
+placeHoles              Place Holes Under Solids
+plotLines               Plot a PolySet as Polylines
+plotMap                 Plot a PolySet as a Map
+plotPoints              Plot EventData/PolyData as Points
+plotPolys               Plot a PolySet as Polygons
+print.EventData         Print PBS Mapping Objects
+pythagoras              Data: Pythagoras' Theorem Diagram PolySet
+refocusWorld            Refocus the 'worldLL'/'worldLLhigh' Data Sets
+rotatePolys             Rotate Polygons and Events
+summary.EventData       Summarize PBS Mapping Objects
+surveyData              Data: Tow Information from Pacific Ocean Perch
+                        Survey
+thickenPolys            Thicken a PolySet of Polygons
+thinPolys               Thin a PolySet of Polygons
+towData                 Data: Tow Information from Longspine Thornyhead
+                        Survey
+towTracks               Data: Tow Track Polylines from Longspine
+                        Thornyhead Survey

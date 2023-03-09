@@ -1,0 +1,152 @@
+# R 3.3 compatibility:
+
+importFrom("grDevices", "chull", "col2rgb", "colorRamp", "rgb2hsv", "hsv",
+             "colorRampPalette", "grey", "rgb", "convertColor", "colors", "hcl")
+
+importFrom("graphics", "abline", "arrows", "axis", "box", "grid",
+             "image", "legend", "lines", "mtext", "par", "points",
+             "polygon", "rect", "segments", "strwidth", "strheight", "text")
+
+importFrom("stats", "aggregate", "approxfun", "as.dist", "as.formula",
+             "complete.cases", "cov", "formula", "median", "model.frame",
+             "na.omit", "na.pass", "quantile", "rnorm", "runif", "sd",
+             "splinefun", "update", "cmdscale", "dist", "TukeyHSD", "aov", "terms",
+             "weighted.mean")
+
+importFrom("utils", "head", "object.size", 'packageVersion')
+
+importFrom(methods,
+  setClass,
+  setOldClass,
+  representation,
+  prototype,
+  new,
+  isGeneric,
+  setGeneric,
+  setReplaceMethod,
+  setMethod,
+  as,
+  show,
+  slot,
+  "slot<-",
+  .hasSlot,
+  slotNames
+)
+
+importFrom(grid,
+  gpar,
+  grid.text,
+  unit
+)
+
+importFrom(lattice,
+  xyplot,
+  levelplot,
+  trellis.par.get,
+  panel.levelplot,
+  panel.abline,
+  panel.lines,
+  panel.polygon,
+  panel.segments,
+  panel.grid,
+  panel.rect,
+  panel.text,
+  panel.points,
+  strip.custom
+)
+
+importFrom(cluster,
+  daisy,
+  pam,
+  silhouette
+)
+
+importFrom(graphics,
+  plot
+)
+
+importFrom(plyr,
+  ddply,
+  llply,
+  ldply,
+  dlply,
+  join,
+  summarise,
+  rbind.fill
+)
+
+import(data.table)
+
+importFrom(stringr,
+  fixed,
+  str_c,
+  str_split,
+  str_trim,
+  str_extract_all,
+  str_length
+)
+
+importFrom(sp,
+  CRS,
+  SpatialPoints,
+  SpatialPointsDataFrame,
+  coordinates,
+  "coordinates<-",
+  proj4string,
+  "proj4string<-",
+  rbind.SpatialPoints
+)
+
+exportClasses(SoilProfileCollection)
+
+exportMethods(
+  "[",
+  "$",
+  "$<-",
+  "[[",
+  "[[<-",
+  validSpatialData,
+  coordinates,
+  "coordinates<-",
+  "depths<-",
+  depth_units,
+  "depth_units<-",
+  diagnostic_hz,
+  "diagnostic_hz<-",
+  restrictions,
+  "restrictions<-",
+  horizons,
+  "horizons<-",
+  horizonDepths,
+  idname,
+  length,
+  max,
+  metadata,
+  "metadata<-",
+  min,
+  names,
+  nrow,
+  plot,
+  profileApply,
+  profile_compare,
+  profile_id,
+  proj4string,
+  "proj4string<-",
+  site,
+  "site<-",
+  slab,
+  slice,
+  hzidname,
+  "hzidname<-",
+  hzID,
+  "hzID<-",
+  hzdesgnname,
+  "hzdesgnname<-",
+  hzDesgn,
+  hztexclname,
+  "hztexclname<-",
+  grepSPC,
+  subApply
+)
+
+exportPattern("^[^\\.]")

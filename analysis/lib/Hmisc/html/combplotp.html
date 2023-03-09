@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Combination Plot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for combplotp {Hmisc}"><tr><td>combplotp {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Combination Plot</h2>
+
+<h3>Description</h3>
+
+<p>Generates a plotly attribute plot given a series of possibly overlapping binary variables
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+combplotp(
+  formula,
+  data = NULL,
+  subset,
+  na.action = na.retain,
+  vnames = c("labels", "names"),
+  includenone = FALSE,
+  showno = FALSE,
+  maxcomb = NULL,
+  minfreq = NULL,
+  N = NULL,
+  pos = function(x) 1 * (tolower(x) %in% c("true", "yes", "y", "positive", "+",
+    "present", "1")),
+  obsname = "subjects",
+  ptsize = 35,
+  width = NULL,
+  height = NULL,
+  ...
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula containing all the variables to be cross-tabulated, on the formula's right hand side.  There is no left hand side variable.  If <code>formula</code> is omitted, then all variables from <code>data</code> are analyzed.</p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>input data frame.  If none is specified the data are assumed to come from the parent frame.</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>an optional subsetting expression applied to <code>data</code></p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+<p>see <code>lm</code> etc.</p>
+</td></tr>
+<tr valign="top"><td><code>vnames</code></td>
+<td>
+<p>set to <code>"names"</code> to use variable names to label axes instead of variable labels.  When using the default <code>labels</code>, any variable not having a label will have its name used instead.</p>
+</td></tr>
+<tr valign="top"><td><code>includenone</code></td>
+<td>
+<p>set to <code>TRUE</code> to include the combination where all conditions are absent</p>
+</td></tr>
+<tr valign="top"><td><code>showno</code></td>
+<td>
+<p>set to <code>TRUE</code> to show a light dot for conditions that are not part of the currently tabulated combination</p>
+</td></tr>
+<tr valign="top"><td><code>maxcomb</code></td>
+<td>
+<p>maximum number of combinations to display</p>
+</td></tr>
+<tr valign="top"><td><code>minfreq</code></td>
+<td>
+<p>if specified, any combination having a frequency less than this will be omitted from the display</p>
+</td></tr>
+<tr valign="top"><td><code>N</code></td>
+<td>
+<p>set to an integer to override the global denominator, instead of using the number of rows in the data</p>
+</td></tr>
+<tr valign="top"><td><code>pos</code></td>
+<td>
+<p>a function of vector returning a logical vector with <code>TRUE</code> values indicating positive</p>
+</td></tr>
+<tr valign="top"><td><code>obsname</code></td>
+<td>
+<p>character string noun describing observations, default is <code>"subjects"</code></p>
+</td></tr>
+<tr valign="top"><td><code>ptsize</code></td>
+<td>
+<p>point size, defaults to 35</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+<p>width of <code>plotly</code> plot</p>
+</td></tr>
+<tr valign="top"><td><code>height</code></td>
+<td>
+<p>height of <code>plotly</code> plot</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>optional arguments to pass to <code>table</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Similar to the <code>UpSetR</code> package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical <code>TRUE</code>, numeric 1, <code>"yes"</code>, <code>"y"</code>, <code>"positive"</code>, <code>"+"</code> or <code>"present"</code> value, and all others are considered negative.  The user can override this determination by specifying her own <code>pos</code> function.  Case is ignored in the variable values.
+</p>
+<p>The plot uses solid dots arranged in a vertical line to indicate which combination of conditions is being considered.  Frequencies of all possible combinations are shown above the dot chart.  Marginal frequencies of positive values for the input variables are shown to the left of the dot chart.  More information for all three of these component symbols is provided in hover text.
+</p>
+<p>Variables are sorted in descending order of marginal frqeuencies and likewise for combinations of variables.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>plotly</code> object
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+if (requireNamespace("plotly")) {
+  g &lt;- function() sample(0:1, n, prob=c(1 - p, p), replace=TRUE)
+  set.seed(2); n &lt;- 100; p &lt;- 0.5
+  x1 &lt;- g(); label(x1) &lt;- 'A long label for x1 that describes it'
+  x2 &lt;- g()
+  x3 &lt;- g(); label(x3) &lt;- 'This is&lt;br&gt;a label for x3'
+  x4 &lt;- g()
+  combplotp(~ x1 + x2 + x3 + x4, showno=TRUE, includenone=TRUE)
+
+  n &lt;- 1500; p &lt;- 0.05
+  pain       &lt;- g()
+  anxiety    &lt;- g()
+  depression &lt;- g()
+  soreness   &lt;- g()
+  numbness   &lt;- g()
+  tiredness  &lt;- g()
+  sleepiness &lt;- g()
+  combplotp(~ pain + anxiety + depression + soreness + numbness +
+            tiredness + sleepiness, showno=TRUE)
+}
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

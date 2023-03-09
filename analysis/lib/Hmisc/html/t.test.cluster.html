@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: t-test for Clustered Data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for t.test.cluster {Hmisc}"><tr><td>t.test.cluster {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>t-test for Clustered Data</h2>
+
+<h3>Description</h3>
+
+<p>Does a 2-sample t-test for clustered data.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+t.test.cluster(y, cluster, group, conf.int = 0.95)
+## S3 method for class 't.test.cluster'
+print(x, digits, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>normally distributed response variable to test</p>
+</td></tr>
+<tr valign="top"><td><code>cluster</code></td>
+<td>
+<p>cluster identifiers, e.g. subject ID</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+<p>grouping variable with two values</p>
+</td></tr>
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+<p>confidence coefficient to use for confidence limits</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>t.test.cluster</code></p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>number of significant digits to print</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>unused</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a matrix of statistics of class <code>t.test.cluster</code>
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>References</h3>
+
+<p>Donner A, Birkett N, Buck C, Am J Epi 114:906-914, 1981.
+</p>
+<p>Donner A, Klar N, J Clin Epi 49:435-439, 1996.
+</p>
+<p>Hsieh FY, Stat in Med 8:1195-1201, 1988.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/t.test.html">t.test</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+y &lt;- rnorm(800)
+group &lt;- sample(1:2, 800, TRUE)
+cluster &lt;- sample(1:40, 800, TRUE)
+table(cluster,group)
+t.test(y ~ group)   # R only
+t.test.cluster(y, cluster, group)
+# Note: negate estimates of differences from t.test to
+# compare with t.test.cluster
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

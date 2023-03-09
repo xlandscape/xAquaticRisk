@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Label Attribute of an Object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for label {Hmisc}"><tr><td>label {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Label Attribute of an Object
+</h2>
+
+<h3>Description</h3>
+
+<p><code>label(x)</code> retrieves the <code>label</code> attribute of <code>x</code>.
+<code>label(x) &lt;- "a label"</code> stores the label attribute, and also puts
+the class <code>labelled</code> as the first class of <code>x</code> (for S-Plus
+this class is not used and methods for handling this class are
+not defined so the <code>"label"</code> and <code>"units"</code> attributes are lost
+upon subsetting).  The reason for having this class is so that the
+subscripting method for <code>labelled</code>, <code>[.labelled</code>, can preserve
+the <code>label</code> attribute in S.  Also, the <code>print</code>
+method for <code>labelled</code> objects prefaces the print with the object's
+<code>label</code> (and <code>units</code> if there).  If the variable is also given
+a <code>"units"</code> attribute using the <code>units</code> function, subsetting
+the variable (using <code>[.labelled</code>) will also retain the
+<code>"units"</code> attribute.
+</p>
+<p><code>label</code> can optionally append a <code>"units"</code> attribute to the
+string, and it can optionally return a string or expression (for <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>'s
+<code>plotmath</code> facility) suitable for plotting.  <code>labelPlotmath</code>
+is a function that also has this function, when the input arguments are
+the <code>'label'</code> and <code>'units'</code> rather than a vector having those
+attributes.  When <code>plotmath</code> mode is used to construct labels, the
+<code>'label'</code> or <code>'units'</code> may contain math expressions but they
+are typed verbatim if they contain percent signs, blanks, or
+underscores.  <code>labelPlotmath</code> can optionally create the
+expression as a character string, which is useful in building
+<code>ggplot</code> commands.
+</p>
+<p>For <code>Surv</code> objects, <code>label</code> first looks to see if there is
+an overall <code>"label"</code> attribute for the object, then it looks for
+saved attributes that <code>Surv</code> put in the <code>"inputAttributes"</code>
+object, looking first at the <code>event</code> variable, then <code>time2</code>,
+and finally <code>time</code>.  You can restrict the looking by specifying
+<code>type</code>.
+</p>
+<p><code>labelLatex</code> constructs suitable LaTeX labels a variable or from the
+<code>label</code> and <code>units</code> arguments, optionally right-justifying
+<code>units</code> if <code>hfill=TRUE</code>.  This is useful when making tables
+when the variable in question is not a column heading.  If <code>x</code>
+is specified, <code>label</code> and <code>units</code> values are extracted from
+its attributes instead of from the other arguments.
+</p>
+<p><code>Label</code> (actually <code>Label.data.frame</code>) is a function which generates
+S source code that makes the labels in all the variables in a data
+frame easy to edit.
+</p>
+<p><code>llist</code> is like <code>list</code> except that it preserves the names or
+labels of the component variables in the variables <code>label</code>
+attribute.  This can be useful when looping over variables or using
+<code>sapply</code> or <code>lapply</code>. By using <code>llist</code> instead of
+<code>list</code> one can annotate the output with the current variable's name
+or label.  <code>llist</code> also defines a <code>names</code> attribute for the
+list and pulls the <code>names</code> from the arguments' expressions for
+non-named arguments.
+</p>
+<p><code>prList</code> prints a list with element names (without the dollar
+sign as in default list printing) and if an element of the list is an
+unclassed list with a name, all of those elements are printed, with
+titles of the form &quot;primary list name : inner list name&quot;.  This is
+especially useful for Rmarkdown html notebooks when a user-written
+function creates multiple html and graphical outputs to all be printed
+in a code chunk.  Optionally the names can be printed after the
+object, and the <code>htmlfig</code> option provides more capabilities when
+making html reports.  <code>prList</code> does not work for regular html
+documents. 
+</p>
+<p><code>putHfig</code> is similar to <code>prList</code> but for a single graphical
+object that is rendered with a <code>print</code> method, making it easy to
+specify long captions, and short captions for the table of contents in
+HTML documents.
+Table of contents entries are generated with the short caption, which
+is taken as the long caption if there is none.  One can optionally not
+make a table of contents entry.  If argument <code>table=TRUE</code> table
+captions will be produced instead.  Using <code>expcoll</code>,
+<code>markupSpecs</code> <code>html</code> function <code>expcoll</code> will be used to
+make tables expand upon clicking an arrow rather than always appear.
+</p>
+<p><code>putHcap</code> is like <code>putHfig</code> except that it
+assumes that users render the graphics or table outside of the
+<code>putHcap</code> call.  This allows things to work in ordinary html
+documents.  <code>putHcap</code> does not handle collapsed text.
+</p>
+<p><code>plotmathTranslate</code> is a simple function that translates certain
+character strings to character strings that can be used as part of <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>
+<code>plotmath</code> expressions.  If the input string has a space or percent
+inside, the string is surrounded by a call to <code>plotmath</code>'s
+<code>paste</code> function.
+</p>
+<p><code>as.data.frame.labelled</code> is a utility function that is called by
+<code>[.data.frame</code>.  It is just a copy of <code>as.data.frame.vector</code>.
+<code>data.frame.labelled</code> is another utility function, that adds a
+class <code>"labelled"</code> to every variable in a data frame that has a
+<code>"label"</code> attribute but not a <code>"labelled"</code> class.
+</p>
+<p><code>relevel.labelled</code> is a method for preserving <code>label</code>s with the <code>relevel</code> function.
+</p>
+<p><code>reLabelled</code> is used to add a <code>'labelled'</code> class back to
+variables in data frame that have a 'label' attribute but no 'labelled'
+class.  Useful for changing <code>cleanup.import()</code>'d S-Plus data
+frames back to general form for <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> and old versions of S-Plus.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+label(x, default=NULL, ...)
+
+## Default S3 method:
+label(x, default=NULL, units=plot, plot=FALSE,
+      grid=FALSE, html=FALSE, ...)
+
+## S3 method for class 'Surv'
+label(x, default=NULL, units=plot, plot=FALSE,
+      grid=FALSE, html=FALSE, type=c('any', 'time', 'event'), ...)
+
+## S3 method for class 'data.frame'
+label(x, default=NULL, self=FALSE, ...)
+
+label(x, ...) &lt;- value
+
+## Default S3 replacement method:
+label(x, ...) &lt;- value
+
+## S3 replacement method for class 'data.frame'
+label(x, self=TRUE, ...) &lt;- value
+
+labelPlotmath(label, units=NULL, plotmath=TRUE, html=FALSE, grid=FALSE,
+              chexpr=FALSE)
+
+labelLatex(x=NULL, label='', units='', size='smaller[2]',
+           hfill=FALSE, bold=FALSE, default='', double=FALSE)
+
+## S3 method for class 'labelled'
+print(x, ...)   ## or x - calls print.labelled
+
+Label(object, ...)
+
+## S3 method for class 'data.frame'
+Label(object, file='', append=FALSE, ...)
+
+llist(..., labels=TRUE)
+
+prList(x, lcap=NULL, htmlfig=0, after=FALSE)
+
+putHfig(x, ..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
+        table=FALSE, file='', append=FALSE, expcoll=NULL)
+
+putHcap(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
+        table=FALSE, file='', append=FALSE)
+
+plotmathTranslate(x)
+
+data.frame.labelled(object)
+
+## S3 method for class 'labelled'
+relevel(x, ...)
+
+reLabelled(object)
+
+combineLabels(...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>any object (for <code>plotmathTranslate</code> is a character string). For
+<code>relevel</code> is a <code>factor</code> variable.  For <code>prList</code> is a
+named list.  For <code>putHfig</code> is a graphical object for which a
+<code>print</code> method will render the graphic (e.g., a <code>ggplot2</code>
+or <code>plotly</code> object).
+</p>
+</td></tr>
+<tr valign="top"><td><code>self</code></td>
+<td>
+<p>lgoical, where to interact with the object or its components</p>
+</td></tr>
+<tr valign="top"><td><code>units</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to append the <code>'units'</code> attribute (if present)
+to the returned label.  The <code>'units'</code> are surrounded
+by brackets.  For <code>labelPlotmath</code> and <code>labelLatex</code> is a
+character string containing the units of measurement.  When
+<code>plot</code> is <code>TRUE</code>, <code>units</code> defaults to <code>TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>plot</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to return a label suitable for <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>'s <code>plotmath</code>
+facility (returns an expression instead of a character string) if R is
+in effect.  If <code>units</code> is also <code>TRUE</code>, and if both
+<code>'label'</code> and <code>'units'</code> attributes are present, the
+<code>'units'</code> will appear after the label but in smaller type and
+will not be surrounded by brackets.
+</p>
+</td></tr>
+<tr valign="top"><td><code>default</code></td>
+<td>
+
+<p>if <code>x</code> does not have a <code>'label'</code> attribute and
+<code>default</code> (a character string) is specified, the label will be
+taken as <code>default</code>.  For <code>labelLatex</code> the <code>default</code>
+is the name of the first argument if it is a variable and not a label.
+</p>
+</td></tr>
+<tr valign="top"><td><code>grid</code></td>
+<td>
+
+<p>Currently <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>'s <code>lattice</code> and <code>grid</code> functions do not support
+<code>plotmath</code> expressions for <code>xlab</code> and <code>ylab</code>
+arguments.  When using <code>lattice</code> functions in <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, set the
+argument <code>grid</code> to <code>TRUE</code> so that <code>labelPlotmath</code> can
+return an ordinary character string instead of an expression.
+</p>
+</td></tr>
+<tr valign="top"><td><code>html</code></td>
+<td>
+<p>set to <code>TRUE</code> to use HTML formatting instead of
+plotmath expressions for constructing labels with units</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+<p>for <code>Surv</code> objects specifies the type of element for
+which to restrict the search for a label</p>
+</td></tr>
+<tr valign="top"><td><code>label</code></td>
+<td>
+<p>a character string containing a variable's label</p>
+</td></tr>
+<tr valign="top"><td><code>plotmath</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to have <code>labelMathplot</code> return an expression
+for plotting using <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>'s <code>plotmath</code> facility.  If <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> is not in
+effect, an ordinary character string is returned.
+</p>
+</td></tr>
+<tr valign="top"><td><code>chexpr</code></td>
+<td>
+<p>set to <code>TRUE</code> to have <code>labelPlotmath</code> return a
+character string of the form <code>"expression(...)"</code></p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+<p>LaTeX size for <code>units</code>.  Default is two sizes smaller
+than <code>label</code>, which assumes that the LaTeX <code>relsize</code>
+package is in use.</p>
+</td></tr>
+<tr valign="top"><td><code>hfill</code></td>
+<td>
+<p>set to <code>TRUE</code> to right-justify <code>units</code> in the
+field.  This is useful when multiple labels are being put into rows
+in a LaTeX <code>tabular</code> environment, and will cause a problem if
+the label is used in an environment where <code>hfill</code> is not
+appropriate.</p>
+</td></tr>
+<tr valign="top"><td><code>bold</code></td>
+<td>
+<p>set to <code>TRUE</code> to have <code>labelLatex</code> put the
+<code>label</code> in bold face.</p>
+</td></tr>
+<tr valign="top"><td><code>double</code></td>
+<td>
+<p>set to <code>TRUE</code> to represent backslash in LaTeX as
+four backslashes in place of two.  This is needed if, for example,
+you need to convert the result using <code>as.formula</code></p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+
+<p>the label of the object, or &quot;&quot;.
+</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>a data frame
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>a list of variables or expressions to be formed into a <code>list</code>.
+Ignored for <code>print.labelled</code>.  For <code>relevel</code> is the
+<code>level</code> (a single character string) to become the new reference
+(first) category.  For <code>putHfig</code> and <code>putHcap</code> represents
+one or more character strings that are pasted together, separated by
+a blank. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+
+<p>the name of a file to which to write S source code.  Default is
+<code>""</code>, meaning standard output.  For <code>putHcap</code>, set
+<code>file</code> to <code>FALSE</code> to return a character vector instead of
+writing to <code>file</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>append</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to append code generated by <code>Label</code> to file
+<code>file</code>.  Also used for <code>putHfig, putHcap</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to make <code>llist</code> ignore the variables'
+<code>label</code> attribute and  use the variables' names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lcap</code></td>
+<td>
+<p>an optional vector of character strings corresponding to
+elements in <code>x</code> for <code>prList</code>.  These contain long captions
+that do not appear in the table of contents but which are printed
+right after the short caption in the body, in the same font.</p>
+</td></tr>
+<tr valign="top"><td><code>htmlfig</code></td>
+<td>
+<p>for <code>prList</code> set to <code>1</code> to use HTML markup by
+running the object names through <code>markupSpecs$html$cap</code> for
+figure captions.  Set <code>htmlfig=2</code> to also preface the figure
+caption with <code>"### "</code> so that it will appear in the table of
+contents.</p>
+</td></tr>
+<tr valign="top"><td><code>after</code></td>
+<td>
+<p>set to <code>TRUE</code> to have <code>prList</code> put names after
+the printed object instead of before</p>
+</td></tr>
+<tr valign="top"><td><code>scap</code></td>
+<td>
+<p>a character string specifying the short (or possibly only)
+caption.</p>
+</td></tr>
+<tr valign="top"><td><code>extra</code></td>
+<td>
+<p>an optional vector of character strings.  When present
+the long caption will be put in the first column of an HTML table
+and the elements of <code>extra</code> in subsequent columns.  This allows
+extra information to appear in the long caption in a way that is
+right-justified to the right of the flowing caption text.</p>
+</td></tr>
+<tr valign="top"><td><code>subsub</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress <code>"### "</code> from being
+placed in front of the short caption.  Set it to different character
+string to use that instead.  Set it to <code>""</code> to ignore short
+captions entirely.  For example to use second-level headings for the
+table of contents specify <code>subsub="## "</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>hr</code></td>
+<td>
+<p>applies if a caption is present.  Specify <code>FALSE</code> to
+not put a horizontal line before the caption and figure.</p>
+</td></tr>
+<tr valign="top"><td><code>table</code></td>
+<td>
+<p>set to <code>TRUE</code> to produce table captions instead of
+figure captions</p>
+</td></tr>
+<tr valign="top"><td><code>expcoll</code></td>
+<td>
+<p>character string to be visible, with a clickable arrow
+following to allow initial hiding of a table and its captions.
+Cannot be used with <code>table=FALSE</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><code>label</code> returns the label attribute of x, if any; otherwise, &quot;&quot;.
+<code>label</code> is used
+most often for the individual variables in data frames.  The function
+<code>sas.get</code> copies labels over from SAS if they exist.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/sas.get.html">sas.get</a></code>, <code><a href="../../Hmisc/help/describe.html">describe</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+age &lt;- c(21,65,43)
+y   &lt;- 1:3
+label(age) &lt;- "Age in Years"
+plot(age, y, xlab=label(age))
+
+data &lt;- data.frame(age=age, y=y)
+label(data)
+
+label(data, self=TRUE) &lt;- "A data frame"
+label(data, self=TRUE)
+
+x1 &lt;- 1:10
+x2 &lt;- 10:1
+label(x2) &lt;- 'Label for x2'
+units(x2) &lt;- 'mmHg'
+x2
+x2[1:5]
+dframe &lt;- data.frame(x1, x2)
+Label(dframe)
+
+labelLatex(x2, hfill=TRUE, bold=TRUE)
+labelLatex(label='Velocity', units='m/s')
+
+##In these examples of llist, note that labels are printed after
+##variable names, because of print.labelled
+a &lt;- 1:3
+b &lt;- 4:6
+label(b) &lt;- 'B Label'
+llist(a,b)
+llist(a,b,d=0)
+llist(a,b,0)
+
+
+w &lt;- llist(a, b&gt;5, d=101:103)
+sapply(w, function(x){
+  hist(as.numeric(x), xlab=label(x))
+  # locator(1)   ## wait for mouse click
+})
+
+# Or: for(u in w) {hist(u); title(label(u))}
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

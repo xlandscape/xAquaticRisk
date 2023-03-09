@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Summarize Multiple Response Variables and Make Multipanel...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for summaryS {Hmisc}"><tr><td>summaryS {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Summarize Multiple Response Variables and Make Multipanel Scatter
+or Dot Plot</h2>
+
+<h3>Description</h3>
+
+<p>Multiple left-hand formula variables along with right-hand side
+conditioning variables are reshaped into a &quot;tall and thin&quot; data frame if
+<code>fun</code> is not specified.  The resulting raw data can be plotted with
+the <code>plot</code> method using user-specified <code>panel</code> functions for
+<code>lattice</code> graphics, typically to make a scatterplot or <code>loess</code>
+smooths, or both.  The <code>Hmisc</code> <code>panel.plsmo</code> function is handy
+in this context.  Instead, if <code>fun</code> is specified, this function
+takes individual response variables (which may be matrices, as in
+<code><a href="../../survival/help/Surv.html">Surv</a></code> objects) and creates one or more summary
+statistics that will be computed while the resulting data frame is being
+collapsed to one row per condition.  The <code>plot</code> method in this case
+plots a multi-panel dot chart using the <code>lattice</code>
+<code><a href="../../lattice/help/dotplot.html">dotplot</a></code> function if <code>panel</code> is not specified
+to <code>plot</code>.  There is an option to print
+selected statistics as text on the panels.  <code>summaryS</code> pays special
+attention to <code>Hmisc</code> variable annotations: <code>label, units</code>.
+When <code>panel</code> is specified in addition to <code>fun</code>, a special
+<code>x-y</code> plot is made that assumes that the <code>x</code>-axis variable
+(typically time) is discrete.  This is used for example to plot multiple
+quantile intervals as vertical lines next to the main point.  A special
+panel function <code>mvarclPanel</code> is provided for this purpose.
+</p>
+<p>The <code>plotp</code> method produces corresponding <code>plotly</code> graphics.
+</p>
+<p>When <code>fun</code> is given and <code>panel</code> is omitted, and the result of
+<code>fun</code> is a vector of more than one 
+statistic, the first statistic is taken as the main one.  Any columns
+with names not in <code>textonly</code> will figure into the calculation of
+axis limits.  Those in <code>textonly</code> will be printed right under the
+dot lines in the dot chart.  Statistics with names in <code>textplot</code>
+will figure into limits, be plotted, and printed.  <code>pch.stats</code> can
+be used to specify symbols for statistics after the first column.  When
+<code>fun</code> computed three columns that are plotted, columns two and
+three are taken as confidence limits for which horizontal &quot;error bars&quot;
+are drawn.  Two levels with different thicknesses are drawn if there are
+four plotted summary statistics beyond the first.
+</p>
+<p><code>mbarclPanel</code> is used to draw multiple vertical lines around the
+main points, such as a series of quantile intervals stratified by
+<code>x</code> and paneling variables.  If <code>mbarclPanel</code> finds a column
+of an arument <code>yother</code> that is named <code>"se"</code>, and if there are
+exactly two levels to a superpositioning variable, the half-height of
+the approximate 0.95 confidence interval for the difference between two
+point estimates is shown, positioned at the midpoint of the two point
+estimates at an <code>x</code> value.  This assume normality of point
+estimates, and the standard error of the difference is the square root
+of the sum of squares of the two standard errors.  By positioning the
+intervals in this fashion, a failure of the two point estimates to touch
+the half-confidence interval is consistent with rejecting the null
+hypothesis of no difference at the 0.05 level.
+</p>
+<p><code>mbarclpl</code> is the <code>sfun</code> function corresponding to
+<code>mbarclPanel</code> for <code>plotp</code>, and <code>medvpl</code> is the
+<code>sfun</code> replacement for <code>medvPanel</code>.
+</p>
+<p><code>medvPanel</code> takes raw data and plots median <code>y</code> vs. <code>x</code>,
+along with confidence intervals and half-interval for the difference in
+medians as with <code>mbarclPanel</code>.  Quantile intervals are optional.
+Very transparent vertical violin plots are added by default.  Unlike
+<code>panel.violin</code>, only half of the violin is plotted, and when there
+are two superpose groups they are side-by-side in different colors.
+</p>
+<p>For <code>plotp</code>, the function corresponding to <code>medvPanel</code> is
+<code>medvpl</code>, which draws back-to-back spike histograms, optional Gini
+mean difference, optional SD, quantiles (thin line version of box
+plot with 0.05 0.25 0.5 0.75 0.95 quantiles), and half-width confidence
+interval for differences in medians.  For quantiles, the Harrell-Davis
+estimator is used.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+summaryS(formula, fun = NULL, data = NULL, subset = NULL,
+         na.action = na.retain, continuous=10, ...)
+
+## S3 method for class 'summaryS'
+plot(x, formula=NULL, groups=NULL, panel=NULL,
+           paneldoesgroups=FALSE, datadensity=NULL, ylab='',
+           funlabel=NULL, textonly='n', textplot=NULL,
+           digits=3, custom=NULL,
+           xlim=NULL, ylim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
+           key=list(columns=length(groupslevels),
+             x=.75, y=-.04, cex=.9,
+             col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
+           outerlabels=TRUE, autoarrange=TRUE, scat1d.opts=NULL, ...)
+
+## S3 method for class 'summaryS'
+plotp(data, formula=NULL, groups=NULL, sfun=NULL,
+           fitter=NULL, showpts=! length(fitter), funlabel=NULL,
+           digits=5, xlim=NULL, ylim=NULL,
+           shareX=TRUE, shareY=FALSE, autoarrange=TRUE, ...)
+
+mbarclPanel(x, y, subscripts, groups=NULL, yother, ...)
+
+medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, ...)
+
+mbarclpl(x, y, groups=NULL, yother, yvar=NULL, maintracename='y',
+         xlim=NULL, ylim=NULL, xname='x', alphaSegments=0.45, ...)
+
+medvpl(x, y, groups=NULL, yvar=NULL, maintracename='y',
+       xlim=NULL, ylim=NULL, xlab=xname, ylab=NULL, xname='x',
+       zeroline=FALSE, yother=NULL, alphaSegments=0.45,
+       dhistboxp.opts=NULL, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula with possibly multiple left and right-side
+variables separated by <code>+</code>.  Analysis (response) variables are
+on the left and are typically numeric.  For <code>plot</code>,
+<code>formula</code> is optional and overrides the default formula
+inferred for the reshaped data frame.</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+<p>an optional summarization function, e.g., <code><a href="../../Hmisc/help/smean.sd.html">smean.sd</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>optional input data frame.  For <code>plotp</code> is the object
+produced by <code>summaryS</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>optional subsetting criteria</p>
+</td></tr>
+<tr valign="top"><td><code>na.action</code></td>
+<td>
+<p>function for dealing with <code>NA</code>s when
+constructing the model data frame</p>
+</td></tr>
+<tr valign="top"><td><code>continuous</code></td>
+<td>
+<p>minimum number of unique values for a numeric
+variable to have to be considered continuous</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>ignored for <code>summaryS</code> and <code>mbarclPanel</code>,
+passed to <code>strip</code> and <code>panel</code> for <code>plot</code>.  Passed to
+the <code><a href="../../stats/html/density.html">density</a></code> function by <code>medvPanel</code>.  For
+<code>plotp</code>, are passed to <code>plotlyM</code> and <code>sfun</code>.  For
+<code>mbarclpl</code>, passed to <code>plotlyM</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>summaryS</code>.  For <code>mbarclPanel</code>
+is an <code>x</code>-axis argument provided by <code>lattice</code></p>
+</td></tr>
+<tr valign="top"><td><code>groups</code></td>
+<td>
+<p>a character string or factor specifying that one of the
+conditioning variables is used for superpositioning and not
+paneling</p>
+</td></tr>
+<tr valign="top"><td><code>panel</code></td>
+<td>
+<p>optional <code>lattice</code> <code>panel</code> function</p>
+</td></tr>
+<tr valign="top"><td><code>paneldoesgroups</code></td>
+<td>
+<p>set to <code>TRUE</code> if, like
+<code><a href="../../Hmisc/help/panel.plsmo.html">panel.plsmo</a></code>, the paneling function internally
+handles superpositioning for <code>groups</code></p>
+</td></tr>
+<tr valign="top"><td><code>datadensity</code></td>
+<td>
+<p>set to <code>TRUE</code> to add rug plots etc. using
+<code><a href="../../Hmisc/help/scat1d.html">scat1d</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+<p>optional <code>y</code>-axis label</p>
+</td></tr>
+<tr valign="top"><td><code>funlabel</code></td>
+<td>
+<p>optional axis label for when <code>fun</code> is given</p>
+</td></tr>
+<tr valign="top"><td><code>textonly</code></td>
+<td>
+<p>names of statistics to print and not plot.  By
+default, any statistic named <code>"n"</code> is only printed.</p>
+</td></tr>
+<tr valign="top"><td><code>textplot</code></td>
+<td>
+<p>names of statistics to print and plot</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>used if any statistics are printed as text (including
+<code>plotly</code> hovertext), to specify
+the number of significant digits to render</p>
+</td></tr>
+<tr valign="top"><td><code>custom</code></td>
+<td>
+<p>a function that customizes formatting of statistics that
+are printed as text.  This is useful for generating plotmath
+notation.  See the example in the tests directory.</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+<p>optional <code>x</code>-axis limits</p>
+</td></tr>
+<tr valign="top"><td><code>ylim</code></td>
+<td>
+<p>optional <code>y</code>-axis limits</p>
+</td></tr>			 
+<tr valign="top"><td><code>cex.strip</code></td>
+<td>
+<p>size of strip labels</p>
+</td></tr>
+<tr valign="top"><td><code>cex.values</code></td>
+<td>
+<p>size of statistics printed as text</p>
+</td></tr>
+<tr valign="top"><td><code>pch.stats</code></td>
+<td>
+<p>symbols to use for statistics (not included the one
+one in columne one) that are plotted.  This is a named
+vectors, with names exactly matching those created by
+<code>fun</code>.  When a column does not have an entry in
+<code>pch.stats</code>, no point is drawn for that column.</p>
+</td></tr>
+<tr valign="top"><td><code>key</code></td>
+<td>
+<p><code>lattice</code> <code>key</code> specification</p>
+</td></tr>
+<tr valign="top"><td><code>outerlabels</code></td>
+<td>
+<p>set to <code>FALSE</code> to not pass two-way charts
+through <code><a href="../../latticeExtra/help/useOuterStrips.html">useOuterStrips</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>autoarrange</code></td>
+<td>
+<p>set to <code>FALSE</code> to prevent <code>plot</code> from
+trying to optimize which conditioning variable is vertical</p>
+</td></tr>
+<tr valign="top"><td><code>scat1d.opts</code></td>
+<td>
+<p>a list of options to specify to <code><a href="../../Hmisc/help/scat1d.html">scat1d</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>y, subscripts</code></td>
+<td>
+<p>provided by <code>lattice</code></p>
+</td></tr>
+<tr valign="top"><td><code>yother</code></td>
+<td>
+<p>passed to the panel function from the <code>plot</code> method
+based on multiple statistics computed</p>
+</td></tr>
+<tr valign="top"><td><code>violin</code></td>
+<td>
+<p>controls whether violin plots are included</p>
+</td></tr>
+<tr valign="top"><td><code>quantiles</code></td>
+<td>
+<p>controls whether quantile intervals are included</p>
+</td></tr>
+<tr valign="top"><td><code>sfun</code></td>
+<td>
+<p>a function called by <code>plotp.summaryS</code> to compute and
+plot user-specified summary measures.  Two functions for doing
+this are provided here: <code>mbarclpl, medvpl</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>fitter</code></td>
+<td>
+<p>a fitting function such as <code>loess</code> to smooth
+points.  The smoothed values over a systematic grid will be
+evaluated and plotted as curves.</p>
+</td></tr>
+<tr valign="top"><td><code>showpts</code></td>
+<td>
+<p>set to <code>TRUE</code> to show raw data points in additon
+to smoothed curves</p>
+</td></tr>
+<tr valign="top"><td><code>shareX</code></td>
+<td>
+<p><code>TRUE</code> to cause <code>plotly</code> to share a single
+x-axis when graphs are aligned vertically</p>
+</td></tr>
+<tr valign="top"><td><code>shareY</code></td>
+<td>
+<p><code>TRUE</code> to cause <code>plotly</code> to share a single
+y-axis when graphs are aligned horizontally</p>
+</td></tr>
+<tr valign="top"><td><code>yvar</code></td>
+<td>
+<p>a character or factor variable used to stratify the
+analysis into multiple y-variables</p>
+</td></tr>
+<tr valign="top"><td><code>maintracename</code></td>
+<td>
+<p>a default trace name when it can't be inferred</p>
+</td></tr>
+<tr valign="top"><td><code>xname</code></td>
+<td>
+<p>x-axis variable name for hover text when it can't be
+inferred</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+<p>x-axis label when it can't be inferred</p>
+</td></tr>
+<tr valign="top"><td><code>alphaSegments</code></td>
+<td>
+<p>alpha saturation to draw line segments for
+<code>plotly</code></p>
+</td></tr>
+<tr valign="top"><td><code>dhistboxp.opts</code></td>
+<td>
+<p><code>list</code> of options to pass to <code>dhistboxp</code></p>
+</td></tr>
+<tr valign="top"><td><code>zeroline</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress <code>plotly</code> zero
+line at x=0</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a data frame with added attributes for <code>summaryS</code> or a
+<code>lattice</code> object ready to render for <code>plot</code></p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/summary.html">summary</a></code>, <code><a href="../../Hmisc/help/summarize.html">summarize</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# See tests directory file summaryS.r for more examples, and summarySp.r
+# for plotp examples
+n &lt;- 100
+set.seed(1)
+d &lt;- data.frame(sbp=rnorm(n, 120, 10),
+                dbp=rnorm(n, 80, 10),
+                age=rnorm(n, 50, 10),
+                days=sample(1:n, n, TRUE),
+                S1=Surv(2*runif(n)), S2=Surv(runif(n)),
+                race=sample(c('Asian', 'Black/AA', 'White'), n, TRUE),
+                sex=sample(c('Female', 'Male'), n, TRUE),
+                treat=sample(c('A', 'B'), n, TRUE),
+                region=sample(c('North America','Europe'), n, TRUE),
+                meda=sample(0:1, n, TRUE), medb=sample(0:1, n, TRUE))
+
+d &lt;- upData(d, labels=c(sbp='Systolic BP', dbp='Diastolic BP',
+            race='Race', sex='Sex', treat='Treatment',
+            days='Time Since Randomization',
+            S1='Hospitalization', S2='Re-Operation',
+            meda='Medication A', medb='Medication B'),
+            units=c(sbp='mmHg', dbp='mmHg', age='Year', days='Days'))
+
+s &lt;- summaryS(age + sbp + dbp ~ days + region + treat,  data=d)
+# plot(s)   # 3 pages
+plot(s, groups='treat', datadensity=TRUE,
+     scat1d.opts=list(lwd=.5, nhistSpike=0))
+plot(s, groups='treat', panel=panel.loess, key=list(space='bottom', columns=2),
+     datadensity=TRUE, scat1d.opts=list(lwd=.5))
+
+# To make a plotly graph when the stratification variable region is not
+# present, run the following (showpts adds raw data points):
+# plotp(s, groups='treat', fitter=loess, showpts=TRUE)
+
+# Make your own plot using data frame created by summaryP
+# xyplot(y ~ days | yvar * region, groups=treat, data=s,
+#        scales=list(y='free', rot=0))
+
+# Use loess to estimate the probability of two different types of events as
+# a function of time
+s &lt;- summaryS(meda + medb ~ days + treat + region, data=d)
+pan &lt;- function(...)
+   panel.plsmo(..., type='l', label.curves=max(which.packet()) == 1,
+               datadensity=TRUE)
+plot(s, groups='treat', panel=pan, paneldoesgroups=TRUE,
+     scat1d.opts=list(lwd=.7), cex.strip=.8)
+
+# Repeat using intervals instead of nonparametric smoother
+pan &lt;- function(...)  # really need mobs &gt; 96 to est. proportion
+  panel.plsmo(..., type='l', label.curves=max(which.packet()) == 1,
+              method='intervals', mobs=5)
+
+plot(s, groups='treat', panel=pan, paneldoesgroups=TRUE, xlim=c(0, 150))
+
+
+# Demonstrate dot charts of summary statistics
+s &lt;- summaryS(age + sbp + dbp ~ region + treat, data=d, fun=mean)
+plot(s)
+plot(s, groups='treat', funlabel=expression(bar(X)))
+# Compute parametric confidence limits for mean, and include sample
+# sizes by naming a column "n"
+
+f &lt;- function(x) {
+  x &lt;- x[! is.na(x)]
+  c(smean.cl.normal(x, na.rm=FALSE), n=length(x))
+}
+s &lt;- summaryS(age + sbp + dbp ~ region + treat, data=d, fun=f)
+plot(s, funlabel=expression(bar(X) %+-% t[0.975] %*% s))
+plot(s, groups='treat', cex.values=.65,
+     key=list(space='bottom', columns=2,
+       text=c('Treatment A:','Treatment B:')))
+
+# For discrete time, plot Harrell-Davis quantiles of y variables across
+# time using different line characteristics to distinguish quantiles
+d &lt;- upData(d, days=round(days / 30) * 30)
+g &lt;- function(y) {
+  probs &lt;- c(0.05, 0.125, 0.25, 0.375)
+  probs &lt;- sort(c(probs, 1 - probs))
+  y &lt;- y[! is.na(y)]
+  w &lt;- hdquantile(y, probs)
+  m &lt;- hdquantile(y, 0.5, se=TRUE)
+  se &lt;- as.numeric(attr(m, 'se'))
+  c(Median=as.numeric(m), w, se=se, n=length(y))
+}
+s &lt;- summaryS(sbp + dbp ~ days + region, fun=g, data=d)
+plot(s, panel=mbarclPanel)
+plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
+
+# For discrete time, plot median y vs x along with CL for difference,
+# using Harrell-Davis median estimator and its s.e., and use violin
+# plots
+
+s &lt;- summaryS(sbp + dbp ~ days + region, data=d)
+plot(s, groups='region', panel=medvPanel, paneldoesgroups=TRUE)
+
+# Proportions and Wilson confidence limits, plus approx. Gaussian
+# based half/width confidence limits for difference in probabilities
+g &lt;- function(y) {
+  y &lt;- y[!is.na(y)]
+  n &lt;- length(y)
+  p &lt;- mean(y)
+  se &lt;- sqrt(p * (1. - p) / n)
+  structure(c(binconf(sum(y), n), se=se, n=n),
+            names=c('Proportion', 'Lower', 'Upper', 'se', 'n'))
+}
+s &lt;- summaryS(meda + medb ~ days + region, fun=g, data=d)
+plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

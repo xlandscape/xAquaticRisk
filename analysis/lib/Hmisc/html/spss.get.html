@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Enhanced Importing of SPSS Files</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for spss.get {Hmisc}"><tr><td>spss.get {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Enhanced Importing of SPSS Files</h2>
+
+<h3>Description</h3>
+
+<p><code>spss.get</code> invokes the <code>read.spss</code> function in the
+<span class="pkg">foreign</span> package to read an SPSS file, with a default output
+format of <code>"data.frame"</code>.  The <code>label</code> function is used to
+attach labels to individual variables instead of to the data frame as
+done by <code>read.spss</code>.  By default, integer-valued variables are
+converted to a storage mode of integer unless
+<code>force.single=FALSE</code>.  Date variables are converted to <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> <code>Date</code>
+variables.  By default, underscores in names are converted to periods.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+spss.get(file, lowernames=FALSE, datevars = NULL,
+         use.value.labels = TRUE, to.data.frame = TRUE,
+         max.value.labels = Inf, force.single=TRUE,
+         allow=NULL, charfactor=FALSE, reencode = NA)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>input SPSS save file.  May be a file on the WWW, indicated
+by <code>file</code> starting with <code>'http://'</code> or <code>'https://'</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>lowernames</code></td>
+<td>
+<p>set to <code>TRUE</code> to convert variable names to
+lower case</p>
+</td></tr>
+<tr valign="top"><td><code>datevars</code></td>
+<td>
+<p>vector of variable names containing dates to be
+converted to <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> internal format</p>
+</td></tr>
+<tr valign="top"><td><code>use.value.labels</code></td>
+<td>
+<p>see <code><a href="../../foreign/help/read.spss.html">read.spss</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>to.data.frame</code></td>
+<td>
+<p>see <code><a href="../../foreign/help/read.spss.html">read.spss</a></code>; default is
+<code>TRUE</code> for <code>spss.get</code></p>
+</td></tr>
+<tr valign="top"><td><code>max.value.labels</code></td>
+<td>
+<p>see <code><a href="../../foreign/help/read.spss.html">read.spss</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>force.single</code></td>
+<td>
+<p>set to <code>FALSE</code> to prevent integer-valued
+variables from being converted from storage mode <code>double</code> to
+<code>integer</code></p>
+</td></tr>
+<tr valign="top"><td><code>allow</code></td>
+<td>
+<p>a vector of characters allowed by <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> that should not be
+converted to periods in variable names.  By default, underscores in
+variable names are converted to periods as with <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> before version 1.9.</p>
+</td></tr>
+<tr valign="top"><td><code>charfactor</code></td>
+<td>
+<p>set to <code>TRUE</code> to change character variables to
+factors if they have fewer than n/2 unique values.  Blanks and null
+strings are converted to <code>NA</code>s.</p>
+</td></tr>
+<tr valign="top"><td><code>reencode</code></td>
+<td>
+<p>see <code><a href="../../foreign/help/read.spss.html">read.spss</a></code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a data frame or list
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../foreign/help/read.spss.html">read.spss</a></code>,<code><a href="../../Hmisc/help/cleanup.import.html">cleanup.import</a></code>,<code><a href="../../Hmisc/help/sas.get.html">sas.get</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+w &lt;- spss.get('/tmp/my.sav', datevars=c('birthdate','deathdate'))
+  
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Minor Tick Marks</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for minor.tick {Hmisc}"><tr><td>minor.tick {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Minor Tick Marks</h2>
+
+<h3>Description</h3>
+
+<p>Adds minor tick marks to an existing plot.  All minor tick marks that
+will fit on the axes will be drawn.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>nx</code></td>
+<td>
+
+<p>number of intervals in which to divide the area between major tick marks on
+the X-axis.  Set to 1 to suppress minor tick marks.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ny</code></td>
+<td>
+
+<p>same as <code>nx</code> but for the Y-axis.
+</p>
+</td></tr>
+<tr valign="top"><td><code>tick.ratio</code></td>
+<td>
+
+<p>ratio of lengths of minor tick marks to major tick marks.  The length
+of major tick marks is retrieved from <code>par("tck")</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>x.args</code></td>
+<td>
+
+<p>additionl arguments (e.g. <code>post</code>, <code>lwd</code>) used by <code>axis()</code> function when rendering the X-axis.</p>
+</td></tr>
+<tr valign="top"><td><code>y.args</code></td>
+<td>
+
+<p>same as <code>x.args</code> but for Y-axis.</p>
+</td></tr>
+</table>
+
+
+<h3>Side Effects</h3>
+
+<p>plots
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+<br />
+Earl Bellinger
+<br />
+Max Planck Institute
+<br />
+<a href="mailto:earlbellinger@gmail.com">earlbellinger@gmail.com</a>
+<br />
+Viktor Horvath
+<br />
+Brandeis University
+<br />
+<a href="mailto:vhorvath@brandeis.edu">vhorvath@brandeis.edu</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/axis.html">axis</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Plot with default settings
+plot(runif(20), runif(20))
+minor.tick()
+
+# Plot with arguments passed to axis()
+plot(c(0,1), c(0,1), type = 'n', axes = FALSE, ann = FALSE)
+# setting up a plot without axes and annotation
+points(runif(20), runif(20))                       # plotting data
+axis(1, pos = 0.5, lwd = 2)                        # showing X-axis at Y = 0.5 with formatting
+axis(2, col = 2)                                   # formatted Y-axis
+minor.tick( nx = 4, ny = 4, tick.ratio = 0.3,
+            x.args = list(pos = 0.5, lwd = 2),     # X-minor tick format argumnets
+            y.args = list(col = 2))                # Y-minor tick format arguments
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -91,6 +91,7 @@ bind,SpatialLines,SpatialLines-method	bind
 bind,SpatialPoints,SpatialPoints-method	bind
 bind,SpatialPolygons,SpatialPolygons-method	bind
 blockSize	blockSize
+blockSize,Raster-method	blockSize
 boundaries	boundaries
 boundaries,RasterLayer-method	boundaries
 boxplot	boxplot
@@ -474,6 +475,8 @@ predict,Raster-method	predict
 print,Raster-method	Raster-classes
 print,Spatial-method	Raster-classes
 proj4string	projection
+proj4string,BasicRaster-method	projection
+proj4string,CRS-method	projection
 proj4string<-	projection
 projectExtent	projectRaster
 projection	projection
@@ -807,6 +810,7 @@ zoom,Spatial-method	zoom
 [<-,RasterStackBrick,missing,missing-method	replacement
 [<-,RasterStackBrick,Raster,missing-method	replacement
 [[,Raster,ANY,ANY-method	extractIndex
-[[<-,RasterBrick,numeric,missing-method	replacement
+[[<-,Raster,numeric,missing-method	replacement
+[[<-,RasterLayer,character,missing-method	replacement
 [[<-,RasterStack,numeric,missing-method	replacement
 [[<-,RasterStackBrick,character,missing-method	replacement

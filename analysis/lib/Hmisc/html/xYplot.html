@@ -1,0 +1,642 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: xyplot and dotplot with Matrix Variables to Plot Error Bars...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for xYplot {Hmisc}"><tr><td>xYplot {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>xyplot and dotplot with Matrix Variables to Plot Error Bars and Bands</h2>
+
+<h3>Description</h3>
+
+<p>A utility function <code>Cbind</code> returns the first argument as a vector and
+combines all other arguments into a matrix stored as an attribute called
+<code>"other"</code>.  The arguments can be named (e.g.,
+<code>Cbind(pressure=y,ylow,yhigh)</code>) or a <code>label</code> attribute may be pre-attached
+to the first argument. In either case, the name or label of the first
+argument is stored as an attribute <code>"label"</code> of the object returned by
+<code>Cbind</code>.  Storing other vectors as a matrix attribute facilitates plotting
+error bars, etc., as <code>trellis</code> really wants the x- and y-variables to be
+vectors, not matrices. If a single argument is given to <code>Cbind</code> and that
+argument is a matrix with column dimnames, the first column is taken as the
+main vector and remaining columns are taken as <code>"other"</code>. A subscript
+method for <code>Cbind</code> objects subscripts the <code>other</code> matrix along
+with the main <code>y</code> vector.
+</p>
+<p>The <code>xYplot</code> function is a substitute for <code>xyplot</code> that allows for
+simulated multi-column <code>y</code>. It uses by default the <code>panel.xYplot</code> and
+<code>prepanel.xYplot</code> functions to do the actual work. The <code>method</code> argument
+passed to <code>panel.xYplot</code> from <code>xYplot</code> allows you to make error bars, the
+upper-only or lower-only portions of error bars, alternating lower-only and
+upper-only bars, bands, or filled bands.  <code>panel.xYplot</code> decides how to
+alternate upper and lower bars according to whether the median <code>y</code> value of
+the current main data line is above the median <code>y</code> for all <code>groups</code> of
+lines or not.  If the median is above the overall median, only the upper
+bar is drawn. For <code>bands</code> (but not 'filled bands'), any number of other
+columns of <code>y</code> will be drawn as lines having the same thickness, color, and
+type as the main data line.  If plotting bars, bands, or filled bands and
+only one additional column is specified for the response variable, that
+column is taken as the half width of a precision interval for <code>y</code>, and the
+lower and upper values are computed automatically as <code>y</code> plus or minus the
+value of the additional column variable.
+</p>
+<p>When a <code>groups</code> variable is present, <code>panel.xYplot</code> will create a function
+in frame 0 (<code>.GlobalEnv</code> in <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>) called <code>Key</code> that when
+invoked will draw a key describing the 
+<code>groups</code> labels, point symbols, and colors. By default, the key is outside
+the graph.  For S-Plus, if <code>Key(locator(1))</code> is specified, the key will appear so that
+its upper left corner is at the coordinates of the mouse click.  For
+R/Lattice the first two arguments of <code>Key</code> (<code>x</code> and <code>y</code>) are fractions
+of the page, measured from the lower left corner, and the default
+placement is at <code>x=0.05, y=0.95</code>.  For <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span>, an optional argument
+to <code>sKey</code>, <code>other</code>, may contain a list of arguments to pass to <code>draw.key</code> (see
+<code><a href="../../lattice/help/xyplot.html">xyplot</a></code> for a list of possible arguments, under
+the <code>key</code> option).  
+</p>
+<p>When <code>method="quantile"</code> is specified, <code>xYplot</code> automatically groups the
+<code>x</code> variable into intervals containing a target of <code>nx</code> observations each,
+and within each <code>x</code> group computes three quantiles of <code>y</code> and plots these
+as three lines. The mean <code>x</code> within each <code>x</code> group is taken as the
+<code>x</code>-coordinate. This will make a useful empirical display for large
+datasets in which scatterdiagrams are too busy to see patterns of central
+tendency and variability.  You can also specify a general function of a
+data vector that returns a matrix of statistics for the <code>method</code> argument.
+Arguments can be passed to that function via a list <code>methodArgs</code>.  The
+statistic in the first column should be the measure of central tendency.
+Examples of useful <code>method</code> functions are those listed under the help file
+for <code>summary.formula</code> such as <code>smean.cl.normal</code>.
+</p>
+<p><code>xYplot</code> can also produce bubble plots.  This is done when
+<code>size</code> is specified to <code>xYplot</code>.  When <code>size</code> is used, a
+function <code>sKey</code> is generated for drawing a key to the character
+sizes.  See the bubble plot example.  <code>size</code> can also specify a
+vector where the first character of each observation is used as the
+plotting symbol, if <code>rangeCex</code> is set to a single <code>cex</code>
+value.  An optional argument to <code>sKey</code>, <code>other</code>, may contain
+a list of arguments to pass to <code>draw.key</code> (see
+<code><a href="../../lattice/help/xyplot.html">xyplot</a></code> for a list of possible arguments, under
+the <code>key</code> option).  See the bubble plot example.
+</p>
+<p><code>Dotplot</code> is a substitute for <code>dotplot</code> allowing for a matrix x-variable,
+automatic superpositioning when <code>groups</code> is present, and creation of a
+<code>Key</code> function.  When the x-variable (created by <code>Cbind</code> to simulate a
+matrix) contains a total of 3 columns, the first column specifies where the
+dot is positioned, and the last 2 columns specify starting and ending
+points for intervals.  The intervals are shown using line type, width, and
+color from the trellis <code>plot.line</code> list. By default, you will usually see a
+darker line segment for the low and high values, with the dotted reference
+line elsewhere. A good choice of the <code>pch</code> argument for such plots is <code>3</code>
+(plus sign) if you want to emphasize the interval more than the point
+estimate.  When the x-variable contains a total of 5 columns, the 2nd and
+5th columns are treated as the 2nd and 3rd are treated above, and the 3rd
+and 4th columns define an inner line segment that will have twice the
+thickness of the outer segments. In addition, tick marks separate the outer
+and inner segments.  This type of display (an example of which appeared in
+<em>The Elements of Graphing Data</em> by Cleveland) is very suitable for
+displaying two confidence levels (e.g., 0.9 and 0.99) or the 0.05, 0.25,
+0.75, 0.95 sample quantiles, for example.  For this display, the central
+point displays well with a default circle symbol.
+</p>
+<p><code>setTrellis</code> sets nice defaults for Trellis graphics, assuming that the
+graphics device has already been opened if using postscript, etc. By
+default, it sets panel strips to blank and reference dot lines to thickness
+1 instead of the Trellis default of 2.
+</p>
+<p><code>numericScale</code> is a utility function that facilitates using
+<code>xYplot</code> to 
+plot variables that are not considered to be numeric but which can readily
+be converted to numeric using <code>as.numeric()</code>.  <code>numericScale</code>
+by default will keep the name of the input variable as a <code>label</code>
+attribute for the new numeric variable.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Cbind(...)
+
+xYplot(formula, data = sys.frame(sys.parent()), groups,
+       subset, xlab=NULL, ylab=NULL, ylim=NULL,
+       panel=panel.xYplot, prepanel=prepanel.xYplot, scales=NULL,
+       minor.ticks=NULL, sub=NULL, ...)
+
+panel.xYplot(x, y, subscripts, groups=NULL, 
+             type=if(is.function(method) || method=='quantiles') 
+               'b' else 'p',
+             method=c("bars", "bands", "upper bars", "lower bars", 
+                      "alt bars", "quantiles", "filled bands"), 
+             methodArgs=NULL, label.curves=TRUE, abline,
+             probs=c(.5,.25,.75), nx=NULL,
+             cap=0.015, lty.bar=1, 
+             lwd=plot.line$lwd, lty=plot.line$lty, pch=plot.symbol$pch, 
+             cex=plot.symbol$cex, font=plot.symbol$font, col=NULL, 
+             lwd.bands=NULL, lty.bands=NULL, col.bands=NULL, 
+             minor.ticks=NULL, col.fill=NULL,
+             size=NULL, rangeCex=c(.5,3), ...)
+
+prepanel.xYplot(x, y, ...)
+
+Dotplot(formula, data = sys.frame(sys.parent()), groups, subset, 
+        xlab = NULL, ylab = NULL, ylim = NULL,
+        panel=panel.Dotplot, prepanel=prepanel.Dotplot,
+        scales=NULL, xscale=NULL, ...)
+
+prepanel.Dotplot(x, y, ...)
+
+panel.Dotplot(x, y, groups = NULL,
+              pch  = dot.symbol$pch, 
+              col  = dot.symbol$col, cex = dot.symbol$cex, 
+              font = dot.symbol$font, abline, ...)
+
+setTrellis(strip.blank=TRUE, lty.dot.line=2, lwd.dot.line=1)
+
+numericScale(x, label=NULL, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>for <code>Cbind</code> <code>...</code> is any number of additional numeric
+vectors. Unless you are using <code>Dotplot</code> (which allows for either 2
+or 4 &quot;other&quot; variables) or <code>xYplot</code> with <code>method="bands"</code>,
+vectors after the first two are ignored.  If drawing bars and only one
+extra variable is given in <code>...</code>, upper and lower values are
+computed as described above. If the second argument to <code>Cbind</code> is a
+matrix, that matrix is stored in the <code>"other"</code> attribute and
+arguments after the second are ignored.  For bubble plots, name an
+argument <code>cex</code>.
+</p>
+<p>Also can be other arguments to pass to <code>labcurve</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+
+<p>a <code>trellis</code> formula consistent with <code>xyplot</code> or <code>dotplot</code> 
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p><code>x</code>-axis variable.  For <code>numericScale</code> <code>x</code> is any vector
+such as <code>as.numeric(x)</code> returns a numeric vector suitable for x- or
+y-coordinates.
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a vector, or an object created by <code>Cbind</code> for <code>xYplot</code>.
+<code>y</code> represents the main variable to plot, i.e., the variable used to
+draw the main lines. For <code>Dotplot</code> the first argument to
+<code>Cbind</code> will be the main <code>x</code>-axis variable.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>data,subset,ylim,subscripts,groups,type,scales,panel,prepanel,xlab,ylab</code></td>
+<td>
+
+<p>see <code>trellis.args</code>.  <code>xlab</code> and <code>ylab</code> get default values from
+<code>"label"</code> attributes.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xscale</code></td>
+<td>
+<p>allows one to use the default <code>scales</code> but specify
+only the <code>x</code> component of it for <code>Dotplot</code></p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>defaults to <code>"bars"</code> to draw error-bar type plots.  See meaning of other
+values above.  <code>method</code> can be a function.  Specifying <code>method=quantile</code>,
+<code>methodArgs=list(probs=c(.5,.25,.75))</code> is the same as specifying
+<code>method="quantile"</code> without specifying <code>probs</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>methodArgs</code></td>
+<td>
+
+<p>a list containing optional arguments to be passed to the function specified
+in <code>method</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>label.curves</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress invocation of <code>labcurve</code> to label primary curves
+where they are most separated or to draw a legend in an empty spot on the
+panel.  You can also set <code>label.curves</code> to a list of options to pass to
+<code>labcurve</code>.  These options can also be passed as <code>...</code> to <code>xYplot</code>. See the
+examples below.
+</p>
+</td></tr>
+<tr valign="top"><td><code>abline</code></td>
+<td>
+
+<p>a list of arguments to pass to <code>panel.abline</code> for each panel, e.g.
+<code>list(a=0, b=1, col=3)</code> to draw the line of identity using color
+3.  To make multiple calls to <code>panel.abline</code>, pass a list of
+unnamed lists as <code>abline</code>, e.g., <code>abline=list(list(h=0),list(v=1))</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>probs</code></td>
+<td>
+
+<p>a vector of three quantiles with the quantile corresponding to the central
+line listed first. By default <code>probs=c(.5, .25, .75)</code>. You can also specify
+<code>probs</code> through <code>methodArgs=list(probs=...)</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>nx</code></td>
+<td>
+
+<p>number of target observations for each <code>x</code> group (see <code>cut2</code> <code>m</code> argument).
+<code>nx</code> defaults to the minimum of 40 and the number of points in the current
+stratum divided by 4. Set <code>nx=FALSE</code> or <code>nx=0</code> if <code>x</code> is already discrete and
+requires no grouping.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cap</code></td>
+<td>
+
+<p>the half-width of horizontal end pieces for error bars, as a fraction of
+the length of the <code>x</code>-axis
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty.bar</code></td>
+<td>
+
+<p>line type for bars
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd, lty, pch, cex, font, col</code></td>
+<td>
+
+<p>see <code>trellis.args</code>.  These are vectors when <code>groups</code> is present, and the
+order of their elements corresponds to the different <code>groups</code>, regardless
+of how many bands or bars are drawn. If you don't specify <code>lty.bands</code>, for
+example, all band lines within each group will have the same <code>lty</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty.bands, lwd.bands, col.bands</code></td>
+<td>
+
+<p>used to allow <code>lty</code>, <code>lwd</code>, <code>col</code> to vary across the different band lines
+for different <code>groups</code>. These parameters are vectors or lists whose
+elements correspond to the added band lines (i.e., they ignore the central
+line, whose line characteristics are defined by <code>lty</code>, <code>lwd</code>, <code>col</code>). For
+example, suppose that 4 lines are drawn in addition to the central line.
+Specifying <code>lwd.bands=1:4</code> will cause line widths of 1:4 to be used for
+every group, regardless of the value of <code>lwd</code>.  To vary characteristics
+over the <code>groups</code> use e.g. <code>lwd.bands=list(rep(1,4), rep(2,4))</code> or
+<code>list(c(1,2,1,2), c(3,4,3,4))</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>minor.ticks</code></td>
+<td>
+
+<p>a list with elements <code>at</code> and <code>labels</code> specifying positions
+and labels for minor tick marks to be used on the x-axis of each panel,
+if any.
+</p>
+</td></tr>
+<tr valign="top"><td><code>sub</code></td>
+<td>
+<p>an optional subtitle</p>
+</td></tr>
+<tr valign="top"><td><code>col.fill</code></td>
+<td>
+
+<p>used to override default colors used for the bands in method='filled
+bands'. This is a vector when <code>groups</code> is present, and the order of the
+elements corresponds to the different <code>groups</code>, regardless of how many
+bands are drawn.  The default colors for 'filled bands' are pastel colors
+matching the default colors superpose.line$col (plot.line$col)
+</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+
+<p>a vector the same length as <code>x</code> giving a variable whose values
+are a linear function of the size of the symbol drawn.  This is used
+for example for bubble plots.
+</p>
+</td></tr>
+<tr valign="top"><td><code>rangeCex</code></td>
+<td>
+
+<p>a vector of two values specifying the range in character sizes to use
+for the <code>size</code> variable (lowest first, highest second).
+<code>size</code> values are linearly translated to this range, based on the
+observed range of <code>size</code> when <code>x</code> and <code>y</code> coordinates
+are not missing.  Specify a single numeric <code>cex</code> value for
+<code>rangeCex</code> to use the first character of each observations's
+<code>size</code> as the plotting symbol.
+</p>
+</td></tr>
+<tr valign="top"><td><code>strip.blank</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to not make the panel strip backgrounds blank 
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty.dot.line</code></td>
+<td>
+
+<p>line type for dot plot reference lines (default = 1 for dotted; use 2 for
+dotted)
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd.dot.line</code></td>
+<td>
+
+<p>line thickness for reference lines for dot plots (default = 1) 
+</p>
+</td></tr>
+<tr valign="top"><td><code>label</code></td>
+<td>
+
+<p>a scalar character string to be used as a variable label after
+<code>numericScale</code> converts the 
+variable to numeric form 
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Unlike <code>xyplot</code>, <code>xYplot</code> senses the presence of a <code>groups</code> variable and
+automatically invokes <code>panel.superpose</code> instead of <code>panel.xyplot</code>. The same
+is true for <code>Dotplot</code> vs. <code>dotplot</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p><code>Cbind</code> returns a matrix with attributes.  Other functions return standard
+<code>trellis</code> results.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>plots, and <code>panel.xYplot</code> may create temporary <code>Key</code> and
+<code>sKey</code> functions in the session frame. 
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+<br />
+Madeline Bauer
+<br />
+Department of Infectious Diseases
+<br />
+University of Southern California School of Medicine
+<br />
+<a href="mailto:mbauer@usc.edu">mbauer@usc.edu</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../lattice/help/xyplot.html">xyplot</a></code>, <code><a href="../../lattice/help/panel.xyplot.html">panel.xyplot</a></code>, <code><a href="../../Hmisc/help/summarize.html">summarize</a></code>, <code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../Hmisc/help/labcurve.html">labcurve</a></code>,
+<code><a href="../../Hmisc/help/errbar.html">errbar</a></code>, <code><a href="../../lattice/help/xyplot.html">dotplot</a></code>, 
+<code><a href="../../Hmisc/help/reShape.html">reShape</a></code>, <code><a href="../../Hmisc/help/cut2.html">cut2</a></code>, <code><a href="../../lattice/help/panel.functions.html">panel.abline</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Plot 6 smooth functions.  Superpose 3, panel 2.
+# Label curves with p=1,2,3 where most separated 
+d &lt;- expand.grid(x=seq(0,2*pi,length=150), p=1:3, shift=c(0,pi)) 
+xYplot(sin(x+shift)^p ~ x | shift, groups=p, data=d, type='l') 
+# Use a key instead, use 3 line widths instead of 3 colors 
+# Put key in most empty portion of each panel
+xYplot(sin(x+shift)^p ~ x | shift, groups=p, data=d, 
+       type='l', keys='lines', lwd=1:3, col=1) 
+# Instead of implicitly using labcurve(), put a 
+# single key outside of panels at lower left corner
+xYplot(sin(x+shift)^p ~ x | shift, groups=p, data=d, 
+       type='l', label.curves=FALSE, lwd=1:3, col=1, lty=1:3) 
+Key()
+
+# Bubble plots
+x &lt;- y &lt;- 1:8
+x[2] &lt;- NA
+units(x) &lt;- 'cm^2'
+z &lt;- 101:108
+p &lt;- factor(rep(c('a','b'),4))
+g &lt;- c(rep(1,7),2)
+data.frame(p, x, y, z, g)
+xYplot(y ~ x | p, groups=g, size=z)
+ Key(other=list(title='g', cex.title=1.2))  # draw key for colors
+sKey(.2,.85,other=list(title='Z Values', cex.title=1.2))
+# draw key for character sizes
+
+# Show the median and quartiles of height given age, stratified 
+# by sex and race.  Draws 2 sets (male, female) of 3 lines per panel.
+# xYplot(height ~ age | race, groups=sex, method='quantiles')
+
+
+# Examples of plotting raw data
+dfr &lt;- expand.grid(month=1:12, continent=c('Europe','USA'), 
+                   sex=c('female','male'))
+set.seed(1)
+dfr &lt;- upData(dfr,
+              y=month/10 + 1*(sex=='female') + 2*(continent=='Europe') + 
+                runif(48,-.15,.15),
+              lower=y - runif(48,.05,.15),
+              upper=y + runif(48,.05,.15))
+
+
+xYplot(Cbind(y,lower,upper) ~ month,subset=sex=='male' &amp; continent=='USA',
+       data=dfr)
+xYplot(Cbind(y,lower,upper) ~ month|continent, subset=sex=='male',data=dfr)
+xYplot(Cbind(y,lower,upper) ~ month|continent, groups=sex, data=dfr); Key() 
+# add ,label.curves=FALSE to suppress use of labcurve to label curves where
+# farthest apart
+
+
+xYplot(Cbind(y,lower,upper) ~ month,groups=sex,
+                              subset=continent=='Europe', data=dfr) 
+xYplot(Cbind(y,lower,upper) ~ month,groups=sex, type='b',
+                              subset=continent=='Europe', keys='lines',
+                              data=dfr)
+# keys='lines' causes labcurve to draw a legend where the panel is most empty
+
+
+xYplot(Cbind(y,lower,upper) ~ month,groups=sex, type='b', data=dfr,
+                              subset=continent=='Europe',method='bands') 
+xYplot(Cbind(y,lower,upper) ~ month,groups=sex, type='b', data=dfr,
+                              subset=continent=='Europe',method='upper')
+
+
+label(dfr$y) &lt;- 'Quality of Life Score'   
+# label is in Hmisc library = attr(y,'label') &lt;- 'Quality\dots'; will be
+# y-axis label 
+# can also specify Cbind('Quality of Life Score'=y,lower,upper) 
+xYplot(Cbind(y,lower,upper) ~ month, groups=sex,
+       subset=continent=='Europe', method='alt bars',
+        offset=unit(.1,'inches'), type='b', data=dfr)   
+# offset passed to labcurve to label .4 y units away from curve
+# for R (using grid/lattice), offset is specified using the grid
+# unit function, e.g., offset=unit(.4,'native') or
+# offset=unit(.1,'inches') or unit(.05,'npc')
+
+
+# The following example uses the summarize function in Hmisc to 
+# compute the median and outer quartiles.  The outer quartiles are 
+# displayed using "error bars"
+set.seed(111)
+dfr &lt;- expand.grid(month=1:12, year=c(1997,1998), reps=1:100)
+month &lt;- dfr$month; year &lt;- dfr$year
+y &lt;- abs(month-6.5) + 2*runif(length(month)) + year-1997
+s &lt;- summarize(y, llist(month,year), smedian.hilow, conf.int=.5) 
+xYplot(Cbind(y,Lower,Upper) ~ month, groups=year, data=s, 
+       keys='lines', method='alt', type='b')
+# Can also do:
+s &lt;- summarize(y, llist(month,year), quantile, probs=c(.5,.25,.75),
+               stat.name=c('y','Q1','Q3')) 
+xYplot(Cbind(y, Q1, Q3) ~ month, groups=year, data=s, 
+       type='b', keys='lines') 
+# Or:
+xYplot(y ~ month, groups=year, keys='lines', nx=FALSE, method='quantile',
+       type='b') 
+# nx=FALSE means to treat month as a discrete variable
+
+
+# To display means and bootstrapped nonparametric confidence intervals 
+# use:
+s &lt;- summarize(y, llist(month,year), smean.cl.boot) 
+s
+xYplot(Cbind(y, Lower, Upper) ~ month | year, data=s, type='b')
+# Can also use Y &lt;- cbind(y, Lower, Upper); xYplot(Cbind(Y) ~ ...) 
+# Or:
+xYplot(y ~ month | year, nx=FALSE, method=smean.cl.boot, type='b')
+
+
+# This example uses the summarize function in Hmisc to 
+# compute the median and outer quartiles.  The outer quartiles are 
+# displayed using "filled bands"
+
+
+s &lt;- summarize(y, llist(month,year), smedian.hilow, conf.int=.5) 
+
+
+# filled bands: default fill = pastel colors matching solid colors
+# in superpose.line (this works differently in R)
+xYplot ( Cbind ( y, Lower, Upper ) ~ month, groups=year, 
+     method="filled bands" , data=s, type="l")
+
+
+# note colors based on levels of selected subgroups, not first two colors
+xYplot ( Cbind ( y, Lower, Upper ) ~ month, groups=year, 
+     method="filled bands" , data=s, type="l",
+     subset=(year == 1998 | year == 2000), label.curves=FALSE )
+
+
+# filled bands using black lines with selected solid colors for fill
+xYplot ( Cbind ( y, Lower, Upper ) ~ month, groups=year, 
+     method="filled bands" , data=s, label.curves=FALSE,
+     type="l", col=1, col.fill = 2:3)
+Key(.5,.8,col = 2:3) #use fill colors in key
+
+
+# A good way to check for stable variance of residuals from ols 
+# xYplot(resid(fit) ~ fitted(fit), method=smean.sdl) 
+# smean.sdl is defined with summary.formula in Hmisc
+
+
+# Plot y vs. a special variable x
+# xYplot(y ~ numericScale(x, label='Label for X') | country) 
+# For this example could omit label= and specify 
+#    y ~ numericScale(x) | country, xlab='Label for X'
+
+
+# Here is an example of using xYplot with several options
+# to change various Trellis parameters,
+# xYplot(y ~ x | z, groups=v, pch=c('1','2','3'),
+#        layout=c(3,1),     # 3 panels side by side
+#        ylab='Y Label', xlab='X Label',
+#        main=list('Main Title', cex=1.5),
+#        par.strip.text=list(cex=1.2),
+#        strip=function(\dots) strip.default(\dots, style=1),
+#        scales=list(alternating=FALSE))
+
+
+#
+# Dotplot examples
+#
+
+
+s &lt;- summarize(y, llist(month,year), smedian.hilow, conf.int=.5) 
+
+
+setTrellis()            # blank conditioning panel backgrounds 
+Dotplot(month ~ Cbind(y, Lower, Upper) | year, data=s) 
+# or Cbind(\dots), groups=year, data=s
+
+
+# Display a 5-number (5-quantile) summary (2 intervals, dot=median) 
+# Note that summarize produces a matrix for y, and Cbind(y) trusts the 
+# first column to be the point estimate (here the median) 
+s &lt;- summarize(y, llist(month,year), quantile,
+               probs=c(.5,.05,.25,.75,.95), type='matrix') 
+Dotplot(month ~ Cbind(y) | year, data=s) 
+# Use factor(year) to make actual years appear in conditioning title strips
+
+# Plot proportions and their Wilson confidence limits
+set.seed(3)
+d &lt;- expand.grid(continent=c('USA','Europe'), year=1999:2001,
+                 reps=1:100)
+# Generate binary events from a population probability of 0.2
+# of the event, same for all years and continents
+d$y &lt;- ifelse(runif(6*100) &lt;= .2, 1, 0)
+s &lt;- with(d,
+          summarize(y, llist(continent,year),
+                    function(y) {
+                     n &lt;- sum(!is.na(y))
+                     s &lt;- sum(y, na.rm=TRUE)
+                     binconf(s, n)
+                    }, type='matrix')
+)
+
+Dotplot(year ~ Cbind(y) | continent,  data=s, ylab='Year',
+        xlab='Probability')
+
+
+# Dotplot(z ~ x | g1*g2)                 
+# 2-way conditioning 
+# Dotplot(z ~ x | g1, groups=g2); Key()  
+# Key defines symbols for g2
+
+
+# If the data are organized so that the mean, lower, and upper 
+# confidence limits are in separate records, the Hmisc reShape 
+# function is useful for assembling these 3 values as 3 variables 
+# a single observation, e.g., assuming type has values such as 
+# c('Mean','Lower','Upper'):
+# a &lt;- reShape(y, id=month, colvar=type) 
+# This will make a matrix with 3 columns named Mean Lower Upper 
+# and with 1/3 as many rows as the original data 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

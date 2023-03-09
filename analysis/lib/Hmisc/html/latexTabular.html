@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Convert a Data Frame or Matrix to a LaTeX Tabular</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for latexTabular {Hmisc}"><tr><td>latexTabular {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Convert a Data Frame or Matrix to a LaTeX Tabular</h2>
+
+<h3>Description</h3>
+
+<p><code>latexTabular</code> creates a character vector representing a matrix or
+data frame in a simple <span class="samp">tabular</span> environment.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+latexTabular(x, headings=colnames(x),
+             align =paste(rep('c',ncol(x)),collapse=''),
+             halign=paste(rep('c',ncol(x)),collapse=''),
+             helvetica=TRUE, translate=TRUE, hline=0, center=FALSE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a matrix or data frame, or a vector that is automatically
+converted to a matrix</p>
+</td></tr>
+<tr valign="top"><td><code>headings</code></td>
+<td>
+<p>a vector of character strings specifying column
+headings for <span class="samp">latexTabular</span>, defaulting to <code>x</code>'s
+<code>colnames</code>.  To make multi-line headers use the newline character
+inside elements of <code>headings</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>align</code></td>
+<td>
+<p>a character strings specifying column
+alignments for <span class="samp">latexTabular</span>, defaulting to
+<code>paste(rep('c',ncol(x)),collapse='')</code> to center.  You may
+specify <code>align='c|c'</code> and other LaTeX tabular formatting.</p>
+</td></tr>
+<tr valign="top"><td><code>halign</code></td>
+<td>
+<p>a character strings specifying alignment for
+column headings, defaulting to centered.</p>
+</td></tr>
+<tr valign="top"><td><code>helvetica</code></td>
+<td>
+<p>set to <code>FALSE</code> to use default LaTeX font in
+<span class="samp">latexTabular</span> instead of helvetica.</p>
+</td></tr>
+<tr valign="top"><td><code>translate</code></td>
+<td>
+<p>set to <code>FALSE</code> if column headings and table
+entries are already in
+LaTeX format, otherwise <code>latexTabular</code> will run them through
+<code>latexTranslate</code></p>
+</td></tr>
+<tr valign="top"><td><code>hline</code></td>
+<td>
+<p>set to 1 to put <code>hline</code> after heading, 2 to also put
+<code>hline</code>s before and after heading and at table end</p>
+</td></tr>
+<tr valign="top"><td><code>center</code></td>
+<td>
+<p>set to <code>TRUE</code> to enclose the tabular in a LaTeX
+<code>center</code> environment</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>if present, <code>x</code> is run through <code>format.df</code> with
+those extra arguments</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a character string containing LaTeX markup</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E. Harrell, Jr.,<br />
+Department of Biostatistics,<br />
+Vanderbilt University,<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/latex.default.html">latex.default</a></code>, <code><a href="../../Hmisc/help/format.df.html">format.df</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','this that')))
+latexTabular(x)   # a character string with LaTeX markup
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

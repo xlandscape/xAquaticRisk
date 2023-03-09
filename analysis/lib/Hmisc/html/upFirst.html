@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Change First Letters to Upper Case</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for upFirst {Hmisc}"><tr><td>upFirst {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Change First Letters to Upper Case</h2>
+
+<h3>Description</h3>
+
+<p>Changes the first letter of each word in a string to upper case, keeping selected words in lower case.  Words containing at least 2 capital letters are kept as-is.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+upFirst(txt, lower = FALSE, alllower = FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>txt</code></td>
+<td>
+<p>a character vector</p>
+</td></tr>
+<tr valign="top"><td><code>lower</code></td>
+<td>
+<p>set to <code>TRUE</code> to make only the very first letter of the string upper case, and to keep words with at least 2 capital letters in their original form</p>
+</td></tr>
+<tr valign="top"><td><code>alllower</code></td>
+<td>
+<p>set to <code>TRUE</code> to make every word start with lower case unless it has at least 2 caps</p>
+</td></tr>
+</table>
+
+
+<h3>References</h3>
+
+<p><a href="https://en.wikipedia.org/wiki/Letter_case#Headings_and_publication_titles">https://en.wikipedia.org/wiki/Letter_case#Headings_and_publication_titles</a>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+upFirst(c('this and that','that is Beyond question'))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

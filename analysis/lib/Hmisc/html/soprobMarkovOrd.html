@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: soprobMarkovOrd</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for soprobMarkovOrd {Hmisc}"><tr><td>soprobMarkovOrd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>soprobMarkovOrd</h2>
+
+<h3>Description</h3>
+
+<p>State Occupancy Probabilities for First-Order Markov Ordinal Model
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+soprobMarkovOrd(y, times, initial, absorb = NULL, intercepts, g, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>a vector of possible y values in order (numeric, character, factor)</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p>vector of measurement times</p>
+</td></tr>
+<tr valign="top"><td><code>initial</code></td>
+<td>
+<p>initial value of <code>y</code> (baseline state; numeric, character, factr)</p>
+</td></tr>
+<tr valign="top"><td><code>absorb</code></td>
+<td>
+<p>vector of absorbing states, a subset of <code>y</code>.  The default is no absorbing states. (numeric, character, factor)</p>
+</td></tr>
+<tr valign="top"><td><code>intercepts</code></td>
+<td>
+<p>vector of intercepts in the proportional odds model, with length one less than the length of <code>y</code></p>
+</td></tr>
+<tr valign="top"><td><code>g</code></td>
+<td>
+<p>a user-specified function of three or more arguments which in order are <code>yprev</code> - the value of <code>y</code> at the previous time, the current time <code>t</code>, the <code>gap</code> between the previous time and the current time, an optional (usually named) covariate vector <code>X</code>, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow <code>yprev</code> to be a vector and <code>yprev</code> must not include any absorbing states.  The <code>g</code> function returns the linear predictor for the proportional odds model aside from <code>intercepts</code>.  The returned value must be a matrix with row names taken from <code>yprev</code>.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to <code>intercepts</code>. The different columns are used for <code>y</code>-specific contributions to the linear predictor (aside from <code>intercepts</code>) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>additional arguments to pass to <code>g</code> such as covariate settings</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>See Also</h3>
+
+<p><a href="https://hbiostat.org/R/Hmisc/markov/">https://hbiostat.org/R/Hmisc/markov/</a>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

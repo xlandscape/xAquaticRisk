@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Function to print a matrix with stacked cells</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for print.char.matrix {Hmisc}"><tr><td>print.char.matrix {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Function to print a matrix with stacked cells </h2>
+
+<h3>Description</h3>
+
+<p>Prints a dataframe or matrix in stacked cells.  Line break charcters
+in a matrix element will result in a line break in that cell, but tab
+characters are not supported.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'char.matrix'
+print(x, file = "", col.name.align = "cen", col.txt.align = "right", 
+    cell.align = "cen", hsep = "|", vsep = "-", csep = "+", row.names = TRUE, 
+    col.names = FALSE, append = FALSE,
+    top.border = TRUE, left.border = TRUE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a matrix or dataframe</p>
+</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+<p>name of file if file output is desired.  If left empty,
+output will be to the screen</p>
+</td></tr>
+<tr valign="top"><td><code>col.name.align</code></td>
+<td>
+<p>if column names are used, they can be aligned
+right, left or centre. Default <code>"cen"</code> results in names centred
+between the sides of the columns they name. If the width of the text
+in the columns is less than the width of the name, <code>col.name.align</code>
+will have no effect. Other options are <code>"right"</code> and <code>"left"</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>col.txt.align</code></td>
+<td>
+<p>how character columns are aligned.  Options
+are the same as for <code>col.name.align</code> with no effect when the width of
+the column is greater than its name.</p>
+</td></tr>
+<tr valign="top"><td><code>cell.align</code></td>
+<td>
+<p>how numbers are displayed in columns</p>
+</td></tr>
+<tr valign="top"><td><code>hsep</code></td>
+<td>
+<p>character string to use as horizontal separator,
+i.e. what separates columns</p>
+</td></tr>
+<tr valign="top"><td><code>vsep</code></td>
+<td>
+<p>character string to use as vertical separator,
+i.e. what separates rows.  Length cannot be more than one.</p>
+</td></tr>
+<tr valign="top"><td><code>csep</code></td>
+<td>
+<p>character string to use where vertical and horizontal
+separators cross.  If <code>hsep</code> is more than one character,
+<code>csep</code> will need to be the same length.  There is no provision
+for multiple vertical separators</p>
+</td></tr>
+<tr valign="top"><td><code>row.names</code></td>
+<td>
+<p>logical: are we printing the names of the rows?</p>
+</td></tr>
+<tr valign="top"><td><code>col.names</code></td>
+<td>
+<p>logical: are we printing the names of the columns?</p>
+</td></tr>
+<tr valign="top"><td><code>append</code></td>
+<td>
+<p>logical: if <code>file</code> is not <code>""</code>, are we appending to
+the file or overwriting?</p>
+</td></tr>
+<tr valign="top"><td><code>top.border</code></td>
+<td>
+<p>logical: do we want a border along the top above the
+columns?</p>
+</td></tr>
+<tr valign="top"><td><code>left.border</code></td>
+<td>
+<p>logical: do we want a border along the left of the
+first column?</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>unused</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>If any column of <code>x</code> is a mixture of character and numeric, the
+distinction between character and numeric columns will be lost. This
+is especially so if the matrix is of a form where you would not want
+to print the column names, the column information being in the rows at
+the beginning of the matrix.
+</p>
+<p>Row names, if not specified in the making of the matrix will simply be
+numbers. To prevent printing them, set <code>row.names = FALSE</code>.</p>
+
+
+<h3>Value</h3>
+
+<p>No value is returned.  The matrix or dataframe will be printed to file
+or to the screen.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Patrick Connolly <a href="mailto:p.connolly@hortresearch.co.nz">p.connolly@hortresearch.co.nz</a></p>
+
+
+<h3>See Also</h3>
+
+<p><code>write</code>,  <code>write.table</code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(HairEyeColor)
+print.char.matrix(HairEyeColor[ , , "Male"], col.names = TRUE)
+print.char.matrix(HairEyeColor[ , , "Female"], col.txt.align = "left", col.names = TRUE)
+
+
+z &lt;- rbind(c("", "N", "y"),
+           c("[ 1.34,40.3)\n[40.30,48.5)\n[48.49,58.4)\n[58.44,87.8]",
+             " 50\n 50\n 50\n 50",
+             "0.530\n0.489\n0.514\n0.507"),
+           c("female\nmale", " 94\n106", "0.552\n0.473"  ),
+           c("", "200", "0.510"))
+dimnames(z) &lt;- list(c("", "age", "sex", "Overall"),NULL)
+
+print.char.matrix(z)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

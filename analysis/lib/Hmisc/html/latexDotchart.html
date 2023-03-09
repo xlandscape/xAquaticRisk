@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Enhanced Dot Chart for LaTeX Picture Environment with epic</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for latexDotchart {Hmisc}"><tr><td>latexDotchart {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Enhanced Dot Chart for LaTeX Picture Environment with epic</h2>
+
+<h3>Description</h3>
+
+<p><code>latexDotchart</code>  is a translation of the <code>dotchart3</code> function
+for producing a vector of character strings containing LaTeX picture
+environment markup that mimics <code>dotchart3</code> output.  The LaTeX
+<code>epic</code> and <code>color</code> packages are required.  The <code>add</code> and
+<code>horizontal=FALSE</code> options are not available for
+<code>latexDotchart</code>, however. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+latexDotchart(data, labels, groups=NULL, gdata=NA, 
+  xlab='', auxdata, auxgdata=NULL, auxtitle,
+  w=4, h=4, margin,      
+  lines=TRUE, dotsize = .075, size='small', size.labels='small',
+  size.group.labels='normalsize', ttlabels=FALSE, sort.=TRUE,
+  xaxis=TRUE, lcolor='gray', ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>a numeric vector whose values are shown on the x-axis</p>
+</td></tr>
+<tr valign="top"><td><code>labels</code></td>
+<td>
+<p>a vector of labels for each point, corresponding to
+<code>x</code>.  If omitted, <code>names(data)</code> are used, and if there are
+no <code>names</code>, integers prefixed by <code>"#"</code> are used.</p>
+</td></tr>
+<tr valign="top"><td><code>groups</code></td>
+<td>
+<p>an optional categorical variable indicating how
+<code>data</code> values are grouped</p>
+</td></tr>
+<tr valign="top"><td><code>gdata</code></td>
+<td>
+<p>data values for groups, typically summaries such as group
+medians</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+<p>x-axis title</p>
+</td></tr>
+<tr valign="top"><td><code>auxdata</code></td>
+<td>
+
+<p>a vector of auxiliary data, of the same length
+as the first (<code>data</code>) argument.  If present, this
+vector of values will be printed outside the right margin of the dot
+chart.  Usually <code>auxdata</code> represents cell sizes.
+</p>
+</td></tr>
+<tr valign="top"><td><code>auxgdata</code></td>
+<td>
+
+<p>similar to <code>auxdata</code> but corresponding to the <code>gdata</code>
+argument.  These usually represent overall sample sizes for each
+group of lines.</p>
+</td></tr>
+<tr valign="top"><td><code>auxtitle</code></td>
+<td>
+
+<p>if <code>auxdata</code> is given, <code>auxtitle</code> specifies a column
+heading for the extra printed data in the chart, e.g., <code>"N"</code></p>
+</td></tr>
+<tr valign="top"><td><code>w</code></td>
+<td>
+<p>width of picture in inches</p>
+</td></tr>
+<tr valign="top"><td><code>h</code></td>
+<td>
+<p>height of picture in inches</p>
+</td></tr>
+<tr valign="top"><td><code>margin</code></td>
+<td>
+<p>a 4-vector representing, in inches, the margin to the
+left of the x-axis, below the y-axis, to the right of the x-axis,
+and above the y-axis.  By default these are computed making educated
+cases about how to accommodate <code>auxdata</code> etc.</p>
+</td></tr>
+<tr valign="top"><td><code>lines</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress drawing of reference
+lines</p>
+</td></tr>
+<tr valign="top"><td><code>dotsize</code></td>
+<td>
+<p>diameter of filled circles, in inches, for drawing dots</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+<p>size of text in picture.  This and the next two arguments
+are LaTeX font commands without the opening backslash, e.g.,
+<code>'normalsize'</code>, <code>'small'</code>, <code>'large'</code>, <code>smaller[2]</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>size.labels</code></td>
+<td>
+<p>size of labels</p>
+</td></tr>
+<tr valign="top"><td><code>size.group.labels</code></td>
+<td>
+<p>size of labels corresponding to <code>groups</code></p>
+</td></tr>
+<tr valign="top"><td><code>ttlabels</code></td>
+<td>
+<p>set to <code>TRUE</code> to use typewriter monospaced font
+for labels</p>
+</td></tr>
+<tr valign="top"><td><code>sort.</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to keep <code>latexDotchart</code> from sorting the input
+data, i.e., it will assume that the data are already properly
+arranged.  This is especially useful when you are using <code>gdata</code>
+and <code>groups</code> and you want to control the
+order that groups appear on the chart (from top to bottom).</p>
+</td></tr>
+<tr valign="top"><td><code>xaxis</code></td>
+<td>
+<p>set to <code>FALSE</code> to suppress drawing x-axis</p>
+</td></tr>
+<tr valign="top"><td><code>lcolor</code></td>
+<td>
+
+<p>color for horizontal reference lines.  Default is <code>"gray"</code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>ignored</p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../help/dotchart3.html">dotchart3</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+z &lt;- latexDotchart(c(.1,.2), c('a','bbAAb'), xlab='This Label',
+                   auxdata=c(.1,.2), auxtitle='Zcriteria')
+f &lt;- '/tmp/t.tex'
+cat('\documentclass{article}\n\usepackage{epic,color}\n\begin{document}\n', file=f)
+cat(z, sep='\n', file=f, append=TRUE)
+cat('\end{document}\n', file=f, append=TRUE)
+
+set.seed(135)
+maj &lt;- factor(c(rep('North',13),rep('South',13)))
+g &lt;- paste('Category',rep(letters[1:13],2))
+n &lt;- sample(1:15000, 26, replace=TRUE)
+y1 &lt;- runif(26)
+y2 &lt;- pmax(0, y1 - runif(26, 0, .1))
+z &lt;- latexDotchart(y1, g, groups=maj, auxdata=n, auxtitle='n', xlab='Y',
+                   size.group.labels='large', ttlabels=TRUE)
+f &lt;- '/tmp/t2.tex'
+cat('\documentclass{article}\n\usepackage{epic,color}\n\begin{document}\n\framebox{', file=f)
+cat(z, sep='\n', file=f, append=TRUE)
+cat('}\end{document}\n', file=f, append=TRUE)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

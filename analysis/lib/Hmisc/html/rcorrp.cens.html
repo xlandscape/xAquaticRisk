@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Rank Correlation for Paired Predictors with a Possibly...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for rcorrp.cens {Hmisc}"><tr><td>rcorrp.cens {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Rank Correlation for Paired Predictors with a Possibly Censored
+Response, and Integrated Discrimination Index
+</h2>
+
+<h3>Description</h3>
+
+<p>Computes U-statistics to test for whether predictor X1 is more
+concordant than predictor X2, extending <code>rcorr.cens</code>.  For
+<code>method=1</code>, estimates the fraction of pairs for which the
+<code>x1</code> difference is more impressive than the <code>x2</code>
+difference. For <code>method=2</code>, estimates the fraction of pairs for
+which <code>x1</code> is concordant with <code>S</code> but <code>x2</code> is not.
+</p>
+<p>For binary responses the function <code>improveProb</code> provides several
+assessments of whether one set of predicted probabilities is better
+than another, using the methods describe in 
+<cite>Pencina et al (2007)</cite>. This involves NRI and IDI to test for
+whether predictions from model <code>x1</code> are significantly different
+from those obtained from predictions from model <code>x2</code>. This is a
+distinct improvement over comparing ROC areas, sensitivity, or
+specificity.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rcorrp.cens(x1, x2, S, outx=FALSE, method=1)
+
+improveProb(x1, x2, y)
+
+## S3 method for class 'improveProb'
+print(x, digits=3, conf.int=.95, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x1</code></td>
+<td>
+
+<p>first predictor (a probability, for <code>improveProb</code>)
+</p>
+</td></tr> 
+<tr valign="top"><td><code>x2</code></td>
+<td>
+
+<p>second predictor (a probability, for <code>improveProb</code>)
+</p>
+</td></tr>
+<tr valign="top"><td><code>S</code></td>
+<td>
+
+<p>a possibly right-censored <code><a href="../../survival/help/Surv.html">Surv</a></code> object.  If
+<code>S</code> is a vector instead, it is converted to a
+<code><a href="../../survival/help/Surv.html">Surv</a></code> object and it is assumed that no
+observations are censored.
+</p>
+</td></tr>
+<tr valign="top"><td><code>outx</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to exclude pairs tied on <code>x1</code> or <code>x2</code>
+from consideration
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>see above
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>a binary 0/1 outcome variable
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>the result from <code>improveProb</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>number of significant digits for use in printing the result of
+<code>improveProb</code>
+</p>
+</td></tr> 
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+
+<p>level for confidence limits
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>unused
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>If <code>x1</code>,<code>x2</code> represent predictions from models, these
+functions assume either that you are using a separate sample from the
+one used to build the model, or that the amount of overfitting in
+<code>x1</code> equals the amount of overfitting in <code>x2</code>.  An example
+of the latter is giving both models equal opportunity to be complex so
+that both models have the same number of effective degrees of freedom,
+whether a predictor was included in the model or was screened out by a
+variable selection scheme.
+</p>
+<p>Note that in the first part of their paper, <cite>Pencina et al.</cite>
+presented measures that required binning the predicted probabilities.
+Those measures were then replaced with better continuous measures that
+are implementedhere.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a vector of statistics for <code>rcorrp.cens</code>, or a list with class
+<code>improveProb</code> of statistics for <code>improveProb</code>:
+<br />
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>number of cases</p>
+</td></tr>
+<tr valign="top"><td><code>na</code></td>
+<td>
+<p>number of events</p>
+</td></tr>
+<tr valign="top"><td><code>nb</code></td>
+<td>
+<p>number of non-events</p>
+</td></tr>
+<tr valign="top"><td><code>pup.ev</code></td>
+<td>
+
+<p>mean of pairwise differences in probabilities for those with events
+and a pairwise difference of <i>\mbox{probabilities}&gt;0</i>
+</p>
+</td></tr>
+<tr valign="top"><td><code>pup.ne</code></td>
+<td>
+
+<p>mean of pairwise differences in probabilities for those without
+events and a pairwise difference of <i>\mbox{probabilities}&gt;0</i>
+</p>
+</td></tr> 
+<tr valign="top"><td><code>pdown.ev</code></td>
+<td>
+
+<p>mean of pairwise differences in probabilities for those with events
+and a pairwise difference of <i>\mbox{probabilities}&gt;0</i>
+</p>
+</td></tr> 
+<tr valign="top"><td><code>pdown.ne</code></td>
+<td>
+
+<p>mean of pairwise differences in probabilities for those without
+events and a pairwise difference of <i>\mbox{probabilities}&gt;0</i>
+</p>
+</td></tr>
+<tr valign="top"><td><code>nri</code></td>
+<td>
+
+<p>Net Reclassification Index =
+<i>(pup.ev-pdown.ev)-(pup.ne-pdown.ne)</i>
+</p>
+</td></tr>
+<tr valign="top"><td><code>se.nri</code></td>
+<td>
+<p>standard error of NRI</p>
+</td></tr>
+<tr valign="top"><td><code>z.nri</code></td>
+<td>
+<p>Z score for NRI</p>
+</td></tr>
+<tr valign="top"><td><code>nri.ev</code></td>
+<td>
+<p>Net Reclassification Index = <i>pup.ev-pdown.ev</i></p>
+</td></tr>
+<tr valign="top"><td><code>se.nri.ev</code></td>
+<td>
+<p>SE of NRI of events</p>
+</td></tr>
+<tr valign="top"><td><code>z.nri.ev</code></td>
+<td>
+<p>Z score for NRI of events</p>
+</td></tr>
+<tr valign="top"><td><code>nri.ne</code></td>
+<td>
+<p>Net Reclassification Index = <i>pup.ne-pdown.ne</i></p>
+</td></tr>
+<tr valign="top"><td><code>se.nri.ne</code></td>
+<td>
+<p>SE of NRI of non-events</p>
+</td></tr>
+<tr valign="top"><td><code>z.nri.ne</code></td>
+<td>
+<p>Z score for NRI of non-events</p>
+</td></tr>
+<tr valign="top"><td><code>improveSens</code></td>
+<td>
+<p>improvement in sensitivity</p>
+</td></tr>
+<tr valign="top"><td><code>improveSpec</code></td>
+<td>
+<p>improvement in specificity</p>
+</td></tr>
+<tr valign="top"><td><code>idi</code></td>
+<td>
+<p>Integrated Discrimination Index</p>
+</td></tr>
+<tr valign="top"><td><code>se.idi</code></td>
+<td>
+<p>SE of IDI</p>
+</td></tr>
+<tr valign="top"><td><code>z.idi</code></td>
+<td>
+<p>Z score of IDI</p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell  <br />
+Department of Biostatistics, Vanderbilt University  <br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+<p>Scott Williams  <br />
+Division of Radiation Oncology  <br />
+Peter MacCallum Cancer Centre, Melbourne, Australia  <br />
+<a href="mailto:scott.williams@petermac.org">scott.williams@petermac.org</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Pencina MJ, D'Agostino Sr RB, D'Agostino Jr RB, Vasan RS (2008):
+Evaluating the added predictive ability of a new marker: From area
+under the ROC curve to reclassification and beyond.  Stat in Med 27:157-172.
+DOI: 10.1002/sim.2929
+</p>
+<p>Pencina MJ, D'Agostino Sr RB, D'Agostino Jr RB, Vasan RS:
+Rejoinder: Comments on Integrated discrimination and net reclassification
+improvements-Practical advice. Stat in Med 2007; DOI: 10.1002/sim.3106  
+</p>
+<p>Pencina MJ, D'Agostino RB, Steyerberg EW (2011): Extensions of net
+reclassification improvement calculations to measure usefulness of new
+biomarkers.  Stat in Med 30:11-21; DOI: 10.1002/sim.4085
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/rcorr.cens.html">rcorr.cens</a></code>, <code><a href="../../Hmisc/help/somers2.html">somers2</a></code>,
+<code><a href="../../survival/help/Surv.html">Surv</a></code>, <code><a href="../../rms/help/val.prob.html">val.prob</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+library(survival)
+
+x1 &lt;- rnorm(400)
+x2 &lt;- x1 + rnorm(400)
+d.time &lt;- rexp(400) + (x1 - min(x1))
+cens   &lt;- runif(400,.5,2)
+death  &lt;- d.time &lt;= cens
+d.time &lt;- pmin(d.time, cens)
+rcorrp.cens(x1, x2, Surv(d.time, death))
+#rcorrp.cens(x1, x2, y) ## no censoring
+
+set.seed(1)
+x1 &lt;- runif(1000)
+x2 &lt;- runif(1000)
+y  &lt;- sample(0:1, 1000, TRUE)
+rcorrp.cens(x1, x2, y)
+improveProb(x1, x2, y)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Empirical Cumulative Distribution Plot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for Ecdf {Hmisc}"><tr><td>Ecdf {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Empirical Cumulative Distribution Plot</h2>
+
+<h3>Description</h3>
+
+<p>Computes coordinates of cumulative distribution function of x, and by defaults
+plots it as a step function.  A grouping variable may be specified so that
+stratified estimates are computed and (by default) plotted.  If there is
+more than one group, the <code>labcurve</code> function is used (by default) to label
+the multiple step functions or to draw a legend defining line types, colors,
+or symbols by linking them with group labels.  A <code>weights</code> vector may
+be specified to get weighted estimates.  Specify <code>normwt</code> to make
+<code>weights</code> sum to the length of <code>x</code> (after removing NAs).  Other wise
+the total sample size is taken to be the sum of the weights.
+</p>
+<p><code>Ecdf</code> is actually a method, and <code>Ecdf.default</code> is what's
+called for a vector argument.  <code>Ecdf.data.frame</code> is called when the
+first argument is a data frame.  This function can automatically set up
+a matrix of ECDFs and wait for a mouse click if the matrix requires more
+than one page.  Categorical variables, character variables, and
+variables having fewer than a set number of unique values are ignored.
+If <code>par(mfrow=..)</code> is not set up before <code>Ecdf.data.frame</code> is
+called, the function will try to figure the best layout depending on the
+number of variables in the data frame.  Upon return the original
+<code>mfrow</code> is left intact.
+</p>
+<p>When the first argument to <code>Ecdf</code> is a formula, a Trellis/Lattice function
+<code>Ecdf.formula</code> is called.  This allows for multi-panel
+conditioning, superposition using a <code>groups</code> variable, and other
+Trellis features, along with the ability to easily plot transformed
+ECDFs using the <code>fun</code> argument.  For example, if <code>fun=qnorm</code>,
+the inverse normal transformation will be used for the y-axis.  If the
+transformed curves are linear this indicates normality.  Like the
+<code>xYplot</code> function, <code>Ecdf</code> will create a function <code>Key</code> if
+the <code>groups</code> variable is used.  This function can be invoked by the
+user to define the keys for the groups.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Ecdf(x, ...)
+
+## Default S3 method:
+Ecdf(x, what=c('F','1-F','f','1-f'),
+     weights=rep(1, length(x)), normwt=FALSE,
+     xlab, ylab, q, pl=TRUE, add=FALSE, lty=1, 
+     col=1, group=rep(1,length(x)), label.curves=TRUE, xlim, 
+     subtitles=TRUE, datadensity=c('none','rug','hist','density'),
+     side=1, 
+     frac=switch(datadensity,none=NA,rug=.03,hist=.1,density=.1),
+     dens.opts=NULL, lwd=1, log='', ...)
+
+
+## S3 method for class 'data.frame'
+Ecdf(x, group=rep(1,nrows),
+     weights=rep(1, nrows), normwt=FALSE,
+     label.curves=TRUE, n.unique=10, na.big=FALSE, subtitles=TRUE, 
+     vnames=c('labels','names'),...)
+
+## S3 method for class 'formula'
+Ecdf(x, data=sys.frame(sys.parent()), groups=NULL,
+     prepanel=prepanel.Ecdf, panel=panel.Ecdf, ..., xlab,
+     ylab, fun=function(x)x, what=c('F','1-F','f','1-f'), subset=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a numeric vector, data frame, or Trellis/Lattice formula</p>
+</td></tr>
+<tr valign="top"><td><code>what</code></td>
+<td>
+
+<p>The default is <code>"F"</code> which results in plotting the fraction of values
+&lt;= x.  Set to <code>"1-F"</code> to plot the fraction &gt; x or <code>"f"</code> to plot the
+cumulative frequency of values &lt;= x.  Use <code>"1-f"</code> to plot the
+cumulative frequency of values &gt;= x.
+</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>numeric vector of weights.  Omit or specify a zero-length vector or
+NULL to get unweighted estimates.
+</p>
+</td></tr>
+<tr valign="top"><td><code>normwt</code></td>
+<td>
+<p>see above</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>x-axis label.  Default is label(x) or name of calling argument.  For
+<code>Ecdf.formula</code>, <code>xlab</code> defaults to the <code>label</code> attribute
+of the x-axis variable.
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>y-axis label.  Default is <code>"Proportion &lt;= x"</code>, <code>"Proportion &gt; x"</code>, 
+or &quot;Frequency &lt;= x&quot; depending on value of <code>what</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>q</code></td>
+<td>
+
+<p>a vector for quantiles for which to draw reference lines on the plot.
+Default is not to draw any.
+</p>
+</td></tr>
+<tr valign="top"><td><code>pl</code></td>
+<td>
+<p>set to F to omit the plot, to just return estimates</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>set to TRUE to add the cdf to an existing plot.  Does not apply if using
+lattice graphics (i.e., if a formula is given as the first argument).
+</p>
+</td></tr>
+<tr valign="top"><td><code>lty</code></td>
+<td>
+
+<p>integer line type for plot.  If <code>group</code> is specified, this can be a vector.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+
+<p>line width for plot.  Can be a vector corresponding to <code>group</code>s.
+</p>
+</td></tr>
+<tr valign="top"><td><code>log</code></td>
+<td>
+
+<p>see <code><a href="../../graphics/html/plot.default.html">plot</a></code>.  Set <code>log='x'</code> to use log scale for
+<code>x</code>-axis.
+</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+
+<p>color for step function.  Can be a vector.
+</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+
+<p>a numeric, character, or <code>factor</code> categorical variable used for stratifying
+estimates.  If <code>group</code> is present, as many ECDFs are drawn as there are
+non&ndash;missing group levels.
+</p>
+</td></tr>
+<tr valign="top"><td><code>label.curves</code></td>
+<td>
+
+<p>applies if more than one <code>group</code> exists.
+Default is <code>TRUE</code> to use <code>labcurve</code> to label curves where they are farthest
+apart.  Set <code>label.curves</code> to a <code>list</code> to specify options to
+<code>labcurve</code>, e.g., <code>label.curves=list(method="arrow", cex=.8)</code>.
+These option names may be abbreviated in the usual way arguments
+are abbreviated.  Use for example <code>label.curves=list(keys=1:5)</code>
+to draw symbols periodically (as in <code>pch=1:5</code> - see <code>points</code>)
+on the curves and automatically position a legend
+in the most empty part of the plot.  Set <code>label.curves=FALSE</code> to
+suppress drawing curve labels.  The <code>col</code>, <code>lty</code>, and <code>type</code>
+parameters are automatically passed to <code>labcurve</code>, although you
+can override them here.  You can set <code>label.curves=list(keys="lines")</code> to
+have different line types defined in an automatically positioned key.
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlim</code></td>
+<td>
+
+<p>x-axis limits.  Default is entire range of <code>x</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>subtitles</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress putting a subtitle at the bottom left of each
+plot.  The subtitle indicates the numbers of
+non-missing and missing observations, which are labeled <code>n</code>, <code>m</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>datadensity</code></td>
+<td>
+
+<p>If <code>datadensity</code> is not <code>"none"</code>, either <code>scat1d</code> or <code>histSpike</code> is called to
+add a rug plot (<code>datadensity="rug"</code>), spike histogram
+(<code>datadensity="hist"</code>), or smooth density estimate (<code>"density"</code>) to
+the bottom or top of the ECDF.
+</p>
+</td></tr>
+<tr valign="top"><td><code>side</code></td>
+<td>
+
+<p>If <code>datadensity</code> is not <code>"none"</code>, the default is to place the additional
+information on top of the x-axis (<code>side=1</code>).  Use <code>side=3</code> to place at
+the top of the graph.
+</p>
+</td></tr>
+<tr valign="top"><td><code>frac</code></td>
+<td>
+
+<p>passed to <code>histSpike</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>dens.opts</code></td>
+<td>
+
+<p>a list of optional arguments for <code>histSpike</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>other parameters passed to plot if add=F.  For data frames, other
+parameters to pass to <code>Ecdf.default</code>.
+For <code>Ecdf.formula</code>, if <code>groups</code> is not used, you can also add
+data density information to each panel's ECDF by specifying the
+<code>datadensity</code> and optional <code>frac</code>, <code>side</code>,
+<code>dens.opts</code> arguments. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>n.unique</code></td>
+<td>
+
+<p>minimum number of unique values before an ECDF is drawn for a variable
+in a data frame.  Default is 10.
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.big</code></td>
+<td>
+
+<p>set to <code>TRUE</code> to draw the number of NAs in larger letters in the middle of
+the plot for <code>Ecdf.data.frame</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>vnames</code></td>
+<td>
+
+<p>By default, variable labels are used to label x-axes.  Set <code>vnames="names"</code>
+to instead use variable names.
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>method for computing the empirical cumulative distribution.  See
+<code>wtd.Ecdf</code>.  The default is to use the standard <code>"i/n"</code> method as is
+used by the non-Trellis versions of <code>Ecdf</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>a function to transform the cumulative proportions, for the
+Trellis-type usage of <code>Ecdf</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>data, groups, subset,prepanel, panel</code></td>
+<td>
+<p>the usual Trellis/Lattice parameters, with <code>groups</code>
+causing <code>Ecdf.formula</code> to overlay multiple ECDFs on one panel.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>for <code>Ecdf.default</code> an invisible list with elements x and y giving the
+coordinates of the cdf.  If there is more than one <code>group</code>, a list of
+such lists is returned.  An attribute, <code>N</code>, is in the returned
+object.  It contains the elements <code>n</code> and <code>m</code>, the number of
+non-missing and missing observations, respectively.
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>plots
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics, Vanderbilt University
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/wtd.Ecdf.html">wtd.Ecdf</a></code>, <code><a href="../../Hmisc/help/label.html">label</a></code>, <code><a href="../../base/html/table.html">table</a></code>, <code><a href="../../base/html/cumsum.html">cumsum</a></code>, <code><a href="../../Hmisc/help/labcurve.html">labcurve</a></code>, <code><a href="../../Hmisc/help/xYplot.html">xYplot</a></code>, <code><a href="../../Hmisc/help/histSpike.html">histSpike</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+ch &lt;- rnorm(1000, 200, 40)
+Ecdf(ch, xlab="Serum Cholesterol")
+scat1d(ch)                       # add rug plot
+histSpike(ch, add=TRUE, frac=.15)   # add spike histogram
+# Better: add a data density display automatically:
+Ecdf(ch, datadensity='density')
+
+
+label(ch) &lt;- "Serum Cholesterol"
+Ecdf(ch)
+other.ch &lt;- rnorm(500, 220, 20)
+Ecdf(other.ch,add=TRUE,lty=2)
+
+
+sex &lt;- factor(sample(c('female','male'), 1000, TRUE))
+Ecdf(ch, q=c(.25,.5,.75))  # show quartiles
+Ecdf(ch, group=sex,
+     label.curves=list(method='arrow'))
+
+
+# Example showing how to draw multiple ECDFs from paired data
+pre.test &lt;- rnorm(100,50,10)
+post.test &lt;- rnorm(100,55,10)
+x &lt;- c(pre.test, post.test)
+g &lt;- c(rep('Pre',length(pre.test)),rep('Post',length(post.test)))
+Ecdf(x, group=g, xlab='Test Results', label.curves=list(keys=1:2))
+# keys=1:2 causes symbols to be drawn periodically on top of curves
+
+
+# Draw a matrix of ECDFs for a data frame
+m &lt;- data.frame(pre.test, post.test, 
+                sex=sample(c('male','female'),100,TRUE))
+Ecdf(m, group=m$sex, datadensity='rug')
+
+
+freqs &lt;- sample(1:10, 1000, TRUE)
+Ecdf(ch, weights=freqs)  # weighted estimates
+
+
+# Trellis/Lattice examples:
+
+
+region &lt;- factor(sample(c('Europe','USA','Australia'),100,TRUE))
+year &lt;- factor(sample(2001:2002,1000,TRUE))
+Ecdf(~ch | region*year, groups=sex)
+Key()           # draw a key for sex at the default location
+# Key(locator(1)) # user-specified positioning of key
+age &lt;- rnorm(1000, 50, 10)
+Ecdf(~ch | equal.count(age), groups=sex)  # use overlapping shingles
+Ecdf(~ch | sex, datadensity='hist', side=3)  # add spike histogram at top
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

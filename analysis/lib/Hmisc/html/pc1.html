@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: First Principal Component</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for pc1 {Hmisc}"><tr><td>pc1 {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>First Principal Component</h2>
+
+<h3>Description</h3>
+
+<p>Given a numeric matrix which may or may not contain <code>NA</code>s,
+<code>pc1</code> standardizes the columns to have mean 0 and variance 1 and
+computes the first principal component using <code><a href="../../stats/html/prcomp.html">prcomp</a></code>.  The
+proportion of variance explained by this component is printed, and so
+are the coefficients of the original (not scaled) variables.  These
+coefficients may be applied to the raw data to obtain the first PC.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+pc1(x, hi)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>numeric matrix</p>
+</td></tr>
+<tr valign="top"><td><code>hi</code></td>
+<td>
+<p>if specified, the first PC is scaled so that its maximum
+value is <code>hi</code> and its minimum value is zero</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>The vector of observations with the first PC.  An attribute
+<code>"coef"</code> is attached to this vector.  <code>"coef"</code> contains the
+raw-variable coefficients.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/prcomp.html">prcomp</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.seed(1)
+x1 &lt;- rnorm(100)
+x2 &lt;- x1 + rnorm(100)
+w &lt;- pc1(cbind(x1,x2))
+attr(w,'coef')
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

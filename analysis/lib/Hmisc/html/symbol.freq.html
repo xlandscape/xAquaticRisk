@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Graphic Representation of a Frequency Table</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for symbol.freq {Hmisc}"><tr><td>symbol.freq {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Graphic Representation of a Frequency Table</h2>
+
+<h3>Description</h3>
+
+<p>This function can be used to represent
+contingency tables graphically.  Frequency counts are represented as
+the heights of &quot;thermometers&quot; by default; you can also specify
+<code>symbol='circle'</code> to the function.  There is an option to include
+marginal frequencies, which are plotted on a halved scale so as to not
+overwhelm the plot.   If you do not ask for marginal frequencies to be
+plotted using <code>marginals=T</code>, <code>symbol.freq</code> will ask you to click
+the mouse where a reference symbol is to be drawn to assist in reading
+the scale of the frequencies.
+</p>
+<p><code>label</code> attributes, if present, are used for x- and y-axis labels.
+Otherwise, names of calling arguments are used.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+symbol.freq(x, y, symbol = c("thermometer", "circle"),
+            marginals = FALSE, orig.scale = FALSE,
+            inches = 0.25, width = 0.15, subset, srtx = 0, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>first variable to cross-classify</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>second variable</p>
+</td></tr>
+<tr valign="top"><td><code>symbol</code></td>
+<td>
+<p>specify <code>"thermometer"</code> (the default) or <code>"circle"</code></p>
+</td></tr>
+<tr valign="top"><td><code>marginals</code></td>
+<td>
+<p>set to <code>TRUE</code> to add marginal frequencies
+(scaled by half) to the plot</p>
+</td></tr>
+<tr valign="top"><td><code>orig.scale</code></td>
+<td>
+<p>set to <code>TRUE</code> when the first two arguments are
+numeric variables; this uses their original values for x and y
+coordinates)</p>
+</td></tr> 
+<tr valign="top"><td><code>inches</code></td>
+<td>
+<p>see <code><a href="../../graphics/html/symbols.html">symbols</a></code></p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+<p>see <code>thermometers</code> option in <code>symbols</code></p>
+</td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+<p>the usual subsetting vector</p>
+</td></tr>
+<tr valign="top"><td><code>srtx</code></td>
+<td>
+<p>rotation angle for x-axis labels</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other arguments to pass to <code>symbols</code></p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/symbols.html">symbols</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+getHdata(titanic)
+attach(titanic)
+age.tertile &lt;- cut2(titanic$age, g=3)
+symbol.freq(age.tertile, pclass, marginals=T, srtx=45)
+detach(2)
+
+## End(Not run)</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

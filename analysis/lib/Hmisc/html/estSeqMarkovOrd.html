@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: estSeqMarkovOrd</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for estSeqMarkovOrd {Hmisc}"><tr><td>estSeqMarkovOrd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>estSeqMarkovOrd</h2>
+
+<h3>Description</h3>
+
+<p>Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Simulations
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+estSeqMarkovOrd(
+  y,
+  times,
+  initial,
+  absorb = NULL,
+  intercepts,
+  parameter,
+  looks,
+  g,
+  formula,
+  ppo = NULL,
+  yprevfactor = TRUE,
+  groupContrast = NULL,
+  cscov = FALSE,
+  timecriterion = NULL,
+  coxzph = FALSE,
+  sstat = NULL,
+  rdsample = NULL,
+  maxest = NULL,
+  maxvest = NULL,
+  nsim = 1,
+  progress = FALSE,
+  pfile = ""
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>vector of possible y values in order (numeric, character, factor)</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p>vector of measurement times</p>
+</td></tr>
+<tr valign="top"><td><code>initial</code></td>
+<td>
+<p>a vector of probabilities summing to 1.0 that specifies the frequency distribution of initial values to be sampled from.  The vector must have names that correspond to values of <code>y</code> representing non-absorbing states.</p>
+</td></tr>
+<tr valign="top"><td><code>absorb</code></td>
+<td>
+<p>vector of absorbing states, a subset of <code>y</code>.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.  May be numeric, character, or factor.</p>
+</td></tr>
+<tr valign="top"><td><code>intercepts</code></td>
+<td>
+<p>vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of <code>y</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>parameter</code></td>
+<td>
+<p>vector of true parameter (effects; group differences) values.  These are group 2:1 log odds ratios in the transition model, conditioning on the previous <code>y</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>looks</code></td>
+<td>
+<p>integer vector of ID numbers at which maximum likelihood estimates and their estimated variances are computed.  For a single look specify a scalar value for <code>loops</code> equal to the number of subjects in the sample.</p>
+</td></tr>
+<tr valign="top"><td><code>g</code></td>
+<td>
+<p>a user-specified function of three or more arguments which in order are <code>yprev</code> - the value of <code>y</code> at the previous time, the current time <code>t</code>, the <code>gap</code> between the previous time and the current time, an optional (usually named) covariate vector <code>X</code>, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow <code>yprev</code> to be a vector and <code>yprev</code> must not include any absorbing states.  The <code>g</code> function returns the linear predictor for the proportional odds model aside from <code>intercepts</code>.  The returned value must be a matrix with row names taken from <code>yprev</code>.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to <code>intercepts</code>. The different columns are used for <code>y</code>-specific contributions to the linear predictor (aside from <code>intercepts</code>) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.</p>
+</td></tr>
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>a formula object given to the <code>lrm()</code> function using variables with these name: <code>y</code>, <code>time</code>, <code>yprev</code>, and <code>group</code> (factor variable having values '1' and '2').  The <code>yprev</code> variable is converted to a factor before fitting the model unless <code>yprevfactor=FALSE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>ppo</code></td>
+<td>
+<p>a formula specifying the part of <code>formula</code> for which proportional odds is not to be assumed, i.e., that specifies a partial proportional odds model.  Specifying <code>ppo</code> triggers the use of <code>VGAM::vglm()</code> instead of <code>rms::lrm</code> and will make the simulations run slower.</p>
+</td></tr>
+<tr valign="top"><td><code>yprevfactor</code></td>
+<td>
+<p>see <code>formula</code></p>
+</td></tr>
+<tr valign="top"><td><code>groupContrast</code></td>
+<td>
+<p>omit this argument if <code>group</code> has only one regression coefficient in <code>formula</code>.  Otherwise if <code>ppo</code> is omitted, provide <code>groupContrast</code> as a list of two lists that are passed to <code>rms::contrast.rms()</code> to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If <code>ppo</code> is given and the group effect is not just a simple regression coefficient, specify as <code>groupContrast</code> a function of a <code>vglm</code> fit that computes the contrast of interest and its standard error and returns a list with elements named <code>Contrast</code> and <code>SE</code>.  For the latter type you can optionally have formal arguments <code>n1</code>, <code>n2</code>, and <code>parameter</code> that are passed to <code>groupContrast</code> to compute the standard error of the group contrast, where <code>n1</code> and <code>n2</code> respectively are the sample sizes for the two groups and <code>parameter</code> is the true group effect parameter value.</p>
+</td></tr>
+<tr valign="top"><td><code>cscov</code></td>
+<td>
+<p>applies if <code>ppo</code> is not used.  Set to <code>TRUE</code> to use the cluster sandwich covariance estimator of the variance of the group comparison.</p>
+</td></tr>
+<tr valign="top"><td><code>timecriterion</code></td>
+<td>
+<p>a function of a time-ordered vector of simulated ordinal responses <code>y</code> that returns a vector <code>FALSE</code> or <code>TRUE</code> values denoting whether the current <code>y</code> level met the condition of interest.  For example <code>estSeqMarkovOrd</code> will compute the first time at which <code>y &gt;= 5</code> if you specify <code>timecriterion=function(y) y &gt;= 5</code>.  This function is only called at the last data look for each simulated study.  To have more control, instead of <code>timecriterion</code> returning a logical vector have it return a numeric 2-vector containing, in order, the event/censoring time and the 1/0 event/censoring indicator.</p>
+</td></tr>
+<tr valign="top"><td><code>coxzph</code></td>
+<td>
+<p>set to <code>TRUE</code> if <code>timecriterion</code> is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data</p>
+</td></tr>
+<tr valign="top"><td><code>sstat</code></td>
+<td>
+<p>set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.</p>
+</td></tr>
+<tr valign="top"><td><code>rdsample</code></td>
+<td>
+<p>an optional function to do response-dependent sampling.  It is a function of these arguments, which are vectors that stop at any absorbing state: <code>times</code> (ascending measurement times for one subject), <code>y</code> (vector of ordinal outcomes at these times for one subject.  The function returns <code>NULL</code> if no observations are to be dropped, returns the vector of new times to sample.</p>
+</td></tr>
+<tr valign="top"><td><code>maxest</code></td>
+<td>
+<p>maximum acceptable absolute value of the contrast estimate, ignored if <code>NULL</code>.  Any values exceeding <code>maxest</code> will result in the estimate being set to <code>NA</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>maxvest</code></td>
+<td>
+<p>like <code>maxest</code> but for the estimated variance of the contrast estimate</p>
+</td></tr>
+<tr valign="top"><td><code>nsim</code></td>
+<td>
+<p>number of simulations (default is 1)</p>
+</td></tr>
+<tr valign="top"><td><code>progress</code></td>
+<td>
+<p>set to <code>TRUE</code> to send current iteration number to <code>pfile</code> every 10 iterations.  Each iteration will really involve multiple simulations, if <code>parameter</code> has length greater than 1.</p>
+</td></tr>
+<tr valign="top"><td><code>pfile</code></td>
+<td>
+<p>file to which to write progress information.  Defaults to <code>''</code> which is the console.  Ignored if <code>progress=FALSE</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector <code>looks</code> with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function <code>g</code> that has extra arguments specifying the true effect of <code>parameter</code> the treatment <code>group</code> expecting treatments to be coded 1 and 2.  <code>parameter</code> is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the <code>rms::lrm()</code> function, unless non-proportional odds is allowed in which case <code>VGAM::vglm()</code> is used.  If <code>timecriterion</code> is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject or use the event time and event/censoring indicator computed by <code>timecriterion</code>.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If <code>coxzph=TRUE</code>, the <code>survival</code> package correlation coefficient <code>rho</code> from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.  <code>vglm</code> is accelerated by saving the first successful fit for the largest sample size and using its coefficients as starting value for further <code>vglm</code> fits for any sample size for the same setting of <code>parameter</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a data frame with number of rows equal to the product of <code>nsim</code>, the length of <code>looks</code>, and the length of <code>parameter</code>, with variables <code>sim</code>, <code>parameter</code>, <code>look</code>, <code>est</code> (log odds ratio for group), and <code>vest</code> (the variance of the latter).  If <code>timecriterion</code> is specified the data frame also contains <code>loghr</code> (Cox log hazard ratio for group), <code>lrchisq</code> (chi-square from Cox test for group), and if <code>coxph=TRUE</code>, <code>phchisq</code>, the chi-square for testing proportional hazards.  The attribute <code>etimefreq</code> is also present if <code>timecriterion</code> is present, and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  If <code>sstat</code> is given, the attribute <code>sstat</code> is also present, and it contains an array with dimensions corresponding to simulations, parameter values within simulations, <code>id</code>, and a two-column subarray with columns <code>group</code> and <code>y</code>, the latter being the summary measure computed by the <code>sstat</code> function.  The returned data frame also has attribute <code>lrmcoef</code> which are the last-look logistic regression coefficient estimates over the <code>nsim</code> simulations and the parameter settings, and an attribute <code>failures</code> which is a data frame containing the variables <code>reason</code> and <code>frequency</code> cataloging the reasons for unsuccessful model fits.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code>gbayesSeqSim()</code>, <code>simMarkovOrd()</code>, <a href="https://hbiostat.org/R/Hmisc/markov/">https://hbiostat.org/R/Hmisc/markov/</a>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

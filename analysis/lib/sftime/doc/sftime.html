@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Benedikt Gräler, Edzer Pebesma" />
+
+<meta name="date" content="2022-03-16" />
+
+<title>Introduction to sftime</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to sftime</h1>
+<h4 class="author">Benedikt Gräler, Edzer Pebesma</h4>
+<h4 class="date">2022-03-16</h4>
+
+
+
+<p>The package <code>sftime</code> extends package <code>sf</code> to store and handle spatiotemporal data. To this end, <code>sftime</code> introduces a dedicated time column that stores the temporal information alongside the simple features column of an <code>sf</code> object.</p>
+<p>The time column can consists of any collection of a class that allows to be sorted - reflecting the native order of time. Besides well-known time classes such as <code>Date</code> or <code>POSIXct</code>, it also allows for custom class definitions that come with the necessary methods to make sorting work (we will see a example below).</p>
+<p>This vignette briefly explains and illustrates the ideas and decisions behind the implementation of <code>sftime</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># load required packages</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(sftime)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt; Loading required package: sf</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt; Warning: package &#39;sf&#39; was built under R version 4.0.5</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">library</span>(sf)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="kw">library</span>(stars)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; Warning: package &#39;stars&#39; was built under R version 4.0.5</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; Loading required package: abind</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="kw">library</span>(spacetime)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt; Warning: package &#39;spacetime&#39; was built under R version 4.0.5</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt; Warning: package &#39;ggplot2&#39; was built under R version 4.0.2</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="kw">library</span>(tidyr)</span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="kw">library</span>(magrittr)</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt; </span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; Attaching package: &#39;magrittr&#39;</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; The following object is masked from &#39;package:tidyr&#39;:</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; </span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt;     extract</span></span></code></pre></div>
+<div id="the-sftime-class" class="section level2">
+<h2>The <code>sftime</code> class</h2>
+<p>An <code>sftime</code> object is an <code>sf</code> object with an additional time column that contains the temporal information alongside the simple features column. This allows it to handle irregular and regular temporal information.</p>
+<p>For spatiotemporal data with regular temporal data (raster or vector data cubes: data where each geometry is observed at the same set of time instances), package <code>stars</code> is developed as a powerful alternative (e.g. time series of remote sensing imagery, regular measurements of entire measurement network). <code>sftime</code> fills the gap for data where arbitrary combinations of geometry and time occur, including irregularly collected sensor data or (spatiotemporal) point pattern data.</p>
+<p><code>sftime</code> objects can be constructed directly from <code>sfc</code> objects by combining them with a vector representing temporal information:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># example sfc object</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>x_sfc &lt;-<span class="st"> </span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="st">  </span>sf<span class="op">::</span><span class="kw">st_sfc</span>(</span>
+<span id="cb2-4"><a href="#cb2-4"></a>    sf<span class="op">::</span><span class="kw">st_point</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>), </span>
+<span id="cb2-5"><a href="#cb2-5"></a>    sf<span class="op">::</span><span class="kw">st_point</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)), </span>
+<span id="cb2-6"><a href="#cb2-6"></a>    sf<span class="op">::</span><span class="kw">st_point</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>), </span>
+<span id="cb2-7"><a href="#cb2-7"></a>    sf<span class="op">::</span><span class="kw">st_point</span>(<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb2-8"><a href="#cb2-8"></a>  )</span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co"># create an sftime object directly from x_sfc</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>x_sftime1 &lt;-<span class="st"> </span>sftime<span class="op">::</span><span class="kw">st_sftime</span>(<span class="dt">a =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, x_sfc, <span class="dt">time =</span> <span class="kw">Sys.time</span>()<span class="op">-</span><span class="st"> </span><span class="dv">0</span><span class="op">:</span><span class="dv">3</span> <span class="op">*</span><span class="st"> </span><span class="dv">3600</span> <span class="op">*</span><span class="st"> </span><span class="dv">24</span>)</span>
+<span id="cb2-12"><a href="#cb2-12"></a></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co"># first create the sf object and from this the sftime object</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>x_sf &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_sf</span>(<span class="dt">a =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, x_sfc, <span class="dt">time =</span> x_sftime1<span class="op">$</span>time)</span>
+<span id="cb2-15"><a href="#cb2-15"></a>x_sftime2 &lt;-<span class="st"> </span>sftime<span class="op">::</span><span class="kw">st_sftime</span>(x_sf)</span>
+<span id="cb2-16"><a href="#cb2-16"></a></span>
+<span id="cb2-17"><a href="#cb2-17"></a>x_sftime3 &lt;-<span class="st"> </span>sftime<span class="op">::</span><span class="kw">st_as_sftime</span>(x_sf) <span class="co"># alernative option</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="kw">identical</span>(x_sftime1, x_sftime2)</span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="kw">identical</span>(x_sftime1, x_sftime3)</span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb2-23"><a href="#cb2-23"></a></span>
+<span id="cb2-24"><a href="#cb2-24"></a>x_sftime1</span>
+<span id="cb2-25"><a href="#cb2-25"></a><span class="co">#&gt; Spatiotemporal feature collection with 4 features and 1 field</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb2-28"><a href="#cb2-28"></a><span class="co">#&gt; Bounding box:  xmin: 1 ymin: 1 xmax: 2 ymax: 3</span></span>
+<span id="cb2-29"><a href="#cb2-29"></a><span class="co">#&gt; CRS:           NA</span></span>
+<span id="cb2-30"><a href="#cb2-30"></a><span class="co">#&gt; Time column with class: &#39;POSIXt&#39;.</span></span>
+<span id="cb2-31"><a href="#cb2-31"></a><span class="co">#&gt; Ranging from 2022-03-13 19:31:00 to 2022-03-16 19:31:00.</span></span>
+<span id="cb2-32"><a href="#cb2-32"></a><span class="co">#&gt;   a       x_sfc                time</span></span>
+<span id="cb2-33"><a href="#cb2-33"></a><span class="co">#&gt; 1 1 POINT (1 2) 2022-03-16 19:31:00</span></span>
+<span id="cb2-34"><a href="#cb2-34"></a><span class="co">#&gt; 2 2 POINT (1 3) 2022-03-15 19:31:00</span></span>
+<span id="cb2-35"><a href="#cb2-35"></a><span class="co">#&gt; 3 3 POINT (2 3) 2022-03-14 19:31:00</span></span>
+<span id="cb2-36"><a href="#cb2-36"></a><span class="co">#&gt; 4 4 POINT (2 1) 2022-03-13 19:31:00</span></span></code></pre></div>
+<p>Methods for <code>sftime</code> objects are:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">methods</span>(<span class="dt">class =</span> <span class="st">&quot;sftime&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt;  [1] $&lt;-               [                 [[&lt;-              cbind            </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt;  [5] filter            gather            nest              pivot_longer     </span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt;  [9] plot              print             rbind             separate         </span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; [13] separate_rows     spread            st_as_sftime      st_cast          </span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt; [17] st_crop           st_difference     st_drop_geometry  st_filter        </span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; [21] st_intersection   st_join           st_sym_difference st_time          </span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; [25] st_time&lt;-         st_union          transform         unite            </span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt; [29] unnest           </span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt; see &#39;?methods&#39; for accessing help and source code</span></span></code></pre></div>
+<p>Methods for <code>sf</code> objects which are not listed above work also for <code>sftime</code> objects.</p>
+</div>
+<div id="functions-to-get-or-set-the-time-column-of-an-sftime-object" class="section level2">
+<h2>Functions to get or set the time column of an <code>sftime</code> object</h2>
+<p>Functions to get or set the time column of an <code>sftime</code> object are:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># get the values from the time column</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">st_time</span>(x_sftime1)</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt; [1] &quot;2022-03-16 19:31:00 CET&quot; &quot;2022-03-15 19:31:00 CET&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt; [3] &quot;2022-03-14 19:31:00 CET&quot; &quot;2022-03-13 19:31:00 CET&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>x_sftime1<span class="op">$</span>time <span class="co"># alternative way</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt; [1] &quot;2022-03-16 19:31:00 CET&quot; &quot;2022-03-15 19:31:00 CET&quot;</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; [3] &quot;2022-03-14 19:31:00 CET&quot; &quot;2022-03-13 19:31:00 CET&quot;</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co"># set the values in the time column</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="kw">st_time</span>(x_sftime1) &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()</span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="kw">st_time</span>(x_sftime1)</span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt; [1] &quot;2022-03-16 19:31:00 CET&quot; &quot;2022-03-16 19:31:00 CET&quot;</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; [3] &quot;2022-03-16 19:31:00 CET&quot; &quot;2022-03-16 19:31:00 CET&quot;</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co"># drop the time column to convert an sftime object to an sf object</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="kw">st_drop_time</span>(x_sftime1)</span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; Simple feature collection with 4 features and 1 field</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#&gt; Bounding box:  xmin: 1 ymin: 1 xmax: 2 ymax: 3</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="co">#&gt; CRS:           NA</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="co">#&gt;   a       x_sfc</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a><span class="co">#&gt; 1 1 POINT (1 2)</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a><span class="co">#&gt; 2 2 POINT (1 3)</span></span>
+<span id="cb4-25"><a href="#cb4-25"></a><span class="co">#&gt; 3 3 POINT (2 3)</span></span>
+<span id="cb4-26"><a href="#cb4-26"></a><span class="co">#&gt; 4 4 POINT (2 1)</span></span>
+<span id="cb4-27"><a href="#cb4-27"></a>x_sftime1</span>
+<span id="cb4-28"><a href="#cb4-28"></a><span class="co">#&gt; Spatiotemporal feature collection with 4 features and 1 field</span></span>
+<span id="cb4-29"><a href="#cb4-29"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb4-30"><a href="#cb4-30"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb4-31"><a href="#cb4-31"></a><span class="co">#&gt; Bounding box:  xmin: 1 ymin: 1 xmax: 2 ymax: 3</span></span>
+<span id="cb4-32"><a href="#cb4-32"></a><span class="co">#&gt; CRS:           NA</span></span>
+<span id="cb4-33"><a href="#cb4-33"></a><span class="co">#&gt; Time column with class: &#39;POSIXt&#39;.</span></span>
+<span id="cb4-34"><a href="#cb4-34"></a><span class="co">#&gt; Ranging from 2022-03-16 19:31:00 to 2022-03-16 19:31:00.</span></span>
+<span id="cb4-35"><a href="#cb4-35"></a><span class="co">#&gt;   a       x_sfc                time</span></span>
+<span id="cb4-36"><a href="#cb4-36"></a><span class="co">#&gt; 1 1 POINT (1 2) 2022-03-16 19:31:00</span></span>
+<span id="cb4-37"><a href="#cb4-37"></a><span class="co">#&gt; 2 2 POINT (1 3) 2022-03-16 19:31:00</span></span>
+<span id="cb4-38"><a href="#cb4-38"></a><span class="co">#&gt; 3 3 POINT (2 3) 2022-03-16 19:31:00</span></span>
+<span id="cb4-39"><a href="#cb4-39"></a><span class="co">#&gt; 4 4 POINT (2 1) 2022-03-16 19:31:00</span></span>
+<span id="cb4-40"><a href="#cb4-40"></a></span>
+<span id="cb4-41"><a href="#cb4-41"></a><span class="co"># add a time column to an sf object converts it to an sftime object</span></span>
+<span id="cb4-42"><a href="#cb4-42"></a><span class="kw">st_time</span>(x_sftime1, <span class="dt">time_column_name =</span> <span class="st">&quot;time&quot;</span>) &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()</span>
+<span id="cb4-43"><a href="#cb4-43"></a><span class="kw">class</span>(x_sftime1)</span>
+<span id="cb4-44"><a href="#cb4-44"></a><span class="co">#&gt; [1] &quot;sftime&quot;     &quot;sf&quot;         &quot;data.frame&quot;</span></span>
+<span id="cb4-45"><a href="#cb4-45"></a></span>
+<span id="cb4-46"><a href="#cb4-46"></a><span class="co"># These can also be used with pipes</span></span>
+<span id="cb4-47"><a href="#cb4-47"></a>x_sftime1 &lt;-</span>
+<span id="cb4-48"><a href="#cb4-48"></a><span class="st">  </span>x_sftime1 <span class="op">%&gt;%</span></span>
+<span id="cb4-49"><a href="#cb4-49"></a><span class="st">  </span><span class="kw">st_drop_time</span>() <span class="op">%&gt;%</span></span>
+<span id="cb4-50"><a href="#cb4-50"></a><span class="st">  </span><span class="kw">st_set_time</span>(<span class="kw">Sys.time</span>(), <span class="dt">time_column_name =</span> <span class="st">&quot;time&quot;</span>)</span></code></pre></div>
+</div>
+<div id="conversion-to-class-sftime" class="section level2">
+<h2>Conversion to class <code>sftime</code></h2>
+<p>sftime supports coercion to <code>sftime</code> objects from the following classes (grouped according to packages):</p>
+<ul>
+<li>sf: sf</li>
+<li>stars: stars</li>
+<li>spacetime: STI, STIDF</li>
+<li>trajectories: Track, Tracks, TracksCollection</li>
+<li>sftrack: sftrack, sftraj</li>
+</ul>
+<p><strong>Conversion from <code>sf</code> objects:</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># define the geometry column</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>g &lt;-<span class="st"> </span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="st">  </span><span class="kw">st_sfc</span>(</span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="kw">st_point</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)), </span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="kw">st_point</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>)), </span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="kw">st_point</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">3</span>)), </span>
+<span id="cb5-7"><a href="#cb5-7"></a>    <span class="kw">st_point</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)), </span>
+<span id="cb5-8"><a href="#cb5-8"></a>    <span class="kw">st_point</span>(<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb5-9"><a href="#cb5-9"></a>  )</span>
+<span id="cb5-10"><a href="#cb5-10"></a></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co"># crate sf object</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a>x4_sf &lt;-<span class="st"> </span><span class="kw">st_sf</span>(<span class="dt">a =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, g, <span class="dt">time =</span> <span class="kw">Sys.time</span>() <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)</span>
+<span id="cb5-13"><a href="#cb5-13"></a></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co"># convert to sftime</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a>x4_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(x4_sf) </span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="kw">class</span>(x4_sftime)</span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt; [1] &quot;sftime&quot;     &quot;sf&quot;         &quot;data.frame&quot;</span></span></code></pre></div>
+<p><strong>Conversion from <code>stars</code> objects:</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># load sample data</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>x5_stars &lt;-<span class="st"> </span>stars<span class="op">::</span><span class="kw">read_ncdf</span>(<span class="kw">system.file</span>(<span class="st">&quot;nc/bcsd_obs_1999.nc&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;stars&quot;</span>), <span class="dt">var =</span> <span class="kw">c</span>(<span class="st">&quot;pr&quot;</span>, <span class="st">&quot;tas&quot;</span>))</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt; No projection information found in nc file. </span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt;  Coordinate variable units found to be degrees, </span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt;  assuming WGS84 Lat/Lon.</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># convert to sftime</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>x5_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(x5_stars, <span class="dt">time_column_name =</span> <span class="st">&quot;time&quot;</span>)</span></code></pre></div>
+<p><code>st_as_sftime.stars</code> is a wrapper around <code>st_as_sf.stars</code>. As a consequence, some dimensions of the <code>stars</code> object can be dropped during conversion. Temporal information in <code>stars</code> objects are typically stored as dimension of an attribute. Therefore, some argument settings to <code>st_as_sftime</code> can drop the dimension with temporal information and therefore throw an error. For example, setting <code>merge = TRUE</code> drops dimension <code>time</code> and therefore conversion fails. Similarly, setting <code>long = FALSE</code> returns the attribute values in a wide format, where each column is a time point:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># failed conversion to sftime</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>x5_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(x5_stars, <span class="dt">merge =</span> <span class="ot">TRUE</span>, <span class="dt">time_column_name =</span> <span class="st">&quot;time&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; Error in st_as_sftime.stars(x5_stars, merge = TRUE, time_column_name = &quot;time&quot;): `time_column_name` is not a column in the converted object.</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>x5_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(x5_stars, <span class="dt">long =</span> <span class="ot">FALSE</span>, <span class="dt">time_column_name =</span> <span class="st">&quot;time&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; Error in st_as_sftime.stars(x5_stars, long = FALSE, time_column_name = &quot;time&quot;): `time_column_name` is not a column in the converted object.</span></span></code></pre></div>
+<p><strong>Conversion from <code>spacetime</code> objects</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># get sample data</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">example</span>(STI, <span class="dt">package =</span> <span class="st">&quot;spacetime&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; </span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; STI&gt; sp = cbind(x = c(0,0,1), y = c(0,1,1))</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; </span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; STI&gt; row.names(sp) = paste(&quot;point&quot;, 1:nrow(sp), sep=&quot;&quot;)</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; </span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; STI&gt; library(sp)</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; </span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; STI&gt; sp = SpatialPoints(sp)</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; </span></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; STI&gt; time = as.POSIXct(&quot;2010-08-05&quot;)+3600*(10:13)</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; </span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; STI&gt; m = c(10,20,30) # means for each of the 3 point locations</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; </span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; STI&gt; mydata = rnorm(length(sp)*length(time),mean=rep(m, 4))</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt; </span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="co">#&gt; STI&gt; IDs = paste(&quot;ID&quot;,1:length(mydata))</span></span>
+<span id="cb8-19"><a href="#cb8-19"></a><span class="co">#&gt; </span></span>
+<span id="cb8-20"><a href="#cb8-20"></a><span class="co">#&gt; STI&gt; mydata = data.frame(values = signif(mydata,3), ID=IDs)</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a><span class="co">#&gt; </span></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">#&gt; STI&gt; stidf = as(STFDF(sp, time, mydata), &quot;STIDF&quot;)</span></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="co">#&gt; </span></span>
+<span id="cb8-24"><a href="#cb8-24"></a><span class="co">#&gt; STI&gt; stidf[1:2,]</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a><span class="co">#&gt; An object of class &quot;STIDF&quot;</span></span>
+<span id="cb8-26"><a href="#cb8-26"></a><span class="co">#&gt; Slot &quot;data&quot;:</span></span>
+<span id="cb8-27"><a href="#cb8-27"></a><span class="co">#&gt;   values   ID</span></span>
+<span id="cb8-28"><a href="#cb8-28"></a><span class="co">#&gt; 1   9.69 ID 1</span></span>
+<span id="cb8-29"><a href="#cb8-29"></a><span class="co">#&gt; 2  20.00 ID 2</span></span>
+<span id="cb8-30"><a href="#cb8-30"></a><span class="co">#&gt; </span></span>
+<span id="cb8-31"><a href="#cb8-31"></a><span class="co">#&gt; Slot &quot;sp&quot;:</span></span>
+<span id="cb8-32"><a href="#cb8-32"></a><span class="co">#&gt; SpatialPoints:</span></span>
+<span id="cb8-33"><a href="#cb8-33"></a><span class="co">#&gt;        x y</span></span>
+<span id="cb8-34"><a href="#cb8-34"></a><span class="co">#&gt; point1 0 0</span></span>
+<span id="cb8-35"><a href="#cb8-35"></a><span class="co">#&gt; point2 0 1</span></span>
+<span id="cb8-36"><a href="#cb8-36"></a><span class="co">#&gt; Coordinate Reference System (CRS) arguments: NA </span></span>
+<span id="cb8-37"><a href="#cb8-37"></a><span class="co">#&gt; </span></span>
+<span id="cb8-38"><a href="#cb8-38"></a><span class="co">#&gt; Slot &quot;time&quot;:</span></span>
+<span id="cb8-39"><a href="#cb8-39"></a><span class="co">#&gt;                     timeIndex</span></span>
+<span id="cb8-40"><a href="#cb8-40"></a><span class="co">#&gt; 2010-08-05 10:00:00         1</span></span>
+<span id="cb8-41"><a href="#cb8-41"></a><span class="co">#&gt; 2010-08-05 10:00:00         1</span></span>
+<span id="cb8-42"><a href="#cb8-42"></a><span class="co">#&gt; </span></span>
+<span id="cb8-43"><a href="#cb8-43"></a><span class="co">#&gt; Slot &quot;endTime&quot;:</span></span>
+<span id="cb8-44"><a href="#cb8-44"></a><span class="co">#&gt; [1] &quot;2010-08-05 11:00:00 CEST&quot; &quot;2010-08-05 11:00:00 CEST&quot;</span></span>
+<span id="cb8-45"><a href="#cb8-45"></a><span class="co">#&gt; </span></span>
+<span id="cb8-46"><a href="#cb8-46"></a><span class="co">#&gt; </span></span>
+<span id="cb8-47"><a href="#cb8-47"></a><span class="co">#&gt; STI&gt; all.equal(stidf, stidf[stidf,])</span></span>
+<span id="cb8-48"><a href="#cb8-48"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb8-49"><a href="#cb8-49"></a><span class="kw">class</span>(stidf)</span>
+<span id="cb8-50"><a href="#cb8-50"></a><span class="co">#&gt; [1] &quot;STIDF&quot;</span></span>
+<span id="cb8-51"><a href="#cb8-51"></a><span class="co">#&gt; attr(,&quot;package&quot;)</span></span>
+<span id="cb8-52"><a href="#cb8-52"></a><span class="co">#&gt; [1] &quot;spacetime&quot;</span></span>
+<span id="cb8-53"><a href="#cb8-53"></a></span>
+<span id="cb8-54"><a href="#cb8-54"></a><span class="co"># conversion to sftime</span></span>
+<span id="cb8-55"><a href="#cb8-55"></a>x1_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(stidf)</span></code></pre></div>
+<p><strong>Conversion from <code>Track</code>, <code>Tracks</code>, <code>TracksCollections</code> objects (trajectories package)</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># get a sample TracksCollection</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>x2_TracksCollection &lt;-<span class="st"> </span>trajectories<span class="op">::</span><span class="kw">rTracksCollection</span>(<span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">m =</span> <span class="dv">3</span>, <span class="dt">n =</span> <span class="dv">40</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># convert to sftime</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>x2_TracksCollection_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(x2_TracksCollection)</span>
+<span id="cb9-6"><a href="#cb9-6"></a>x2_Tracks_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(x2_TracksCollection<span class="op">@</span>tracksCollection[[<span class="dv">1</span>]])</span>
+<span id="cb9-7"><a href="#cb9-7"></a>x2_Track_sftime &lt;-<span class="st"> </span><span class="kw">st_as_sftime</span>(x2_TracksCollection<span class="op">@</span>tracksCollection[[<span class="dv">1</span>]]<span class="op">@</span>tracks[[<span class="dv">1</span>]])</span></code></pre></div>
+</div>
+<div id="subsetting" class="section level2">
+<h2>Subsetting</h2>
+<p>Different subsetting methods exist for <code>sftime</code> objects. Since <code>sftime</code> objects are built on top of <code>sf</code> objects, all subsetting methods for <code>sf</code> objects also work for <code>sftime</code> objects.</p>
+<p>Above (section <a href="#the-sftime-class">The <code>sftime</code> class</a>), the method to subset the time column was introduced:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">st_time</span>(x_sftime1)</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="co">#&gt; [1] &quot;2022-03-16 19:31:00 CET&quot; &quot;2022-03-16 19:31:00 CET&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#&gt; [3] &quot;2022-03-16 19:31:00 CET&quot; &quot;2022-03-16 19:31:00 CET&quot;</span></span></code></pre></div>
+<p>Other subsetting functions work as for <code>sf</code> objects, e.g. selecting rows by row indices returns the specified rows. A key difference is that the active time column of an <code>sftime</code> object is not sticky — in contrast to the active simple feature column in <code>sf</code> objects.<br />
+Therefore, the active time column of an <code>sftime</code> object always has to be selected explicitly. If omitted, the subset will simplify to an <code>sf</code> objects without the active time column:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># selecting rows and columns (works just as for sf objects)</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>x_sftime1[<span class="dv">1</span>, ]</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; Spatiotemporal feature collection with 1 feature and 1 field</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; Bounding box:  xmin: 1 ymin: 2 xmax: 1 ymax: 2</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; CRS:           NA</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; Time column with class: &#39;POSIXt&#39;.</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="co">#&gt; Representing 2022-03-16 19:31:00.</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="co">#&gt;   a       x_sfc                time</span></span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="co">#&gt; 1 1 POINT (1 2) 2022-03-16 19:31:00</span></span>
+<span id="cb11-12"><a href="#cb11-12"></a>x_sftime1[, <span class="dv">3</span>]</span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="co">#&gt; Spatiotemporal feature collection with 4 features and 0 fields</span></span>
+<span id="cb11-14"><a href="#cb11-14"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb11-15"><a href="#cb11-15"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a><span class="co">#&gt; Bounding box:  xmin: 1 ymin: 1 xmax: 2 ymax: 3</span></span>
+<span id="cb11-17"><a href="#cb11-17"></a><span class="co">#&gt; CRS:           NA</span></span>
+<span id="cb11-18"><a href="#cb11-18"></a><span class="co">#&gt; Time column with class: &#39;POSIXt&#39;.</span></span>
+<span id="cb11-19"><a href="#cb11-19"></a><span class="co">#&gt; Ranging from 2022-03-16 19:31:00 to 2022-03-16 19:31:00.</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a><span class="co">#&gt;                  time       x_sfc</span></span>
+<span id="cb11-21"><a href="#cb11-21"></a><span class="co">#&gt; 1 2022-03-16 19:31:00 POINT (1 2)</span></span>
+<span id="cb11-22"><a href="#cb11-22"></a><span class="co">#&gt; 2 2022-03-16 19:31:00 POINT (1 3)</span></span>
+<span id="cb11-23"><a href="#cb11-23"></a><span class="co">#&gt; 3 2022-03-16 19:31:00 POINT (2 3)</span></span>
+<span id="cb11-24"><a href="#cb11-24"></a><span class="co">#&gt; 4 2022-03-16 19:31:00 POINT (2 1)</span></span>
+<span id="cb11-25"><a href="#cb11-25"></a></span>
+<span id="cb11-26"><a href="#cb11-26"></a><span class="co"># beware: the time column is not sticky. If omitted, the subset becomes an sf object</span></span>
+<span id="cb11-27"><a href="#cb11-27"></a><span class="kw">class</span>(x_sftime1[, <span class="dv">1</span>])</span>
+<span id="cb11-28"><a href="#cb11-28"></a><span class="co">#&gt; [1] &quot;sf&quot;         &quot;data.frame&quot;</span></span>
+<span id="cb11-29"><a href="#cb11-29"></a><span class="kw">class</span>(x_sftime1[<span class="st">&quot;a&quot;</span>]) <span class="co"># the same</span></span>
+<span id="cb11-30"><a href="#cb11-30"></a><span class="co">#&gt; [1] &quot;sf&quot;         &quot;data.frame&quot;</span></span>
+<span id="cb11-31"><a href="#cb11-31"></a>x_sftime1[, <span class="dv">1</span>]</span>
+<span id="cb11-32"><a href="#cb11-32"></a><span class="co">#&gt; Simple feature collection with 4 features and 1 field</span></span>
+<span id="cb11-33"><a href="#cb11-33"></a><span class="co">#&gt; Geometry type: POINT</span></span>
+<span id="cb11-34"><a href="#cb11-34"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb11-35"><a href="#cb11-35"></a><span class="co">#&gt; Bounding box:  xmin: 1 ymin: 1 xmax: 2 ymax: 3</span></span>
+<span id="cb11-36"><a href="#cb11-36"></a><span class="co">#&gt; CRS:           NA</span></span>
+<span id="cb11-37"><a href="#cb11-37"></a><span class="co">#&gt;   a       x_sfc</span></span>
+<span id="cb11-38"><a href="#cb11-38"></a><span class="co">#&gt; 1 1 POINT (1 2)</span></span>
+<span id="cb11-39"><a href="#cb11-39"></a><span class="co">#&gt; 2 2 POINT (1 3)</span></span>
+<span id="cb11-40"><a href="#cb11-40"></a><span class="co">#&gt; 3 3 POINT (2 3)</span></span>
+<span id="cb11-41"><a href="#cb11-41"></a><span class="co">#&gt; 4 4 POINT (2 1)</span></span>
+<span id="cb11-42"><a href="#cb11-42"></a></span>
+<span id="cb11-43"><a href="#cb11-43"></a><span class="co"># to retain the time column and an sftime object, explicitly select the time column during subsetting:</span></span>
+<span id="cb11-44"><a href="#cb11-44"></a><span class="kw">class</span>(x_sftime1[, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>)])</span>
+<span id="cb11-45"><a href="#cb11-45"></a><span class="co">#&gt; [1] &quot;sftime&quot;     &quot;sf&quot;         &quot;data.frame&quot;</span></span>
+<span id="cb11-46"><a href="#cb11-46"></a><span class="kw">class</span>(x_sftime1[<span class="kw">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;time&quot;</span>)]) <span class="co"># the same</span></span>
+<span id="cb11-47"><a href="#cb11-47"></a><span class="co">#&gt; [1] &quot;sftime&quot;     &quot;sf&quot;         &quot;data.frame&quot;</span></span></code></pre></div>
+</div>
+<div id="plotting" class="section level2">
+<h2>Plotting</h2>
+<p>For quick plotting, a plot method exists for <code>sftime</code> objects, which plots longitude-latitude coordinates and colors simple features according to values of a specified variable. Different panels are plotted for different time intervals which can be specified. Simple feature geometries might be overlaid several times when multiple observations fall in the same time interval. This is similar to <code>stplot()</code> from package spacetime with <code>mode = &quot;xy&quot;</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>coords &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">runif</span>(<span class="dv">100</span>), <span class="dt">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb12-2"><a href="#cb12-2"></a>g &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_sfc</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">50</span>, <span class="cf">function</span>(i) <span class="kw">st_point</span>(coords[i, ]) ))</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a>x_sftime4 &lt;-<span class="st"> </span></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="st">  </span><span class="kw">st_sftime</span>(</span>
+<span id="cb12-6"><a href="#cb12-6"></a>    <span class="dt">a =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">200</span>,</span>
+<span id="cb12-7"><a href="#cb12-7"></a>    <span class="dt">b =</span> <span class="kw">rnorm</span>(<span class="dv">200</span>),</span>
+<span id="cb12-8"><a href="#cb12-8"></a>    <span class="dt">id_object =</span> <span class="kw">as.factor</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>,<span class="dt">each=</span><span class="dv">50</span>)),</span>
+<span id="cb12-9"><a href="#cb12-9"></a>    <span class="dt">geometry =</span> g, </span>
+<span id="cb12-10"><a href="#cb12-10"></a>    <span class="dt">time =</span> <span class="kw">as.POSIXct</span>(<span class="st">&quot;2020-09-01 00:00:00&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="dv">0</span><span class="op">:</span><span class="dv">49</span> <span class="op">*</span><span class="st"> </span><span class="dv">3600</span> <span class="op">*</span><span class="st"> </span><span class="dv">6</span></span>
+<span id="cb12-11"><a href="#cb12-11"></a>) </span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="co">#&gt; Warning in data.frame(..., check.names = FALSE): row names were found from a</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a><span class="co">#&gt; short variable and have been discarded</span></span>
+<span id="cb12-14"><a href="#cb12-14"></a></span>
+<span id="cb12-15"><a href="#cb12-15"></a><span class="kw">plot</span>(x_sftime4, <span class="dt">key.pos =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<pre><code>#&gt; NULL</code></pre>
+<p>The plotting method internally uses the <code>plot</code> method for <code>sf</code> objects. This makes it possible to customize plot appearance using the arguments of <code>plot.sf()</code>, for example:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">plot</span>(x_sftime4, <span class="dt">number =</span> <span class="dv">10</span>, <span class="dt">max.plot =</span> <span class="dv">10</span>, <span class="dt">key.pos =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<pre><code>#&gt; NULL</code></pre>
+<p>To create customized plots or plots which have different variables on plot axes than longitude and latitude, we recommend using ggplot2. For example, the plot method output can be mimicked by:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb16-2"><a href="#cb16-2"></a></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data =</span> x_sftime4, <span class="kw">aes</span>(<span class="dt">color =</span> b)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span><span class="kw">cut_number</span>(time, <span class="dt">n =</span> <span class="dv">6</span>)) <span class="op">+</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="st">  </span><span class="kw">theme</span>(</span>
+<span id="cb16-7"><a href="#cb16-7"></a>    <span class="dt">panel.spacing.x =</span> <span class="kw">unit</span>(<span class="dv">4</span>, <span class="st">&quot;mm&quot;</span>), </span>
+<span id="cb16-8"><a href="#cb16-8"></a>    <span class="dt">panel.spacing.y =</span> <span class="kw">unit</span>(<span class="dv">4</span>, <span class="st">&quot;mm&quot;</span>)</span>
+<span id="cb16-9"><a href="#cb16-9"></a>  )</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>This strategy can also be used to create other plots, for example plotting the id of entities over time (similar to <code>stplot()</code> with <code>mode = &quot;xt&quot;</code>):</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">ggplot</span>(x_sftime4) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> id_object, <span class="dt">x =</span> time, <span class="dt">color =</span> b))</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAEgCAIAAADkBlbXAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nO3da1hcVb7n8VXn6Rczz/SbmYdnLgczJ5wDmemYmb5MbDpFR8VLFEwwRkzbaNDWI4geU6DGW+I9eIkaKD0awaMdUdM2wYhowDvaaSrSZvoyJ6anAzbpITjnkuecN+c8c15lz4tVtVistdlUUbWpqlXfz5MXf1jFWrVTRf3Y+793VcTzPAEAANzyR/m+AwAAIPcIeAAAHETAAwDgIAIeAAAHEfAAADiIgAcAwEFfy8uqp06dytVUZWVlOZytWJbO7+oszdJuL53f1Vl6CdZamoXyjj14AAAcRMADAOAgAh4AAAcR8AAAOIiABwDAQQQ8AAAOIuABAHAQAQ8AgIMIeAAAHETAAwDgIAIeAAAHEfAAADiIgAcAwEEEPAAADiLgAQBwEAEPAICDCHgAABxEwAMA4CACHgAABxHwAAA4iIAHAMBBBDwAAA4i4AEAcBABDwCAgwh4AAAcRMADAOAgAh4AAAcR8AAAOIiABwDAQQQ8AAAOCingZwZiDV3j4cwNAAAW8rUwJp0Z2NU3JWrDmHqumpYnZDHWu833Bmuue0QWh1+6xx5tfP5Xshi48dv26Lodr8vi/Z1X2qN1Dw7KYuT+jb5LX9L5jiwObl9vj65/7D1ZvHPXRfboqouvl8XRd1/0nXzD4+/L4u0719mjzQN/K4u+xv+Q6dIX3bdfFu89dIXv0mde9CNZfPHej+3Ri+8fkMW7Dzbao5c8MiyLg/fU+05ev/NtWQzv2GCPXvXaCSFOCCFeu2q5PXrp7k9l8dat5/jcsQcOJO/YA5t8l77wnn2y+OCRJnv0ip5fy2J/67d87ti+P8jitaY/8Z/87teSkz96lT36nStul8Uv9z9pj9Y/PCSL4Xsb7NHaW/9KFqO7/9x36dqOnuQNulrt0YYnR2UxdLvP7+tlTydk8ebWqO/kwQ9o/c7kr8DwDp9fgU3PHJbFgVvW2KPBv5sLLn3BXa/I4sPHttij39p4iyx+PfiM7+QtH3pC/L0QoveCiD161g+TLyaf/+QRe/T7rckH8ec9t/tOvj71y/uO3y/vlXt/J8TvhBCvX/tf7NGVFzbL4tgHffZo9PrHZJF48S7fpb/ZcLMsfjP0rD26bnvqFa/T5xXvnK3PyeLTp2/ynby24wVZjHbdYI8GP5eufv2kECeFEK9eeYY9uuDrBuYTwh78zMCuQ8trK3I/sUGlu1ErKt2NWlKvIEYtqXQ3akmlu1ErKt2NWlIRa9SSSnejVlS6G7Wk0t2o01lapbtRKyrdjVpS6W7UkvotNWpFpbtRS1e9dsK3llS6G3XyzqTS3agVle5GLal0N+rknUmlu1HPTphKd6OWVLobtaTS3aglle5GPfvNVLobtaTS3agl9Yps1ErwA6rS3aglle5GLQX/bi64tEp3o5ZUuhu10vKh51tLKt2NWlLpbtTKeu0Xdr31y3vl3t/51pJKd6OWVLobtaLS3aglle5GLal0N2pFpbtRS8HPpatfP+lbSwu+biBAzvfgZwZ2HVp7xx1i1+j03IHVq1er+siRI7leV5SVlWVzg/BGl3zyvw0cDXXpUCc/kb+lg0f/EDiay/tWVI9X8S7992FOHnyD3wWOhrp0Hic/GTia2dLQ5TjgZbzHy4W5+zY31E+dOpXbddOZM/gG4Y0W7+RsV3FNznYxeSEsHerkOcmO0vkrIaeH6GW8N5bncs756X133x683ne3e/B6b8/u8+l9d7sHr/fdfXvwet/d7sHrzW+7Ea733X178Hrf3e7B6313uwcfvLTed/ftwet9d7sHr/fd7R683j/z7aXpfXe7B6/33e0evN53t3vwet/dtwev993tHrzed7d78Hrf3bcHr/fd7R683ne3e/B6393uwet9d98evN53t3vwet/d7sHrvVLfvmnwA6r33e0evN53t3vwwb+bCy6t993tHrzed/ftwet9d7sHr/fd7R683nf37cHrfXe7B6/33e0evN53t3vwet/dtwev993tHrzed7d78Hrf3bcHr/fd7R588HNJ77vbPfgFXzcQIOJ5ZpNp0WYGYm19U/p3Kpr3xP3yPod78GVlZWEcDyjwpfO7OkuztNtL53d1ll6CtZZmobzL5SH68sb4UHK3bWYg1jbdNNRRncPpAQBAunijGwAAHBTKdfByZz6cmQEAwMLYgwcAwEEEPAAADiLgAQBwEAEPAICDCHgAABxEwAMA4CACHgAABxHwAAA4iIAHAMBBBDwAAA4i4AEAcBABDwCAgwh4AAAyMRmvidTEJ/N9NxZCwAMA4CACHgAABxHwAABk7mBrRCrUo/UEPAAAmUq096+c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" /><!-- --></p>
+<p>Or for plotting time series of values of all variables with different panels for each entity (location) defined via a categorical variable (similar to <code>stplot()</code> with <code>mode = &quot;tp&quot;</code>):</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>x_sftime4 <span class="op">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">pivot_longer</span>(<span class="dt">cols =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="dt">names_to =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;value&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="st">  </span><span class="kw">geom_path</span>(<span class="kw">aes</span>(<span class="dt">y =</span> value, <span class="dt">x =</span> time, <span class="dt">color =</span> variable)) <span class="op">+</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>id_object)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Or for plotting time series of values of all variables for all entities defined via a categorical variable with different panels for each variable (similar to <code>stplot()</code> with <code>mode = &quot;ts&quot;</code>):</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>x_sftime4 <span class="op">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">pivot_longer</span>(<span class="dt">cols =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="dt">names_to =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;value&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="st">  </span><span class="kw">geom_path</span>(<span class="kw">aes</span>(<span class="dt">y =</span> value, <span class="dt">x =</span> time, <span class="dt">color =</span> id_object)) <span class="op">+</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>variable, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="user-defined-time-columns" class="section level2">
+<h2>User-defined time columns</h2>
+<p>The time column is a special column of the underlying sf object which defines time information (timestamps and temporal ordering) alongside the simple features column of an sf object. Common time representations in R (e.g. <code>POSIXct</code>, <code>POSIXlt</code>, <code>Date</code>, <code>yearmon</code>, <code>yearqtr</code>) are allowed, as well as optional user-defined types. Let us look at a simple example where we define a time column based on <code>POSIXct</code></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>(tc &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(<span class="st">&quot;2020-09-01 08:00:00&quot;</span>)<span class="op">-</span><span class="dv">0</span><span class="op">:</span><span class="dv">3</span><span class="op">*</span><span class="dv">3600</span><span class="op">*</span><span class="dv">24</span>)</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="co">#&gt; [1] &quot;2020-09-01 08:00:00 CEST&quot; &quot;2020-08-31 08:00:00 CEST&quot;</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="co">#&gt; [3] &quot;2020-08-30 08:00:00 CEST&quot; &quot;2020-08-29 08:00:00 CEST&quot;</span></span></code></pre></div>
+<p>The ordering is not altered upon construction (as in some other representations). If a different order is required, the <code>order</code> function and <code>sort</code> method can be applied to the time column:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>tc</span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="co">#&gt; [1] &quot;2020-09-01 08:00:00 CEST&quot; &quot;2020-08-31 08:00:00 CEST&quot;</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="co">#&gt; [3] &quot;2020-08-30 08:00:00 CEST&quot; &quot;2020-08-29 08:00:00 CEST&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="kw">order</span>(tc)</span>
+<span id="cb21-5"><a href="#cb21-5"></a><span class="co">#&gt; [1] 4 3 2 1</span></span>
+<span id="cb21-6"><a href="#cb21-6"></a><span class="kw">sort</span>(tc)</span>
+<span id="cb21-7"><a href="#cb21-7"></a><span class="co">#&gt; [1] &quot;2020-08-29 08:00:00 CEST&quot; &quot;2020-08-30 08:00:00 CEST&quot;</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="co">#&gt; [3] &quot;2020-08-31 08:00:00 CEST&quot; &quot;2020-09-01 08:00:00 CEST&quot;</span></span></code></pre></div>
+<p>In some applications it might be useful to have more complex temporal information such as intervals of different length. The following example is also meant as template for other user-defined classes which could be used to build the time column of the sftime class.</p>
+<p>At first, we will need a few helper functions:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># utility functions</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>as.character.interval &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
+<span id="cb22-3"><a href="#cb22-3"></a>  <span class="kw">paste0</span>(<span class="st">&quot;[&quot;</span>, x[<span class="dv">1</span>], <span class="st">&quot;, &quot;</span>, x[<span class="dv">2</span>], <span class="st">&quot;]&quot;</span>)</span>
+<span id="cb22-4"><a href="#cb22-4"></a>}</span>
+<span id="cb22-5"><a href="#cb22-5"></a></span>
+<span id="cb22-6"><a href="#cb22-6"></a>print.interval &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</span>
+<span id="cb22-7"><a href="#cb22-7"></a>  <span class="kw">cat</span>(<span class="st">&quot;Interval:&quot;</span>, <span class="kw">as.character</span>(x), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb22-8"><a href="#cb22-8"></a>}</span>
+<span id="cb22-9"><a href="#cb22-9"></a></span>
+<span id="cb22-10"><a href="#cb22-10"></a><span class="co">#&#39;[.intervals&#39; &lt;- function(x, i) {</span></span>
+<span id="cb22-11"><a href="#cb22-11"></a><span class="co">#  sx &lt;- unclass(x)[i]</span></span>
+<span id="cb22-12"><a href="#cb22-12"></a><span class="co">#  class(sx) &lt;- &quot;intervals&quot;</span></span>
+<span id="cb22-13"><a href="#cb22-13"></a><span class="co">#  sx</span></span>
+<span id="cb22-14"><a href="#cb22-14"></a><span class="co">#}</span></span></code></pre></div>
+<p>Now, we can define the different intervals used to represent our temporal information:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># time interval definition</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>i1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">5.3</span>,<span class="dv">12</span>)</span>
+<span id="cb23-3"><a href="#cb23-3"></a><span class="kw">class</span>(i1) &lt;-<span class="st"> &quot;interval&quot;</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>i2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">3.1</span>,<span class="dv">6</span>)</span>
+<span id="cb23-5"><a href="#cb23-5"></a><span class="kw">class</span>(i2) &lt;-<span class="st"> &quot;interval&quot;</span></span>
+<span id="cb23-6"><a href="#cb23-6"></a>i3 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">1.4</span>,<span class="fl">6.9</span>)</span>
+<span id="cb23-7"><a href="#cb23-7"></a><span class="kw">class</span>(i3) &lt;-<span class="st"> &quot;interval&quot;</span></span>
+<span id="cb23-8"><a href="#cb23-8"></a>i4 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">21</span>)</span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="kw">class</span>(i4) &lt;-<span class="st"> &quot;interval&quot;</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a></span>
+<span id="cb23-11"><a href="#cb23-11"></a>intrvls &lt;-<span class="st"> </span><span class="kw">structure</span>(<span class="kw">list</span>(i1, i2, i3, i4), <span class="dt">class =</span> <span class="st">&quot;Intervals&quot;</span>)</span>
+<span id="cb23-12"><a href="#cb23-12"></a><span class="co"># provide dedicated generic to xtfrm for class intervals</span></span></code></pre></div>
+<p>The advantage is to be able to define different sorting approaches:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>xtfrm.Intervals &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">sapply</span>(x, mean)</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="co"># - sort by centre</span></span>
+<span id="cb24-3"><a href="#cb24-3"></a>(tc &lt;-<span class="st"> </span>intrvls)</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a><span class="co">#&gt; Interval: [5.3, 12] </span></span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="co">#&gt; </span></span>
+<span id="cb24-7"><a href="#cb24-7"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb24-8"><a href="#cb24-8"></a><span class="co">#&gt; Interval: [3.1, 6] </span></span>
+<span id="cb24-9"><a href="#cb24-9"></a><span class="co">#&gt; </span></span>
+<span id="cb24-10"><a href="#cb24-10"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb24-11"><a href="#cb24-11"></a><span class="co">#&gt; Interval: [1.4, 6.9] </span></span>
+<span id="cb24-12"><a href="#cb24-12"></a><span class="co">#&gt; </span></span>
+<span id="cb24-13"><a href="#cb24-13"></a><span class="co">#&gt; [[4]]</span></span>
+<span id="cb24-14"><a href="#cb24-14"></a><span class="co">#&gt; Interval: [1, 21] </span></span>
+<span id="cb24-15"><a href="#cb24-15"></a><span class="co">#&gt; </span></span>
+<span id="cb24-16"><a href="#cb24-16"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
+<span id="cb24-17"><a href="#cb24-17"></a><span class="co">#&gt; [1] &quot;Intervals&quot;</span></span>
+<span id="cb24-18"><a href="#cb24-18"></a><span class="kw">order</span>(tc)</span>
+<span id="cb24-19"><a href="#cb24-19"></a><span class="co">#&gt; [1] 3 2 1 4</span></span>
+<span id="cb24-20"><a href="#cb24-20"></a><span class="kw">sort</span>(tc)[<span class="dv">1</span>]</span>
+<span id="cb24-21"><a href="#cb24-21"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb24-22"><a href="#cb24-22"></a><span class="co">#&gt; Interval: [1.4, 6.9]</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># - sort by end</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>xtfrm.Intervals &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">sapply</span>(x, max)</span>
+<span id="cb25-3"><a href="#cb25-3"></a>(tc &lt;-<span class="st"> </span>intrvls)</span>
+<span id="cb25-4"><a href="#cb25-4"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb25-5"><a href="#cb25-5"></a><span class="co">#&gt; Interval: [5.3, 12] </span></span>
+<span id="cb25-6"><a href="#cb25-6"></a><span class="co">#&gt; </span></span>
+<span id="cb25-7"><a href="#cb25-7"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb25-8"><a href="#cb25-8"></a><span class="co">#&gt; Interval: [3.1, 6] </span></span>
+<span id="cb25-9"><a href="#cb25-9"></a><span class="co">#&gt; </span></span>
+<span id="cb25-10"><a href="#cb25-10"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb25-11"><a href="#cb25-11"></a><span class="co">#&gt; Interval: [1.4, 6.9] </span></span>
+<span id="cb25-12"><a href="#cb25-12"></a><span class="co">#&gt; </span></span>
+<span id="cb25-13"><a href="#cb25-13"></a><span class="co">#&gt; [[4]]</span></span>
+<span id="cb25-14"><a href="#cb25-14"></a><span class="co">#&gt; Interval: [1, 21] </span></span>
+<span id="cb25-15"><a href="#cb25-15"></a><span class="co">#&gt; </span></span>
+<span id="cb25-16"><a href="#cb25-16"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
+<span id="cb25-17"><a href="#cb25-17"></a><span class="co">#&gt; [1] &quot;Intervals&quot;</span></span>
+<span id="cb25-18"><a href="#cb25-18"></a><span class="kw">order</span>(tc)</span>
+<span id="cb25-19"><a href="#cb25-19"></a><span class="co">#&gt; [1] 2 3 1 4</span></span>
+<span id="cb25-20"><a href="#cb25-20"></a><span class="kw">sort</span>(tc)[<span class="dv">1</span>]</span>
+<span id="cb25-21"><a href="#cb25-21"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb25-22"><a href="#cb25-22"></a><span class="co">#&gt; Interval: [3.1, 6]</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># - sort by start</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>xtfrm.Intervals &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">sapply</span>(x, min)</span>
+<span id="cb26-3"><a href="#cb26-3"></a>tc &lt;-<span class="st"> </span>intrvls</span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="kw">order</span>(tc)</span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="co">#&gt; [1] 4 3 2 1</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="kw">sort</span>(tc)[<span class="dv">1</span>]</span>
+<span id="cb26-7"><a href="#cb26-7"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb26-8"><a href="#cb26-8"></a><span class="co">#&gt; Interval: [1, 21]</span></span></code></pre></div>
+<p>Based on the sorting procedure (begin, centre or end of the interval), the smallest element (each last line) and the order of the time column changes.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

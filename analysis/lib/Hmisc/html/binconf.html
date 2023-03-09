@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Confidence Intervals for Binomial Probabilities</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for binconf {Hmisc}"><tr><td>binconf {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Confidence Intervals for Binomial Probabilities
+</h2>
+
+<h3>Description</h3>
+
+<p>Produces 1-alpha confidence intervals for binomial probabilities.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+binconf(x, n, alpha=0.05,
+        method=c("wilson","exact","asymptotic","all"),
+        include.x=FALSE, include.n=FALSE, return.df=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>vector containing the number of &quot;successes&quot; for binomial variates
+</p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+
+<p>vector containing the numbers of corresponding observations 
+</p>
+</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+
+<p>probability of a type I error, so confidence coefficient = 1-alpha
+</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>character string specifing which method to use.  The &quot;all&quot; method only
+works when 
+x and n are length 1.  The &quot;exact&quot; method uses the F distribution
+to compute exact (based on the binomial cdf) intervals; the
+&quot;wilson&quot; interval is score-test-based; and the &quot;asymptotic&quot; is the
+text-book, asymptotic normal interval.  Following Agresti and
+Coull, the Wilson interval is to be preferred and so is the
+default.
+</p>
+</td></tr>
+<tr valign="top"><td><code>include.x</code></td>
+<td>
+
+<p>logical flag to indicate whether <code>x</code> should be included in the
+returned matrix or data frame 
+</p>
+</td></tr>
+<tr valign="top"><td><code>include.n</code></td>
+<td>
+
+<p>logical flag to indicate whether <code>n</code> should be included in the
+returned matrix or data frame 
+</p>
+</td></tr>
+<tr valign="top"><td><code>return.df</code></td>
+<td>
+
+<p>logical flag to indicate that a data frame rather than a matrix be
+returned
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>a matrix or data.frame containing the computed intervals and,
+optionally, <code>x</code> and <code>n</code>.  
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Rollin Brant, Modified by Frank Harrell and
+<br />
+Brad Biggerstaff
+<br />
+Centers for Disease Control and Prevention
+<br />
+National Center for Infectious Diseases
+<br />
+Division of Vector-Borne Infectious Diseases
+<br />
+P.O. Box 2087, Fort Collins, CO, 80522-2087, USA
+<br />
+<a href="mailto:bkb5@cdc.gov">bkb5@cdc.gov</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>A. Agresti and B.A. Coull, Approximate is better than &quot;exact&quot; for
+interval estimation of binomial proportions,  
+<em>American Statistician,</em>
+<b>52</b>:119&ndash;126, 1998.
+</p>
+<p>R.G. Newcombe, Logit confidence intervals and the inverse sinh
+transformation,
+<em>American Statistician,</em>
+<b>55</b>:200&ndash;202, 2001.
+</p>
+<p>L.D. Brown, T.T. Cai and A. DasGupta, Interval estimation for
+a binomial proportion (with discussion),
+<em>Statistical Science,</em>
+<b>16</b>:101&ndash;133, 2001.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+binconf(0:10,10,include.x=TRUE,include.n=TRUE)
+binconf(46,50,method="all")
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

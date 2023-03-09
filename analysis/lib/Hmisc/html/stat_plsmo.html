@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Add a lowess smoother without counfidence bands.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for stat_plsmo {Hmisc}"><tr><td>stat_plsmo {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Add a lowess smoother without counfidence bands.</h2>
+
+<h3>Description</h3>
+
+<p>Automatically selects <code>iter=0</code> for <code>lowess</code> if <code>y</code> is binary, otherwise uses <code>iter=3</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+stat_plsmo(
+  mapping = NULL,
+  data = NULL,
+  geom = "smooth",
+  position = "identity",
+  n = 80,
+  fullrange = FALSE,
+  span = 2/3,
+  fun = function(x) x,
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>mapping, data, geom, position, show.legend, inherit.aes</code></td>
+<td>
+<p>see ggplot2 documentation</p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>number of points to evaluate smoother at</p>
+</td></tr>
+<tr valign="top"><td><code>fullrange</code></td>
+<td>
+<p>should the fit span the full range of the plot, or just
+the data</p>
+</td></tr>
+<tr valign="top"><td><code>span</code></td>
+<td>
+<p>see <code>f</code> argument to <code>lowess</code></p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+<p>a function to transform smoothed <code>y</code></p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p>If <code>FALSE</code> (the default), removes missing values with
+a warning.  If <code>TRUE</code> silently removes missing values.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other arguments are passed to smoothing function</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>a data.frame with additional columns
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>predicted value</p>
+</td></tr>
+</table>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../stats/html/lowess.html">lowess</a></code> for <code>loess</code> smoother.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+c &lt;- ggplot(mtcars, aes(qsec, wt))
+c + stat_plsmo()
+c + stat_plsmo() + geom_point()
+
+c + stat_plsmo(span = 0.1) + geom_point()
+
+# Smoothers for subsets
+c &lt;- ggplot(mtcars, aes(y=wt, x=mpg)) + facet_grid(. ~ cyl)
+c + stat_plsmo() + geom_point()
+c + stat_plsmo(fullrange = TRUE) + geom_point()
+
+# Geoms and stats are automatically split by aesthetics that are factors
+c &lt;- ggplot(mtcars, aes(y=wt, x=mpg, colour=factor(cyl)))
+c + stat_plsmo() + geom_point()
+c + stat_plsmo(aes(fill = factor(cyl))) + geom_point()
+c + stat_plsmo(fullrange=TRUE) + geom_point()
+
+# Example with logistic regression
+data("kyphosis", package="rpart")
+qplot(Age, as.numeric(Kyphosis) - 1, data = kyphosis) + stat_plsmo()
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Bootstrap Kaplan-Meier Estimates</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for bootkm {Hmisc}"><tr><td>bootkm {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Bootstrap Kaplan-Meier Estimates
+</h2>
+
+<h3>Description</h3>
+
+<p>Bootstraps Kaplan-Meier estimate of the probability of survival to at
+least a fixed time (<code>times</code> variable) or the estimate of the <code>q</code>
+quantile of the survival distribution (e.g., median survival time, the
+default).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+bootkm(S, q=0.5, B=500, times, pr=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>S</code></td>
+<td>
+
+<p>a <code>Surv</code> object for possibly right-censored survival time
+</p>
+</td></tr>
+<tr valign="top"><td><code>q</code></td>
+<td>
+
+<p>quantile of survival time, default is 0.5 for median
+</p>
+</td></tr>
+<tr valign="top"><td><code>B</code></td>
+<td>
+
+<p>number of bootstrap repetitions (default=500)
+</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+
+<p>time vector (currently only a scalar is allowed) at which to compute
+survival estimates.  You may specify only one of <code>q</code> and
+<code>times</code>, and if <code>times</code> is specified <code>q</code> is ignored. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress printing the iteration number every
+10 iterations
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p><code>bootkm</code> uses Therneau's <code>survfitKM</code> function to efficiently
+compute Kaplan-Meier estimates.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a vector containing <code>B</code> bootstrap estimates
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>updates <code>.Random.seed</code>, and, if <code>pr=TRUE</code>, prints progress
+of simulations
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+<br />
+Department of Biostatistics
+<br />
+Vanderbilt University School of Medicine
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Akritas MG (1986): Bootstrapping the Kaplan-Meier estimator.  JASA
+81:1032&ndash;1038.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../survival/help/survfit.html">survfit</a></code>, <code><a href="../../survival/help/Surv.html">Surv</a></code>,
+<code><a href="../../rms/help/Survival.cph.html">Survival.cph</a></code>, <code><a href="../../rms/help/Quantile.cph.html">Quantile.cph</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Compute 0.95 nonparametric confidence interval for the difference in
+# median survival time between females and males (two-sample problem)
+set.seed(1)
+library(survival)
+S &lt;- Surv(runif(200))      # no censoring
+sex &lt;- c(rep('female',100),rep('male',100))
+med.female &lt;- bootkm(S[sex=='female',], B=100) # normally B=500
+med.male   &lt;- bootkm(S[sex=='male',],   B=100)
+describe(med.female-med.male)
+quantile(med.female-med.male, c(.025,.975), na.rm=TRUE)
+# na.rm needed because some bootstrap estimates of median survival
+# time may be missing when a bootstrap sample did not include the
+# longer survival times
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

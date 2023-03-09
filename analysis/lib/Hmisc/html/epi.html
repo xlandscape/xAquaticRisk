@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Miscellaneous Functions for Epidemiology</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for mhgr {Hmisc}"><tr><td>mhgr {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Miscellaneous Functions for Epidemiology</h2>
+
+<h3>Description</h3>
+
+<p>The <code>mhgr</code> function computes the Cochran-Mantel-Haenszel stratified
+risk ratio and its confidence limits using the Greenland-Robins variance
+estimator.
+</p>
+<p>The <code>lrcum</code> function takes the results of a series of 2x2 tables
+representing the relationship between test positivity and diagnosis and
+computes positive and negative likelihood ratios (with all their
+deficiencies) and the variance of
+their logarithms.  Cumulative likelihood ratios and their confidence
+intervals (assuming independence of tests) are computed, assuming a
+string of all positive tests or a string of all negative tests.  The
+method of Simel et al as described in Altman et al is used.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mhgr(y, group, strata, conf.int = 0.95)
+## S3 method for class 'mhgr'
+print(x, ...)
+
+lrcum(a, b, c, d, conf.int = 0.95)
+## S3 method for class 'lrcum'
+print(x, dec=3, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>a binary response variable</p>
+</td></tr>
+<tr valign="top"><td><code>group</code></td>
+<td>
+<p>a variable with two unique values specifying comparison groups</p>
+</td></tr>
+<tr valign="top"><td><code>strata</code></td>
+<td>
+<p>the stratification variable</p>
+</td></tr>
+<tr valign="top"><td><code>conf.int</code></td>
+<td>
+<p>confidence level</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object created by <code>mhgr</code> or <code>lrcum</code></p>
+</td></tr>
+<tr valign="top"><td><code>a</code></td>
+<td>
+<p>frequency of true positive tests</p>
+</td></tr>
+<tr valign="top"><td><code>b</code></td>
+<td>
+<p>frequency of false positive tests</p>
+</td></tr>
+<tr valign="top"><td><code>c</code></td>
+<td>
+<p>frequency of false negative tests</p>
+</td></tr>
+<tr valign="top"><td><code>d</code></td>
+<td>
+<p>frequency of true negative tests</p>
+</td></tr>
+<tr valign="top"><td><code>dec</code></td>
+<td>
+<p>number of places to the right of the decimal to print for
+<code>lrcum</code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>addtitional arguments to be passed to other print functions</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Uses equations 4 and 13 from Greenland and Robins.
+</p>
+
+
+<h3>Value</h3>
+
+<p>a list of class <code>"mhgr"</code> or of class <code>"lrcum"</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E Harrell Jr <a href="mailto:fh@fharrell.com">fh@fharrell.com</a></p>
+
+
+<h3>References</h3>
+
+<p>Greenland S, Robins JM (1985): Estimation of a common effect parameter
+from sparse follow-up data.  Biometrics 41:55-68.
+</p>
+<p>Altman DG, Machin D, Bryant TN, Gardner MJ, Eds. (2000): Statistics with
+Confidence, 2nd Ed.  Bristol: BMJ Books, 105-110.
+</p>
+<p>Simel DL, Samsa GP, Matchar DB (1991): Likelihood ratios with
+confidence: sample size estimation for diagnostic test studies.  J
+Clin Epi 44:763-770.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/logrank.html">logrank</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Greate Migraine dataset used in Example 28.6 in the SAS PROC FREQ guide
+d &lt;- expand.grid(response=c('Better','Same'),
+                 treatment=c('Active','Placebo'),
+                 sex=c('female','male'))
+d$count &lt;- c(16, 11, 5, 20, 12, 16, 7, 19)
+d
+# Expand data frame to represent raw data
+r &lt;- rep(1:8, d$count)
+d &lt;- d[r,]
+with(d, mhgr(response=='Better', treatment, sex))
+
+# Discrete survival time example, to get Cox-Mantel relative risk and CL
+# From Stokes ME, Davis CS, Koch GG, Categorical Data Analysis Using the
+# SAS System, 2nd Edition, Sectino 17.3, p. 596-599
+#
+# Input data in Table 17.5
+d &lt;- expand.grid(treatment=c('A','P'), center=1:3)
+d$healed2w    &lt;- c(15,15,17,12, 7, 3)
+d$healed4w    &lt;- c(17,17,17,13,17,17)
+d$notHealed4w &lt;- c( 2, 7,10,15,16,18)
+d
+# Reformat to the way most people would collect raw data
+d1 &lt;- d[rep(1:6, d$healed2w),]
+d1$time &lt;- '2'
+d1$y &lt;- 1
+d2 &lt;- d[rep(1:6, d$healed4w),]
+d2$time &lt;- '4'
+d2$y &lt;- 1
+d3 &lt;- d[rep(1:6, d$notHealed4w),]
+d3$time &lt;- '4'
+d3$y &lt;- 0
+d &lt;- rbind(d1, d2, d3)
+d$healed2w &lt;- d$healed4w &lt;- d$notHealed4w &lt;- NULL
+d
+# Finally, duplicate appropriate observations to create 2 and 4-week
+# risk sets.  Healed and not healed at 4w need to be in the 2-week
+# risk set as not healed
+d2w      &lt;- subset(d, time=='4')
+d2w$time &lt;- '2'
+d2w$y    &lt;- 0
+d24      &lt;- rbind(d, d2w)
+with(d24, table(y, treatment, time, center))
+# Matches Table 17.6
+
+with(d24, mhgr(y, treatment, interaction(center, time, sep=';')))
+
+# Get cumulative likelihood ratios and their 0.95 confidence intervals
+# based on the following two tables
+#
+#          Disease       Disease
+#          +     -       +     -
+# Test +   39    3       20    5
+# Test -   21   17       22   15
+
+lrcum(c(39,20), c(3,5), c(21,22), c(17,15))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

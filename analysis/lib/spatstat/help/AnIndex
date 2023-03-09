@@ -1,0 +1,10 @@
+spatstat-package	spatstat-package
+beginner	beginner
+bugfixes	bugfixes
+foo	foo
+latest.news	latest.news
+plot.foo	foo
+print.autoexec	spatstat-internal
+print.bugtable	spatstat-internal
+spatstat	spatstat-package
+spatstat.family	spatstat.family

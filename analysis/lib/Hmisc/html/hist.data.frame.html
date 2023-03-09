@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Histograms for Variables in a Data Frame</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for hist.data.frame {Hmisc}"><tr><td>hist.data.frame {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Histograms for Variables in a Data Frame</h2>
+
+<h3>Description</h3>
+
+<p>This functions tries to compute the maximum number of histograms that
+will fit on one page, then it draws a matrix of histograms.  If there
+are more qualifying variables than will fit on a page, the function
+waits for a mouse click before drawing the next page.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'data.frame'
+hist(x, n.unique = 3, nclass = "compute",
+                na.big = FALSE, rugs = FALSE, freq=TRUE, mtitl = FALSE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>a data frame</p>
+</td></tr>
+<tr valign="top"><td><code>n.unique</code></td>
+<td>
+<p>minimum number of unique values a variable must have
+before a histogram is drawn</p>
+</td></tr>
+<tr valign="top"><td><code>nclass</code></td>
+<td>
+<p>number of bins.  Default is
+max(2,trunc(min(n/10,25*log(n,10))/2)), where n is the number of
+non-missing values for a variable.</p>
+</td></tr>
+<tr valign="top"><td><code>na.big</code></td>
+<td>
+<p>set to <code>TRUE</code> to draw the number of missing values
+on the top of the histogram in addition to in a subtitle.  In the
+subtitle, n is the number of non-missing values and m is the number
+of missing values</p>
+</td></tr>
+<tr valign="top"><td><code>rugs</code></td>
+<td>
+<p>set to <code>TRUE</code> to add rug plots at the top of each
+histogram</p>
+</td></tr>
+<tr valign="top"><td><code>freq</code></td>
+<td>
+<p>see <code><a href="../../graphics/html/hist.html">hist</a></code>.  Default is to show frequencies.</p>
+</td></tr>
+<tr valign="top"><td><code>mtitl</code></td>
+<td>
+<p>set to a character string to set aside extra outside top
+margin and to use the string for an overall title</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments passed to <code>scat1d</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>the number of pages drawn</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E Harrell Jr</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../graphics/html/hist.html">hist</a></code>, <code><a href="../../Hmisc/help/scat1d.html">scat1d</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+d &lt;- data.frame(a=runif(200), b=rnorm(200),
+                w=factor(sample(c('green','red','blue'), 200, TRUE)))
+hist.data.frame(d)   # in R, just say hist(d)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

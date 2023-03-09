@@ -254,6 +254,14 @@
     -->
     <RunStreamCom>true</RunStreamCom>
 
+     <!--
+    Parameter     :  ReachSelection
+    Description   :  The reaches for which LGuts and LPop runs are conducted
+    Values        :  A space separated list of reach identifiers
+    Remark        :  An empty list results in a simulation for all reaches in the scenario.
+    -->
+    <ReachSelection>567 570 580 584</ReachSelection>
+
     <!--
     Parameter     :  MultiplicationFactors_LPop
     Description   :  Multiplication factors that applied during LPop simulations

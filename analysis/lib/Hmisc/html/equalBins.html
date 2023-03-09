@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Multicolumn Formating</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for equalBins {Hmisc}"><tr><td>equalBins {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Multicolumn Formating</h2>
+
+<h3>Description</h3>
+
+<p>Expands the width either supercolumns or the subcolumns so that the
+the sum of the supercolumn widths is the same as the sum of the
+subcolumn widths.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+equalBins(widths, subwidths)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>widths</code></td>
+<td>
+<p>widths of the supercolumns.</p>
+</td></tr>
+<tr valign="top"><td><code>subwidths</code></td>
+<td>
+<p>list of widths of the subcolumns for each supercolumn.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This determins the correct subwidths of each of various columns in a table
+for printing.  The correct width of the multicolumns is deterimed by
+summing the widths of it subcolumns.
+</p>
+
+
+<h3>Value</h3>
+
+<p>widths of the the columns for a table.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Charles Dupont</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../base/html/nchar.html">nchar</a></code>, <code><a href="../../Hmisc/help/stringDims.html">stringDims</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+mcols &lt;- c("Group 1", "Group 2")
+mwidth &lt;- nchar(mcols, type="width")
+spancols &lt;- c(3,3)
+ccols &lt;- c("a", "deer", "ad", "cat", "help", "bob")
+cwidth &lt;- nchar(ccols, type="width")
+
+subwidths &lt;- partition.vector(cwidth, spancols)
+
+equalBins(mwidth, subwidths)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

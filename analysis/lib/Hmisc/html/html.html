@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Convert an S object to HTML</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for html {Hmisc}"><tr><td>html {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Convert an S object to HTML</h2>
+
+<h3>Description</h3>
+
+<p><code>html</code> is a generic function, for which only two methods are currently
+implemented, <code>html.latex</code> and a rudimentary
+<code>html.data.frame</code>.  The former uses the <code>HeVeA</code> LaTeX to HTML 
+translator by Maranget to create an HTML file from a LaTeX file like
+the one produced by <code>latex</code>.  <code>html.default</code> just runs
+<code>html.data.frame</code>. 
+<code>htmlVerbatim</code> prints all of its arguments to the console in an
+html verbatim environment, using a specified percent of the prevailing
+character size.  This is useful for R Markdown with <code>knitr</code>.
+</p>
+<p>Most of the html-producing functions in the Hmisc and rms packages
+return a character vector passed through <code>htmltools::HTML</code> so that
+<code>kintr</code> will correctly format the result without the need for the
+user putting <code>results='asis'</code> in the chunk header.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+html(object, ...)
+## S3 method for class 'latex'
+html(object, file, where=c('cwd', 'tmp'),
+  method=c('hevea', 'htlatex'),
+  rmarkdown=FALSE, cleanup=TRUE, ...)
+## S3 method for class 'data.frame'
+html(object,
+  file=paste(first.word(deparse(substitute(object))),'html',sep='.'), header,
+     caption=NULL, rownames=FALSE, align='r', align.header='c',
+     bold.header=TRUE, col.header='Black',
+     border=2, width=NULL, size=100, translate=FALSE,
+     append=FALSE, link=NULL, linkCol=1,
+     linkType=c('href','name'), ...) 
+## Default S3 method:
+html(object,
+     file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
+     append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), ...)
+htmlVerbatim(..., size=75, width=85, scroll=FALSE, rows=10, cols=100,
+             propts=NULL, omit1b=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>a data frame or an object created by <code>latex</code>.
+For the generic <code>html</code> is any object for which an <code>html</code>
+method exists.</p>
+</td></tr> 
+<tr valign="top"><td><code>file</code></td>
+<td>
+
+<p>name of the file to create.  The default file
+name is <code>object.html</code> where <code>object</code> is the first word in
+the name of the argument for <code>object</code>.  For <code>html.latex</code>
+specify <code>file=''</code> or <code>file=character(0)</code> to print html code to
+the console, as when using <code>knitr</code>.  For the <code>data.frame</code>
+method, <code>file</code> may be set to <code>FALSE</code> which causes a character
+vector enclosed in <code>htmltools::HTML</code> to be returned instead of
+writing to the console. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>where</code></td>
+<td>
+<p>for <code>html</code>.  Default is to put output files in current
+working directory.  Specify <code>where='tmp'</code> to put in a system
+temporary directory area.</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+<p>default is to use system command <code>hevea</code> to convert
+from LaTeX to html.  Specify<code>method='htlatex'</code> to use system
+command <code>htlatex</code>, assuming the 
+system package <code>TeX4ht</code> is installed.</p>
+</td></tr>
+<tr valign="top"><td><code>rmarkdown</code></td>
+<td>
+<p>set to <code>TRUE</code> if using RMarkdown (usually under
+<code>knitr</code> and RStudio).  This causes html to be packaged for
+RMarkdown and output to go into the console stream.  <code>file</code> is
+ignored when <code>rmarkdown=TRUE</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>cleanup</code></td>
+<td>
+<p>if using <code>method='htlatex'</code> set to <code>FALSE</code> if
+<code>where='cwd'</code> to	prevent deletion of auxiliary files created by
+<code>htlatex</code> that are not needed when using the final <code>html</code>
+document (only the <code>.css</code> file is needed in addition to
+<code>.html</code>).  If using <code>method='hevea'</code>, <code>cleanup=TRUE</code>
+causes deletion of the generated <code>.haux</code> file.</p>
+</td></tr>
+<tr valign="top"><td><code>header</code></td>
+<td>
+<p>vector of column names.  Defaults to names in
+<code>object</code>.  Set to <code>NULL</code> to suppress column names.</p>
+</td></tr>
+<tr valign="top"><td><code>caption</code></td>
+<td>
+<p>a character string to be used as a caption before the
+table</p>
+</td></tr>
+<tr valign="top"><td><code>rownames</code></td>
+<td>
+<p>set to <code>FALSE</code> to ignore row names even if they are
+present</p>
+</td></tr>
+<tr valign="top"><td><code>align</code></td>
+<td>
+<p>alignment for table columns (all are assumed to have the
+same if is a scalar).  Specify <code>"c", "r", "l"</code> for center, right, or left
+alignment.</p>
+</td></tr>
+<tr valign="top"><td><code>align.header</code></td>
+<td>
+<p>same coding as for <code>align</code> but pertains to
+header</p>
+</td></tr>
+<tr valign="top"><td><code>bold.header</code></td>
+<td>
+<p>set to <code>FALSE</code> to not bold face column headers</p>
+</td></tr>
+<tr valign="top"><td><code>col.header</code></td>
+<td>
+<p>color for column headers</p>
+</td></tr>
+<tr valign="top"><td><code>border</code></td>
+<td>
+<p>set to 0 to not include table cell borders, 1 to include
+only outer borders, or 2 (the default) to put borders around cells too</p>
+</td></tr>
+<tr valign="top"><td><code>translate</code></td>
+<td>
+<p>set to <code>TRUE</code> to run header and table cell text
+through the <code>htmlTranslate</code> function</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+<p>optional table width for <code>html.data.frame</code>.  For full
+page width use <code>width="100%"</code>, for use in <code>options()</code> for
+printing objects.</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+<p>a number between 0 and 100 representing the percent of the
+prevailing character size to be used by <code>htmlVerbatim</code> and the
+data frame method.</p>
+</td></tr>
+<tr valign="top"><td><code>append</code></td>
+<td>
+<p>set to <code>TRUE</code> to append to an existing file</p>
+</td></tr>
+<tr valign="top"><td><code>link</code></td>
+<td>
+<p>character vector specifying hyperlink names to attach to
+selected elements of the matrix or data frame.  No hyperlinks are used
+if <code>link</code> is omitted or for elements of <code>link</code> that are
+<code>""</code>.  To allow multiple links per link, <code>link</code> may also be
+a character matrix shaped as <code>object</code> in which case
+<code>linkCol</code> is ignored.</p>
+</td></tr>
+<tr valign="top"><td><code>linkCol</code></td>
+<td>
+<p>column number of <code>object</code> to which hyperlinks are
+attached.  Defaults to first column.</p>
+</td></tr>
+<tr valign="top"><td><code>linkType</code></td>
+<td>
+<p>defaults to <code>"href"</code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>ignored except for <code>htmlVerbatim</code> - is a list of
+objects to <code>print()</code></p>
+</td></tr>
+<tr valign="top"><td><code>scroll</code></td>
+<td>
+<p>set to <code>TRUE</code> to put the html in a scrollable
+<code>textarea</code></p>
+</td></tr>
+<tr valign="top"><td><code>rows,cols</code></td>
+<td>
+<p>the number of rows and columns to devote to the visable
+part of the scrollable box</p>
+</td></tr>
+<tr valign="top"><td><code>propts</code></td>
+<td>
+<p>options, besides <code>quote=FALSE</code> to pass to the
+<code>print</code> method, for <code>htmlVerbatim</code></p>
+</td></tr>
+<tr valign="top"><td><code>omit1b</code></td>
+<td>
+<p>for <code>htmlVerbatim</code> if <code>TRUE</code> causes an initial
+line of output that is all blank to be deleted</p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank E. Harrell, Jr.
+<br />
+Department of Biostatistics,
+<br />
+Vanderbilt University,
+<br />
+<a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Maranget, Luc.  HeVeA: a LaTeX to HTML translater.
+URL: http://para.inria.fr/~maranget/hevea/
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/latex.html">latex</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+x &lt;- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','e')))
+w &lt;- latex(x)
+h &lt;- html(w) # run HeVeA to convert .tex to .html
+h &lt;- html(x) # convert x directly to html
+w &lt;- html(x, link=c('','B'))   # hyperlink first row first col to B
+
+# Assuming system package tex4ht is installed, easily convert advanced
+# LaTeX tables to html
+getHdata(pbc)
+s &lt;- summaryM(bili + albumin + stage + protime + sex + age + spiders ~ drug,
+              data=pbc, test=TRUE)
+w &lt;- latex(s, npct='slash', file='s.tex')
+z &lt;- html(w)
+browseURL(z$file)
+
+d &lt;- describe(pbc)
+w &lt;- latex(d, file='d.tex')
+z &lt;- html(w)
+browseURL(z$file)
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

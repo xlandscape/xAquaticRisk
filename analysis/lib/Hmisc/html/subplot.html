@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Embed a new plot within an existing plot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for subplot {Hmisc}"><tr><td>subplot {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Embed a new plot within an existing plot</h2>
+
+<h3>Description</h3>
+
+<p>Subplot will embed a new plot within an existing plot at the
+coordinates specified (in user units of the existing plot).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+subplot(fun, x, y, size=c(1,1), vadj=0.5, hadj=0.5, pars=NULL)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>fun</code></td>
+<td>
+<p>an expression or function defining the new plot to be embedded.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p><code>x</code>-coordinate(s) of the new plot (in user coordinates
+of the existing plot).</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p><code>y</code>-coordinate(s) of the new plot, <code>x</code> and <code>y</code>
+can be specified in any of the ways understood by <code>xy.coords</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>size</code></td>
+<td>
+<p>The size of the embedded plot in inches if <code>x</code> and
+<code>y</code> have length 1.</p>
+</td></tr>
+<tr valign="top"><td><code>vadj</code></td>
+<td>
+<p>vertical adjustment of the plot when <code>y</code> is a scalar,
+the default is to center vertically, 0 means place the bottom of the
+plot at <code>y</code>, 1 places the top of the plot at <code>y</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>hadj</code></td>
+<td>
+<p>horizontal adjustment of the plot when <code>x</code> is a
+scalar, the default is to center horizontally, 0 means place the
+left edge of the plot at <code>x</code>, and 1 means place the right edge
+of the plot at <code>x</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>pars</code></td>
+<td>
+<p>a list of parameters to be passed to <code>par</code> before
+running <code>fun</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The coordinates <code>x</code> and <code>y</code> can be scalars or vectors of
+length 2.  If vectors of length 2 then they determine the opposite
+corners of the rectangle for the embedded plot (and the parameters
+<code>size</code>, <code>vadj</code>, and <code>hadj</code> are all ignored.
+</p>
+<p>If <code>x</code> and <code>y</code> are given as scalars then the plot position
+relative to the point and the size of the plot will be determined by
+the arguments <code>size</code>, <code>vadj</code>, and <code>hadj</code>.  The default
+is to center a 1 inch by 1 inch plot at <code>x,y</code>.  Setting
+<code>vadj</code> and <code>hadj</code> to <code>(0,0)</code> will position the lower
+left corner of the plot at <code>(x,y)</code>.
+</p>
+<p>The rectangle defined by <code>x</code>, <code>y</code>, <code>size</code>, <code>vadj</code>,
+and <code>hadj</code> will be used as the plotting area of the new plot.
+Any tick marks, axis labels, main and sub titles will be outside of
+this rectangle.
+</p>
+<p>Any graphical parameter settings that you would like to be in place
+before <code>fun</code> is evaluated can be specified in the <code>pars</code>
+argument (warning: specifying layout parameters here (<code>plt</code>,
+<code>mfrow</code>, etc.) may cause unexpected results).
+</p>
+<p>After the function completes the graphical parameters will have been
+reset to what they were before calling the function (so you can
+continue to augment the original plot).
+</p>
+
+
+<h3>Value</h3>
+
+<p>An invisible list with the graphical parameters that were in effect
+when the subplot was created.  Passing this list to <code>par</code> will
+enable you to augment the embedded plot.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Greg Snow <a href="mailto:greg.snow@imail.org">greg.snow@imail.org</a></p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/cnvrt.coords.html">cnvrt.coords</a></code>, <code><a href="../../graphics/html/par.html">par</a></code>, <code><a href="../../graphics/html/symbols.html">symbols</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# make an original plot
+plot( 11:20, sample(51:60) )
+
+# add some histograms
+
+subplot( hist(rnorm(100)), 15, 55)
+subplot( hist(runif(100),main='',xlab='',ylab=''), 11, 51, hadj=0, vadj=0)
+subplot( hist(rexp(100, 1/3)), 20, 60, hadj=1, vadj=1, size=c(0.5,2) )
+subplot( hist(rt(100,3)), c(12,16), c(57,59), pars=list(lwd=3,ask=FALSE) )
+
+tmp &lt;- rnorm(25)
+qqnorm(tmp)
+qqline(tmp)
+tmp2 &lt;- subplot( hist(tmp,xlab='',ylab='',main=''), 
+		cnvrt.coords(0.1,0.9,'plt')$usr, vadj=1, hadj=0 )
+abline(v=0, col='red') # wrong way to add a reference line to histogram
+
+# right way to add a reference line to histogram
+op &lt;- par(no.readonly=TRUE)
+par(tmp2)
+abline(v=0, col='green')
+par(op)
+
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

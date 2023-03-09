@@ -1,0 +1,667 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>R: Linear Networks Functionality of the 'spatstat' Family</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+<h1> Linear Networks Functionality of the 'spatstat' Family
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;spatstat.linnet&rsquo; version 3.0-4</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+<li><a href="../doc/index.html">User guides, package vignettes and other documentation.</a></li>
+<li><a href="../NEWS">Package NEWS</a>.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<p style="text-align: center;">
+<a href="# "> </a>
+<a href="#A">A</a>
+<a href="#B">B</a>
+<a href="#C">C</a>
+<a href="#D">D</a>
+<a href="#E">E</a>
+<a href="#F">F</a>
+<a href="#H">H</a>
+<a href="#I">I</a>
+<a href="#J">J</a>
+<a href="#L">L</a>
+<a href="#M">M</a>
+<a href="#N">N</a>
+<a href="#O">O</a>
+<a href="#P">P</a>
+<a href="#Q">Q</a>
+<a href="#R">R</a>
+<a href="#S">S</a>
+<a href="#T">T</a>
+<a href="#U">U</a>
+<a href="#V">V</a>
+<a href="#W">W</a>
+<a href="#misc">misc</a>
+</p>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spatstat.linnet-package.html">spatstat.linnet-package</a></td>
+<td>The spatstat.linnet Package</td></tr>
+</table>
+
+<h2><a name="A">-- A --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="addVertices.html">addVertices</a></td>
+<td>Add New Vertices to a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linim.html">affine.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.linnet.html">affine.linnet</a></td>
+<td>Apply Geometrical Transformations to a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.lpp.html">affine.lpp</a></td>
+<td>Apply Geometrical Transformations to Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="anova.lppm.html">anova.lppm</a></td>
+<td>ANOVA for Fitted Point Process Models on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linfun.html">as.data.frame.linfun</a></td>
+<td>Methods for Functions on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linim.html">as.data.frame.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.data.frame.lintess.html">as.data.frame.lintess</a></td>
+<td>Convert Network Tessellation to Data Frame</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linfun.html">as.function.linfun</a></td>
+<td>Methods for Functions on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linim.html">as.im.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linfun.html">as.linfun</a></td>
+<td>Convert Data to a Function on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linfun.html">as.linfun.linim</a></td>
+<td>Convert Data to a Function on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linfun.html">as.linfun.lintess</a></td>
+<td>Convert Data to a Function on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linim.html">as.linim</a></td>
+<td>Convert to Pixel Image on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linim.html">as.linim.default</a></td>
+<td>Convert to Pixel Image on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linim.html">as.linim.linfun</a></td>
+<td>Convert to Pixel Image on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linim.html">as.linim.linim</a></td>
+<td>Convert to Pixel Image on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">as.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="as.linnet.linim.html">as.linnet.linfun</a></td>
+<td>Extract Linear Network from Data on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linnet.linim.html">as.linnet.linim</a></td>
+<td>Extract Linear Network from Data on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">as.linnet.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="as.linnet.linim.html">as.linnet.lintess</a></td>
+<td>Extract Linear Network from Data on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linnet.linim.html">as.linnet.lpp</a></td>
+<td>Extract Linear Network from Data on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">as.linnet.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.linnet.psp.html">as.linnet.psp</a></td>
+<td>Convert Line Segment Pattern to Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="as.lpp.html">as.lpp</a></td>
+<td>Convert Data to a Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linfun.html">as.owin.linfun</a></td>
+<td>Methods for Functions on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">as.owin.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="as.owin.lpp.html">as.owin.lpp</a></td>
+<td>Convert Data on a Network to class owin</td></tr>
+<tr><td style="width: 25%;"><a href="as.owin.lpp.html">as.owin.lppm</a></td>
+<td>Convert Data on a Network to class owin</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">as.ppp.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">as.psp.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">as.psp.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="auc.lpp.html">auc.lpp</a></td>
+<td>Area Under ROC Curve for Data on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="auc.lpp.html">auc.lppm</a></td>
+<td>Area Under ROC Curve for Data on a Network</td></tr>
+</table>
+
+<h2><a name="B">-- B --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="begins.html">begins</a></td>
+<td>Check Start of Character String</td></tr>
+<tr><td style="width: 25%;"><a href="berman.test.lpp.html">berman.test.lpp</a></td>
+<td>Berman's Tests for Point Process Model on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="berman.test.lpp.html">berman.test.lppm</a></td>
+<td>Berman's Tests for Point Process Model on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="diameter.linnet.html">boundingradius.linnet</a></td>
+<td>Diameter and Bounding Radius of a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="branchlabelfun.html">branchlabelfun</a></td>
+<td>Tree Branch Membership Labelling Function</td></tr>
+<tr><td style="width: 25%;"><a href="bw.lppl.html">bw.lppl</a></td>
+<td>Likelihood Cross Validation Bandwidth Selection for Kernel Density on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="bw.relrisk.lpp.html">bw.relrisk.lpp</a></td>
+<td>Cross Validated Bandwidth Selection for Relative Risk Estimation on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="bw.voronoi.html">bw.voronoi</a></td>
+<td>Cross Validated Bandwidth Selection for Voronoi Estimator of Intensity on a Network</td></tr>
+</table>
+
+<h2><a name="C">-- C --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="cdf.test.lpp.html">cdf.test.lpp</a></td>
+<td>Spatial Distribution Test for Points on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="cdf.test.lpp.html">cdf.test.lppm</a></td>
+<td>Spatial Distribution Test for Points on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="chop.linnet.html">chop.linnet</a></td>
+<td>Divide a Linear Network into Tiles Using Infinite Lines</td></tr>
+<tr><td style="width: 25%;"><a href="clickjoin.html">clickjoin</a></td>
+<td>Interactively join vertices on a plot</td></tr>
+<tr><td style="width: 25%;"><a href="clicklpp.html">clicklpp</a></td>
+<td>Interactively Add Points on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">coef.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="Math.linim.html">Complex.linim</a></td>
+<td>S3 Group Generic Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="connected.linnet.html">connected.linnet</a></td>
+<td>Connected Components of a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="connected.lpp.html">connected.lpp</a></td>
+<td>Connected Components of a Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lineardisc.html">countends</a></td>
+<td>Compute Disc of Given Radius in Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="crossdist.lpp.html">crossdist.lpp</a></td>
+<td>Pairwise distances between two point patterns on a linear network</td></tr>
+<tr><td style="width: 25%;"><a href="crossing.linnet.html">crossing.linnet</a></td>
+<td>Crossing Points between Linear Network and Other Lines</td></tr>
+<tr><td style="width: 25%;"><a href="cut.lpp.html">cut.lpp</a></td>
+<td>Classify Points in a Point Pattern on a Network</td></tr>
+</table>
+
+<h2><a name="D">-- D --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="data.lppm.html">data.lppm</a></td>
+<td>Extract Original Data from a Fitted Point Process Model on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="delaunayNetwork.html">delaunayNetwork</a></td>
+<td>Linear Network of Delaunay Triangulation or Dirichlet Tessellation</td></tr>
+<tr><td style="width: 25%;"><a href="deletebranch.html">deletebranch</a></td>
+<td>Delete or Extract a Branch of a Tree</td></tr>
+<tr><td style="width: 25%;"><a href="deletebranch.html">deletebranch.linnet</a></td>
+<td>Delete or Extract a Branch of a Tree</td></tr>
+<tr><td style="width: 25%;"><a href="deletebranch.html">deletebranch.lpp</a></td>
+<td>Delete or Extract a Branch of a Tree</td></tr>
+<tr><td style="width: 25%;"><a href="density.linnet.html">density.linnet</a></td>
+<td>Kernel Smoothing of Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="density.lpp.html">density.lpp</a></td>
+<td>Kernel Estimate of Intensity on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="density.lpp.html">density.splitppx</a></td>
+<td>Kernel Estimate of Intensity on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="densityEqualSplit.html">densityEqualSplit</a></td>
+<td>Equal-Split Algorithm for Kernel Density on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="densityfun.lpp.html">densityfun.lpp</a></td>
+<td>Kernel Estimate of Intensity on a Linear Network as a Spatial Function</td></tr>
+<tr><td style="width: 25%;"><a href="densityHeat.lpp.html">densityHeat.lpp</a></td>
+<td>Kernel Density on a Network using Heat Equation</td></tr>
+<tr><td style="width: 25%;"><a href="densityQuick.lpp.html">densityQuick.lpp</a></td>
+<td>Kernel Estimation of Intensity on a Network using a 2D Kernel</td></tr>
+<tr><td style="width: 25%;"><a href="densityVoronoi.lpp.html">densityVoronoi.lpp</a></td>
+<td>Intensity Estimate of Point Pattern on Linear Network Using Voronoi-Dirichlet Tessellation</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">deviance.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="diameter.linnet.html">diameter.linnet</a></td>
+<td>Diameter and Bounding Radius of a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="delaunayNetwork.html">dirichletNetwork</a></td>
+<td>Linear Network of Delaunay Triangulation or Dirichlet Tessellation</td></tr>
+<tr><td style="width: 25%;"><a href="distfun.lpp.html">distfun.lpp</a></td>
+<td>Distance Map on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="distmap.lpp.html">distmap.lpp</a></td>
+<td>Distance Map of Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="divide.linnet.html">divide.linnet</a></td>
+<td>Divide Linear Network at Cut Points</td></tr>
+<tr><td style="width: 25%;"><a href="domain.lpp.html">domain.linfun</a></td>
+<td>Extract the Linear Network on which Spatial Data are Defined</td></tr>
+<tr><td style="width: 25%;"><a href="domain.lpp.html">domain.lintess</a></td>
+<td>Extract the Linear Network on which Spatial Data are Defined</td></tr>
+<tr><td style="width: 25%;"><a href="domain.lpp.html">domain.lpp</a></td>
+<td>Extract the Linear Network on which Spatial Data are Defined</td></tr>
+<tr><td style="width: 25%;"><a href="domain.lpp.html">domain.lppm</a></td>
+<td>Extract the Linear Network on which Spatial Data are Defined</td></tr>
+</table>
+
+<h2><a name="E">-- E --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="methods.lppm.html">emend.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="envelope.lpp.html">envelope.lpp</a></td>
+<td>Envelope for Point Patterns on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="envelope.lpp.html">envelope.lppm</a></td>
+<td>Envelope for Point Patterns on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="eval.linim.html">eval.linim</a></td>
+<td>Evaluate Expression Involving Pixel Images on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">extractAIC.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="deletebranch.html">extractbranch</a></td>
+<td>Delete or Extract a Branch of a Tree</td></tr>
+<tr><td style="width: 25%;"><a href="deletebranch.html">extractbranch.linnet</a></td>
+<td>Delete or Extract a Branch of a Tree</td></tr>
+<tr><td style="width: 25%;"><a href="deletebranch.html">extractbranch.lpp</a></td>
+<td>Delete or Extract a Branch of a Tree</td></tr>
+</table>
+
+<h2><a name="F">-- F --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="fitted.lppm.html">fitted.lppm</a></td>
+<td>Fitted Intensity for Point Process on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">formula.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+</table>
+
+<h2><a name="H">-- H --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="heatkernelapprox.html">heatkernelapprox</a></td>
+<td>Approximation to Heat Kernel on Linear Network at Source Point</td></tr>
+</table>
+
+<h2><a name="I">-- I --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="identify.lpp.html">identify.lpp</a></td>
+<td>Identify Points in a Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="insertVertices.html">insertVertices</a></td>
+<td>Insert New Vertices in a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="integral.linim.html">integral.linfun</a></td>
+<td>Integral on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="integral.linim.html">integral.linim</a></td>
+<td>Integral on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="intensity.lpp.html">intensity.lpp</a></td>
+<td>Empirical Intensity of Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="intersect.lintess.html">intersect.lintess</a></td>
+<td>Intersection of Tessellations on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="is.connected.linnet.html">is.connected.linnet</a></td>
+<td>Determine Whether a Linear Network is Connected</td></tr>
+<tr><td style="width: 25%;"><a href="is.marked.lppm.html">is.marked.lppm</a></td>
+<td>Test Whether A Point Process Model is Marked</td></tr>
+<tr><td style="width: 25%;"><a href="is.multitype.lpp.html">is.multitype.lpp</a></td>
+<td>Test Whether A Point Pattern on a Network is Multitype</td></tr>
+<tr><td style="width: 25%;"><a href="is.multitype.lppm.html">is.multitype.lppm</a></td>
+<td>Test Whether A Point Process Model is Multitype</td></tr>
+<tr><td style="width: 25%;"><a href="is.stationary.lppm.html">is.poisson.lppm</a></td>
+<td>Recognise Stationary and Poisson Point Process Models on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="is.stationary.lppm.html">is.stationary.lppm</a></td>
+<td>Recognise Stationary and Poisson Point Process Models on a Network</td></tr>
+</table>
+
+<h2><a name="J">-- J --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="joinVertices.html">joinVertices</a></td>
+<td>Join Vertices in a Network</td></tr>
+</table>
+
+<h2><a name="L">-- L --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="lineardirichlet.html">lineardirichlet</a></td>
+<td>Dirichlet Tessellation on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lineardisc.html">lineardisc</a></td>
+<td>Compute Disc of Given Radius in Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lineardisc.html">lineardisclength</a></td>
+<td>Compute Disc of Given Radius in Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="linearJinhom.html">linearJinhom</a></td>
+<td>Inhomogeneous Linear J-function for Point Processes on Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="linearK.html">linearK</a></td>
+<td>Linear K Function</td></tr>
+<tr><td style="width: 25%;"><a href="linearKcross.html">linearKcross</a></td>
+<td>Multitype K Function (Cross-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearKcross.inhom.html">linearKcross.inhom</a></td>
+<td>Inhomogeneous multitype K Function (Cross-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearKdot.html">linearKdot</a></td>
+<td>Multitype K Function (Dot-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearKdot.inhom.html">linearKdot.inhom</a></td>
+<td>Inhomogeneous multitype K Function (Dot-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearKEuclid.html">linearKEuclid</a></td>
+<td>Linear K Function Using Euclidean Distance</td></tr>
+<tr><td style="width: 25%;"><a href="linearKEuclidInhom.html">linearKEuclidInhom</a></td>
+<td>Inhomogeneous Linear K Function Based on Euclidean Distances</td></tr>
+<tr><td style="width: 25%;"><a href="linearKinhom.html">linearKinhom</a></td>
+<td>Inhomogeneous Linear K Function</td></tr>
+<tr><td style="width: 25%;"><a href="linearmarkconnect.html">linearmarkconnect</a></td>
+<td>Mark Connection Function for Multitype Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="linearmarkequal.html">linearmarkequal</a></td>
+<td>Mark Connection Function for Multitype Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcf.html">linearpcf</a></td>
+<td>Linear Pair Correlation Function</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcfcross.html">linearpcfcross</a></td>
+<td>Multitype Pair Correlation Function (Cross-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcfcross.inhom.html">linearpcfcross.inhom</a></td>
+<td>Inhomogeneous Multitype Pair Correlation Function (Cross-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcfdot.html">linearpcfdot</a></td>
+<td>Multitype Pair Correlation Function (Dot-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcfdot.inhom.html">linearpcfdot.inhom</a></td>
+<td>Inhomogeneous Multitype Pair Correlation Function (Dot-type) for Linear Point Pattern</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcfEuclid.html">linearpcfEuclid</a></td>
+<td>Linear Pair Correlation Function Using Euclidean Distance</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcfEuclidInhom.html">linearpcfEuclidInhom</a></td>
+<td>Inhomogeneous Linear Pair Correlation Function Based on Euclidean Distances</td></tr>
+<tr><td style="width: 25%;"><a href="linearpcfinhom.html">linearpcfinhom</a></td>
+<td>Inhomogeneous Linear Pair Correlation Function</td></tr>
+<tr><td style="width: 25%;"><a href="lineartileindex.html">lineartileindex</a></td>
+<td>Determine Which Tile Contains Each Given Point on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="linequad.html">linequad</a></td>
+<td>Quadrature Scheme on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="linfun.html">linfun</a></td>
+<td>Function on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="linim.html">linim</a></td>
+<td>Create Pixel Image on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="linnet.html">linnet</a></td>
+<td>Create a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lintess.html">lintess</a></td>
+<td>Tessellation on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lixellate.html">lixellate</a></td>
+<td>Subdivide Segments of a Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">logLik.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lpp.html">lpp</a></td>
+<td>Create Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lppm.html">lppm</a></td>
+<td>Fit Point Process Model to Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lppm.html">lppm.formula</a></td>
+<td>Fit Point Process Model to Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="lppm.html">lppm.lpp</a></td>
+<td>Fit Point Process Model to Point Pattern on Linear Network</td></tr>
+</table>
+
+<h2><a name="M">-- M --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="marks.linnet.html">marks.linnet</a></td>
+<td>Marks of a Network</td></tr>
+<tr><td style="width: 25%;"><a href="marks.lintess.html">marks.lintess</a></td>
+<td>Marks of a Tessellation on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="marks.linnet.html">marks&lt;-.linnet</a></td>
+<td>Marks of a Network</td></tr>
+<tr><td style="width: 25%;"><a href="marks.lintess.html">marks&lt;-.lintess</a></td>
+<td>Marks of a Tessellation on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">marks&lt;-.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="Math.linim.html">Math.linim</a></td>
+<td>S3 Group Generic Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="mean.linim.html">mean.linim</a></td>
+<td>Mean, Median, Quantiles of Pixel Values on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="mean.linim.html">median.linim</a></td>
+<td>Mean, Median, Quantiles of Pixel Values on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linfun.html">methods.linfun</a></td>
+<td>Methods for Functions on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linim.html">methods.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">methods.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">methods.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">methods.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="model.frame.lppm.html">model.frame.lppm</a></td>
+<td>Extract the Variables in a Point Process Model on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="model.images.lppm.html">model.images.lppm</a></td>
+<td>Compute Images of Constructed Covariates</td></tr>
+<tr><td style="width: 25%;"><a href="model.matrix.lppm.html">model.matrix.lppm</a></td>
+<td>Extract Design Matrix from Point Process Model on a Network</td></tr>
+</table>
+
+<h2><a name="N">-- N --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="nncross.lpp.html">nncross.lpp</a></td>
+<td>Nearest Neighbours on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="nndist.lpp.html">nndist.lpp</a></td>
+<td>Nearest neighbour distances on a linear network</td></tr>
+<tr><td style="width: 25%;"><a href="nnfromvertex.html">nnfromvertex</a></td>
+<td>Nearest Data Point From Each Vertex in a Network</td></tr>
+<tr><td style="width: 25%;"><a href="nnfun.lpp.html">nnfun.lpp</a></td>
+<td>Nearest Neighbour Map on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="nnwhich.lpp.html">nnwhich.lpp</a></td>
+<td>Identify Nearest Neighbours on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">nobs.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">nsegments.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">nsegments.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">nvertices.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+</table>
+
+<h2><a name="O">-- O --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="Math.linim.html">Ops.linim</a></td>
+<td>S3 Group Generic Methods for Images on a Linear Network</td></tr>
+</table>
+
+<h2><a name="P">-- P --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="pairdist.lpp.html">pairdist.lpp</a></td>
+<td>Pairwise shortest-path distances between points on a linear network</td></tr>
+<tr><td style="width: 25%;"><a href="pairs.linim.html">pairs.linim</a></td>
+<td>Scatterplot Matrix for Pixel Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="persp.linfun.html">persp.linfun</a></td>
+<td>Perspective View of Function on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="persp.linim.html">persp.linim</a></td>
+<td>Perspective View of Pixel Image on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">pixellate.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linfun.html">plot.linfun</a></td>
+<td>Methods for Functions on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="plot.linim.html">plot.linim</a></td>
+<td>Plot Pixel Image on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="plot.linnet.html">plot.linnet</a></td>
+<td>Plot a linear network</td></tr>
+<tr><td style="width: 25%;"><a href="plot.lintess.html">plot.lintess</a></td>
+<td>Plot a Tessellation on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="plot.lpp.html">plot.lpp</a></td>
+<td>Plot Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="plot.lppm.html">plot.lppm</a></td>
+<td>Plot a Fitted Point Process Model on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="points.lpp.html">points.lpp</a></td>
+<td>Draw Points on Existing Plot</td></tr>
+<tr><td style="width: 25%;"><a href="predict.lppm.html">predict.lppm</a></td>
+<td>Predict Point Process Model on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linfun.html">print.linfun</a></td>
+<td>Methods for Functions on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linim.html">print.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">print.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">print.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">print.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">print.summary.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="pseudoR2.lppm.html">pseudoR2.lppm</a></td>
+<td>Calculate Pseudo-R-Squared for Point Process Model on Linear Network</td></tr>
+</table>
+
+<h2><a name="Q">-- Q --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="mean.linim.html">quantile.linim</a></td>
+<td>Mean, Median, Quantiles of Pixel Values on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="mean.linim.html">quantilefun.linim</a></td>
+<td>Mean, Median, Quantiles of Pixel Values on a Linear Network</td></tr>
+</table>
+
+<h2><a name="R">-- R --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="rcelllpp.html">rcelllpp</a></td>
+<td>Simulate Cell Process on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="relrisk.lpp.html">relrisk.lpp</a></td>
+<td>Nonparametric Estimate of Spatially-Varying Relative Risk on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="repairNetwork.html">repairNetwork</a></td>
+<td>Repair Internal Data in a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.linnet.html">rescale.linnet</a></td>
+<td>Apply Geometrical Transformations to a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.lpp.html">rescale.lpp</a></td>
+<td>Apply Geometrical Transformations to Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">response.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="rhohat.lpp.html">rhohat.lpp</a></td>
+<td>Nonparametric Estimate of Intensity as Function of a Covariate</td></tr>
+<tr><td style="width: 25%;"><a href="rhohat.lpp.html">rhohat.lppm</a></td>
+<td>Nonparametric Estimate of Intensity as Function of a Covariate</td></tr>
+<tr><td style="width: 25%;"><a href="rjitter.lpp.html">rjitter.lpp</a></td>
+<td>Random Perturbation of a Point Pattern on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="rlpp.html">rlpp</a></td>
+<td>Random Points on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="roc.lpp.html">roc.lpp</a></td>
+<td>Receiver Operating Characteristic for Data on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="roc.lpp.html">roc.lppm</a></td>
+<td>Receiver Operating Characteristic for Data on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.linnet.html">rotate.linnet</a></td>
+<td>Apply Geometrical Transformations to a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.lpp.html">rotate.lpp</a></td>
+<td>Apply Geometrical Transformations to Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="rpoislpp.html">rpoislpp</a></td>
+<td>Poisson Point Process on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="rSwitzerlpp.html">rSwitzerlpp</a></td>
+<td>Switzer-type Point Process on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="rThomaslpp.html">rThomaslpp</a></td>
+<td>Simulate Thomas Process on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="runiflpp.html">runiflpp</a></td>
+<td>Uniform Random Points on a Linear Network</td></tr>
+</table>
+
+<h2><a name="S">-- S --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="methods.linim.html">scalardilate.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.linnet.html">scalardilate.linnet</a></td>
+<td>Apply Geometrical Transformations to a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.lpp.html">scalardilate.lpp</a></td>
+<td>Apply Geometrical Transformations to Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="sdr.lpp.html">sdr.lpp</a></td>
+<td>Sufficient Dimension Reduction for a Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linim.html">shift.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.linnet.html">shift.linnet</a></td>
+<td>Apply Geometrical Transformations to a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="affine.lpp.html">shift.lpp</a></td>
+<td>Apply Geometrical Transformations to Point Pattern on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="simulate.lppm.html">simulate.lppm</a></td>
+<td>Simulate a Fitted Point Process Model on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="Smooth.lpp.html">Smooth.lpp</a></td>
+<td>Spatial Smoothing of Observations on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="spatstat.linnet-package.html">spatstat.linnet</a></td>
+<td>The spatstat.linnet Package</td></tr>
+<tr><td style="width: 25%;"><a href="subset.lpp.html">subset.lpp</a></td>
+<td>Subset of Point Pattern Satisfying A Condition</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linfun.html">summary.linfun</a></td>
+<td>Methods for Functions on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="Math.linim.html">Summary.linim</a></td>
+<td>S3 Group Generic Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linim.html">summary.linim</a></td>
+<td>Methods for Images on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">summary.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">summary.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">summary.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="superimpose.lpp.html">superimpose.lpp</a></td>
+<td>Superimpose Several Point Patterns on Linear Network</td></tr>
+</table>
+
+<h2><a name="T">-- T --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="terminalvertices.html">terminalvertices</a></td>
+<td>Terminal Vertices of a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">terms.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="text.lpp.html">text.lpp</a></td>
+<td>Add Text Labels to Point Pattern on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="thinNetwork.html">thinNetwork</a></td>
+<td>Remove Vertices or Segments from a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="tile.lengths.html">tile.lengths</a></td>
+<td>Compute Lengths of Tiles in a Tessellation on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="tilenames.lintess.html">tilenames.lintess</a></td>
+<td>Names of Tiles in a Tessellation on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="tilenames.lintess.html">tilenames&lt;-.lintess</a></td>
+<td>Names of Tiles in a Tessellation on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="treebranchlabels.html">treebranchlabels</a></td>
+<td>Label Vertices of a Tree by Branch Membership</td></tr>
+<tr><td style="width: 25%;"><a href="treeprune.html">treeprune</a></td>
+<td>Prune Tree to Given Level</td></tr>
+</table>
+
+<h2><a name="U">-- U --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="methods.linnet.html">unitname.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">unitname.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">unitname&lt;-.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">unitname&lt;-.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="marks.lintess.html">unmark.lintess</a></td>
+<td>Marks of a Tessellation on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lpp.html">unmark.lpp</a></td>
+<td>Methods for Point Patterns on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="unstack.lpp.html">unstack.lintess</a></td>
+<td>Separate Multiple Columns of Marks</td></tr>
+<tr><td style="width: 25%;"><a href="unstack.lpp.html">unstack.lpp</a></td>
+<td>Separate Multiple Columns of Marks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">update.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+</table>
+
+<h2><a name="V">-- V --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="methods.lppm.html">valid.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.lppm.html">vcov.lppm</a></td>
+<td>Methods for Fitted Point Process Models on a Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">vertexdegree</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">vertices.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="methods.linnet.html">volume.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+</table>
+
+<h2><a name="W">-- W --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="methods.linnet.html">Window.linnet</a></td>
+<td>Methods for Linear Networks</td></tr>
+<tr><td style="width: 25%;"><a href="Window.lpp.html">Window.lpp</a></td>
+<td>Extract Window of Spatial Object on a Network</td></tr>
+<tr><td style="width: 25%;"><a href="Window.lpp.html">Window.lppm</a></td>
+<td>Extract Window of Spatial Object on a Network</td></tr>
+</table>
+
+<h2><a name="misc">-- misc --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="Extract.linim.html">[.linim</a></td>
+<td>Extract Subset of Pixel Image on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="Extract.linnet.html">[.linnet</a></td>
+<td>Extract Subset of Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="Extract.lpp.html">[.lpp</a></td>
+<td>Extract Subset of Point Pattern on Linear Network</td></tr>
+<tr><td style="width: 25%;"><a href="Replace.linim.html">[&lt;-.linim</a></td>
+<td>Reset Values in Subset of Image on Linear Network</td></tr>
+</table>
+</div></body></html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: intMarkovOrd</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for intMarkovOrd {Hmisc}"><tr><td>intMarkovOrd {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>intMarkovOrd</h2>
+
+<h3>Description</h3>
+
+<p>Compute Parameters for Proportional Odds Markov Model
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+intMarkovOrd(
+  y,
+  times,
+  initial,
+  absorb = NULL,
+  intercepts,
+  extra = NULL,
+  g,
+  target,
+  t,
+  ftarget = NULL,
+  onlycrit = FALSE,
+  constraints = NULL,
+  printsop = FALSE,
+  ...
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>vector of possible y values in order (numeric, character, factor)</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p>vector of measurement times</p>
+</td></tr>
+<tr valign="top"><td><code>initial</code></td>
+<td>
+<p>initial value of <code>y</code> (baseline state; numeric, character, or factor matching <code>y</code>).  If length 1 this value is used for all subjects, otherwise it is a vector of length <code>n</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>absorb</code></td>
+<td>
+<p>vector of absorbing states, a subset of <code>y</code> (numeric, character, or factor matching <code>y</code>).  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.</p>
+</td></tr>
+<tr valign="top"><td><code>intercepts</code></td>
+<td>
+<p>vector of initial guesses for the intercepts</p>
+</td></tr>
+<tr valign="top"><td><code>extra</code></td>
+<td>
+<p>an optional vector of intial guesses for other parameters passed to <code>g</code> such as regression coefficients for previous states and for general time trends.  Name the elements of <code>extra</code> for more informative output.</p>
+</td></tr>
+<tr valign="top"><td><code>g</code></td>
+<td>
+<p>a user-specified function of three or more arguments which in order are <code>yprev</code> - the value of <code>y</code> at the previous time, the current time <code>t</code>, the <code>gap</code> between the previous time and the current time, an optional (usually named) covariate vector <code>X</code>, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow <code>yprev</code> to be a vector and <code>yprev</code> must not include any absorbing states.  The <code>g</code> function returns the linear predictor for the proportional odds model aside from <code>intercepts</code>.  The returned value must be a matrix with row names taken from <code>yprev</code>.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to <code>intercepts</code>. The different columns are used for <code>y</code>-specific contributions to the linear predictor (aside from <code>intercepts</code>) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.</p>
+</td></tr>
+<tr valign="top"><td><code>target</code></td>
+<td>
+<p>vector of target state occupancy probabilities at time <code>t</code>.  If <code>extra</code> is specified, <code>target</code> must be a matrix where row names are character versions of <code>t</code> and columns represent occupancy probabilities corresponding to values of <code>y</code> at the time given in the row.</p>
+</td></tr>
+<tr valign="top"><td><code>t</code></td>
+<td>
+<p>target times.  Can have more than one element only if <code>extra</code> is given.</p>
+</td></tr>
+<tr valign="top"><td><code>ftarget</code></td>
+<td>
+<p>an optional function defining constraints that relate to transition probabilities.  The function returns a penalty which is a sum of absolute differences in probabilities from target probabilities over possibly multiple targets.  The <code>ftarget</code> function must have two arguments: <code>intercepts</code> and <code>extra</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>onlycrit</code></td>
+<td>
+<p>set to <code>TRUE</code> to only return the achieved objective criterion and not print anything</p>
+</td></tr>
+<tr valign="top"><td><code>constraints</code></td>
+<td>
+<p>a function of two arguments: the vector of current intercept values and the vector of <code>extra</code> parameters, returning <code>TRUE</code> if that vector meets the constrains and <code>FALSE</code> otherwise</p>
+</td></tr>
+<tr valign="top"><td><code>printsop</code></td>
+<td>
+<p>set to <code>TRUE</code> to print solved-for state occupancy probabilities for groups 1 and 2 and log odds ratios corresponding to them</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>optional arguments to pass to <code><a href="../../stats/help/nlm.html">stats::nlm()</a></code>.  If this is specified, the arguments that <code>intMarkovOrd</code> normally sends to <code>nlm</code> are not used.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Given a vector <code>intercepts</code> of initial guesses at the intercepts in a Markov proportional odds model, and a vector <code>extra</code> if there are other parameters, solves for the <code>intercepts</code> and <code>extra</code> vectors that yields a set of occupancy probabilities at time <code>t</code> that equal, as closely as possible, a vector of target values.
+</p>
+
+
+<h3>Value</h3>
+
+<p>list containing two vectors named <code>intercepts</code> and <code>extra</code> unless <code>oncrit=TRUE</code> in which case the best achieved sum of absolute errors is returned
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Frank Harrell
+</p>
+
+
+<h3>See Also</h3>
+
+<p><a href="https://hbiostat.org/R/Hmisc/markov/">https://hbiostat.org/R/Hmisc/markov/</a>
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

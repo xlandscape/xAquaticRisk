@@ -1,0 +1,19 @@
+# Remove the previous line if you edit this file
+
+# Export all names
+exportPattern(".")
+
+# Import all packages listed as Imports or Depends
+import(
+  sp,
+  maps,
+  shapefiles
+)
+
+#Import from different packages; creating global functions to avoid R errors
+
+importFrom("graphics", "lines", "points")
+importFrom("stats", "as.dist", "rlnorm", "sd")
+importFrom("sp", "coordinates")
+
+

@@ -1,6 +1,13 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.74] - 2023-03-09
+### Added
+### Changed
+- Updated submodules to fit status at GitLab
+### Fixed
+- Errors in analysis scripts
+
 ## [2.73] - 2022-04-06
 ### Added
 ### Changed

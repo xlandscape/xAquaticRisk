@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Units Attribute of a Vector</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for units {Hmisc}"><tr><td>units {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Units Attribute of a Vector  
+</h2>
+
+<h3>Description</h3>
+
+<p>Sets or retrieves the <code>"units"</code> attribute of an object.
+For <code>units.default</code> replaces the builtin
+version, which only works for time series objects.  If the variable is
+also given a <code>label</code>, subsetting (using <code>[.labelled</code>) will
+retain the <code>"units"</code> attribute.  For a <code>Surv</code> object,
+<code>units</code> first looks for an overall <code>"units"</code> attribute, then
+it looks for <code>units</code> for the <code>time2</code> variable then for <code>time1</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+units(x, ...)
+## Default S3 method:
+units(x, none='', ...)
+## S3 method for class 'Surv'
+units(x, none='', ...)
+## Default S3 replacement method:
+units(x) &lt;- value
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>any object</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>ignored</p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+<p>the units of the object, or &quot;&quot;</p>
+</td></tr>
+<tr valign="top"><td><code>none</code></td>
+<td>
+<p>value to which to set result if no appropriate attribute is
+found</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>the units attribute of x, if any; otherwise, the <code>units</code> attribute of
+the <code>tspar</code> attribute of <code>x</code> if any; otherwise the value
+<code>none</code>.  Handling for <code>Surv</code> objects is different (see above).
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/label.html">label</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+fail.time &lt;- c(10,20)
+units(fail.time) &lt;- "Day"
+describe(fail.time)
+S &lt;- Surv(fail.time)
+units(S)
+
+label(fail.time) &lt;- 'Failure Time'
+fail.time
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>

@@ -1,0 +1,53 @@
+Package: RSAGA
+Type: Package
+Title: SAGA Geoprocessing and Terrain Analysis
+Version: 1.4.0
+Date: 2022-12-06
+Authors@R: c(
+    person("Alexander", "Brenning",
+    email = "alexander.brenning@uni-jena.de", 
+    role = c("aut", "cre"),
+    comment = c(ORCID = '0000-0001-6640-679X')),
+    person("Donovan", "Bangs",
+    role = "aut"),
+    person("Marc", "Becker",
+    role = "aut"),
+    person("Patrick", "Schratz",
+    email = "patrick.schratz@gmail.com", 
+    role = c("ctb"),
+    comment = c(ORCID = '0000-0003-0748-6624')),
+    person("Fabian", "Polakowski",
+    role = c("ctb"),
+    email = "fabian.polakowski@gmail.com")
+    )
+Description: Provides access to geocomputing and terrain analysis functions
+    of the geographical information system (GIS) 'SAGA' (System for Automated
+    Geoscientific Analyses) from within R by running the command line version of
+    SAGA. This package furthermore provides several R functions for handling ASCII
+    grids, including a flexible framework for applying local functions (including
+    predict methods of fitted models) and focal functions to multiple grids. SAGA
+    GIS is available under GPL-2 / LGPL-2 licences from 
+    <https://sourceforge.net/projects/saga-gis/>.
+URL: https://github.com/r-spatial/RSAGA
+License: GPL-2 | file LICENSE
+Encoding: UTF-8
+SystemRequirements: SAGA GIS (2.3 LTS - 8.4.1)
+Depends: R (>= 2.10), gstat, shapefiles, plyr
+Imports: stats, utils, stringr, magrittr
+Suggests: sf, sp, knitr, testthat, rmarkdown
+LazyLoad: yes
+Collate: 'gridtools.R' 'RSAGA-core.R' 'RSAGA-modules.R' 'RSAGA-utils.R'
+        'RSAGA-package.R' 'landslides.R'
+VignetteBuilder: knitr
+RoxygenNote: 7.2.0
+NeedsCompilation: no
+Packaged: 2022-12-09 14:42:12 UTC; yo54pow
+Author: Alexander Brenning [aut, cre] (<https://orcid.org/0000-0001-6640-679X>),
+  Donovan Bangs [aut],
+  Marc Becker [aut],
+  Patrick Schratz [ctb] (<https://orcid.org/0000-0003-0748-6624>),
+  Fabian Polakowski [ctb]
+Maintainer: Alexander Brenning <alexander.brenning@uni-jena.de>
+Repository: CRAN
+Date/Publication: 2022-12-09 18:20:02 UTC
+Built: R 4.1.3; ; 2023-02-06 08:26:26 UTC; windows

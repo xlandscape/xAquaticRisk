@@ -1,0 +1,384 @@
+AreaInter               The Area Interaction Point Process Model
+BadGey                  Hybrid Geyer Point Process Model
+Concom                  The Connected Component Process Model
+DiggleGatesStibbard     Diggle-Gates-Stibbard Point Process Model
+DiggleGratton           Diggle-Gratton model
+Fiksel                  The Fiksel Interaction
+Gcom                    Model Compensator of Nearest Neighbour Function
+Geyer                   Geyer's Saturation Point Process Model
+Gres                    Residual G Function
+Hardcore                The Hard Core Point Process Model
+HierHard                The Hierarchical Hard Core Point Process Model
+HierStrauss             The Hierarchical Strauss Point Process Model
+HierStraussHard         The Hierarchical Strauss Hard Core Point
+                        Process Model
+Hybrid                  Hybrid Interaction Point Process Model
+Kcom                    Model Compensator of K Function
+Kmodel                  K Function or Pair Correlation Function of a
+                        Point Process Model
+Kmodel.dppm             K-function or Pair Correlation Function of a
+                        Determinantal Point Process Model
+Kmodel.kppm             K Function or Pair Correlation Function of
+                        Cluster Model or Cox model
+Kmodel.ppm              K Function or Pair Correlation Function of
+                        Gibbs Point Process model
+Kres                    Residual K Function
+LambertW                Lambert's W Function
+LennardJones            The Lennard-Jones Potential
+MultiHard               The Multitype Hard Core Point Process Model
+MultiStrauss            The Multitype Strauss Point Process Model
+MultiStraussHard        The Multitype/Hard Core Strauss Point Process
+                        Model
+Ops.msr                 Arithmetic Operations on Measures
+Ord                     Generic Ord Interaction model
+OrdThresh               Ord's Interaction model
+PairPiece               The Piecewise Constant Pairwise Interaction
+                        Point Process Model
+Pairwise                Generic Pairwise Interaction model
+Penttinen               Penttinen Interaction
+Poisson                 Poisson Point Process Model
+SatPiece                Piecewise Constant Saturated Pairwise
+                        Interaction Point Process Model
+Saturated               Saturated Pairwise Interaction model
+Smooth.msr              Smooth a Signed or Vector-Valued Measure
+Softcore                The Soft Core Point Process Model
+Strauss                 The Strauss Point Process Model
+StraussHard             The Strauss / Hard Core Point Process Model
+Triplets                The Triplet Point Process Model
+Window.ppm              Extract Window of Spatial Object
+[.influence.ppm         Extract Subset of Influence Object
+[.leverage.ppm          Extract Subset of Leverage Object
+[.msr                   Extract Subset of Signed or Vector Measure
+addvar                  Added Variable Plot for Point Process Model
+anova.mppm              ANOVA for Fitted Point Process Models for
+                        Replicated Patterns
+anova.ppm               ANOVA for Fitted Point Process Models
+anova.slrm              Analysis of Deviance for Spatial Logistic
+                        Regression Models
+as.function.leverage.ppm
+                        Convert Leverage Object to Function of
+                        Coordinates
+as.fv.kppm              Convert Fitted Model To Class fv
+as.interact             Extract Interaction Structure
+as.layered.msr          Convert Measure To Layered Object
+as.owin.ppm             Convert Data To Class owin
+as.ppm                  Extract Fitted Point Process Model
+auc.ppm                 Area Under ROC Curve
+bc.ppm                  Bias Correction for Fitted Model
+berman.test.ppm         Berman's Tests for Point Process Model
+cauchy.estK             Fit the Neyman-Scott cluster process with
+                        Cauchy kernel
+cauchy.estpcf           Fit the Neyman-Scott cluster process with
+                        Cauchy kernel
+cdf.test.mppm           Spatial Distribution Test for Multiple Point
+                        Process Model
+cdf.test.ppm            Spatial Distribution Test for Point Pattern or
+                        Point Process Model
+closepaircounts         Count Close Pairs of Points
+clusterfield.kppm       Field of clusters
+clusterfit              Fit Cluster or Cox Point Process Model via
+                        Minimum Contrast
+clusterkernel.kppm      Extract Cluster Offspring Kernel
+clusterradius.kppm      Compute or Extract Effective Range of Cluster
+                        Kernel
+coef.mppm               Coefficients of Point Process Model Fitted to
+                        Multiple Point Patterns
+coef.ppm                Coefficients of Fitted Point Process Model
+coef.slrm               Coefficients of Fitted Spatial Logistic
+                        Regression Model
+compareFit              Residual Diagnostics for Multiple Fitted Models
+data.ppm                Extract Original Data from a Fitted Point
+                        Process Model
+detpointprocfamilyfun   Construct a New Determinantal Point Process
+                        Model Family Function
+dfbetas.ppm             Parameter Influence Measure
+dffit.ppm               Case Deletion Effect Measure of Fitted Model
+diagnose.ppm            Diagnostic Plots for Fitted Point Process Model
+dim.detpointprocfamily
+                        Dimension of Determinantal Point Process Model
+domain.ppm              Extract the Domain of any Spatial Object
+dppBessel               Bessel Type Determinantal Point Process Model
+dppCauchy               Generalized Cauchy Determinantal Point Process
+                        Model
+dppGauss                Gaussian Determinantal Point Process Model
+dppMatern               Whittle-Matern Determinantal Point Process
+                        Model
+dppPowerExp             Power Exponential Spectral Determinantal Point
+                        Process Model
+dppapproxkernel         Approximate Determinantal Point Process Kernel
+dppapproxpcf            Approximate Pair Correlation Function of
+                        Determinantal Point Process Model
+dppeigen                Internal function calculating eig and index
+dppkernel               Extract Kernel from Determinantal Point Process
+                        Model Object
+dppm                    Fit Determinantal Point Process Model
+dppparbounds            Parameter Bound for a Determinantal Point
+                        Process Model
+dppspecden              Extract Spectral Density from Determinantal
+                        Point Process Model Object
+dppspecdenrange         Range of Spectral Density of a Determinantal
+                        Point Process Model
+dummify                 Convert Data to Numeric Values by Constructing
+                        Dummy Variables
+dummy.ppm               Extract Dummy Points Used to Fit a Point
+                        Process Model
+eem                     Exponential Energy Marks
+effectfun               Compute Fitted Effect of a Spatial Covariate in
+                        a Point Process Model
+emend                   Force Model to be Valid
+emend.ppm               Force Point Process Model to be Valid
+emend.slrm              Force Spatial Logistic Regression Model to be
+                        Valid
+envelope.ppm            Simulation Envelopes of Summary Function
+exactMPLEstrauss        Exact Maximum Pseudolikelihood Estimate for
+                        Stationary Strauss Process
+fitin.ppm               Extract the Interaction from a Fitted Point
+                        Process Model
+fitted.mppm             Fitted Conditional Intensity for Multiple Point
+                        Process Model
+fitted.ppm              Fitted Conditional Intensity for Point Process
+                        Model
+fitted.slrm             Fitted Probabilities for Spatial Logistic
+                        Regression
+fixef.mppm              Extract Fixed Effects from Point Process Model
+formula.ppm             Model Formulae for Gibbs Point Process Models
+hardcoredist            Extract the Hard Core Distance of a Point
+                        Process Model
+harmonic                Basis for Harmonic Functions
+harmonise.msr           Make Measures Compatible
+hierpair.family         Hierarchical Pairwise Interaction Process
+                        Family
+hybrid.family           Hybrid Interaction Family
+ic.kppm                 Model selection criteria for the intensity
+                        function of a point process
+improve.kppm            Improve Intensity Estimate of Fitted Cluster
+                        Point Process Model
+influence.ppm           Influence Measure for Spatial Point Process
+                        Model
+inforder.family         Infinite Order Interaction Family
+integral.msr            Integral of a Measure
+intensity.dppm          Intensity of Determinantal Point Process Model
+intensity.ppm           Intensity of Fitted Point Process Model
+intensity.slrm          Intensity of Fitted Spatial Logistic Regression
+                        Model
+interactionorder        Determine the Order of Interpoint Interaction
+                        in a Model
+ippm                    Fit Point Process Model Involving Irregular
+                        Trend Parameters
+is.dppm                 Recognise Fitted Determinantal Point Process
+                        Models
+is.hybrid               Test Whether Object is a Hybrid
+is.marked.ppm           Test Whether A Point Process Model is Marked
+is.multitype.ppm        Test Whether A Point Process Model is Multitype
+is.poissonclusterprocess
+                        Recognise Poisson Cluster Process Models
+is.ppm                  Test Whether An Object Is A Fitted Point
+                        Process Model
+is.stationary.ppm       Recognise Stationary and Poisson Point Process
+                        Models
+isf.object              Interaction Structure Family Objects
+kppm                    Fit Cluster or Cox Point Process Model
+leverage.ppm            Leverage Measure for Spatial Point Process
+                        Model
+leverage.slrm           Leverage and Influence Diagnostics for Spatial
+                        Logistic Regression
+lgcp.estK               Fit a Log-Gaussian Cox Point Process by Minimum
+                        Contrast
+lgcp.estpcf             Fit a Log-Gaussian Cox Point Process by Minimum
+                        Contrast
+logLik.dppm             Log Likelihood and AIC for Fitted Determinantal
+                        Point Process Model
+logLik.kppm             Log Likelihood and AIC for Fitted Cox or
+                        Cluster Point Process Model
+logLik.mppm             Log Likelihood and AIC for Multiple Point
+                        Process Model
+logLik.ppm              Log Likelihood and AIC for Point Process Model
+logLik.slrm             Loglikelihood of Spatial Logistic Regression
+lurking                 Lurking Variable Plot
+lurking.mppm            Lurking Variable Plot for Multiple Point
+                        Patterns
+matclust.estK           Fit the Matern Cluster Point Process by Minimum
+                        Contrast
+matclust.estpcf         Fit the Matern Cluster Point Process by Minimum
+                        Contrast Using Pair Correlation
+measureContinuous       Discrete and Continuous Components of a Measure
+measureVariation        Positive and Negative Parts, and Variation, of
+                        a Measure
+measureWeighted         Weighted Version of a Measure
+methods.dppm            Methods for Determinantal Point Process Models
+methods.fii             Methods for Fitted Interactions
+methods.influence.ppm   Methods for Influence Objects
+methods.kppm            Methods for Cluster Point Process Models
+methods.leverage.ppm    Methods for Leverage Objects
+methods.objsurf         Methods for Objective Function Surfaces
+methods.slrm            Methods for Spatial Logistic Regression Models
+methods.traj            Methods for Trajectories of Function
+                        Evaluations
+methods.zclustermodel   Methods for Cluster Models
+methods.zgibbsmodel     Methods for Gibbs Models
+mincontrast             Method of Minimum Contrast
+model.depends           Identify Covariates Involved in each Model Term
+model.frame.ppm         Extract the Variables in a Point Process Model
+model.images            Compute Images of Constructed Covariates
+model.matrix.mppm       Extract Design Matrix of Point Process Model
+                        for Several Point Patterns
+model.matrix.ppm        Extract Design Matrix from Point Process Model
+model.matrix.slrm       Extract Design Matrix from Spatial Logistic
+                        Regression Model
+mppm                    Fit Point Process Model to Several Point
+                        Patterns
+msr                     Signed or Vector-Valued Measure
+npfun                   Dummy Function Returns Number of Points
+objsurf                 Objective Function Surface
+ord.family              Ord Interaction Process Family
+pairsat.family          Saturated Pairwise Interaction Point Process
+                        Family
+pairwise.family         Pairwise Interaction Process Family
+palmdiagnose            Diagnostic based on Palm Intensity
+panel.contour           Panel Plots using Colour Image or Contour Lines
+panysib                 Probability that a Point Has Any Siblings
+parameters              Extract Model Parameters in Understandable Form
+parres                  Partial Residuals for Point Process Model
+plot.dppm               Plot a fitted determinantal point process
+plot.influence.ppm      Plot Influence Measure
+plot.kppm               Plot a fitted cluster point process
+plot.leverage.ppm       Plot Leverage Function
+plot.mppm               plot a Fitted Multiple Point Process Model
+plot.msr                Plot a Signed or Vector-Valued Measure
+plot.palmdiag           Plot the Palm Intensity Diagnostic
+plot.plotppm            Plot a plotppm Object Created by plot.ppm
+plot.ppm                plot a Fitted Point Process Model
+plot.profilepl          Plot Profile Likelihood
+plot.rppm               Plot a Recursively Partitioned Point Process
+                        Model
+plot.slrm               Plot a Fitted Spatial Logistic Regression
+polynom                 Polynomial in One or Two Variables
+ppm                     Fit Point Process Model to Data
+ppm.object              Class of Fitted Point Process Models
+ppm.ppp                 Fit Point Process Model to Point Pattern Data
+ppmInfluence            Leverage and Influence Measures for Spatial
+                        Point Process Model
+predict.dppm            Prediction from a Fitted Determinantal Point
+                        Process Model
+predict.kppm            Prediction from a Fitted Cluster Point Process
+                        Model
+predict.mppm            Prediction for Fitted Multiple Point Process
+                        Model
+predict.ppm             Prediction from a Fitted Point Process Model
+predict.rppm            Make Predictions From a Recursively Partitioned
+                        Point Process Model
+predict.slrm            Predicted or Fitted Values from Spatial
+                        Logistic Regression
+print.ppm               Print a Fitted Point Process Model
+profilepl               Fit Models by Profile Maximum Pseudolikelihood
+                        or AIC
+prune.rppm              Prune a Recursively Partitioned Point Process
+                        Model
+pseudoR2                Calculate Pseudo-R-Squared for Point Process
+                        Model
+psib                    Sibling Probability of Cluster Point Process
+psst                    Pseudoscore Diagnostic For Fitted Model against
+                        General Alternative
+psstA                   Pseudoscore Diagnostic For Fitted Model against
+                        Area-Interaction Alternative
+psstG                   Pseudoscore Diagnostic For Fitted Model against
+                        Saturation Alternative
+qqplot.ppm              Q-Q Plot of Residuals from Fitted Point Process
+                        Model
+quad.ppm                Extract Quadrature Scheme Used to Fit a Point
+                        Process Model
+quadrat.test.mppm       Chi-Squared Test for Multiple Point Process
+                        Model Based on Quadrat Counts
+quadrat.test.ppm        Dispersion Test for Spatial Point Pattern Based
+                        on Quadrat Counts
+ranef.mppm              Extract Random Effects from Point Process Model
+rdpp                    Simulation of a Determinantal Point Process
+reach.dppm              Range of Interaction for a Determinantal Point
+                        Process Model
+reach.kppm              Range of Interaction for a Cox or Cluster Point
+                        Process Model
+reach.ppm               Interaction Distance of a Point Process Model
+relrisk.ppm             Parametric Estimate of Spatially-Varying
+                        Relative Risk
+repul.dppm              Repulsiveness Index of a Determinantal Point
+                        Process Model
+residualMeasure         Residual Measure for an Observed Point Pattern
+                        and a Fitted Intensity
+residuals.dppm          Residuals for Fitted Determinantal Point
+                        Process Model
+residuals.kppm          Residuals for Fitted Cox or Cluster Point
+                        Process Model
+residuals.mppm          Residuals for Point Process Model Fitted to
+                        Multiple Point Patterns
+residuals.ppm           Residuals for Fitted Point Process Model
+residuals.rppm          Residuals for Recursively Partitioned Point
+                        Process Model
+residuals.slrm          Residuals for Fitted Spatial Logistic
+                        Regression Model
+response                Extract the Values of the Response from a
+                        Fitted Model
+rex                     Richardson Extrapolation
+rhohat.ppm              Nonparametric Estimate of Intensity as Function
+                        of a Covariate
+rmh.ppm                 Simulate from a Fitted Point Process Model
+rmhmodel.ppm            Interpret Fitted Model for Metropolis-Hastings
+                        Simulation.
+roc.ppm                 Receiver Operating Characteristic
+rppm                    Recursively Partitioned Point Process Model
+simulate.dppm           Simulation of Determinantal Point Process Model
+simulate.kppm           Simulate a Fitted Cluster Point Process Model
+simulate.mppm           Simulate a Point Process Model Fitted to
+                        Several Point Patterns
+simulate.ppm            Simulate a Fitted Gibbs Point Process Model
+simulate.slrm           Simulate a Fitted Spatial Logistic Regression
+                        Model
+slrm                    Spatial Logistic Regression
+spatstat.model-package
+                        The spatstat.model Package
+split.msr               Divide a Measure into Parts
+subfits                 Extract List of Individual Point Process Models
+suffstat                Sufficient Statistic of Point Process Model
+summary.dppm            Summarizing a Fitted Determinantal Point
+                        Process Model
+summary.kppm            Summarizing a Fitted Cox or Cluster Point
+                        Process Model
+summary.ppm             Summarizing a Fitted Point Process Model
+thomas.estK             Fit the Thomas Point Process by Minimum
+                        Contrast
+thomas.estpcf           Fit the Thomas Point Process by Minimum
+                        Contrast
+traj                    Extract trajectory of function evaluations
+triplet.family          Triplet Interaction Family
+unitname.dppm           Name for Unit of Length
+unstack.msr             Separate a Vector Measure into its Scalar
+                        Components
+update.detpointprocfamily
+                        Set Parameter Values in a Determinantal Point
+                        Process Model
+update.interact         Update an Interpoint Interaction
+update.kppm             Update a Fitted Cluster Point Process Model
+update.ppm              Update a Fitted Point Process Model
+valid                   Check Whether Point Process Model is Valid
+valid.detpointprocfamily
+                        Check Validity of a Determinantal Point Process
+                        Model
+valid.ppm               Check Whether Point Process Model is Valid
+valid.slrm              Check Whether Spatial Logistic Regression Model
+                        is Valid
+varcount                Predicted Variance of the Number of Points
+vargamma.estK           Fit the Neyman-Scott Cluster Point Process with
+                        Variance Gamma kernel
+vargamma.estpcf         Fit the Neyman-Scott Cluster Point Process with
+                        Variance Gamma kernel
+vcov.kppm               Variance-Covariance Matrix for a Fitted Cluster
+                        Point Process Model
+vcov.mppm               Calculate Variance-Covariance Matrix for Fitted
+                        Multiple Point Process Model
+vcov.ppm                Variance-Covariance Matrix for a Fitted Point
+                        Process Model
+vcov.slrm               Variance-Covariance Matrix for a Fitted Spatial
+                        Logistic Regression
+with.msr                Evaluate Expression Involving Components of a
+                        Measure
+zclustermodel           Cluster Point Process Model
+zgibbsmodel             Gibbs Model

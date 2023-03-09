@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Power of Interaction Test for Exponential Survival</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+
+<table width="100%" summary="page for ciapower {Hmisc}"><tr><td>ciapower {Hmisc}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Power of Interaction Test for Exponential Survival
+</h2>
+
+<h3>Description</h3>
+
+<p>Uses the method of Peterson and George to compute the power of an
+interaction test in a 2 x 2 setup in which all 4 distributions are
+exponential.  This will be the same as the power of the Cox model
+test if assumptions hold.  The test is 2-tailed.  
+The duration of accrual is specified
+(constant accrual is assumed), as is the minimum follow-up time.
+The maximum follow-up time is then <code>accrual + tmin</code>.  Treatment
+allocation is assumed to be 1:1.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ciapower(tref, n1, n2, m1c, m2c, r1, r2, accrual, tmin, 
+         alpha=0.05, pr=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>tref</code></td>
+<td>
+
+<p>time at which mortalities estimated
+</p>
+</td></tr>
+<tr valign="top"><td><code>n1</code></td>
+<td>
+
+<p>total sample size, stratum 1
+</p>
+</td></tr>
+<tr valign="top"><td><code>n2</code></td>
+<td>
+
+<p>total sample size, stratum 2
+</p>
+</td></tr>
+<tr valign="top"><td><code>m1c</code></td>
+<td>
+
+<p>tref-year mortality, stratum 1 control
+</p>
+</td></tr>
+<tr valign="top"><td><code>m2c</code></td>
+<td>
+
+<p>tref-year mortality, stratum 2 control
+</p>
+</td></tr>
+<tr valign="top"><td><code>r1</code></td>
+<td>
+
+<p>% reduction in <code>m1c</code> by intervention, stratum 1
+</p>
+</td></tr>
+<tr valign="top"><td><code>r2</code></td>
+<td>
+
+<p>% reduction in <code>m2c</code> by intervention, stratum 2
+</p>
+</td></tr>
+<tr valign="top"><td><code>accrual</code></td>
+<td>
+
+<p>duration of accrual period
+</p>
+</td></tr>
+<tr valign="top"><td><code>tmin</code></td>
+<td>
+
+<p>minimum follow-up time
+</p>
+</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+
+<p>type I error probability
+</p>
+</td></tr>
+<tr valign="top"><td><code>pr</code></td>
+<td>
+
+<p>set to <code>FALSE</code> to suppress printing of details
+</p>
+</td></tr></table>
+
+
+<h3>Value</h3>
+
+<p>power
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>prints
+</p>
+
+
+<h3>AUTHOR</h3>
+
+<p>Frank Harrell
+</p>
+<p>Department of Biostatistics
+</p>
+<p>Vanderbilt University
+</p>
+<p><a href="mailto:fh@fharrell.com">fh@fharrell.com</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>Peterson B, George SL: Controlled Clinical Trials 14:511&ndash;522; 1993.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../Hmisc/help/cpower.html">cpower</a></code>, <code><a href="../../Hmisc/help/spower.html">spower</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Find the power of a race x treatment test.  25% of patients will
+# be non-white and the total sample size is 14000.  
+# Accrual is for 1.5 years and minimum follow-up is 5y.
+# Reduction in 5-year mortality is 15% for whites, 0% or -5% for
+# non-whites.  5-year mortality for control subjects if assumed to
+# be 0.18 for whites, 0.23 for non-whites.
+n &lt;- 14000
+for(nonwhite.reduction in c(0,-5)) {
+  cat("\n\n\n% Reduction in 5-year mortality for non-whites:",
+      nonwhite.reduction, "\n\n")
+  pow &lt;- ciapower(5,  .75*n, .25*n,  .18, .23,  15, nonwhite.reduction,  
+                  1.5, 5)
+  cat("\n\nPower:",format(pow),"\n")
+}
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>Hmisc</em> version 4.8-0 <a href="00Index.html">Index</a>]</div>
+</div></body></html>
