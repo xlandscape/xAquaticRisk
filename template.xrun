@@ -110,13 +110,6 @@
     <RunCascadeToxswa>true</RunCascadeToxswa>
 
     <!--
-    Parameter     :  RunCmfContinuous
-    Description   :  Controls whether environmental fate is calculated by the CmfContinuous component
-    Values        :  true or false
-      -->
-    <RunCmfContinuous>true</RunCmfContinuous>
-
-    <!--
     Parameter     :  ThresholdSW
     Description   :  The surface water value precision used by StepsRiverNetwork
     Values        :  A positive number
@@ -240,36 +233,12 @@
     <RunLGuts>true</RunLGuts>
 
     <!--
-    Parameter     :  RunLPop
-    Description   :  Specifies whether effects are simulated by LPop for the switched-on environmental fate components
-    Values        :  true or false
-    -->
-    <RunLPop>true</RunLPop>
-
-    <!--
-    Parameter     :  RunStreamCom
-    Description   :  Specifies whether effects are simulated by StreamCom for the switched-on environmental fate
-                     components
-    Values        :  true or false
-    -->
-    <RunStreamCom>true</RunStreamCom>
-
-     <!--
     Parameter     :  ReachSelection
     Description   :  The reaches for which LGuts and LPop runs are conducted
     Values        :  A space separated list of reach identifiers
     Remark        :  An empty list results in a simulation for all reaches in the scenario.
     -->
     <ReachSelection>567 570 580 584</ReachSelection>
-
-    <!--
-    Parameter     :  MultiplicationFactors_LPop
-    Description   :  Multiplication factors that applied during LPop simulations
-    Values        :  A space separated list of multiplication factors (decimal numbers)
-    Remark        :  Use a multiplication factor of 1 if no further investigation of the effect space is
-                     required; every additional multiplication factor increases processing time
-    -->
-    <MultiplicationFactors_LPop>0 1 10</MultiplicationFactors_LPop>
 
     <!--
     Parameter     : NumberOfWarmupYears
@@ -288,38 +257,6 @@
                     substance
     -->
     <RecoveryPeriodYears>1</RecoveryPeriodYears>
-
-    <!--
-    Parameter     :  StreamComReach1
-    Description   :  The first reach that is used for StreamCom simulations
-    Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
-    Remark        :  Leave empty to skip StreamCom simulation
-    -->
-    <StreamComReach1>567</StreamComReach1>
-
-    <!--
-    Parameter     :  StreamComReach2
-    Description   :  The second reach that is used for StreamCom simulations
-    Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
-    Remark        :  Leave empty to skip StreamCom simulation
-    -->
-    <StreamComReach2>570</StreamComReach2>
-
-    <!--
-    Parameter     :  StreamComReach3
-    Description   :  The third reach that is used for StreamCom simulations
-    Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
-    Remark        :  Leave empty to skip StreamCom simulation
-    -->
-    <StreamComReach3>580</StreamComReach3>
-
-    <!--
-    Parameter     :  StreamComReach4
-    Description   :  The first reach that is used for StreamCom simulations
-    Values        :  The (numeric) identifier of one of the reaches in the landscape scenario
-    Remark        :  Leave empty to skip StreamCom simulation
-    -->
-    <StreamComReach4>584</StreamComReach4>
 
     <!--
     Parameter     :  Species1
@@ -477,14 +414,6 @@
     Values        :  Any positive number
     -->
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
-
-    <!--
-    Parameter     :  UseEmpiricalWaterTemperatures
-    Description   :  Specifies, whether water temperatures for the LPop model are calculated from air temperatures
-                     (=true) or if they are calculated using a forcing function (=false)
-    Values        :  true or false
-    -->
-    <UseEmpiricalWaterTemperatures>true</UseEmpiricalWaterTemperatures>
   </Effects>
   <Settings>
     <!--

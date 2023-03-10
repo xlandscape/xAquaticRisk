@@ -57,6 +57,15 @@
         <NumberLPopRuns>3</NumberLPopRuns>
         <NumberStreamComRuns>3</NumberStreamComRuns>
         <StreamComStartBiomass>Ind/m^2</StreamComStartBiomass>
+        <RunCmfContinuous>false</RunCmfContinuous>
+        <RunLPop>false</RunLPop>
+        <RunStreamCom>false</RunStreamCom>
+        <MultiplicationFactors_LPop>0 1 10</MultiplicationFactors_LPop>
+        <StreamComReach1>567</StreamComReach1>
+        <StreamComReach2>570</StreamComReach2>
+        <StreamComReach3>580</StreamComReach3>
+        <StreamComReach4>584</StreamComReach4>
+        <UseEmpiricalWaterTemperatures>true</UseEmpiricalWaterTemperatures>
     </Global>
     <Composition>
         <LandscapeScenario module="components" class="LandscapeScenario">

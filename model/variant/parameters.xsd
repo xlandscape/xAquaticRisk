@@ -85,7 +85,6 @@
             <xsd:sequence>
               <xsd:element name="RunStepsRiverNetwork" type="xsd:boolean"/>
               <xsd:element name="RunCascadeToxswa" type="xsd:boolean"/>
-              <xsd:element name="RunCmfContinuous" type="xsd:boolean"/>
               <xsd:element name="ThresholdSW">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:float">
@@ -205,24 +204,13 @@
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element name="RunLGuts" type="xsd:boolean"/>
-              <xsd:element name="RunLPop" type="xsd:boolean"/>
-              <xsd:element name="RunStreamCom" type="xsd:boolean"/>
               <xsd:element name="ReachSelection">
                 <xsd:simpleType>
                   <xsd:list itemType="xsd:positiveInteger"/>
                 </xsd:simpleType>
               </xsd:element>
-              <xsd:element name="MultiplicationFactors_LPop">
-                <xsd:simpleType>
-                  <xsd:list itemType="xsd:float"/>
-                </xsd:simpleType>
-              </xsd:element>
               <xsd:element name="NumberOfWarmUpYears" type="xsd:nonNegativeInteger"/>
               <xsd:element name="RecoveryPeriodYears" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="StreamComReach1" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="StreamComReach2" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="StreamComReach3" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="StreamComReach4" type="xsd:nonNegativeInteger"/>
               <xsd:element name="Species1">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
@@ -370,7 +358,6 @@
                   </xsd:restriction>
                 </xsd:simpleType>
               </xsd:element>
-              <xsd:element name="UseEmpiricalWaterTemperatures" type="xsd:boolean"/>
             </xsd:sequence>
           </xsd:complexType>
         </xsd:element>
