@@ -1,6 +1,13 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.75] - 2023-03-10
+### Added
+### Changed
+- Modified parameterization and configuration to reflect model usage in xAquaticRisk publication
+- Removed run of analysis scripts due to firewall warning
+### Fixed
+
 ## [2.74] - 2023-03-09
 ### Added
 ### Changed

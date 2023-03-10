@@ -12,23 +12,6 @@
             <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\mc_$(_MC_NAME_).log</LogFile>
             <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
         </Observer>
-        <Observer
-            module="AnalysisObserver"
-            class="AnalysisObserver"
-            enabled_expression="'$(RunCascadeToxswa)'.lower() == 'true' and '$(RunLGuts)'.lower() == 'true'"
-        >
-            <Data>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store\arr.dat</Data>
-            <Script>$(_PARAM_DIR_)\analysis\iFEM\ifem_analysis.R</Script>
-            <Output_Folder>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\analysis</Output_Folder>
-            <Source>$(_PARAM_DIR_)\analysis\iFEM\ifem_functions.R</Source>
-            <Hydrography>$(_SCENARIO_DIR_)\geo\ReachList_shp.shp</Hydrography>
-            <Start>$(SimulationStart)</Start>
-            <End>$(SimulationEnd)</End>
-            <Application_Window>$(ApplicationTimeWindow)</Application_Window>
-            <Lib>$(_PARAM_DIR_)\analysis\lib</Lib>
-            <Model_Name>xAquaticRisk</Model_Name>
-            <Model_Version>2.73</Model_Version>
-        </Observer>
     </Observers>
     <Store module="stores" class="X3dfStore">
         <File_Path>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\store</File_Path>
@@ -74,6 +57,15 @@
         <NumberLPopRuns>3</NumberLPopRuns>
         <NumberStreamComRuns>3</NumberStreamComRuns>
         <StreamComStartBiomass>Ind/m^2</StreamComStartBiomass>
+        <RunCmfContinuous>false</RunCmfContinuous>
+        <RunLPop>false</RunLPop>
+        <RunStreamCom>false</RunStreamCom>
+        <MultiplicationFactors_LPop>0 1 10</MultiplicationFactors_LPop>
+        <StreamComReach1>567</StreamComReach1>
+        <StreamComReach2>570</StreamComReach2>
+        <StreamComReach3>580</StreamComReach3>
+        <StreamComReach4>584</StreamComReach4>
+        <UseEmpiricalWaterTemperatures>true</UseEmpiricalWaterTemperatures>
     </Global>
     <Composition>
         <LandscapeScenario module="components" class="LandscapeScenario">
