@@ -59,13 +59,17 @@
         <StreamComStartBiomass>Ind/m^2</StreamComStartBiomass>
         <RunCmfContinuous>false</RunCmfContinuous>
         <RunLPop>false</RunLPop>
-        <RunStreamCom>false</RunStreamCom>
+        <RunStreamCom>true</RunStreamCom>
         <MultiplicationFactors_LPop>0 1 10</MultiplicationFactors_LPop>
         <StreamComReach1>567</StreamComReach1>
         <StreamComReach2>570</StreamComReach2>
         <StreamComReach3>580</StreamComReach3>
         <StreamComReach4>584</StreamComReach4>
         <UseEmpiricalWaterTemperatures>true</UseEmpiricalWaterTemperatures>
+        <SaveEnvironmentalConditions>TRUE</SaveEnvironmentalConditions>
+        <MinimumPeriphytonDensity>1</MinimumPeriphytonDensity>
+        <ReproductionSuccessRate>2</ReproductionSuccessRate>
+        <LeafLitterEntryDensity>9</LeafLitterEntryDensity>
     </Global>
     <Composition>
         <LandscapeScenario module="components" class="LandscapeScenario">
@@ -2937,6 +2941,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom1_StepsRiverNetwork>
         <StreamCom1_CmfContinuous
                 module="StreamCom"
@@ -3033,6 +3049,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom1_CmfContinuous>
         <StreamCom1_CascadeToxswa
                 module="StreamCom"
@@ -3131,6 +3159,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom1_CascadeToxswa>
         <StreamCom2_StepsRiverNetwork
                 module="StreamCom"
@@ -3229,6 +3269,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom2_StepsRiverNetwork>
         <StreamCom2_CmfContinuous
                 module="StreamCom"
@@ -3325,6 +3377,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom2_CmfContinuous>
         <StreamCom2_CascadeToxswa
                 module="StreamCom"
@@ -3423,6 +3487,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom2_CascadeToxswa>
         <StreamCom3_StepsRiverNetwork
                 module="StreamCom"
@@ -3521,6 +3597,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom3_StepsRiverNetwork>
         <StreamCom3_CmfContinuous
                 module="StreamCom"
@@ -3616,6 +3704,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom3_CmfContinuous>
         <StreamCom3_CascadeToxswa
                 module="StreamCom"
@@ -3714,6 +3814,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom3_CascadeToxswa>
         <StreamCom4_StepsRiverNetwork
                 module="StreamCom"
@@ -3812,6 +3924,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom4_StepsRiverNetwork>
         <StreamCom4_CmfContinuous
                 module="StreamCom"
@@ -3908,6 +4032,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom4_CmfContinuous>
         <StreamCom4_CascadeToxswa
                 module="StreamCom"
@@ -4006,6 +4142,18 @@
             <Biomass scales="global">$(:Biomass)</Biomass>
             <StartBiomass scales="global">$(StreamComStartBiomass)</StartBiomass>
             <NumberRuns type="int" unit="1" scales="global">$(NumberStreamComRuns)</NumberRuns>
+            <SaveEnvironmentalConditions type="bool" scales="global">
+                $(SaveEnvironmentalConditions)
+            </SaveEnvironmentalConditions>
+            <MinimumPeriphytonDensity type="float" scales="global" unit="g/m²">
+                $(MinimumPeriphytonDensity)
+            </MinimumPeriphytonDensity>
+            <ReproductionSuccessRate type="float" scales="global" unit="1">
+                $(ReproductionSuccessRate)
+            </ReproductionSuccessRate>
+            <LeafLitterEntryDensity type="float" scales="global" unit="g/m²">
+                $(LeafLitterEntryDensity)
+            </LeafLitterEntryDensity>
         </StreamCom4_CascadeToxswa>
         <DeleteFolder module="components" class="DeleteFolder" enabled="$(DeleteFoldersAtFinish)">
             <Path>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing</Path>
