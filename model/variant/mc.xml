@@ -27,7 +27,7 @@
         <PlantUptake>0</PlantUptake>
         <QFac>-9999</QFac>
         <LGUTS_BackgroundHazardRate>0</LGUTS_BackgroundHazardRate>
-        <UseSubLethalToxEffects>True</UseSubLethalToxEffects>
+        <UseSubLethalToxEffects>False</UseSubLethalToxEffects>
         <ThresholdPopulationSizeForSuperIndividuals>10</ThresholdPopulationSizeForSuperIndividuals>
         <NumberOfSiblingsPerSuperIndividual>70</NumberOfSiblingsPerSuperIndividual>
         <InitialBiomassForMacroinvertebrates>1</InitialBiomassForMacroinvertebrates>
