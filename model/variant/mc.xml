@@ -32,24 +32,24 @@
         <NumberOfSiblingsPerSuperIndividual>70</NumberOfSiblingsPerSuperIndividual>
         <InitialBiomassForMacroinvertebrates>1</InitialBiomassForMacroinvertebrates>
         <InitialBiomassForFish>0.1</InitialBiomassForFish>
-        <MaximumPeriphytonGrowthRate>3.05</MaximumPeriphytonGrowthRate>
-        <PeriphytonCarryingCapacity>10</PeriphytonCarryingCapacity>
+        <MaximumPeriphytonGrowthRate>.5</MaximumPeriphytonGrowthRate>
+        <PeriphytonCarryingCapacity>.3</PeriphytonCarryingCapacity>
         <PeriphytonArrheniusTemperature>5500</PeriphytonArrheniusTemperature>
-        <InitialLeafLitterDensity>0.00001</InitialLeafLitterDensity>
-        <LeafLitterEnergyDensity>72.275</LeafLitterEnergyDensity>
+        <InitialLeafLitterDensity>2</InitialLeafLitterDensity>
+        <LeafLitterEnergyDensity>2700</LeafLitterEnergyDensity>
         <DayOfYearForLitterAddition>270</DayOfYearForLitterAddition>
-        <C-PomSettlementRate>0.00001</C-PomSettlementRate>
-        <MaximumVelocityClassForC-PomAddition>2</MaximumVelocityClassForC-PomAddition>
-        <SettlementRateForFPomAndAnimalRemains>0.07</SettlementRateForFPomAndAnimalRemains>
-        <InitialF-PomDensity>4000</InitialF-PomDensity>
+        <C-PomSettlementRate>0.1</C-PomSettlementRate>
+        <MaximumVelocityClassForC-PomAddition>3</MaximumVelocityClassForC-PomAddition>
+        <SettlementRateForFPomAndAnimalRemains>0</SettlementRateForFPomAndAnimalRemains>
+        <InitialF-PomDensity>500</InitialF-PomDensity>
         <InitialS-PomDensity>500</InitialS-PomDensity>
         <FractionOfS-PomAvailableToFilterFeeders>0.0001</FractionOfS-PomAvailableToFilterFeeders>
         <PeriphytonEnergyDensity>4623</PeriphytonEnergyDensity>
         <UsePopulationDensity>TRUE</UsePopulationDensity>
         <SavePopulationSize>TRUE</SavePopulationSize>
-        <SaveTraitSize>TRUE</SaveTraitSize>
-        <SavePopulationDistribution>TRUE</SavePopulationDistribution>
-        <SaveTraitDistribution>TRUE</SaveTraitDistribution>
+        <SaveTraitSize>False</SaveTraitSize>
+        <SavePopulationDistribution>False</SavePopulationDistribution>
+        <SaveTraitDistribution>False</SaveTraitDistribution>
         <MultiplicationFactors>
             0.0009765625 0.001953125 0.00390625 0.0078125 0.015625 0.03125 0.0625 0.125 0.25 0.5
             1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768
