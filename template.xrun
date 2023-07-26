@@ -107,7 +107,7 @@
     Description   :  Controls whether environmental fate is calculated by the CascadeToxswa component
     Values        :  true or false
       -->
-    <RunCascadeToxswa>false</RunCascadeToxswa>
+    <RunCascadeToxswa>true</RunCascadeToxswa>
 
     <!--
     Parameter     :  ThresholdSW
@@ -230,7 +230,7 @@
     Description   :  Specifies whether effects are simulated by LGuts for the switched-on environmental fate components
     Values        :  true or false
     -->
-    <RunLGuts>false</RunLGuts>
+    <RunLGuts>true</RunLGuts>
 
     <!--
     Parameter     :  ReachSelection
@@ -432,7 +432,7 @@
     Values        :  true or false
     Best practice :  The export feature is experimental and should be set to false for longer simulation runs.
     -->
-    <ExportToSqlite>false</ExportToSqlite>
+    <ExportToSqlite>true</ExportToSqlite>
   </Settings>
   <Analysis>
       <!--
