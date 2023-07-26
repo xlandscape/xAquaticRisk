@@ -59,7 +59,7 @@
         <StreamComStartBiomass>Ind/m^2</StreamComStartBiomass>
         <RunCmfContinuous>false</RunCmfContinuous>
         <RunLPop>false</RunLPop>
-        <RunStreamCom>true</RunStreamCom>
+        <RunStreamCom>false</RunStreamCom>
         <MultiplicationFactors_LPop>0 1 10</MultiplicationFactors_LPop>
         <StreamComReach1>567</StreamComReach1>
         <StreamComReach2>570</StreamComReach2>
@@ -166,7 +166,7 @@
             <SpatialOutputScale scales="global">base_geometry</SpatialOutputScale>
             <RandomSeed type="int" scales="global">0</RandomSeed>
             <MinimumDistanceToField type="float" unit="m" scales="global">0</MinimumDistanceToField>
-            <FilteringTypes type="list[int]" scales="global"/>
+            <FilteringTypes type="list[int]" scales="global">-1</FilteringTypes>
             <FilteringMinWidth type="float" unit="m" scales="global">999</FilteringMinWidth>
             <FilteringFraction type="float" unit="1" scales="global">0</FilteringFraction>
             <AgDriftBoomHeight scales="global">n/a</AgDriftBoomHeight>
