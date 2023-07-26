@@ -1,6 +1,14 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.76] - 2023-07-26
+### Added
+### Changed
+- Updated Landscape Model core to version 1.14.3
+- Updated StreamCom component to version 2.3.0
+- Updated example scenario to version 3.19
+### Fixed
+
 ## [2.75] - 2023-03-10
 ### Added
 ### Changed
