@@ -107,7 +107,7 @@
     Description   :  Controls whether environmental fate is calculated by the CascadeToxswa component
     Values        :  true or false
       -->
-    <RunCascadeToxswa>true</RunCascadeToxswa>
+    <RunCascadeToxswa>false</RunCascadeToxswa>
 
     <!--
     Parameter     :  ThresholdSW
@@ -230,7 +230,7 @@
     Description   :  Specifies whether effects are simulated by LGuts for the switched-on environmental fate components
     Values        :  true or false
     -->
-    <RunLGuts>true</RunLGuts>
+    <RunLGuts>false</RunLGuts>
 
     <!--
     Parameter     :  ReachSelection
@@ -424,7 +424,7 @@
     Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long-running simulations,
                      30 for small simulations and 10 for anything in between.
     -->
-    <NumberMC>2</NumberMC>
+    <NumberMC>1</NumberMC>
 
     <!--
     Parameter     :  ExportToSqlite
@@ -432,7 +432,7 @@
     Values        :  true or false
     Best practice :  The export feature is experimental and should be set to false for longer simulation runs.
     -->
-    <ExportToSqlite>true</ExportToSqlite>
+    <ExportToSqlite>false</ExportToSqlite>
   </Settings>
   <Analysis>
       <!--
@@ -520,7 +520,7 @@
       Values        :   true or false
       Remark        :   Profiling comes with a little overhead and makes observer outputs less verbose
     -->
-    <EnableProfiling>true</EnableProfiling>
+    <EnableProfiling>false</EnableProfiling>
 
     <!--
       Parameter     :   ProfilingWaitingTime
