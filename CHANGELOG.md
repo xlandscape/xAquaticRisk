@@ -1,6 +1,18 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.80] - 2023-09-13
+### Added
+### Changed
+- Updated Landscape Model core to version 1.15.3
+- Updated XSprayDrift to version 2.5.4
+- Updated StepsRiverNetwork to version 2.1.6
+- Updated LEffectModel to version 2.1.4
+- Updated LP50 to version 2.2.7
+- Updated CascadeToxswa to version 2.3.5
+- Updated ReportingObserver to version 2.0.15
+### Fixed
+
 ## [2.79] - 2023-09-12
 ### Added
 ### Changed
