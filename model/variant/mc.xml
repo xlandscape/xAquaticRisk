@@ -169,9 +169,9 @@
             <FilteringTypes type="list[int]" scales="global">-1</FilteringTypes>
             <FilteringMinWidth type="float" unit="m" scales="global">999</FilteringMinWidth>
             <FilteringFraction type="float" unit="1" scales="global">0</FilteringFraction>
-            <AgDriftBoomHeight scales="global">n/a</AgDriftBoomHeight>
-            <AgDriftDropletSize scales="global">n/a</AgDriftDropletSize>
-            <AgDriftQuantile type="float" unit="1" scales="global">-1</AgDriftQuantile>
+            <AgDriftBoomHeight scales="global">low</AgDriftBoomHeight>
+            <AgDriftDropletSize scales="global">fine</AgDriftDropletSize>
+            <AgDriftQuantile type="float" unit="1" scales="global">.9</AgDriftQuantile>
         </SprayDrift>
         <DepositionToReach module="components" class="DepositionToReach">
             <Deposition>
