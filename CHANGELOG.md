@@ -1,6 +1,12 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [2.83] - 2023-09-18
+### Added
+### Changed
+- Updated Landscape model core to version 1.15.7
+### Fixed
+
 ## [2.82] - 2023-09-18
 ### Added
 ### Changed
