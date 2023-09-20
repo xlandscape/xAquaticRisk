@@ -94,6 +94,9 @@
             <ToTime type="date" scales="global">$(SimulationEnd)</ToTime>
             <InflowTimeSeriesPath scales="global">$(:TimeSeries)</InflowTimeSeriesPath>
             <ImportInflows type="bool" scales="global">$(RunCmfContinuous)</ImportInflows>
+            <Hydrography>
+                <FromOutput component="LandscapeScenario" output="hydrography_geom"/>
+            </Hydrography>
         </Hydrology>
         <PPM module="components" class="PpmCalendar">
             <SimulationStart type="date" scales="global">$(SimulationStart)</SimulationStart>
