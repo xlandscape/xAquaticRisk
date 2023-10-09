@@ -245,7 +245,7 @@
             <DepositionInputFile scales="global">$(_PARAM_DIR_)/$(DepositionInputFile)</DepositionInputFile>
         </DepositionToReach> 
 
-        <CascadeToxswa module="cascade_toxswa" class="CascadeToxswa" enabled="$(RunCascadeToxswa)">
+        <CascadeToxswa module="CascadeToxswa" class="CascadeToxswa">
             <ProcessingPath scales="global">$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing\fate\cascade</ProcessingPath>
             <SuspendedSolids type="float" unit="g/m³" scales="global">15</SuspendedSolids>
             <TimeSeriesStart>
