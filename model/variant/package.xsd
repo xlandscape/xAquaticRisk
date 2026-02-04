@@ -18,7 +18,15 @@
                   </xsd:restriction>
                 </xsd:simpleType>
               </xsd:element>
-              <xsd:element name="target_type" type="xsd:positiveInteger"/>
+              <xsd:element name="target_type">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:positiveInteger">
+                      <xsd:attribute name="type" type="xsd:string" use="required" fixed="list[int]"/>
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
               <xsd:element name="habitat_types">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
