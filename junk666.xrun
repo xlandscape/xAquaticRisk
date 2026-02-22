@@ -5,10 +5,10 @@
     <ns0:Project>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</ns0:Project>
 
     
-    <ns0:SimulationStart>1991-04-01</ns0:SimulationStart>
+    <ns0:SimulationStart>1991-01-01</ns0:SimulationStart>
 
     
-    <ns0:SimulationEnd>1991-04-30</ns0:SimulationEnd>
+    <ns0:SimulationEnd>1991-12-30</ns0:SimulationEnd>
   </ns0:Scenario>
   <ns0:PppUse>
     
@@ -19,10 +19,10 @@
   </ns0:PppUse>
   <ns0:Mitigation>
     
-    <ns0:InCropBuffer>20</ns0:InCropBuffer>
+    <ns0:InCropBuffer>0</ns0:InCropBuffer>
 
     
-    <ns0:TechnologyDriftReduction>0.5</ns0:TechnologyDriftReduction>
+    <ns0:TechnologyDriftReduction>0</ns0:TechnologyDriftReduction>
   </ns0:Mitigation>
   <ns0:Exposure>
     
@@ -178,7 +178,7 @@
   </ns0:Analysis>
   <ns0:SimulationInfo>
     
-    <ns0:SimID>muenster_feb2026_arable1x75_Mitig_2_junk</ns0:SimID>
+    <ns0:SimID>muenster_feb2026_arable1x75_noMitig_2</ns0:SimID>
 
     
     <ns0:ParentRun />

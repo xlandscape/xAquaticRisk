@@ -2,20 +2,20 @@
 <ns0:Parameters xmlns:ns0="urn:xAquaticRisk" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:xAquaticRisk model/variant/parameters.xsd">
   <ns0:Scenario>
     
-    <ns0:Project>scenario/oudebeek-beek7-tdi</ns0:Project>
+    <ns0:Project>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</ns0:Project>
 
     
-    <ns0:SimulationStart>2015-05-01</ns0:SimulationStart>
+    <ns0:SimulationStart>1991-01-01</ns0:SimulationStart>
 
     
-    <ns0:SimulationEnd>2015-05-07</ns0:SimulationEnd>
+    <ns0:SimulationEnd>1991-12-30</ns0:SimulationEnd>
   </ns0:Scenario>
   <ns0:PppUse>
     
-    <ns0:ApplicationRate>12.5</ns0:ApplicationRate>
+    <ns0:ApplicationRate>7.5</ns0:ApplicationRate>
 
     
-    <ns0:ApplicationTimeWindow>05-02 to 05-02</ns0:ApplicationTimeWindow>
+    <ns0:ApplicationTimeWindow>04-01 to 04-10</ns0:ApplicationTimeWindow>
   </ns0:PppUse>
   <ns0:Mitigation>
     
@@ -33,7 +33,7 @@
   </ns0:Exposure>
   <ns0:EnvironmentalFate>
     
-    <ns0:RunStepsRiverNetwork>true</ns0:RunStepsRiverNetwork>
+    <ns0:RunStepsRiverNetwork>false</ns0:RunStepsRiverNetwork>
 
     
     <ns0:RunCascadeToxswa>true</ns0:RunCascadeToxswa>
@@ -91,7 +91,7 @@
     <ns0:RunLGuts>true</ns0:RunLGuts>
 
     
-    <ns0:ReachSelection>567 570 580 584</ns0:ReachSelection>
+    <ns0:ReachSelection>154 772 575 149</ns0:ReachSelection>
 
     
     <ns0:NumberOfWarmUpYears>1</ns0:NumberOfWarmUpYears>
@@ -167,30 +167,30 @@
     <ns0:NumberMC>1</ns0:NumberMC>
 
     
-    <ns0:ExportToSqlite>true</ns0:ExportToSqlite>
+    <ns0:ExportToSqlite>false</ns0:ExportToSqlite>
   </ns0:Settings>
   <ns0:Analysis>
       
-      <ns0:ReportingReaches>r577</ns0:ReportingReaches>
+      <ns0:ReportingReaches>r154</ns0:ReportingReaches>
 
       
-      <ns0:PecDisplayedTime>2015-05-02 12:00</ns0:PecDisplayedTime>
+      <ns0:PecDisplayedTime>2015-04-02 12:00</ns0:PecDisplayedTime>
   </ns0:Analysis>
   <ns0:SimulationInfo>
     
-    <ns0:SimID>Test_Run_aqRisk</ns0:SimID>
+    <ns0:SimID>muenster_feb2026_arable1x75_noMitig_2</ns0:SimID>
 
     
     <ns0:ParentRun />
 
     
-    <ns0:NumberParallelProcesses>2</ns0:NumberParallelProcesses>
+    <ns0:NumberParallelProcesses>6</ns0:NumberParallelProcesses>
 
     
-    <ns0:CascadeToxswaWorkers>12</ns0:CascadeToxswaWorkers>
+    <ns0:CascadeToxswaWorkers>6</ns0:CascadeToxswaWorkers>
 
     
-    <ns0:DeleteFoldersAtFinish>false</ns0:DeleteFoldersAtFinish>
+    <ns0:DeleteFoldersAtFinish>true</ns0:DeleteFoldersAtFinish>
 
     
     <ns0:VerboseLogging>false</ns0:VerboseLogging>

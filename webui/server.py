@@ -234,13 +234,18 @@ class XAquaticHandler(SimpleHTTPRequestHandler):
                     # Create the .xrun file
                     create_xrun_file(params, output_path, TEMPLATE_PATH)
                     
-                    # Run the model in a separate thread
+                    # Run the model in a separate thread with a new CMD window
                     def run_model():
-                        subprocess.Popen(
-                            f'"{START_BAT}" "{output_path}"',
-                            cwd=BASE_DIR,
-                            shell=True
-                        )
+                        try:
+                            # Start simulation in a new CMD window (Windows-specific)
+                            # Pass arguments as list instead of shell string for proper handling
+                            subprocess.Popen(
+                                [START_BAT, output_path],
+                                cwd=BASE_DIR,
+                                creationflags=subprocess.CREATE_NEW_CONSOLE
+                            )
+                        except Exception as e:
+                            print(f"Error starting simulation: {e}")
                     
                     thread = threading.Thread(target=run_model)
                     thread.start()
