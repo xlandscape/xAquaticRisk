@@ -164,222 +164,248 @@ class XAquaticHandler(SimpleHTTPRequestHandler):
             super().do_GET()
     
     def do_POST(self):
-        if self.path == "/api/xrun-files":
-            try:
-                content_length = int(self.headers.get("Content-Length", 0))
-                
-                if content_length == 0:
-                    self.send_response(400)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    response = {"status": "error", "message": "No data provided"}
-                    self.wfile.write(json.dumps(response).encode())
-                    return
-                
-                post_data = self.rfile.read(content_length)
-                data = json.loads(post_data.decode())
-                
-                path = data.get("path", "").strip()
-                
-                if not path:
-                    self.send_response(400)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    response = {"status": "error", "message": "Path not provided"}
-                    self.wfile.write(json.dumps(response).encode())
-                    return
-                
-                print(f"DEBUG: Loading xrun files from path: {path}")
-                xrun_files = get_available_xrun_files(path)
-                print(f"DEBUG: Found {len(xrun_files)} files")
-                
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {
-                    "status": "success",
-                    "files": xrun_files,
-                    "count": len(xrun_files)
-                }
-                self.wfile.write(json.dumps(response).encode())
-            except json.JSONDecodeError as e:
-                print(f"DEBUG: JSON decode error: {e}")
-                self.send_response(400)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {"status": "error", "message": f"Invalid JSON: {str(e)}"}
-                self.wfile.write(json.dumps(response).encode())
-            except Exception as e:
-                print(f"DEBUG: Exception in /api/xrun-files: {e}")
-                self.send_response(500)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {"status": "error", "message": str(e)}
-                self.wfile.write(json.dumps(response).encode())
-        
-        elif self.path == "/api/run":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            params = json.loads(post_data.decode())
-            
-            try:
-                # Get SimID for filename
-                sim_id = params.get("Scenario/SimID", params.get("SimID", "Simulation"))
-                output_filename = f"{sim_id}.xrun"
-                output_path = os.path.join(OUTPUT_DIR, output_filename)
-                
-                # Create the .xrun file
-                create_xrun_file(params, output_path, TEMPLATE_PATH)
-                
-                # Run the model in a separate thread
-                def run_model():
-                    subprocess.Popen(
-                        f'"{START_BAT}" "{output_path}"',
-                        cwd=BASE_DIR,
-                        shell=True
-                    )
-                
-                thread = threading.Thread(target=run_model)
-                thread.start()
-                
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {
-                    "status": "success",
-                    "message": f"Model started with configuration: {output_filename}",
-                    "xrun_path": output_path
-                }
-                self.wfile.write(json.dumps(response).encode())
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {"status": "error", "message": str(e)}
-                self.wfile.write(json.dumps(response).encode())
-        
-        elif self.path == "/api/save":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            params = json.loads(post_data.decode())
-            
-            try:
-                sim_id = params.get("Scenario/SimID", params.get("SimID", "Simulation"))
-                output_filename = f"{sim_id}.xrun"
-                output_path = os.path.join(OUTPUT_DIR, output_filename)
-                
-                create_xrun_file(params, output_path, TEMPLATE_PATH)
-                
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {
-                    "status": "success",
-                    "message": f"Configuration saved to: {output_filename}",
-                    "xrun_path": output_path
-                }
-                self.wfile.write(json.dumps(response).encode())
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {"status": "error", "message": str(e)}
-                self.wfile.write(json.dumps(response).encode())
-        
-        elif self.path == "/api/save-as":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            data = json.loads(post_data.decode())
-            
-            try:
-                filename = data.get("filename", "configuration")
-                if not filename.endswith('.xrun'):
-                    filename += '.xrun'
-                
-                # Use provided path or default to OUTPUT_DIR
-                save_path = data.get("path", OUTPUT_DIR)
-                save_path = os.path.abspath(save_path)
-                
-                output_path = os.path.join(save_path, filename)
-                params = data.get("parameters", {})
-                
-                # Ensure the directory exists
-                os.makedirs(save_path, exist_ok=True)
-                
-                create_xrun_file(params, output_path, TEMPLATE_PATH)
-                
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {
-                    "status": "success",
-                    "message": f"Configuration saved as: {filename}",
-                    "xrun_path": output_path
-                }
-                self.wfile.write(json.dumps(response).encode())
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {"status": "error", "message": str(e)}
-                self.wfile.write(json.dumps(response).encode())
-        
-        elif self.path == "/api/open-xrun":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            data = json.loads(post_data.decode())
-            
-            try:
-                xrun_filename = data.get("filename", "")
-                xrun_dir = data.get("path", BASE_DIR)
-                
-                # Normalize the directory path
-                xrun_dir = os.path.abspath(xrun_dir)
-                xrun_path = os.path.join(xrun_dir, xrun_filename)
-                
-                # Make sure the path doesn't escape the base directory (security check)
-                xrun_path = os.path.abspath(xrun_path)
-                
-                if os.path.exists(xrun_path) and xrun_path.endswith('.xrun'):
-                    tree = ET.parse(xrun_path)
-                    root = tree.getroot()
+        try:
+            if self.path == "/api/xrun-files":
+                try:
+                    content_length = int(self.headers.get("Content-Length", 0))
                     
-                    # Extract parameters from the xrun file
-                    parameters = {}
-                    def extract_params(element, prefix=""):
-                        for child in element:
-                            tag = child.tag.replace('{urn:xAquaticRisk}', '')
-                            full_key = f"{prefix}{tag}" if prefix else tag
-                            
-                            if len(child) > 0:
-                                extract_params(child, f"{full_key}/")
-                            else:
-                                value = child.text.strip() if child.text else ""
-                                parameters[full_key] = value
+                    if content_length == 0:
+                        self.send_response(400)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        response = {"status": "error", "message": "No data provided"}
+                        self.wfile.write(json.dumps(response).encode())
+                        return
                     
-                    extract_params(root)
+                    post_data = self.rfile.read(content_length)
+                    data = json.loads(post_data.decode())
+                    
+                    path = data.get("path", "").strip()
+                    
+                    if not path:
+                        self.send_response(400)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        response = {"status": "error", "message": "Path not provided"}
+                        self.wfile.write(json.dumps(response).encode())
+                        return
+                    
+                    print(f"DEBUG: Loading xrun files from path: {path}")
+                    xrun_files = get_available_xrun_files(path)
+                    print(f"DEBUG: Found {len(xrun_files)} files")
                     
                     self.send_response(200)
                     self.send_header("Content-type", "application/json")
                     self.end_headers()
                     response = {
                         "status": "success",
-                        "parameters": parameters,
-                        "filename": xrun_filename
+                        "files": xrun_files,
+                        "count": len(xrun_files)
                     }
                     self.wfile.write(json.dumps(response).encode())
-                else:
-                    self.send_response(404)
+                except json.JSONDecodeError as e:
+                    print(f"DEBUG: JSON decode error: {e}")
+                    self.send_response(400)
                     self.send_header("Content-type", "application/json")
                     self.end_headers()
-                    response = {"status": "error", "message": "File not found"}
+                    response = {"status": "error", "message": f"Invalid JSON: {str(e)}"}
                     self.wfile.write(json.dumps(response).encode())
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                response = {"status": "error", "message": str(e)}
-                self.wfile.write(json.dumps(response).encode())
+                except Exception as e:
+                    print(f"DEBUG: Exception in /api/xrun-files: {type(e).__name__}: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    self.send_response(500)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {"status": "error", "message": str(e)}
+                    self.wfile.write(json.dumps(response).encode())
+            
+            elif self.path == "/api/run":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                params = json.loads(post_data.decode())
+                
+                try:
+                    # Get SimID for filename
+                    sim_id = params.get("Scenario/SimID", params.get("SimID", "Simulation"))
+                    output_filename = f"{sim_id}.xrun"
+                    output_path = os.path.join(OUTPUT_DIR, output_filename)
+                    
+                    # Create the .xrun file
+                    create_xrun_file(params, output_path, TEMPLATE_PATH)
+                    
+                    # Run the model in a separate thread
+                    def run_model():
+                        subprocess.Popen(
+                            f'"{START_BAT}" "{output_path}"',
+                            cwd=BASE_DIR,
+                            shell=True
+                        )
+                    
+                    thread = threading.Thread(target=run_model)
+                    thread.start()
+                    
+                    self.send_response(200)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {
+                        "status": "success",
+                        "message": f"Model started with configuration: {output_filename}",
+                        "xrun_path": output_path
+                    }
+                    self.wfile.write(json.dumps(response).encode())
+                except Exception as e:
+                    self.send_response(500)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {"status": "error", "message": str(e)}
+                    self.wfile.write(json.dumps(response).encode())
+            
+            elif self.path == "/api/save":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                data = json.loads(post_data.decode())
+                
+                try:
+                    # Check if this is an update to an existing file or a new save
+                    if "path" in data and "filename" in data:
+                        # Update existing xrun file
+                        save_path = data.get("path")
+                        save_path = os.path.abspath(save_path)
+                        filename = data.get("filename")
+                        if not filename.endswith('.xrun'):
+                            filename += '.xrun'
+                        output_path = os.path.join(save_path, filename)
+                    else:
+                        # Save to default location (Simulation.xrun or based on SimID)
+                        params = data.get("parameters", {})
+                        sim_id = params.get("Scenario/SimID", params.get("SimID", "Simulation"))
+                        filename = f"{sim_id}.xrun"
+                        output_path = os.path.join(OUTPUT_DIR, filename)
+                    
+                    params = data.get("parameters", data)
+                    create_xrun_file(params, output_path, TEMPLATE_PATH)
+                    
+                    self.send_response(200)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {
+                        "status": "success",
+                        "message": f"Configuration saved to: {os.path.basename(output_path)}",
+                        "xrun_path": output_path
+                    }
+                    self.wfile.write(json.dumps(response).encode())
+                except Exception as e:
+                    self.send_response(500)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {"status": "error", "message": str(e)}
+                    self.wfile.write(json.dumps(response).encode())
+            
+            elif self.path == "/api/save-as":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                data = json.loads(post_data.decode())
+                
+                try:
+                    filename = data.get("filename", "configuration")
+                    if not filename.endswith('.xrun'):
+                        filename += '.xrun'
+                    
+                    # Use provided path or default to OUTPUT_DIR
+                    save_path = data.get("path", OUTPUT_DIR)
+                    save_path = os.path.abspath(save_path)
+                    
+                    output_path = os.path.join(save_path, filename)
+                    params = data.get("parameters", {})
+                    
+                    # Ensure the directory exists
+                    os.makedirs(save_path, exist_ok=True)
+                    
+                    create_xrun_file(params, output_path, TEMPLATE_PATH)
+                    
+                    self.send_response(200)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {
+                        "status": "success",
+                        "message": f"Configuration saved as: {filename}",
+                        "filename": filename,
+                        "xrun_path": output_path
+                    }
+                    self.wfile.write(json.dumps(response).encode())
+                except Exception as e:
+                    self.send_response(500)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {"status": "error", "message": str(e)}
+                    self.wfile.write(json.dumps(response).encode())
+        
+            elif self.path == "/api/open-xrun":
+                try:
+                    content_length = int(self.headers.get("Content-Length", 0))
+                    post_data = self.rfile.read(content_length)
+                    data = json.loads(post_data.decode())
+                    
+                    xrun_filename = data.get("filename", "")
+                    xrun_dir = data.get("path", BASE_DIR)
+                    
+                    # Normalize the directory path
+                    xrun_dir = os.path.abspath(xrun_dir)
+                    xrun_path = os.path.join(xrun_dir, xrun_filename)
+                    
+                    # Make sure the path doesn't escape the base directory (security check)
+                    xrun_path = os.path.abspath(xrun_path)
+                    
+                    if os.path.exists(xrun_path) and xrun_path.endswith('.xrun'):
+                        tree = ET.parse(xrun_path)
+                        root = tree.getroot()
+                        
+                        # Extract parameters from the xrun file
+                        parameters = {}
+                        def extract_params(element, prefix=""):
+                            for child in element:
+                                tag = child.tag.replace('{urn:xAquaticRisk}', '')
+                                full_key = f"{prefix}{tag}" if prefix else tag
+                                
+                                if len(child) > 0:
+                                    extract_params(child, f"{full_key}/")
+                                else:
+                                    value = child.text.strip() if child.text else ""
+                                    parameters[full_key] = value
+                        
+                        extract_params(root)
+                        
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        response = {
+                            "status": "success",
+                            "parameters": parameters,
+                            "filename": xrun_filename
+                        }
+                        self.wfile.write(json.dumps(response).encode())
+                    else:
+                        self.send_response(404)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        response = {"status": "error", "message": "File not found"}
+                        self.wfile.write(json.dumps(response).encode())
+                except Exception as e:
+                    self.send_response(500)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    response = {"status": "error", "message": str(e)}
+                    self.wfile.write(json.dumps(response).encode())
+        except Exception as e:
+            print(f"DEBUG: Unexpected error in do_POST: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
+            self.send_response(500)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            response = {"status": "error", "message": str(e)}
+            self.wfile.write(json.dumps(response).encode())
     
     def get_available_scenarios(self) -> list:
         """Get list of available scenarios."""

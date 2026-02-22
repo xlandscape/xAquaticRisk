@@ -303,7 +303,7 @@
                         <label for="xrunPath">Path to xrun Files</label>
                         <div style="display: flex; gap: 10px;">
                             <input type="text" id="xrunPath" placeholder="e.g., C:\LocalWork\xAquaticRisk or .\scenario\mydir" style="flex: 1;">
-                            <button type="button" onclick="loadXrunFiles()" class="btn btn-secondary">
+                            <button type="button" id="browseButton" class="btn btn-secondary">
                                 Browse
                             </button>
                         </div>
@@ -315,21 +315,21 @@
                         <select id="xrunSelect">
                             <option value="">Select an xrun file to open...</option>
                         </select>
-                        <button type="button" onclick="openXrunFile()" class="btn btn-secondary" style="margin-top: 10px;">
+                        <button type="button" id="loadFileButton" class="btn btn-secondary" style="margin-top: 10px;">
                             Load File
                         </button>
                         <div class="help-text">Select an existing xrun file to load its parameters</div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="saveAsName">Save Configuration As</label>
+                        <label for="saveAsName">Save Parameterisation as</label>
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" id="saveAsName" placeholder="e.g., MyConfiguration" style="flex: 1;">
-                            <button type="button" onclick="saveAsXrun()" class="btn btn-secondary">
+                            <input type="text" id="saveAsName" placeholder="e.g., MyParameterisation" style="flex: 1;">
+                            <button type="button" id="saveAsButton" class="btn btn-secondary">
                                 Save As
                             </button>
                         </div>
-                        <div class="help-text">Save current configuration with a custom filename</div>
+                        <div class="help-text">Save current parameterisation with a custom filename</div>
                     </div>
                 </div>
             </div>
@@ -341,13 +341,6 @@
                     <span class="toggle">&#9660;</span>
                 </div>
                 <div class="card-body">
-                    <div class="form-group">
-                        <label for="SimID">Experiment Definition File Name *</label>
-                        <input type="text" id="SimID" name="SimID" required 
-                               placeholder="e.g., MySimulation_2024">
-                        <div class="help-text">Unique identifier for this run (used for filename)</div>
-                    </div>
-                    
                     <div class="form-group">
                         <label for="SimulationInfo/SimID">SimID</label>
                         <input type="text" id="SimulationInfo/SimID" name="SimulationInfo/SimID" 
@@ -787,7 +780,7 @@
                     <button type="button" class="btn btn-outline" onclick="loadTemplate()">
                         Reset to Template
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="saveConfiguration()">
+                    <button type="button" class="btn btn-secondary" id="saveConfigButton">
                         Save Configuration
                     </button>
                     <button type="submit" class="btn btn-primary">
@@ -810,6 +803,10 @@
     </div>
     
     <script>
+        // Track the currently active xrun file (for updating changes)
+        let activeXrunPath = null;
+        let activeXrunFilename = null;
+        
         // Known parameter mappings
         const knownParams = [
             'Scenario/Project', 'Scenario/SimulationStart', 'Scenario/SimulationEnd',
@@ -851,6 +848,40 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadScenarios();
             loadTemplate();
+            
+            // Attach event listeners for xrun file buttons
+            const browseButton = document.getElementById('browseButton');
+            const loadFileButton = document.getElementById('loadFileButton');
+            const saveAsButton = document.getElementById('saveAsButton');
+            const saveConfigButton = document.getElementById('saveConfigButton');
+            
+            if (browseButton) {
+                browseButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loadXrunFiles();
+                });
+            }
+            
+            if (loadFileButton) {
+                loadFileButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openXrunFile();
+                });
+            }
+            
+            if (saveAsButton) {
+                saveAsButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    saveAsXrun();
+                });
+            }
+            
+            if (saveConfigButton) {
+                saveConfigButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    saveConfiguration();
+                });
+            }
         });
         
         async function loadScenarios() {
@@ -943,30 +974,27 @@
                 }
             }
             
-            // Also get SimID which is separate
-            const simId = document.getElementById('SimID');
-            if (simId && simId.value) {
-                params['SimID'] = simId.value;
-            }
-            
             return params;
         }
         
         async function saveConfiguration() {
             const params = getFormData();
             
-            if (!params.SimID) {
-                showStatus('Please enter an Experiment Definition File Name', 'error');
-                return;
-            }
-            
             try {
+                const body = { parameters: params };
+                
+                // If an active xrun file exists, save to that file instead
+                if (activeXrunPath && activeXrunFilename) {
+                    body.path = activeXrunPath;
+                    body.filename = activeXrunFilename;
+                }
+                
                 const response = await fetch('/api/save', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(params)
+                    body: JSON.stringify(body)
                 });
                 
                 const result = await response.json();
@@ -985,11 +1013,6 @@
             e.preventDefault();
             
             const params = getFormData();
-            
-            if (!params.SimID) {
-                showStatus('Please enter an Experiment Definition File Name', 'error');
-                return;
-            }
             
             if (!params['Scenario/Project']) {
                 showStatus('Please select a scenario', 'error');
@@ -1166,7 +1189,11 @@
                 
                 if (result.status === 'success') {
                     showStatus(result.message, 'success');
-                    document.getElementById('saveAsName').value = '';
+                    // Update the field with the actual saved filename
+                    document.getElementById('saveAsName').value = result.filename;
+                    // Track this as the active xrun file for subsequent saves
+                    activeXrunPath = path;
+                    activeXrunFilename = result.filename;
                     loadXrunFiles(); // Refresh the file list
                 } else {
                     showStatus('Error saving file: ' + result.message, 'error');
