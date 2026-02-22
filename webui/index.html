@@ -292,6 +292,48 @@
         </header>
         
         <form id="paramForm">
+            <!-- xrun File Operations Section -->
+            <div class="card">
+                <div class="card-header" onclick="toggleSection(this)">
+                    <span>xrun File</span>
+                    <span class="toggle">&#9660;</span>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="xrunPath">Path to xrun Files</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="xrunPath" placeholder="e.g., C:\LocalWork\xAquaticRisk or .\scenario\mydir" style="flex: 1;">
+                            <button type="button" onclick="loadXrunFiles()" class="btn btn-secondary">
+                                Browse
+                            </button>
+                        </div>
+                        <div class="help-text">Enter the directory path where xrun files are located, then click Browse</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="xrunSelect">Open xrun File</label>
+                        <select id="xrunSelect">
+                            <option value="">Select an xrun file to open...</option>
+                        </select>
+                        <button type="button" onclick="openXrunFile()" class="btn btn-secondary" style="margin-top: 10px;">
+                            Load File
+                        </button>
+                        <div class="help-text">Select an existing xrun file to load its parameters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saveAsName">Save Configuration As</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="saveAsName" placeholder="e.g., MyConfiguration" style="flex: 1;">
+                            <button type="button" onclick="saveAsXrun()" class="btn btn-secondary">
+                                Save As
+                            </button>
+                        </div>
+                        <div class="help-text">Save current configuration with a custom filename</div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Experiment Configuration Section -->
             <div class="card">
                 <div class="card-header" onclick="toggleSection(this)">
@@ -989,6 +1031,148 @@
                 setTimeout(() => {
                     statusDiv.className = 'status-message';
                 }, 5000);
+            }
+        }
+        
+        async function loadXrunFiles() {
+            const path = document.getElementById('xrunPath').value.trim();
+            
+            console.log('loadXrunFiles called with path:', path);
+            
+            if (!path) {
+                showStatus('Please enter a path to the xrun files directory', 'error');
+                return;
+            }
+            
+            try {
+                console.log('Sending request to /api/xrun-files with path:', path);
+                
+                const response = await fetch('/api/xrun-files', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: path })
+                });
+                
+                console.log('Response received:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Result:', result);
+                
+                if (result.status === 'success') {
+                    const select = document.getElementById('xrunSelect');
+                    select.innerHTML = '<option value="">Select an xrun file to open...</option>';
+                    
+                    if (result.files && result.files.length > 0) {
+                        result.files.forEach(file => {
+                            const option = document.createElement('option');
+                            option.value = file.name;
+                            option.textContent = file.name;
+                            select.appendChild(option);
+                        });
+                        showStatus(`Found ${result.files.length} xrun file(s)`, 'success');
+                    } else {
+                        showStatus('No xrun files found in the specified directory', 'warning');
+                    }
+                } else {
+                    showStatus('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading xrun files:', error);
+                showStatus('Error loading xrun files: ' + error.message, 'error');
+            }
+        }
+        
+        async function openXrunFile() {
+            const filename = document.getElementById('xrunSelect').value;
+            const path = document.getElementById('xrunPath').value.trim();
+            
+            if (!filename) {
+                showStatus('Please select an xrun file to open', 'error');
+                return;
+            }
+            
+            if (!path) {
+                showStatus('Please specify the path to xrun files', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/open-xrun', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        filename: filename,
+                        path: path
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Load parameters into the form
+                    for (const [key, value] of Object.entries(result.parameters)) {
+                        const input = document.getElementById(key);
+                        if (input) {
+                            input.value = value;
+                        }
+                    }
+                    showStatus(`Loaded configuration from: ${filename}`, 'success');
+                } else {
+                    showStatus('Error loading file: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showStatus('Error loading xrun file: ' + error.message, 'error');
+            }
+        }
+        
+        async function saveAsXrun() {
+            const filename = document.getElementById('saveAsName').value;
+            const path = document.getElementById('xrunPath').value.trim();
+            
+            if (!filename) {
+                showStatus('Please enter a filename for "Save As"', 'error');
+                return;
+            }
+            
+            if (!path) {
+                showStatus('Please specify a path where to save the file', 'error');
+                return;
+            }
+            
+            const params = getFormData();
+            
+            try {
+                const response = await fetch('/api/save-as', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        filename: filename,
+                        path: path,
+                        parameters: params
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showStatus(result.message, 'success');
+                    document.getElementById('saveAsName').value = '';
+                    loadXrunFiles(); // Refresh the file list
+                } else {
+                    showStatus('Error saving file: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showStatus('Error saving xrun file: ' + error.message, 'error');
             }
         }
     </script>

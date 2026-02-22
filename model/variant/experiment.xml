@@ -18,7 +18,7 @@
             <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\experiment.log</LogFile>
             <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
         </Observer>
-        <Observer module="ReportingObserver" class="ReportingObserver">
+        <!-- <Observer module="ReportingObserver" class="ReportingObserver">
             <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>
             <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\reporting\$(Species1)_SD</Output_Folder>
             <Key>$(SimID)</Key>
@@ -73,8 +73,8 @@
             <LM_Cmf_Survival_Offset>true</LM_Cmf_Survival_Offset>
             <LM_Steps_Survival_Offset>true</LM_Steps_Survival_Offset>
             <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
-        </Observer>
-        <Observer module="ReportingObserver" class="ReportingObserver">
+        </Observer> -->
+        <!-- <Observer module="ReportingObserver" class="ReportingObserver">
             <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>
             <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\reporting\$(Species1)_IT</Output_Folder>
             <Key>$(SimID)</Key>
@@ -129,10 +129,10 @@
             <LM_Cmf_Survival_Offset>true</LM_Cmf_Survival_Offset>
             <LM_Steps_Survival_Offset>true</LM_Steps_Survival_Offset>
             <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
-        </Observer>
-            <Observer module="AnalysisObserver" class="AnalysisObserver">
+        </Observer> -->
+        <Observer module="AnalysisObserver" class="AnalysisObserver">
             <Data>$(_EXP_BASE_DIR_)\$(SimID)\log\experiment.log</Data>
-            <Script>$(_PARAM_DIR_)\analysis\profiling.R</Script>
+            <Script>C:\LocalWork\xAquaticRisk\analysis\profiling.R</Script>
             <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\log\profile</Output_Folder>
         </Observer>
     </Observers>
