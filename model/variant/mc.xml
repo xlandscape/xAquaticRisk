@@ -150,7 +150,7 @@
             <WindDirection type="int" unit="deg" scales="global">-1</WindDirection>
             <SprayDriftModel scales="global">XSprayDrift</SprayDriftModel>
             <SourceExposure unit="g/ha" scales="global">NA</SourceExposure>
-            <RautmannClass scales="global">orchards.$(CropStage)</RautmannClass>
+            <RautmannClass scales="global">$(RautmannClass)</RautmannClass>
             <AppliedFields>
                 <FromOutput component="PPM" output="AppliedFields"/>
             </AppliedFields>

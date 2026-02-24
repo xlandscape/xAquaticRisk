@@ -74,13 +74,13 @@
   </Mitigation>
   <Exposure>
     <!--
-    Parameter     :  CropStage
-    Description   :  The spray-drift scenario used in the simulation
-    Values        :  early or late
-    Remark        :  The scenario is applied to all applications of application sequences.
-    Best practice :  Select the spray-drift scenario fitting to te application dates.
+    Parameter     :  RautmannClass
+    Description   :  The Rautmann drift class used in the simulation
+    Values        :  orchards.early, orchards.late or arable
+    Remark        :  The Rautmann class is applied to all applications of application sequences.
+    Best practice :  Select the Rautmann class fitting to the crop type and application dates.
     -->
-    <CropStage>early</CropStage>
+    <RautmannClass>orchards.early</RautmannClass>
 
     <!--
     Parameter     :  DepositionInputFile

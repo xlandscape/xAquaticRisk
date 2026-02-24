@@ -452,12 +452,13 @@
                 <div class="card-body">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="Exposure/CropStage">Crop Stage</label>
-                            <select id="Exposure/CropStage" name="Exposure/CropStage">
-                                <option value="early">Early</option>
-                                <option value="late">Late</option>
+                            <label for="Exposure/RautmannClass">Rautmann Class</label>
+                            <select id="Exposure/RautmannClass" name="Exposure/RautmannClass">
+                                <option value="orchards.early">Orchards Early</option>
+                                <option value="orchards.late">Orchards Late</option>
+                                <option value="arable">Arable</option>
                             </select>
-                            <div class="help-text">The spray-drift scenario used in the simulation</div>
+                            <div class="help-text">The Rautmann drift class used in the simulation</div>
                         </div>
                         
                         <div class="form-group">
@@ -813,7 +814,7 @@
             'SimulationInfo/SimID', 'Settings/NumberMC', 'SimulationInfo/NumberParallelProcesses',
             'PppUse/ApplicationRate', 'PppUse/ApplicationTimeWindow',
             'Mitigation/InCropBuffer', 'Mitigation/TechnologyDriftReduction',
-            'Exposure/CropStage', 'Exposure/DepositionInputFile',
+            'Exposure/RautmannClass', 'Exposure/DepositionInputFile',
             'EnvironmentalFate/RunStepsRiverNetwork', 'EnvironmentalFate/RunCascadeToxswa',
             'EnvironmentalFate/MolarMass', 'EnvironmentalFate/SolubilityInWater',
             'EnvironmentalFate/DT50sw', 'EnvironmentalFate/DT50sed',

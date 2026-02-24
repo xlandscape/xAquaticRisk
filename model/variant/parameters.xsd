@@ -68,11 +68,12 @@
         <xsd:element name="Exposure">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="CropStage">
+              <xsd:element name="RautmannClass">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="early"/>
-                    <xsd:enumeration value="late"/>
+                    <xsd:enumeration value="orchards.early"/>
+                    <xsd:enumeration value="orchards.late"/>
+                    <xsd:enumeration value="arable"/>
                   </xsd:restriction>
                 </xsd:simpleType>
               </xsd:element>
