@@ -8,6 +8,32 @@
   <xsd:element name="Parameters">
     <xsd:complexType>
       <xsd:sequence>
+        <xsd:element name="SimulationInfo">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="SimID">
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="3"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+              <xsd:element name="ParentRun" type="xsd:anyURI"/>
+              <xsd:element name="NumberParallelProcesses" type="xsd:nonNegativeInteger"/>
+              <xsd:element name="CascadeToxswaWorkers" type="xsd:nonNegativeInteger"/>
+              <xsd:element name="DeleteFoldersAtFinish" type="xsd:boolean"/>
+              <xsd:element name="VerboseLogging" type="xsd:boolean"/>
+              <xsd:element name="EnableProfiling" type="xsd:boolean"/>
+              <xsd:element name="ProfilingWaitingTime">
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:float">
+                    <xsd:minExclusive value="0"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
         <xsd:element name="Scenario">
           <xsd:complexType>
             <xsd:sequence>
@@ -378,32 +404,6 @@
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
                     <xsd:pattern value="[12]\d{3}-[0-2]\d-[0-3]\d [01]\d:[0-5]\d"/>
-                  </xsd:restriction>
-                </xsd:simpleType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="SimulationInfo">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="SimID">
-                <xsd:simpleType>
-                  <xsd:restriction base="xsd:string">
-                    <xsd:minLength value="3"/>
-                  </xsd:restriction>
-                </xsd:simpleType>
-              </xsd:element>
-              <xsd:element name="ParentRun" type="xsd:anyURI"/>
-              <xsd:element name="NumberParallelProcesses" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="CascadeToxswaWorkers" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="DeleteFoldersAtFinish" type="xsd:boolean"/>
-              <xsd:element name="VerboseLogging" type="xsd:boolean"/>
-              <xsd:element name="EnableProfiling" type="xsd:boolean"/>
-              <xsd:element name="ProfilingWaitingTime">
-                <xsd:simpleType>
-                  <xsd:restriction base="xsd:float">
-                    <xsd:minExclusive value="0"/>
                   </xsd:restriction>
                 </xsd:simpleType>
               </xsd:element>

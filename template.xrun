@@ -4,6 +4,87 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:xAquaticRisk model/variant/parameters.xsd"
 >
+  <SimulationInfo>
+    <!--
+    Parameter     :  SimID
+    Description   :  A unique identifier of a simulation run
+    Values        :  Any characters that are valid in file system identifiers
+    Remark        :  Running a simulation with the same name as an existing simulation run results in an error.
+    Best practice :  Change this parameter with every simulation run. When doing test runs, indicate the test character
+                     of clearly in the identifier. If conducting a run from the experiment table, register it there and
+                     use the naming scheme <experiment id>-<n> where n is the number of the run.
+    -->
+    <SimID>Test_Run_aqRisk</SimID>
+
+    <!--
+    Parameter     :  ParentRun
+    Description   :  A file pattern of potential parents for this run
+    Values        :  Empty (=do not use this feature) or a file pattern yielding at least one X3df data store file.
+    Remark        :  The feature is currently experimental.
+                     If the pattern yields more than one file, a single file will be sampled per Monte Carlo run.
+    Best practice :  Only fill out the parent run if you like to test the feature.
+    -->
+    <ParentRun/>
+
+    <!--
+    Parameter     :  NumberParallelProcesses
+    Description   :  The number of Monte Carlo runs that are conducted simultaneously
+    Values        :  Any positive integer
+    Remark        :  This parameter should be modified according to the available hardware resources.
+    Best practice :  To best use the available hardware, apply this rule of thumb:
+                     min(NumberMC, NumberParallelProcesses) <= available processors
+                     if RunCascadeToxswa is false, else
+                     min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
+    -->
+    <NumberParallelProcesses>2</NumberParallelProcesses>
+
+    <!--
+    Parameter     :  CascadeToxswaWorkers
+    Description   :  The number of processes spawned by CascadeToxswa
+    Values        :  Any positive integer
+    Remark        :  This parameter should be modified according to the available hardware resources. Only in effect, if
+                     RunCascadeToxswa is true.
+    Best practice :  To best use the available hardware, apply this rule of thumb:
+                     min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
+    -->
+    <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
+
+    <!--
+      Parameter     :   DeleteFoldersAtFinish
+      Description   :   Specifies whether processing folders should be deleted after the model run is finished
+      Values        :   true or false
+      Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when
+                        testing
+    -->
+    <DeleteFoldersAtFinish>false</DeleteFoldersAtFinish>
+
+    <!--
+      Parameter     :   VerboseLogging
+      Description   :   Specifies whether verbose logging is used
+      Values        :   true or false
+      Best practice :   Should be set to false when using the model in production environments and only to false if
+                        there is need for debugging or during development
+    -->
+    <VerboseLogging>false</VerboseLogging>
+
+    <!--
+      Parameter     :   EnableProfiling
+      Description   :   Specifies whether the performance of the simulation run is profiled
+      Values        :   true or false
+      Remark        :   Profiling comes with a little overhead and makes observer outputs less verbose
+    -->
+    <EnableProfiling>false</EnableProfiling>
+
+    <!--
+      Parameter     :   ProfilingWaitingTime
+      Description   :   The time interval in seconds between to profiling rounds
+      Values        :   Any positive integer
+      Remark        :   Only in effect if profiling is enabled
+      Best practice :   Choose an interval that does not produce an overly large amount of output but that still results
+                         in a sufficient temporal resolution
+    -->
+    <ProfilingWaitingTime>5</ProfilingWaitingTime>
+  </SimulationInfo>
   <Scenario>
     <!--
     Parameter     :  Project
@@ -451,85 +532,4 @@
       -->
       <PecDisplayedTime>2015-05-02 12:00</PecDisplayedTime>
   </Analysis>
-  <SimulationInfo>
-    <!--
-    Parameter     :  SimID
-    Description   :  A unique identifier of a simulation run
-    Values        :  Any characters that are valid in file system identifiers
-    Remark        :  Running a simulation with the same name as an existing simulation run results in an error.
-    Best practice :  Change this parameter with every simulation run. When doing test runs, indicate the test character
-                     of clearly in the identifier. If conducting a run from the experiment table, register it there and
-                     use the naming scheme <experiment id>-<n> where n is the number of the run.
-    -->
-    <SimID>Test_Run_aqRisk</SimID>
-
-    <!--
-    Parameter     :  ParentRun
-    Description   :  A file pattern of potential parents for this run
-    Values        :  Empty (=do not use this feature) or a file pattern yielding at least one X3df data store file.
-    Remark        :  The feature is currently experimental.
-                     If the pattern yields more than one file, a single file will be sampled per Monte Carlo run.
-    Best practice :  Only fill out the parent run if you like to test the feature.
-    -->
-    <ParentRun/>
-
-    <!--
-    Parameter     :  NumberParallelProcesses
-    Description   :  The number of Monte Carlo runs that are conducted simultaneously
-    Values        :  Any positive integer
-    Remark        :  This parameter should be modified according to the available hardware resources.
-    Best practice :  To best use the available hardware, apply this rule of thumb:
-                     min(NumberMC, NumberParallelProcesses) <= available processors
-                     if RunCascadeToxswa is false, else
-                     min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
-    -->
-    <NumberParallelProcesses>2</NumberParallelProcesses>
-
-    <!--
-    Parameter     :  CascadeToxswaWorkers
-    Description   :  The number of processes spawned by CascadeToxswa
-    Values        :  Any positive integer
-    Remark        :  This parameter should be modified according to the available hardware resources. Only in effect, if
-                     RunCascadeToxswa is true.
-    Best practice :  To best use the available hardware, apply this rule of thumb:
-                     min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
-    -->
-    <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
-
-    <!--
-      Parameter     :   DeleteFoldersAtFinish
-      Description   :   Specifies whether processing folders should be deleted after the model run is finished
-      Values        :   true or false
-      Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when
-                        testing
-    -->
-    <DeleteFoldersAtFinish>false</DeleteFoldersAtFinish>
-
-    <!--
-      Parameter     :   VerboseLogging
-      Description   :   Specifies whether verbose logging is used
-      Values        :   true or false
-      Best practice :   Should be set to false when using the model in production environments and only to false if
-                        there is need for debugging or during development
-    -->
-    <VerboseLogging>false</VerboseLogging>
-
-    <!--
-      Parameter     :   EnableProfiling
-      Description   :   Specifies whether the performance of the simulation run is profiled
-      Values        :   true or false
-      Remark        :   Profiling comes with a little overhead and makes observer outputs less verbose
-    -->
-    <EnableProfiling>false</EnableProfiling>
-
-    <!--
-      Parameter     :   ProfilingWaitingTime
-      Description   :   The time interval in seconds between to profiling rounds
-      Values        :   Any positive integer
-      Remark        :   Only in effect if profiling is enabled
-      Best practice :   Choose an interval that does not produce an overly large amount of output but that still results
-                         in a sufficient temporal resolution
-    -->
-    <ProfilingWaitingTime>5</ProfilingWaitingTime>
-  </SimulationInfo>
 </Parameters>

@@ -6,6 +6,43 @@
 # to __start__.bat instead of an .xrun file.
 # =============================================================================
 
+SimulationInfo:
+  # A unique identifier of a simulation run
+  # Values: Any characters that are valid in file system identifiers
+  # Remark: Running a simulation with the same name as an existing run results in an error.
+  SimID: Test_Run_aqRisk
+
+  # A file pattern of potential parents for this run
+  # Values: Empty or a file pattern yielding at least one X3df data store file.
+  # Remark: The feature is currently experimental.
+  ParentRun:
+
+  # The number of Monte Carlo runs that are conducted simultaneously
+  # Values: Any positive integer
+  # Best practice: min(NumberMC, NumberParallelProcesses) <= available processors
+  NumberParallelProcesses: 2
+
+  # The number of processes spawned by CascadeToxswa
+  # Values: Any positive integer
+  # Remark: Only in effect if RunCascadeToxswa is true.
+  CascadeToxswaWorkers: 12
+
+  # Specifies whether processing folders should be deleted after the model run is finished
+  # Values: true or false
+  DeleteFoldersAtFinish: false
+
+  # Specifies whether verbose logging is used
+  # Values: true or false
+  VerboseLogging: false
+
+  # Specifies whether the performance of the simulation run is profiled
+  # Values: true or false
+  EnableProfiling: false
+
+  # The time interval in seconds between two profiling rounds
+  # Values: Any positive integer
+  ProfilingWaitingTime: 5
+
 Scenario:
   # The scenario used by the simulation
   # Values: scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
@@ -190,39 +227,3 @@ Analysis:
   # Values: A date and time of format YYYY-MM-DD HH:MM
   PecDisplayedTime: "2015-05-02 12:00"
 
-SimulationInfo:
-  # A unique identifier of a simulation run
-  # Values: Any characters that are valid in file system identifiers
-  # Remark: Running a simulation with the same name as an existing run results in an error.
-  SimID: Test_Run_aqRisk
-
-  # A file pattern of potential parents for this run
-  # Values: Empty or a file pattern yielding at least one X3df data store file.
-  # Remark: The feature is currently experimental.
-  ParentRun:
-
-  # The number of Monte Carlo runs that are conducted simultaneously
-  # Values: Any positive integer
-  # Best practice: min(NumberMC, NumberParallelProcesses) <= available processors
-  NumberParallelProcesses: 2
-
-  # The number of processes spawned by CascadeToxswa
-  # Values: Any positive integer
-  # Remark: Only in effect if RunCascadeToxswa is true.
-  CascadeToxswaWorkers: 12
-
-  # Specifies whether processing folders should be deleted after the model run is finished
-  # Values: true or false
-  DeleteFoldersAtFinish: false
-
-  # Specifies whether verbose logging is used
-  # Values: true or false
-  VerboseLogging: false
-
-  # Specifies whether the performance of the simulation run is profiled
-  # Values: true or false
-  EnableProfiling: false
-
-  # The time interval in seconds between two profiling rounds
-  # Values: Any positive integer
-  ProfilingWaitingTime: 5
