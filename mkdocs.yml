@@ -1,5 +1,5 @@
 site_name: xAquaticRisk Documentation
-site_url: ""
+site_url: https://xlandscape.github.io/xAquaticRisk/
 use_directory_urls: false
 plugins:
   - search
