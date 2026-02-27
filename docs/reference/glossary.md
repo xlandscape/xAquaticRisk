@@ -66,7 +66,7 @@ General Unified Threshold models of Survival — a toxicokinetic–toxicodynamic
 - **GUTS-SD** (Stochastic Death): assumes a common threshold for all individuals and a stochastic killing process once the threshold is exceeded. Parameters: dominant rate constant (kd), threshold concentration (zw), killing rate (bw).  
 - **GUTS-IT** (Individual Tolerance): assumes individual variation in sensitivity thresholds across a population. Parameters: dominant rate constant (kd), median threshold (mw), width of threshold distribution (β).
 
-GUTS models are scientifically validated and accepted in regulatory risk assessment (see [EFSA Scientific Opinion on TKTD models](https://doi.org/10.2903/j.efsa.2018.5377)).
+GUTS models are scientifically validated and accepted in regulatory risk assessment (see [EFSA Scientific Opinion on TKTD models](https://doi.org/10.2903/j.efsa.2018.5377) and [Regulatory Framework — TKTD](regulatory-framework.md#tktd-and-mechanistic-effect-modelling)).
 
 ## KOC
 
@@ -78,7 +78,7 @@ A component of xAquaticRisk that implements individual-based and population-base
 
 ## LP50
 
-The multiplication factor applied to the exposure profile (or application rate) at which 50% lethal effects occur. LP50 is a key risk metric in xAquaticRisk, derived by the LP50 component across multiple Monte Carlo runs and reaches. An LP50 value greater than 1 indicates that effects only occur at exposure levels above the simulated application rate.
+The multiplication factor applied to the exposure profile (or application rate) at which 50% lethal effects occur. LP50 is a key risk metric in xAquaticRisk, derived by the LP50 component across multiple Monte Carlo runs and reaches. An LP50 value greater than 1 indicates that effects only occur at exposure levels above the simulated application rate. LP50 values support the [tiered risk assessment](regulatory-framework.md#tiered-risk-assessment-under-the-uniform-principles) approach defined by the EU regulatory framework.
 
 ## Monte Carlo Run
 
@@ -111,7 +111,7 @@ A single segment of the stream network. In xAquaticRisk, each reach has associat
 
 ## Risk Mitigation / Risk Mitigation Measures
 
-Regarding the use of PPPs, *Risk Mitigation* basically refers to reducing exposure caused by PPP application. In xAquaticRisk, the following *Risk Mitigation* measures are implemented:
+Regarding the use of PPPs, *Risk Mitigation* basically refers to reducing exposure caused by PPP application (see [Regulatory Framework — Mitigation](regulatory-framework.md#mitigation-measures) for the regulatory requirements). In xAquaticRisk, the following *Risk Mitigation* measures are implemented:
 
 - **In-crop buffer**: a distance (m) from the crop boundary that must not be sprayed, reducing spray-drift deposition into nearby water bodies.
 - **Drift-reducing technology**: the use of drift-reducing nozzles or other sprayer technology to reduce the fraction of applied substance that becomes spray-drift (specified as a fraction 0–1).

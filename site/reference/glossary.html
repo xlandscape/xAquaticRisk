@@ -1327,13 +1327,13 @@ As compared to experimental setups, the 'control' setup is basically assumed to 
 <li><strong>GUTS-SD</strong> (Stochastic Death): assumes a common threshold for all individuals and a stochastic killing process once the threshold is exceeded. Parameters: dominant rate constant (kd), threshold concentration (zw), killing rate (bw).  </li>
 <li><strong>GUTS-IT</strong> (Individual Tolerance): assumes individual variation in sensitivity thresholds across a population. Parameters: dominant rate constant (kd), median threshold (mw), width of threshold distribution (β).</li>
 </ul>
-<p>GUTS models are scientifically validated and accepted in regulatory risk assessment (see <a href="https://doi.org/10.2903/j.efsa.2018.5377">EFSA Scientific Opinion on TKTD models</a>).</p>
+<p>GUTS models are scientifically validated and accepted in regulatory risk assessment (see <a href="https://doi.org/10.2903/j.efsa.2018.5377">EFSA Scientific Opinion on TKTD models</a> and <a href="regulatory-framework.html#tktd-and-mechanistic-effect-modelling">Regulatory Framework — TKTD</a>).</p>
 <h2 id="koc">KOC</h2>
 <p>The organic carbon–water partition coefficient (l/kg). KOC describes the tendency of a substance to sorb to organic carbon in sediment and suspended particles. It is a key parameter for environmental fate modelling in surface water systems. The KOM used by some modules is automatically derived from the KOC by dividing by 1.742.</p>
 <h2 id="leffectmodel">LEffectModel</h2>
 <p>A component of xAquaticRisk that implements individual-based and population-based GUTS models within a landscape context. It calculates lethal effects of pesticide exposure on aquatic organisms based on predicted environmental concentrations in surface water.</p>
 <h2 id="lp50">LP50</h2>
-<p>The multiplication factor applied to the exposure profile (or application rate) at which 50% lethal effects occur. LP50 is a key risk metric in xAquaticRisk, derived by the LP50 component across multiple Monte Carlo runs and reaches. An LP50 value greater than 1 indicates that effects only occur at exposure levels above the simulated application rate.</p>
+<p>The multiplication factor applied to the exposure profile (or application rate) at which 50% lethal effects occur. LP50 is a key risk metric in xAquaticRisk, derived by the LP50 component across multiple Monte Carlo runs and reaches. An LP50 value greater than 1 indicates that effects only occur at exposure levels above the simulated application rate. LP50 values support the <a href="regulatory-framework.html#tiered-risk-assessment-under-the-uniform-principles">tiered risk assessment</a> approach defined by the EU regulatory framework.</p>
 <h2 id="monte-carlo-run">Monte Carlo Run</h2>
 <p>Monte Carlo simulations rely on random sampling drawn from probability distributions to obtain numerical results. They are used to model phenomena with significant variability in inputs, such as calculating the range of possible exposure profiles and effects in a catchment.<br />
 In xAquaticRisk, Monte Carlo runs sample variability in application timing (within specified time windows). The number of Monte Carlo runs is defined by the <code>&lt;NumberMC&gt;</code> parameter.</p>
@@ -1353,7 +1353,7 @@ PPPs contain one or more <em>Active Substances</em> and other co-formulants.</p>
 <h2 id="reach">Reach</h2>
 <p>A single segment of the stream network. In xAquaticRisk, each reach has associated geospatial, hydrological and environmental fate properties. Reaches are identified by numeric IDs (e.g., r567, r577) and are the basic spatial units for surface water modelling, effect modelling and reporting.</p>
 <h2 id="risk-mitigation-risk-mitigation-measures">Risk Mitigation / Risk Mitigation Measures</h2>
-<p>Regarding the use of PPPs, <em>Risk Mitigation</em> basically refers to reducing exposure caused by PPP application. In xAquaticRisk, the following <em>Risk Mitigation</em> measures are implemented:</p>
+<p>Regarding the use of PPPs, <em>Risk Mitigation</em> basically refers to reducing exposure caused by PPP application (see <a href="regulatory-framework.html#mitigation-measures">Regulatory Framework — Mitigation</a> for the regulatory requirements). In xAquaticRisk, the following <em>Risk Mitigation</em> measures are implemented:</p>
 <ul>
 <li><strong>In-crop buffer</strong>: a distance (m) from the crop boundary that must not be sprayed, reducing spray-drift deposition into nearby water bodies.</li>
 <li><strong>Drift-reducing technology</strong>: the use of drift-reducing nozzles or other sprayer technology to reduce the fraction of applied substance that becomes spray-drift (specified as a fraction 0–1).</li>

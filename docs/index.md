@@ -5,12 +5,12 @@ Welcome to the xAquaticRisk (xAR) documentation. This documentation provides an 
 ## Background
 
 Today, **scientific models** make a great contribution to understanding and predicting the consequences of how we cultivate the landscapes we are living in. Based on present knowledge and together with data, models have become a key instrument in decision making.  
-An important field is the **risk assessment and management of pesticides**. In Europe (and countries beyond), this includes an assessment of aquatic risk, in particular, for aquatic invertebrate populations in streams and water bodies ([EFSA Aquatic Guidance](https://www.efsa.europa.eu/en/efsajournal/pub/3290)). The risk assessment includes the use of models (eg, [TOXSWA](https://www.wur.nl/en/show/toxswa.htm), [GUTS](https://doi.org/10.1002/etc.4249)) which require landscape scenarios and exposure profiles for their operation. Key information of such scenarios is the hydrological network, spray-drift deposition, and environmental fate of pesticides in surface water and sediment.  
+An important field is the **risk assessment and management of pesticides**. In Europe (and countries beyond), this includes an assessment of aquatic risk, in particular, for aquatic invertebrate populations in streams and water bodies ([EFSA Aquatic Guidance](https://www.efsa.europa.eu/en/efsajournal/pub/3290)). The [regulatory framework](reference/regulatory-framework.md) for higher-tier aquatic risk assessment defines how landscape-level modelling approaches can be used within the EU authorisation system. The risk assessment includes the use of models (eg, [TOXSWA](https://www.wur.nl/en/show/toxswa.htm), [GUTS](https://doi.org/10.1002/etc.4249)) which require landscape scenarios and exposure profiles for their operation. Key information of such scenarios is the hydrological network, spray-drift deposition, and environmental fate of pesticides in surface water and sediment.  
 Beyond the use of xAR in a risk assessment and management context and given its modular and flexible design, xAR can be employed in a range of **related research and applied topics**, eg,  
 
 - **landscape design and management, biodiversity enhancements**
 - **Holistic view to risk**, multiple stressors analysis, systems-based approach  
-- Risk Assessment **Recovery Option** ([EFSA, Aquatic Guidance](https://www.efsa.europa.eu/en/efsajournal/pub/3290))  
+- Risk Assessment **Recovery Option** ([EFSA, Aquatic Guidance](https://www.efsa.europa.eu/en/efsajournal/pub/3290); see also [Regulatory Framework](reference/regulatory-framework.md#4-higher-tier-effects-assessment))  
 - **Environmental Impact Reduction** (EIR), eg, *what if* analysis, assessment and documentation of real-world EIR by new plant protection products and digital environmental safety solutions  
 - **Aquatic ecosystem analysis**: effects on macroinvertebrate communities  
 - **Monitoring** (design, insights, transfer of results to other regions and times)  
@@ -65,11 +65,11 @@ GUTS models link external exposure concentrations to internal damage dynamics an
 - **GUTS-SD** (Stochastic Death): assumes a common threshold for all individuals and a stochastic killing process once the threshold is exceeded. Key parameters are the dominant rate constant, the threshold concentration and the killing rate.  
 - **GUTS-IT** (Individual Tolerance): assumes individual variation in sensitivity thresholds across a population. Key parameters are the dominant rate constant, the median threshold concentration and the width of the threshold distribution.  
 
-GUTS models have been scientifically validated and are accepted in regulatory risk assessment (see [EFSA Scientific Opinion on TKTD models](https://doi.org/10.2903/j.efsa.2018.5377)). In xAR, GUTS parameters can be specified for up to three species simultaneously, enabling comparative risk assessment.
+GUTS models have been scientifically validated and are accepted in regulatory risk assessment (see [EFSA Scientific Opinion on TKTD models](https://doi.org/10.2903/j.efsa.2018.5377) and [Regulatory Framework — TKTD](reference/regulatory-framework.md#tktd-and-mechanistic-effect-modelling)). In xAR, GUTS parameters can be specified for up to three species simultaneously, enabling comparative risk assessment.
 
 ### StreamCom Population Model
 
-StreamCom is a population model for *Asellus aquaticus* that simulates population dynamics in the stream network. It accounts for reproduction, growth, mortality and dispersal, and is coupled with the GUTS effect model to simulate population-level effects of pesticide exposure and subsequent recovery. The StreamCom component enables the assessment of population recovery following exposure events — a key endpoint in higher-tier aquatic risk assessment.
+StreamCom is a population model for *Asellus aquaticus* that simulates population dynamics in the stream network. It accounts for reproduction, growth, mortality and dispersal, and is coupled with the GUTS effect model to simulate population-level effects of pesticide exposure and subsequent recovery. The StreamCom component enables the assessment of population recovery following exposure events — a key endpoint in [higher-tier aquatic risk assessment](reference/regulatory-framework.md#recovery-and-ecological-relevance).
 
 ### Scenarios
 

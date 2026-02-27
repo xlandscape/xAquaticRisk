@@ -46,7 +46,7 @@ After cloning: the repository contains documentation, model components, example 
 
 Cloning steps vary based on the application being used, eg. [Sourcetree](https://support.atlassian.com/bitbucket-cloud/docs/clone-a-git-repository/) or [Visual Studio Code](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository?tabs=activity-bar). Contact Sascha Bub or Thorsten Schad in case of problems.  
 
-After cloning the repository, a user will have everything necessary to start using xAquaticRisk including sample scenarios and parametrisation files.  
+After cloning the repository, a user will have everything necessary to start using xAquaticRisk including sample scenarios and parametrisation files. For background on the regulatory context in which xAquaticRisk operates, see the [Regulatory Framework](../reference/regulatory-framework.md).  
 
 ### Option 2: Download xAquaticRisk.zip
 
