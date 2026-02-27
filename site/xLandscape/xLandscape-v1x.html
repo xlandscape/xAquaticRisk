@@ -1,0 +1,1404 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="xLandscape-intro.html">
+      
+      
+        <link rel="next" href="xLandscape-components.html">
+      
+      
+      <link rel="icon" href="../img/land-plots-marker.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Version 1.x - xAquaticRisk Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#version-1-summary" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="xAquaticRisk Documentation" class="md-header__button md-logo" aria-label="xAquaticRisk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h16c1.1 0 2 .9 2 2v6H10v10h4.55q.27.45.54.84c.29.43.57.82.83 1.16H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2m4 2H4v10h4zM4 16v4h4v-4zm6-8h10V4H10zm8.5 14s-.58-.65-1.27-1.59c-.09-.13-.19-.27-.29-.41C16 18.66 15 16.89 15 15.5c0-1.9 1.6-3.5 3.5-3.5.53 0 1.04.13 1.5.35 1.17.57 2 1.78 2 3.15 0 1.54-1.23 3.54-2.23 4.91-.69.94-1.27 1.59-1.27 1.59m-1.2-6.4c0 .6.5 1.2 1.2 1.2s1.3-.6 1.2-1.2c0-.6-.6-1.2-1.2-1.2s-1.2.5-1.2 1.2"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            xAquaticRisk Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Version 1.x
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/xlandscape/xAquaticRisk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    xAquaticRisk on GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getstarted/getstarted.html" class="md-tabs__link">
+          
+  
+  
+  Get Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../scenarios/scenario-intro.html" class="md-tabs__link">
+          
+  
+  
+  Scenarios
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/regulatory-framework.html" class="md-tabs__link">
+          
+  
+  
+  Technical Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../reference/glossary.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Glossary
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="xLandscape-intro.html" class="md-tabs__link">
+          
+  
+  
+  xLandscape
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="xAquaticRisk Documentation" class="md-nav__button md-logo" aria-label="xAquaticRisk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h16c1.1 0 2 .9 2 2v6H10v10h4.55q.27.45.54.84c.29.43.57.82.83 1.16H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2m4 2H4v10h4zM4 16v4h4v-4zm6-8h10V4H10zm8.5 14s-.58-.65-1.27-1.59c-.09-.13-.19-.27-.29-.41C16 18.66 15 16.89 15 15.5c0-1.9 1.6-3.5 3.5-3.5.53 0 1.04.13 1.5.35 1.17.57 2 1.78 2 3.15 0 1.54-1.23 3.54-2.23 4.91-.69.94-1.27 1.59-1.27 1.59m-1.2-6.4c0 .6.5 1.2 1.2 1.2s1.3-.6 1.2-1.2c0-.6-.6-1.2-1.2-1.2s-1.2.5-1.2 1.2"/></svg>
+
+    </a>
+    xAquaticRisk Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/xlandscape/xAquaticRisk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    xAquaticRisk on GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Get Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Get Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getstarted/getstarted.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Scenarios
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Scenarios
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scenarios/scenario-intro.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scenarios/Example-scenarios.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Example Scenarios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Technical Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Technical Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/regulatory-framework.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Regulatory Framework
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/troubleshooting.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/glossary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Glossary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    xLandscape
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            xLandscape
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-intro.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Intro
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Version 1.x
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="xLandscape-v1x.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Version 1.x
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#applicability" class="md-nav__link">
+    <span class="md-ellipsis">
+      Applicability
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programming-language" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programming Language
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#landscape-model-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Landscape Model Composition
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Landscape Model Composition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#propagation-of-variability" class="md-nav__link">
+    <span class="md-ellipsis">
+      Propagation of Variability
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#components-modules-and-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components, Modules and Models
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multidimensional-data-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multidimensional Data Store
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relational-data-representation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relational Data Representation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sequential-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sequential Processing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Semantics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-input-geodata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Input (Geo)Data
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Output
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Analysis
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-and-user-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development and User Level
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Technical Implementation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-components.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-models.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Landscape Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-outlook.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Outlook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_6" id="__nav_6_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Technology
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_6">
+            <span class="md-nav__icon md-icon"></span>
+            Technology
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-technology.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-buildingComponents.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-buildingModels.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building Landscape Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="xLandscape-references.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    References
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="version-1-summary">Version 1 - Summary</h1>
+<p>The first major release (version 1.x) implements key goals as summarised the <a href="xLandscape-intro.html#today---applicable-landscape-models-needed">Introduction</a>. The design is based on <em>Component-Base-Software-Engineering</em> (CBSE). So, xLandscape is not a model but a framework to build models, with a core functionality for numeric, multidimensional landscape modelling.  </p>
+<p><strong>xLandscape major entities</strong>:</p>
+<ol>
+<li><strong>Core</strong>: inspired by microkernel architecture in CBSE context. Represents key features of the modular landscape modelling approach. <em>Components</em> are connected to the core and controlled by the core (necessary minimum). Provides a multidimensional data store. Organises model inputs.</li>
+<li><strong>Components</strong>: colloquial the modules of the modular approach. Represent the actual funtionality of a landscape model. Can be quite simple (eg, estimation of water temperature from air) or quite complex (eg, calculating substance transport in streams). Technically precise, <em>components</em> are build from <em>wrapping</em> scientific models (called 'the module of a component').</li>
+<li><strong>xLandscape Models</strong>: an applicable landscape model for a specific purpose. The composition of <em>components</em> and the <em>core</em> (<a href="xLandscape-models.html">Example xLandscape Models</a>). </li>
+</ol>
+<p><img src="../img/xLandscape - moduls core models.png" alt="xLandscape - Modules, Core, Models" width="900"/>  </p>
+<p><em>Illustration of the xLandscape ecosystem: components, Core, Models, as well as 'Analysis&amp;Reporting Elements'</em>  </p>
+<p><strong>xLandscape Characteristics</strong>:</p>
+<ol>
+<li><strong>Numeric approach</strong> that works with discretised entities: time is discretised in time steps (any step possible, 'hour' and 'day' are typical in different processes). Spatial entities can be eg, vector polygons or raster cells. This makes xLandscape a spatiotemporally explicit model.</li>
+<li><strong>Explicit scales</strong>: phenomenons like variability are assigned to specific scales. Eg, variability of spray-drift deposition might be observed on a <em>field</em>-scale. Likewise, explicit <em>scales</em> serve as important units in the analysis of landscape modelling outcome, eg. to provide endpoints that fit to the definition of <a href="https://www.efsa.europa.eu/en/efsajournal/pub/1821">Specific Protection Goals</a>.</li>
+<li><strong>Monte Carlo</strong>: variability (and uncertainty) are represented by Probability Density Functions (PDFs). This, together with the spatiotemporally explicit approach, provides the functionality to propagate variability of landscape processes, activities and dynamics to landscape model outputs.  </li>
+<li><strong>Multidimensional data storage</strong>: Environmental characteristics, agriculture, PPP use, exposure, effects and their attributes, space and time, make xLandscape a multidimensional approach. These data are stored in a  multidimensional storage. Currently, the Hierarchical Data Format (<a href="https://www.hdfgroup.org/">HDF</a>) is used. At the end of a xLandscape-based model simulation all data resides in the HDF store.</li>
+<li><strong>Semantics</strong>: xLandscape introduces <em>semantics</em> to improve meaning of data. This is done in a stepwise way. Currently, values have a unit and scale assigned.</li>
+<li><strong>Sequential processing</strong>: in version 1.x <em>components</em> are executed in a sequential order.</li>
+<li><strong>'xcopy' distribution</strong>: an xLandscape-based model can be copied (downloaded) and used without installation. The xLandscape <em>core</em> comes with its Python environment and each <em>component</em> with their required runtime environment.</li>
+<li><strong>Scalability</strong>: basically, the spatial and temporal extent, as well as other simulation characteristics (eg, the number and detail of endpoints) are only limited by computing ressources. Scaleability is a central requirement, also to the design of <em>components</em>. Ideally, processes should show a linear scaling behaviour. Besides actual landscape models build with xLandscape, the related analysis software need to cope with (large) raw data volumes typically generated.</li>
+<li><strong>Scenarios</strong>: each specific model built with the xLandscape approach has its specific scenario requirements. As long as data requirements can be fulfilled, scenarios of any (global) region and any time period can be used as model input. Scenarios can be of any spatial shape. See also <a href="../reference/glossary.html#scenario">scenarios</a> in the <a href="../reference/glossary.html">Glossary</a>.</li>
+<li><strong>Analysis- and Reporting Elements</strong>: example analysis code and outputs (eg, tables, graphics) are prepared. Typically, <a href="https://jupyter.org/">Jupyter</a> notebooks are used, each focusing on a certain analysis topic.</li>
+</ol>
+<h2 id="applicability">Applicability</h2>
+<p>The application of xLandscape framework is not limited to its original key purpose for RA, ie to generate model results for RA endpoints (exposure, effects). xLandscape can be employed for modelling quite a large range of spatiotemporally phenomenon, eg, to model the spatiotemporally occurrence of bee forage (nectar, pollen), the use of pesticides in cultivated landscapes, the toxic loads of chemicals in landscapes, etc.</p>
+<h2 id="programming-language">Programming Language</h2>
+<p>The xLandscape <em>core</em> and <em>components</em> building software are written in <strong>Python</strong>. This language was choosen for its properties, popularity and ease to learn. However, compute demanding processes can be written in basically any language (eg, C, C++, Go) and be integrated as Python packages.<br />
+The inner model of <em>components</em> can be written basically in any language. The <em>component</em> building process wraps such software, typically including the software (model) specific runtime environment.<br />
+Development is <strong>versioned</strong> and currently done using <strong>Github</strong> (<a href="https://github.com/xlandscape">Github/xLandscape</a>).</p>
+<h2 id="core">Core</h2>
+<p>The modular approach of xLandscape does not intend to loosely couple models. There is a 'framing' element necessary to represent characteristics that make a landscape model according to the use context, goals and requirements (see <a href="xLandscape-intro.html">Intro</a>).<br />
+The '<em>core</em> and <em>component</em>' design was inspired by microkernel architecture in Component-based Software Engineering (CBSE) context. Represents key features of the modular landscape modelling approach.<br />
+Key <em>core</em> functionality and characteristics:</p>
+<ol>
+<li>The <em>core</em> provides the (Python) <strong>framework to build <em>components</em></strong> (eg, interfaces for data exchange, data semantics, initialisation, control, <em>component</em> self-description, status request)</li>
+<li>The <em>core</em> provides the <strong>framework to build compositions</strong>, ie actual landscape models (currently implemented as XML)</li>
+<li>The <em>core</em> provides the <strong>framework for a 'semantic context'</strong> that enables operating with explicit entities (eg, scales) and assures inner landscape model data <strong>consistency</strong></li>
+<li>The <em>core</em> provides the <strong>framework for operating with multidimensional data</strong></li>
+<li>The <em>core</em> provides functionality for landscape <strong>simulation control, status observer, ressources and logging</strong></li>
+<li>The <em>core</em> provides functionality for reading the <strong><em>parameterisation</em></strong> and <strong><em>configuration</em></strong> of a Landscape Model as defined by the user</li>
+</ol>
+<p>This is illustrated as the blue <strong>'L'</strong> together with the light blue background in xLandscape model schemes:  </p>
+<p><img src="../img/core illustration.png" alt="xlandscape Core Illustration" width="300"/>  </p>
+<p><em>xlandscape core illustration</em></p>
+<h2 id="components">Components</h2>
+<p>Essentially all <strong>functionality is represented by <em>components</em></strong>.<br />
+<em>Components</em> are initiated by and operated in the framework of the <em>core</em>. A composition of the <em>core</em> and <em>components</em> make a Landscape Model.<br />
+<em>Components</em> can contain and represent basically any simulation model, eg,</p>
+<ul>
+<li>(Large) <strong>Mechanistic models</strong>, eg, simulating substance exposure, fate and effects (eg, PRZM, PEARL, Macro, Cascade-Toxswa, GUTS, Mastep, Streamcom)</li>
+<li><strong>Data-driven models</strong>, eg, representing variability of spray-drift deposition (eg, <a href="xLandscape-components.html#xdrift">xDrift</a>, AgDrift), results from ecotoxicologial studies (eg, Dose-response, Species Sensitivity Distributions, Toxic-Load), or lookup tables (eg, bee forage production by vegetation and time)</li>
+<li><strong>Hybrid models</strong>, eg, for simulating residues of substances in plants and commodities</li>
+<li>Models simulating <strong>agricultural management</strong>, eg, <strong>PPP use</strong> (eg, <a href="xLandscape-components.html#xcropprotection">xCropProtection</a>)</li>
+<li><strong>Small calculations</strong>, eg for modelling specific environmental conditions (eg, sunshine hours, water temperature)</li>
+<li><strong>(Geo)data inputs</strong>: external data is imported into a Landscape Model using specific <em>components</em>, eg, weather, land use, or soil data. Besides such explicit data inputs. This applies, eg, when complex mechanistic models bring some default settings with them which are loaded using text-files.</li>
+<li><strong>Analysis</strong>: when a simulation is done it might be nice to see some analysis automatically. So, <em>components</em> can be build and integrated into a Landscape Model for analysis purposes</li>
+</ul>
+<blockquote>
+<p>Colloquially, we might call the pieces of a modular Landscape Model <em>modules</em>, eg say <em>'xDrift is a module in the xAquatic landscape model'</em>, or <em>'in which repository can I find the module for PPP use?'</em>.<br />
+However, following the terminology of Component-Based-Software-Engineering (CBSE), we need to be more precise and talk about <em>components</em>. A <em>component</em> contains a <em>model</em> which is also called a <em>module</em>. <em>Models</em> (<em>modules</em>) represent the actual functionality.<br />
+A <em>model</em> (<em>module</em>) becomes a xLandscape <em>component</em> when it is wrapped using the xLandscape <em>core</em> framework.</p>
+</blockquote>
+<p>The graphic below shows the design of a <em>component</em>:  </p>
+<p><img src="../img/Component - stream temperature.png" alt="xlandscape" width="300"/>  </p>
+<p><em>Component 'Stream_Temperature' representing a model to estimate stream temperature (T_stream) from air temperature (T_air). (a blue background indicates connection to an internal source (semantically enriched), whereas a grey background represents connection to external sources; the diamond represents the actual model ('module'))</em></p>
+<p>A <em>component</em> has the following elements: </p>
+<ol>
+<li><strong>Input</strong>: the data input to be processed by the <em>component</em>. Inputs can be connected to external data sources (eg, files, data bases, APIs) (grey background) or to the internal <em>multidimensional store</em> (blue background)</li>
+<li><strong>Init/Control</strong>: inputs for the initialisation and control of a <em>component</em> and its <em>module</em> (<em>model</em>). Init/Control can come from  external data sources (eg, xml/text files) (grey background) or from the internal <em>multidimensional store</em> (blue background)</li>
+<li><strong>Output</strong>: the data output of a <em>component</em>. Outputs are typically written to the internal <em>multidimensional store</em> (blue background) yet, can also be written to external data storages (eg, Relational Database Management Systems, files, cloud storage) (grey background)</li>
+<li><strong>Module (model)</strong>: the actual <em>model</em> (<em>module</em>) that provides the functionality, ie, conducts the simulation (blue diamond element)</li>
+</ol>
+<p>All internal data (information) is semantically-enriched (see <a href="#semantics">Semantics</a>).<br />
+<em>Components</em> typically have multiple in- and outputs.<br />
+Example <em>components</em> are introduced in section <a href="xLandscape-components.html">Components</a>.  </p>
+<h2 id="landscape-model-composition">Landscape Model Composition</h2>
+<p><strong>A composition of <em>components</em> and the <em>core</em> builds a landscape model.</strong> <a href="xLandscape-models.html">Example Landscape Models</a> built are <a href="xLandscape-models.html#xaquatic-invertebrates">xAquatic</a>, to simulate exposure and effects of aquatic organisms in catchments, <a href="xLandscape-models.html#xofffieldsoil">xOff-Field-Soil</a>, to calculate exposure of soil organisms living next to fields, or <a href="xLandscape-models.html#xpollinator">xPollinator</a> to simulate nectar and pollen occurrence for building bee modelling scenarios.</p>
+<p>The graphic below shows the composition of a very simple Landscape Model that inputs a stream network, together with weather data, in order to calculate stream temperature:</p>
+<ul>
+<li>The model is built using <strong>2 <em>components</em></strong>: 'Weather_MARS' inputs (external) weather data (from the EU 'MARS' database) and writes defined data (eg, air temperature, T_air) into the landscape model storage, whereas <em>component</em> 'Stream_Temperature' takes T_air from the store and transfers this to an estimated stream temperature (T_stream) using a model.</li>
+<li>The <strong>blue 'L' represents the xLandscape <a href="#core"><em>core</em></a></strong>. The light blue rectancle-shaped background represents the semantically-enriched space of this specific model (eg, T_air is defined with a unit and assigned spatial and temporal scales; T_air is consistantly available to all <em>components</em> of the model).</li>
+<li>The Landscape Model is <strong>parameterised and configured using XML and YAML files</strong> (eg, to define the landscape scenario and simulation time period; grey box)</li>
+<li>Typical landscape model input data (green box) comprises land use/cover, weather, habitats and pesticide use, yet, depends on the landscape model.</li>
+<li>The <strong><em>Data Storage</em></strong> contains all data defined by the landscape model designer, as relevant to the landscape model application (inputs, interim, and model outputs). Thus, the <em>Data Storage</em> can be recognised as representing <em>'the landscape'</em> from the view of the model purpose. Eg, <a href="xLandscape-models.html#xaquatic-invertebrates">xAquatic</a> stores data on land use, weather, hydrology, PPP use, stream exposure and effects on aquatic invertegrates, whereas <a href="xLandscape-models.html#xpollinator">xPollinator</a> outputs stores nectar and pollen occurrence by space and time. The <em>Data Storage</em> is multidimensional. </li>
+</ul>
+<p><img src="../img/xLandscape model building scheme.png" alt="xlandscape" width="1000"/>  </p>
+<p><em>Illustration of a simple Landscape Model, built from 2 </em>components<em> (Weather_MARS, Stream_Temperature) and the xlandscape core</em></p>
+<h3 id="propagation-of-variability">Propagation of Variability</h3>
+<p>Taking the protection of species' populations in cultivated landscapes as an example topic for xLandscape, from the use of PPPs in landscapes to the exposure pattern of non-target-organisms many processes and phenomenons come with a range of variabilities (eg, weather conditions, land use/cover dynamics, agricultural management and PPP use, species occurrence and behaviour, etc.).  </p>
+<p>xLandscape basically 'resolves' such variabilities by discretisation, ie by making things <strong><em>explicit</em></strong> (this is, what the suffix 'x' represents). Eg, the actually continuous (simulation) time is discretised into time steps (of any interval, often [day] or [hour]), spatial entities are discretised using resolutions depending on the individual process (eg, [1m2] for local spray-drift exposure, [100m] segments of stream networks).<br />
+However, <em>explicitness</em> alone is not a sufficient means to represent natural variability of phenomenons, events and processes, of natural systems, eg, an <em>explicit</em> representation of land use (in space and time) requires that land use is deterministically know for the simulation region and the simulation period (eg use satellite classification). This is often not the case and only general knowledge is available (eg, statistical data and crop cultivation and rotation). Even if full deterministic data is available for a phenomenon (eg, for weather representation by using long-term records) the <strong><em>purpose</em></strong> of a landscape simulation might require to go beyond actual data and consider situations (eg, extremes) which are not part of an actual record. This is a typical situation in regulatory risk assessment where the <em>range of conditions</em> that might happen has to be considered in order for the (prospective) decision making to cover these.<br />
+This is where the use of <strong><em>distributions</em></strong> comes in. In xLandscape, variability can be represented as <strong><em>Probability Density Functions</em></strong> (PDFs). Examples for using PDFs are wind direction distributions, PPP application windows and application rates, local spray-drift depositions in the (<a href="xLandscape-components.html#xdrift">xDrift</a>) <em>component</em> or drift-filtering by riparian vegetation.<br />
+The scope of validity of a <em>PDF</em> and its elements have to be defined, eg, a weather conditions representing <em>PDF</em> might be valid for a certain geographic regions and a certain time period, it's elements might be valid for a certain day. Thus, samples drawn from this <em>PDF</em> are associated to the scales [region,day]. Irrespective which <em>component</em> asks for weather conditions, the result should be the same for the same region and day, but different for different regions and/or days (corresponding to the random sample of the <em>PDF</em>).<br />
+This mechanism of scale-dependent definition and use of <em>PDFs</em> enables to build a <strong>Monte Carlo</strong> approach that <strong>generates naturally occuring pattern of the simulated agro-environmental system</strong>. In other words, <strong>real-world variability comes with pattern</strong>, ie, is not just random (an overly simple, independently sampling Monte Carlo approach would just generate chaotic situations).  </p>
+<p><img src="../img/variability propagation 1a.png" alt="Propagation of Variability" width="900"/>  </p>
+<p><em>Propagation of landscape agro-environmental system variability to variability of model predictions</em></p>
+<p><img src="../img/variability propagation 2.png" alt="Propagation of Variability" width="1000"/>  </p>
+<p><em>Real-world variability has structure, ie, comes with pattern</em></p>
+<h2 id="components-modules-and-models">Components, Modules and Models</h2>
+<p>You will read the term <strong><em>component</em></strong> quite often in the context of <em>xLandscape</em>. xLandscape is a modular landscape modelling framework that architecture is derived from <em>Component-Based Software Engineering (CBSE)</em>. This is, why the elements of a modular xLandscape model are called <a href="#modules-and-components"><em>components</em></a> (<a href="xLandscape-components.html#xdrift">xDrift</a> is an example for a frequently used <em>component</em>).<br />
+<em>Components</em> contain <em>moduls</em>. <em>Modules</em> represent the software that provides the actual functionality of a <em>component</em>, typically a <em>model</em> (eg, an exposure or environmental fate model).  </p>
+<h2 id="multidimensional-data-store">Multidimensional Data Store</h2>
+<p>Landscape models based on xLandscape is at minimum 3-dimensional (space, time, modelled value). Typically, landscape modelling is using and interested in multiple values in space and time (eg, exposure of different compartments, multiple PPP uses, effects of different species), which makes it a <strong>multidimensional landscape model</strong>.<br />
+Corresponding <strong>multidimentsional data is stored using a multidimensional data store</strong>. At present, <a href="xLandscape/xLandscape-intro.md#multidimensional-data-store"><strong>HDF</strong></a> is being used. All landscape model data as defined by the model designer is stored in an <em>HDF</em> store (basically, the in- and outputs of <em>components</em>). Data in the store can come in independent resolutions (eg, PPP use might be represented by the spatial scale <em>field</em>, whereas local exposure of off-field areas might be calculated and stored by m2 as spatial scale). The same applies to any other dimension and scale.<br />
+As the multidimensional store contains the data relevant to the specific landscape model, it represents <em>'the landscape'</em> of the model. Thus, <em>'the landscape'</em> is built of such data/information that is defined by model design (and configuration). In particular, the <em>store</em> contains the actual model outcome, yet, also any other data is kept as defined by the model designer that might be of interest for the analysis.<br />
+At present, a single data store is being used. This, and the technology <a href="xLandscape/xLandscape-intro.md#multidimensional-data-store"><em>HDF</em></a> can be adapted according to future needs.  </p>
+<p><img src="../img/multidimensional data store HDF.png" alt="Multidimensional Data Store" width="880"/>  </p>
+<p><em>Multidimensional Data Store is implemented in the xAquatic landscape model</em></p>
+<h2 id="relational-data-representation">Relational Data Representation</h2>
+<p>With the key aim to facilitate model outcome analysis using common data access technologies, a <em>component</em> (<em>xSQLite</em>) is available that exports defined data from the <em>HDF</em> to <em>SQLite</em> database. Further data exports are under development.  </p>
+<h2 id="sequential-processing">Sequential Processing</h2>
+<p>At version 1.x, xLandscape has a linear processing sequence. Eg, in a given (or modelled) land use the farmer applies PPPs. These PPPs cause exposure which is subject to substance environmental fate (eg, degradation, distribution). The exposure might cause effects to non-target-organisms. This sequence matches natural causality in a majority of landscape modelling applications, in particular in pesticide risk assessment. However, future demands for landscape modelling might lead to increased autonomy of components' operation.<br />
+This sequence is defined in the model configuration file (currently the <em>mc.xml</em>) in the landscape model design phase.<br />
+Thus, there are no feedback loops from subsequent <em>components</em> to predecessors.  </p>
+<p><img src="../img/xAquatic linear processing sequence.png" alt="xAquatic" width="900"/>  </p>
+<p><em>Example sequential processing in xAquatic (2022)</em></p>
+<h2 id="semantics">Semantics</h2>
+<p>When building larger models from individual <em>components</em>, these <em>components</em> need to have a correct understanding of the data/information they exchange. The <strong>meaning of values</strong> exchanged in inputs and outputs of <em>components</em> need to be clearly described.<br />
+The goal in xLandscape is that <em>components</em> understand each other on a machine-level, ie, without any human interference. This level of semantic representation can be reached using <strong><em>ontologies</em></strong>.<br />
+In any case, data/information need to be sufficiently documented and described (metadata).  </p>
+<p>The implementation towards this goal is stepwise:
+- Current version: <strong>values have units</strong>, <strong>explicit scales</strong>; in the landscape model design phase, module developer might need to communicate to clarify semantics (in addition to proper use of metadata).
+- Next: apply <strong>ontolgies</strong> (eg, using RDF format)</p>
+<h2 id="model-input-geodata">Model Input (Geo)Data</h2>
+<p>Input data is specific to the actual landscape model built with the xLandscape framework. Basically, input data are read by individual <em>components</em> and transferred into the <a href="xLandscape-v1x.html#multidimensional-data-store">Multidimensional Store</a>. In this process the data get's semantically enriched. All <em>components</em> then <strong>consistently</strong> use the same data, eg, environmental or landuse data.<br />
+Data typically come in their native format, eg, geodata as shapefiles, weather data as textfiles or database tables, etc.  </p>
+<h2 id="model-output">Model Output</h2>
+<p>At present, modelling outcome of landscape models built using the xLandscape framework are stored in a (multidimensional) <a href="xLandscape-v1x.html#multidimensional-data-store"><strong>HDF Store</strong></a>. Common data analysis software and programming languages provide interfaces to HDF.<br />
+In addition, <em>components</em> are available and being developed that enable export of data that resides in the HDF store to common data formates (eg, SQLite, other relational databases, csv, or excel).</p>
+<h2 id="analysis">Analysis</h2>
+<p>Landscape model outcome can be analysed using common analysis software package or own developed processes.<br />
+Typically, landscape models built on the basis of xLandscape contain <em>analysis components</em> that process raw model outcome and provide first insights into the results of an <em>experiment</em>.  </p>
+<p>Jupyter notebooks (using Python) are used as a means for data analysis. Templates are provided in corresponding <a href="https://github.com/xlandscape">Github</a> repositories. Dashboards provide an ideal means to derive insights.</p>
+<h2 id="development-and-user-level">Development and User Level</h2>
+<p>Typically, landscape models developed built using the xLandscape framework address an expert user level, like any other model used in the regulatory scientific field (eg, FOCUS exposure models, effect models).<br />
+However, irrespective of their complexity, these landscape models can be operated in the background (eg, on a back-end server) and only their key outcome displayed or integrated at a user front-end level (like a simple weather forecast is derived from complex weather models).</p>
+<p>Differentiation of developer levels are shown in the graphic below.</p>
+<p><img src="../img/development and user level.png" alt="Development and User Levels" width="950"/>  </p>
+<p><em>Development and User Levels</em></p>
+<h2 id="technical-implementation">Technical Implementation</h2>
+<p>The xLandscape core is written in Python, hence, building <em>components</em> is done in Python as well.<br />
+The actual <em>modules</em>, ie, the models within <em>components</em> that provide the actual modelling functionality of a <em>component</em> can be written in any language.  </p>
+<p>Code documentation can be found in the corresponding Github repository (eg, https://github.com/xlandscape).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "toc.integrate"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>

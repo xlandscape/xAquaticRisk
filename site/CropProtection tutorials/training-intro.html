@@ -1,0 +1,1276 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../img/land-plots-marker.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Get started with xCropProtection - xAquaticRisk Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#get-started-with-xcropprotection" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="xAquaticRisk Documentation" class="md-header__button md-logo" aria-label="xAquaticRisk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h16c1.1 0 2 .9 2 2v6H10v10h4.55q.27.45.54.84c.29.43.57.82.83 1.16H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2m4 2H4v10h4zM4 16v4h4v-4zm6-8h10V4H10zm8.5 14s-.58-.65-1.27-1.59c-.09-.13-.19-.27-.29-.41C16 18.66 15 16.89 15 15.5c0-1.9 1.6-3.5 3.5-3.5.53 0 1.04.13 1.5.35 1.17.57 2 1.78 2 3.15 0 1.54-1.23 3.54-2.23 4.91-.69.94-1.27 1.59-1.27 1.59m-1.2-6.4c0 .6.5 1.2 1.2 1.2s1.3-.6 1.2-1.2c0-.6-.6-1.2-1.2-1.2s-1.2.5-1.2 1.2"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            xAquaticRisk Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Get started with xCropProtection
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/xlandscape/xAquaticRisk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    xAquaticRisk on GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getstarted/getstarted.html" class="md-tabs__link">
+          
+  
+  
+  Get Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../scenarios/scenario-intro.html" class="md-tabs__link">
+          
+  
+  
+  Scenarios
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/regulatory-framework.html" class="md-tabs__link">
+          
+  
+  
+  Technical Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../reference/glossary.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Glossary
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../xLandscape/xLandscape-intro.html" class="md-tabs__link">
+          
+  
+  
+  xLandscape
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="xAquaticRisk Documentation" class="md-nav__button md-logo" aria-label="xAquaticRisk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h16c1.1 0 2 .9 2 2v6H10v10h4.55q.27.45.54.84c.29.43.57.82.83 1.16H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2m4 2H4v10h4zM4 16v4h4v-4zm6-8h10V4H10zm8.5 14s-.58-.65-1.27-1.59c-.09-.13-.19-.27-.29-.41C16 18.66 15 16.89 15 15.5c0-1.9 1.6-3.5 3.5-3.5.53 0 1.04.13 1.5.35 1.17.57 2 1.78 2 3.15 0 1.54-1.23 3.54-2.23 4.91-.69.94-1.27 1.59-1.27 1.59m-1.2-6.4c0 .6.5 1.2 1.2 1.2s1.3-.6 1.2-1.2c0-.6-.6-1.2-1.2-1.2s-1.2.5-1.2 1.2"/></svg>
+
+    </a>
+    xAquaticRisk Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/xlandscape/xAquaticRisk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    xAquaticRisk on GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Get Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Get Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getstarted/getstarted.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Scenarios
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Scenarios
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scenarios/scenario-intro.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scenarios/Example-scenarios.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Example Scenarios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Technical Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Technical Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/regulatory-framework.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Regulatory Framework
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/troubleshooting.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/glossary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Glossary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    xLandscape
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            xLandscape
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-intro.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Intro
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-v1x.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Version 1.x
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-components.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-models.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Landscape Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-outlook.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Outlook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_6" id="__nav_6_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Technology
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_6">
+            <span class="md-nav__icon md-icon"></span>
+            Technology
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-technology.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-buildingComponents.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-buildingModels.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building Landscape Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-references.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    References
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="get-started-with-xcropprotection">Get started with xCropProtection</h1>
+<p>Goal: Create a scenario that represents a series of product applications to one crop class.</p>
+<p>In this tutorial, you'll learn the basics of xCropProtection. You'll prepare a simulation using xCropProtection and recommendations for product applications for a specific pest.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In xCropProtection, the term <strong>PPP use scenario</strong> is used to describe a certain parameterization of xCropProtection including PPP application information, input/output scales, and temporal constraints. The term <strong>landscape scenario</strong> is used in the sense of a certain geographic region for which land use/cover, soil, weather, and habitat conditions have been defined as basis for landscape-scale pesticide exposure and effect modelling.</p>
+</div>
+<figure>
+    <img src="../img/xCP-diagram.PNG" width="70%">
+  <figcaption>Illustration of the input to xCropProtection.</figcaption>
+</figure>
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>xCropProtection version 1.0</li>
+<li><a href="https://www.qgis.org/">QGIS</a> to view the landscape scenario</li>
+<li><a href="https://www.hdfgroup.org/download-hdfview/">HDFView</a></li>
+</ul>
+<h2 id="explore-the-landscape-scenario">Explore the landscape scenario</h2>
+<ol>
+<li>
+<p>Navigate to the <em>scenario/Demo-scenario</em> folder in your local installation of xCropProtection. In this folder, you will find a <em>Documentation</em> folder, a <em>geo</em> folder, and a <em>scenario.xproject</em> file.</p>
+<p><img src="../img/tutorials/scenario-folder.PNG" width="40%"></p>
+<p>Open the <em>Documentation</em> folder which includes an image of the scenario, as well as a QGIS project containing the scenario.</p>
+</li>
+<li>
+<p>Open the QGIS project.</p>
+<p><img src="../img/tutorials/QGIS.PNG" width="70%"></p>
+<p>You can use this project to explore the landscape scenario and inspect individual fields. Any changes you make to the LULC layer will affect the dataset used as input to xCropProtection.</p>
+<p>Open the layer's attribute table. There are 1,000 fields in this scenario, 500 have the LULC type 222 and 500 have the LULC type 444. Take note of the fields ALVID and LULCTypeID. ALVID serves as a unique identifier for each feature, and LULCTypeID defines the land use type for each feature. Leave the project open, as we will refer to it later in this section.</p>
+</li>
+<li>
+<p>Back in the <em>Demo-scenario</em> folder, open the geo folder. This folder holds the spatial data for the scenario as well as the <em>package.xinfo</em> file. Opening <em>package.xinfo</em>, you will see some information about the shapefile. Specifically, <code>base_landscape_geometries</code>, <code>feature_id_attribute</code>, and <code>feature_type_attribute</code> are important to simulation runs. <code>base_landscape_geometries</code> refers to the name of the target shapefile, including the .shp extension. <code>feature_id_attribute</code> must be the same as the name of the field in the <code>base_landscape_geometry</code>'s attribute table that provides a unique identifier for each feature. The type of this field must be an integer. Similarly, <code>feature_type_attribute</code> must be the same as the name of the field in the <code>base_landscape_geometry</code>'s attribute table that identifies the land use type of each feature. You can see how the XML attributes in <em>package.xinfo</em> match the values in the open attribute table in the QGIS project. Close the QGIS project once you are done exploring the landscape scenario.</p>
+</li>
+<li>
+<p>Navigate back to the <em>Demo-scenario</em> folder and open the file named <em>scenario.xproject</em>. This file contains metadata about the scenario and should be updated whenever there are changes to the scenario files.</p>
+</li>
+</ol>
+<p>Now that you understand the landscape scenario, it is time to prepare input to xCropProtection.</p>
+<h2 id="create-the-plant-protection-measure-ppm-calendars">Create the Plant Protection Measure (PPM) Calendars</h2>
+<p>First, we will write the PPM Calendars for the PPP use scenario. PPM Calendars are XML files representing Plant Protection Measures and are composed of one or more Indications (measures to protect crops from certain pests). In xCP, an Indication is an explicit part of its parameterization. You can think of <code>Indication</code> elements, technically, as collections of <code>ApplicationSequence</code> elements. If more than one Application Sequence is defined in an Indication, these sequences are considered alternative Application sequences ("OR" related). The xCP parameterization entity Indication can be used to define alternative PPP use pattern, e.g., reflecting product market shares or fractions of biological or organic pest control means. Multiple Indications can be defined in an xCP parameterization, as many as necessary to represent a simple or complex real-world PPP use pattern in one or many crops. In this tutorial, we will be creating a very simple PPP use pattern.</p>
+<figure>
+  <img src="../img/xCP entities and their relationship 2.png" width="80%">
+  <figcaption>Structure of a PPM Calendar</figcaption>
+</figure>
+
+<p>The most important things to know are that PPM Calendars apply to one land use type (called the target crop type) <strong>and</strong> you should create unique PPM Calendars for each use scenario. The target crop type of a calendar is a numeric value corresponding to a numeric land use type in the landscape scenario (<code>feature_type_attribute</code>). </p>
+<ol>
+<li>Navigate to the <em>CropProtection</em> folder from the root of the repository. Open the folder <em>PPMCalendars</em> where you will see multiple other folders, each containing one or more PPM Calendars. Create a folder for your PPM Calendars named <em>Tutorial-calendars</em>. Open that folder.</li>
+<li>Open the Notepad application to start writing your XML file. If you have an application with auto-complete or other text functions like Visual Studio Code, you can also use those to write XML files. Each PPM Calendar starts by defining the root element, <code>PPMCalendar</code>. Add the following lines to your file
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">&lt;/PPMCalendar&gt;</span>
+</span></code></pre></div>
+    Everything we write in PPM Calendars should fall between the opening and closing tags that we just added. Next we need to determine the <code>TemporalValidity</code>, <code>TargetCropType</code>, and <code>TargetField</code> values. Let's say that this calendar should be applied every year that the simulation runs, so we will add the following line <strong>between</strong> the opening and closing PPMCalendar tags. Indentation is not necessary but makes XML files easier to read.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&lt;TemporalValidity</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/simulation&quot;</span><span class="nt">&gt;</span><span class="w"> </span>always<span class="w"> </span><span class="nt">&lt;/TemporalValidity&gt;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">&lt;/PPMCalendar&gt;</span>
+</span></code></pre></div>
+    The next two options restrict either the crop type or the field/feature ID that this calendar can be applied to. You can specify one or both, but in this case we will only define <code>TargetCropType</code>. Any PPP applications defined in this calendar will only apply to fields/features with the LULC type 222.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&lt;TemporalValidity</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/simulation&quot;</span><span class="nt">&gt;</span><span class="w"> </span>always<span class="w"> </span><span class="nt">&lt;/TemporalValidity&gt;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&lt;TargetCrops</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;list[int]&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span><span class="w"> </span>222<span class="w"> </span><span class="nt">&lt;/TargetCrops&gt;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nt">&lt;/PPMCalendar&gt;</span>
+</span></code></pre></div></li>
+<li>Define <code>Indication</code> elements and <code>ApplicationSequence</code> elements. An <code>Indications</code> element always needs to enclose <code>Indication</code> elements; it can be thought of as a collection of multiple <code>Indication</code> elements.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&lt;TemporalValidity</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/simulation&quot;</span><span class="nt">&gt;</span><span class="w"> </span>always<span class="w"> </span><span class="nt">&lt;/TemporalValidity&gt;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&lt;TargetCrops</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;list[int]&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span><span class="w"> </span>222<span class="w"> </span><span class="nt">&lt;/TargetCrops&gt;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">&lt;Indications&gt;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">        </span><span class="nt">&lt;Indication</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xCropProtection.ChoiceDistribution&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/year, space/base_geometry&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">        </span><span class="nt">&lt;/Indication&gt;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">&lt;/Indications&gt;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="nt">&lt;/PPMCalendar&gt;</span>
+</span></code></pre></div>
+    You will notice that the <code>Indication</code> element has a type of "xCropProtection.ChoiceDistribution". This means that only one of its child elements will be chosen to be applied (sampled for each field and year). It also means that probability values need to be defined for each child element. In this tutorial, this <code>Indication</code> represents the possible response to Mullein bugs in apples and we will provide two product options.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&lt;TemporalValidity</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/simulation&quot;</span><span class="nt">&gt;</span><span class="w"> </span>always<span class="w"> </span><span class="nt">&lt;/TemporalValidity&gt;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&lt;TargetCrops</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;list[int]&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span><span class="w"> </span>222<span class="w"> </span><span class="nt">&lt;/TargetCrops&gt;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&lt;Indications&gt;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="nt">&lt;Indication</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xCropProtection.ChoiceDistribution&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/year, space/base_geometry&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">            </span><span class="nt">&lt;ApplicationSequence</span><span class="w"> </span><span class="na">probability=</span><span class="s">&quot;0.65&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">            </span><span class="nt">&lt;/ApplicationSequence&gt;</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">            </span><span class="nt">&lt;ApplicationSequence</span><span class="w"> </span><span class="na">probability=</span><span class="s">&quot;0.35&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">            </span><span class="nt">&lt;/ApplicationSequence&gt;</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="nt">&lt;/Indication&gt;</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="nt">&lt;/Indications&gt;</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="nt">&lt;/PPMCalendar&gt;</span>
+</span></code></pre></div></li>
+<li>Now that the <code>ApplicationSequence</code> elements have been defined, we can add <code>Application</code> elements for each sequence. An <code>ApplicationSequence</code> can have one or more <code>Application</code> elements, and if an <code>ApplicationSequence</code> is sampled, each <code>Application</code> in the sequence will be applied to the field.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nt">&lt;TemporalValidity</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/simulation&quot;</span><span class="nt">&gt;</span><span class="w"> </span>always<span class="w"> </span><span class="nt">&lt;/TemporalValidity&gt;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&lt;TargetCrops</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;list[int]&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span><span class="w"> </span>222<span class="w"> </span><span class="nt">&lt;/TargetCrops&gt;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&lt;Indications&gt;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="nt">&lt;Indication</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xCropProtection.ChoiceDistribution&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;time/year, space/base_geometry&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">            </span><span class="nt">&lt;ApplicationSequence</span><span class="w"> </span><span class="na">probability=</span><span class="s">&quot;0.65&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">                </span><span class="nt">&lt;Application&gt;</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">                    </span><span class="nt">&lt;Tank&gt;</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">                        </span><span class="nt">&lt;Products</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;list[str]&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;other/products&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">                            </span>Admire
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">                        </span><span class="nt">&lt;/Products&gt;</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">                        </span><span class="nt">&lt;ApplicationRates</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;other/products&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">                            </span><span class="nt">&lt;ApplicationRate</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;float&quot;</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;g/ha&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">                                </span>380
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">                            </span><span class="nt">&lt;/ApplicationRate&gt;</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">                        </span><span class="nt">&lt;/ApplicationRates&gt;</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">                    </span><span class="nt">&lt;/Tank&gt;</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">                    </span><span class="nt">&lt;ApplicationWindow</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xCropProtection.MonthDaySpan&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">                        </span>05-01<span class="w"> </span>to<span class="w"> </span>05-10
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">                    </span><span class="nt">&lt;/ApplicationWindow&gt;</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">                    </span><span class="nt">&lt;Technology</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>Drift<span class="w"> </span>reduction<span class="w"> </span>nozzle<span class="nt">&lt;/Technology&gt;</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">                    </span><span class="nt">&lt;InCropBuffer</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;float&quot;</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;m&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/InCropBuffer&gt;</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">                    </span><span class="nt">&lt;InFieldMargin</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;float&quot;</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;m&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/InFieldMargin&gt;</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">                </span><span class="nt">&lt;/Application&gt;</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">            </span><span class="nt">&lt;/ApplicationSequence&gt;</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">            </span><span class="nt">&lt;ApplicationSequence</span><span class="w"> </span><span class="na">probability=</span><span class="s">&quot;0.35&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">                </span><span class="nt">&lt;Application&gt;</span>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">                    </span><span class="nt">&lt;Tank&gt;</span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">                        </span><span class="nt">&lt;Products</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;list[str]&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;other/products&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="w">                            </span>Calypso
+</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="w">                        </span><span class="nt">&lt;/Products&gt;</span>
+</span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="w">                        </span><span class="nt">&lt;ApplicationRates</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;other/products&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-33"><a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="w">                            </span><span class="nt">&lt;ApplicationRate</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;float&quot;</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;g/ha&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-34"><a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="w">                                </span>217
+</span><span id="__span-5-35"><a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">                            </span><span class="nt">&lt;/ApplicationRate&gt;</span>
+</span><span id="__span-5-36"><a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="w">                        </span><span class="nt">&lt;/ApplicationRates&gt;</span>
+</span><span id="__span-5-37"><a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a><span class="w">                    </span><span class="nt">&lt;/Tank&gt;</span>
+</span><span id="__span-5-38"><a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a><span class="w">                    </span><span class="nt">&lt;ApplicationWindow</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xCropProtection.MonthDaySpan&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-5-39"><a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a><span class="w">                        </span>05-01<span class="w"> </span>to<span class="w"> </span>05-10
+</span><span id="__span-5-40"><a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a><span class="w">                    </span><span class="nt">&lt;/ApplicationWindow&gt;</span>
+</span><span id="__span-5-41"><a id="__codelineno-5-41" name="__codelineno-5-41" href="#__codelineno-5-41"></a><span class="w">                    </span><span class="nt">&lt;Technology</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>Drift<span class="w"> </span>reduction<span class="w"> </span>nozzle<span class="nt">&lt;/Technology&gt;</span>
+</span><span id="__span-5-42"><a id="__codelineno-5-42" name="__codelineno-5-42" href="#__codelineno-5-42"></a><span class="w">                    </span><span class="nt">&lt;InCropBuffer</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;float&quot;</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;m&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/InCropBuffer&gt;</span>
+</span><span id="__span-5-43"><a id="__codelineno-5-43" name="__codelineno-5-43" href="#__codelineno-5-43"></a><span class="w">                    </span><span class="nt">&lt;InFieldMargin</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;float&quot;</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;m&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/InFieldMargin&gt;</span>
+</span><span id="__span-5-44"><a id="__codelineno-5-44" name="__codelineno-5-44" href="#__codelineno-5-44"></a><span class="w">                </span><span class="nt">&lt;/Application&gt;</span>
+</span><span id="__span-5-45"><a id="__codelineno-5-45" name="__codelineno-5-45" href="#__codelineno-5-45"></a><span class="w">            </span><span class="nt">&lt;/ApplicationSequence&gt;</span>
+</span><span id="__span-5-46"><a id="__codelineno-5-46" name="__codelineno-5-46" href="#__codelineno-5-46"></a><span class="w">        </span><span class="nt">&lt;/Indication&gt;</span>
+</span><span id="__span-5-47"><a id="__codelineno-5-47" name="__codelineno-5-47" href="#__codelineno-5-47"></a><span class="w">    </span><span class="nt">&lt;/Indications&gt;</span>
+</span><span id="__span-5-48"><a id="__codelineno-5-48" name="__codelineno-5-48" href="#__codelineno-5-48"></a><span class="nt">&lt;/PPMCalendar&gt;</span>
+</span></code></pre></div>
+    In this step we have added one <code>Application</code> to each <code>ApplicationSequence</code>. This means that every year, each field with the LULC type 222 will have a 65% chance of receiving an application of Admire, and a 35% chance of receiving an application of Calypso. For further exploration on this example, see <a href="intro-example.html">this page</a></li>
+<li>Save this file as <em>tutorial-LULC-222.xml</em> in the <em>Tutorial-calendars</em> folder.</li>
+</ol>
+<h2 id="create-the-xcropprotectionxml-file">Create the xCropProtection.xml file</h2>
+<ol>
+<li>Navigate to the <em>CropProtection</em> folder from the root of the repository and open the Notepad application. We now need to create the <em>xCropProtection.xml</em> file. This file stores the location of PPM Calendars that will be used in an xCropProtection simulation as well as spray-drift reduction values for technologies.</li>
+<li>This file starts with an <code>xCropProtection</code> element. The attributes of this element do not need to be changed by users and can be copied from the documentation for any file you create.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&lt;xCropProtection</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="w"> </span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="na">xsi:schemaLocation=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization ../model/core/components/xCropProtection/xCropProtection.xsd&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nt">&lt;/xCropProtection&gt;</span>
+</span></code></pre></div></li>
+<li>The two main elements of this file are PPM Calendars, represented as file paths to <em>PPMCalendar.xml</em> files, and Technologies, represented as <code>Technology</code> elements. <code>Technology</code> elements may also be provided in a separate file, however, in this tutorial we will include them in this file.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">&lt;xCropProtection</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="w"> </span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="na">xsi:schemaLocation=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization ../model/core/components/xCropProtection/xCropProtection.xsd&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">&lt;PPMCalendars&gt;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">&lt;/PPMCalendars&gt;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="nt">&lt;Technologies&gt;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="nt">&lt;/Technologies&gt;</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="nt">&lt;/xCropProtection&gt;</span>
+</span></code></pre></div></li>
+<li>Add a <code>PPMCalendar</code> element for each PPM Calendar that you would like to include. Here, we add one calendar pointing to the file we just created.
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">&lt;xCropProtection</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="w"> </span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="na">xsi:schemaLocation=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization ../model/core/components/xCropProtection/xCropProtection.xsd&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="nt">&lt;PPMCalendars&gt;</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">include=</span><span class="s">&quot;PPMCalendars/Tutorial-calendars/tutorial-LULC-222.xml&quot;</span><span class="nt">/&gt;</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="nt">&lt;/PPMCalendars&gt;</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="nt">&lt;Technologies&gt;</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="nt">&lt;/Technologies&gt;</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nt">&lt;/xCropProtection&gt;</span>
+</span></code></pre></div></li>
+<li>Add a <code>Technology</code> element for each unique <code>Technology</code> value in the included PPM Calendars. In this tutorial, we only had one technology named "Drift reduction nozzle". Each different technology needs a value for the spray-drift reduction that occurs from using this technology (as a fraction).
+    <div class="language-xml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">&lt;xCropProtection</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization&quot;</span><span class="w"> </span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="na">xsi:schemaLocation=</span><span class="s">&quot;urn:xCropProtectionLandscapeScenarioParametrization ../model/core/components/xCropProtection/xCropProtection.xsd&quot;</span><span class="nt">&gt;</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&lt;PPMCalendars&gt;</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">        </span><span class="nt">&lt;PPMCalendar</span><span class="w"> </span><span class="na">include=</span><span class="s">&quot;PPMCalendars/Tutorial-calendars/tutorial-LULC-222.xml&quot;</span><span class="nt">/&gt;</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="nt">&lt;/PPMCalendars&gt;</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="nt">&lt;Technologies&gt;</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">        </span><span class="nt">&lt;Technology&gt;</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">            </span><span class="nt">&lt;TechnologyName</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>Drift<span class="w"> </span>reduction<span class="w"> </span>nozzle<span class="nt">&lt;/TechnologyName&gt;</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">            </span><span class="nt">&lt;DriftReduction</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;float&quot;</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">scales=</span><span class="s">&quot;global&quot;</span><span class="nt">&gt;</span>0.2<span class="nt">&lt;/DriftReduction&gt;</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="nt">&lt;/Technology&gt;</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">    </span><span class="nt">&lt;/Technologies&gt;</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="nt">&lt;/xCropProtection&gt;</span>
+</span></code></pre></div></li>
+</ol>
+<p>Save this file as <em>xCropProtection-tutorial.xml</em> in the <em>CropProtection</em> folder.</p>
+<h2 id="configure-the-user-parameters">Configure the user parameters</h2>
+<p>Next, we will configure the landscape model parameterization for this PPP use scenario. It is recommended to copy an existing landscape model parameterization file located in the root of the repository and change parameter values, rather than writing everything from scratch.</p>
+<ol>
+<li>Copy the text of an XRUN file to a new file named <em>tutorial-configuration.xrun</em>.</li>
+<li>Change the following elements:<ul>
+<li><code>Modeller</code>: Your name or initials</li>
+<li><code>Project</code>: The name of the scenario, <em>scenario/Demo-scenario</em>. Be sure to include the <em>scenario</em> folder name</li>
+<li><code>CropProtectionScenario</code>: xCropProtection-tutorial.xml (including .xml)</li>
+<li><code>OutputApplicationType</code>: This defines whether the output of xCropProtection has the scale product or active substance. This should be set to product for this demo</li>
+<li><code>SimulationStart</code> and <code>SimulationEnd</code>: Set these to any two dates (with <code>SimulationStart</code> occurring before <code>SimulationEnd</code>). For this tutorial, it is recommended to simulate only 1 year.</li>
+<li><code>SimID</code>: Should be a short, descriptive string that represents this simulation. The SimID cannot be the same as any already existing simulation run in the <em>run</em> folder. For this tutorial, use <em>tutorial-run</em></li>
+</ul>
+</li>
+<li>Any elements not listed here should remain as they are.</li>
+<li>Save this file.</li>
+</ol>
+<h2 id="run-xcropprotection">Run xCropProtection</h2>
+<ol>
+<li>Drag <em>tutorial-configuraion.xrun</em> onto <em>__start___.bat</em> to run xCropProtection with the parameterization you have just generated.</li>
+<li>
+<p>Once the simulation is finished, navigate to <em>run/tutorial-run/mcs/[MC ID]/store</em> to find the output of the xCropProtection simulation. Open the file <em>arr.dat</em> with HDFView. Expand the xCropProtection section.</p>
+<p><img src="../img/tutorials/output-hdf.PNG" width="40%"></p>
+<p>You can explore each of these datasets by right clicking on each and selecting "Open".
+3. To export the results to a csv for easier inspection, first close <em>arr.dat</em> and copy its file path. Navigate to the <em>analysis</em> folder and open <em>xCP_write_csv.ipynb</em>.
+4. Set <code>xcrop_arrdat_path</code> to <em>arr.dat</em>'s file path. Set <code>output_path</code> to the desired csv output location. Follow instructions in xCropProtection's <code>README</code> for installing Python and the notebook requirements.
+4. Open the result of <em>xCP_write_csv.ipynb</em> to see a csv of applications that occurred during the simulation. Viewing the csv results can be more easy to understand than directly viewing the output file.</p>
+</li>
+</ol>
+<p>This tutorial has been a walkthrough of how to prepare a scenario for xCropProtection. To start creating more complex PPP use scenarios, see the <a href="../xCropProtection-templates/templates-intro.md">Templates</a> section to learn more.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "toc.integrate"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>

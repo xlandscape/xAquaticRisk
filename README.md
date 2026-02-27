@@ -1,15 +1,16 @@
 ## Table of Contents
-* [About the project](#about-the-project)
-  * [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
-* [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
+- [Table of Contents](#table-of-contents)
+- [About the project](#about-the-project)
+  - [Built with](#built-with)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgements](#acknowledgements)
 
 
 ## About the project
@@ -74,15 +75,17 @@ xAquaticRisk requires a 64-bit Windows to run.
 5. If the run was successful, you can find analysis results over the entire experiment under 
    `\run\<name-of-your-experiment>\reporting`.
 
+## Documentation
+For detailed documentation — including getting started guides, scenario descriptions, a glossary and technical
+reference — visit the **[xAquaticRisk Documentation](https://xlandscape.github.io/xAquaticRisk/)**.
 
-## Roadmap
-xAquaticRisk is under continuous development. Future versions will include further and updated models. Usage of 
-ontologies for semantic description of data will be added in a future version.
-
+You can also build and serve the documentation locally:
+```bash
+mkdocs serve
+```
 
 ## Contributing
 Contributions are welcome. Please contact the authors (see [Contact](#contact)).
-
 
 ## License
 xAquaticRisk is distributed under the CC0 License. See the according `LICENSE` files for more information. See also the
@@ -90,8 +93,8 @@ xAquaticRisk is distributed under the CC0 License. See the according `LICENSE` f
 
 
 ## Contact
-Thorsten Schad - thorsten.schad@bayer.com  
-Sascha Bub - sascha.bub@gmx.de
+Thorsten Schad - thorsten.schad@landwerk-ev.de  
+Sascha Bub - sascha.bub@rptu.de
 
 
 ## Acknowledgements

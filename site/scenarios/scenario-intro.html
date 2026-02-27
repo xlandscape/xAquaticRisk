@@ -1,0 +1,1609 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../getstarted/getstarted.html">
+      
+      
+        <link rel="next" href="Example-scenarios.html">
+      
+      
+      <link rel="icon" href="../img/land-plots-marker.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Introduction - xAquaticRisk Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#scenarios" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="xAquaticRisk Documentation" class="md-header__button md-logo" aria-label="xAquaticRisk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h16c1.1 0 2 .9 2 2v6H10v10h4.55q.27.45.54.84c.29.43.57.82.83 1.16H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2m4 2H4v10h4zM4 16v4h4v-4zm6-8h10V4H10zm8.5 14s-.58-.65-1.27-1.59c-.09-.13-.19-.27-.29-.41C16 18.66 15 16.89 15 15.5c0-1.9 1.6-3.5 3.5-3.5.53 0 1.04.13 1.5.35 1.17.57 2 1.78 2 3.15 0 1.54-1.23 3.54-2.23 4.91-.69.94-1.27 1.59-1.27 1.59m-1.2-6.4c0 .6.5 1.2 1.2 1.2s1.3-.6 1.2-1.2c0-.6-.6-1.2-1.2-1.2s-1.2.5-1.2 1.2"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            xAquaticRisk Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Introduction
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/xlandscape/xAquaticRisk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    xAquaticRisk on GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getstarted/getstarted.html" class="md-tabs__link">
+          
+  
+  
+  Get Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="scenario-intro.html" class="md-tabs__link">
+          
+  
+  
+  Scenarios
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/regulatory-framework.html" class="md-tabs__link">
+          
+  
+  
+  Technical Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../reference/glossary.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Glossary
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../xLandscape/xLandscape-intro.html" class="md-tabs__link">
+          
+  
+  
+  xLandscape
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="xAquaticRisk Documentation" class="md-nav__button md-logo" aria-label="xAquaticRisk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h16c1.1 0 2 .9 2 2v6H10v10h4.55q.27.45.54.84c.29.43.57.82.83 1.16H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2m4 2H4v10h4zM4 16v4h4v-4zm6-8h10V4H10zm8.5 14s-.58-.65-1.27-1.59c-.09-.13-.19-.27-.29-.41C16 18.66 15 16.89 15 15.5c0-1.9 1.6-3.5 3.5-3.5.53 0 1.04.13 1.5.35 1.17.57 2 1.78 2 3.15 0 1.54-1.23 3.54-2.23 4.91-.69.94-1.27 1.59-1.27 1.59m-1.2-6.4c0 .6.5 1.2 1.2 1.2s1.3-.6 1.2-1.2c0-.6-.6-1.2-1.2-1.2s-1.2.5-1.2 1.2"/></svg>
+
+    </a>
+    xAquaticRisk Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/xlandscape/xAquaticRisk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    xAquaticRisk on GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Get Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Get Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getstarted/getstarted.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Scenarios
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Scenarios
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="scenario-intro.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#xar-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      xAR Scenarios
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xAR Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general" class="md-nav__link">
+    <span class="md-ellipsis">
+      General
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-development-aspects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario Development Aspects
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario Development Aspects">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-site-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario Site Selection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#levels-of-detail" class="md-nav__link">
+    <span class="md-ellipsis">
+      Levels of Detail
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Base Data
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Base Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#land-use-land-cover-lulc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Land Use Land Cover (LULC)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hydrological-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hydrological Data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environmental-fate-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environmental Fate Data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weather-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Weather Data
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crop-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Crop Protection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#substance-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Substance Properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#species-and-effect-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Species and Effect Parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      References
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Example-scenarios.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Example Scenarios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Technical Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Technical Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/regulatory-framework.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Regulatory Framework
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/troubleshooting.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/glossary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Glossary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    xLandscape
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            xLandscape
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-intro.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Intro
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-v1x.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Version 1.x
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-components.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-models.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Landscape Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-outlook.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Outlook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_6" id="__nav_6_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Technology
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_6">
+            <span class="md-nav__icon md-icon"></span>
+            Technology
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-technology.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-buildingComponents.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-buildingModels.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building Landscape Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xLandscape/xLandscape-references.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    References
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="scenarios">Scenarios</h1>
+<p>First of all, scenarios have a <strong>technical meaning</strong> as a structured integration of all necessary environmental, hydrological, land use/cover, agricultural, ecological data, information and assumptions to run a model (here, xAquaticRisk). However, in environmental risk assessment, scenarios have a <strong>regulatory meaning</strong> as a testing system, that has to assure a certain protection level in case the test gets passed. In this role, scenarios have to address a certain <strong>level of conservatism</strong>, hence, need to be <strong>representative</strong> for a range of conditions of a typically large geographic area (e.g., a country).<br />
+Whereas detailed scenarios are applied to derive risk estimates, simple ones are used, e.g., for screening a level of conservatism for large areas.<br />
+Scenarios play a key role in the analysis and definition of effective <strong>risk mitigation</strong> measures. Scenarios can incorporate buffer zones, the use of drift-reducing technology, reduced application rates, or alternative practices to evaluate risk reduction. Beyond the focus on actual pesticide uses, scenarios serve <strong>risk management</strong> approaches targeting generic landscape characteristics which affect species populations, communities and biodiversity: e.g., the composition, management and structure of cultivated landscapes, and their relationship to their surrounding regions.<br />
+Realistic landscape scenarios can play an important role in <strong>policy alignment</strong>: The definition of Specific Protection Goals (SPGs, e.g., <a href="https://doi.org/10.2903/j.efsa.2010.1821">EFSA 2010</a>, <a href="https://doi.org/10.2903/j.efsa.2025.9501">EFSA 2025</a>) is based on the ecosystem services concepts. Modern regulatory developments highlight the important role of landscape scenarios and approaches as a way to contextualize SPGs, e.g., for aquatic organisms. Future risk and risk assessment will develop beyond single-species laboratory tests and incorporate realistic agricultural landscapes, including spatial and temporal heterogeneity, e.g., to capture both direct and indirect effects of pesticides on aquatic ecosystems. Risk management decisions should be informed by how pesticides affect organisms in actual European agroecosystems, not abstract worst-cases or averages. Landscape scenarios can ensure that SPGs align with broader environmental protection mandates to EU biodiversity and sustainability goals. So, landscape scenarios serve as a <strong>bridge between scientific modelling and regulatory decision-making</strong>.</p>
+<h2 id="xar-scenarios">xAR Scenarios</h2>
+<h3 id="general">General</h3>
+<p>According to their technical meaning, scenario definition and requirements depend on the given composition of the xAR landscape model (i.e., integrated components and their version). Thus, scenario development has to be adaptive and in line with xAR model development.<br />
+<a href="Example-scenarios.html">Example scenarios</a> shipped with xAR fit to the given model version and reside in the scenario folder after model download (<code>xAquaticRisk\scenario</code>).<br />
+<a href="Example-scenarios.html">Example scenarios</a> also provide a good starting point for the development of user-defined (new) scenarios.  </p>
+<p>Outlook:<br />
+For scenario creation web-based services have been experimentally tested. Such services provide a (simple) GUI via web browser to enable the user to select a geographic location (e.g., via mouse click or by providing coordinates), to set parameters and to get a ready-to-use scenario back. This significantly reduces effort and cost for the user and supports consistency and harmonisation.<br />
+Furthermore, such services can support the study site identification, i.e., the selection of representative scenario locations (and numbers).  </p>
+<h3 id="scenario-structure">Scenario Structure</h3>
+<p>An xAR scenario is stored in a sub-folder of <code>xAquaticRisk\scenario\</code> and typically contains the following elements:</p>
+<table>
+<thead>
+<tr>
+<th>Folder / File</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>geo/</code></td>
+<td>Geospatial data: field geometries (shapefiles), stream reach geometries, field-to-reach distances, catchment delineation</td>
+</tr>
+<tr>
+<td><code>hydro/</code></td>
+<td>Hydrological data: flow time series, water depth, volume for each reach in the stream network</td>
+</tr>
+<tr>
+<td><code>weather/</code></td>
+<td>Meteorological data: temperature, precipitation, wind, solar radiation time series</td>
+</tr>
+<tr>
+<td><code>stream_com/</code></td>
+<td>StreamCom species parameters: life-history traits, biomass data for population modelling</td>
+</tr>
+<tr>
+<td><code>scenario.xproject</code></td>
+<td>Scenario configuration file linking all data layers and defining macros</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>Scenario documentation (auto-generated)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scenario-development-aspects">Scenario Development Aspects</h3>
+<h4 id="scenario-site-selection">Scenario Site Selection</h4>
+<p>The selection of scenario sites is a crucial part of the scenario development process and depends on the study context, purpose and goals.<br />
+For aquatic risk assessment, site selection typically considers:</p>
+<ol>
+<li><strong>Catchment characteristics</strong>: The hydrological network structure (stream order, connectivity), catchment size, and the density of agricultural fields near water bodies. Catchments with a high proportion of treated fields draining into streams represent higher exposure scenarios.  </li>
+<li><strong>Agricultural intensity</strong>: The density and proximity of treated crop fields to the stream network, crop types and application regimes. Regions with intensive agriculture bordering streams are of particular interest.  </li>
+<li><strong>Hydrological conditions</strong>: Base flow, flow variability, and dilution capacity of the stream network. Smaller streams with lower dilution may represent more conservative scenarios.  </li>
+<li><strong>Climatic variability</strong>: Weather conditions affect hydrology, substance degradation, and species phenology. Scenarios covering different climatic zones increase representativeness.  </li>
+<li><strong>Ecological relevance</strong>: Presence of sensitive aquatic communities, protected water bodies, or areas of ecological importance.  </li>
+</ol>
+<p>The current example scenarios shipped with xAR are located in Belgium (Oudebeek/Rummen catchment, Grote Kemmelbeek) and Germany (Münster region), representing different catchment types and agricultural contexts.</p>
+<h4 id="levels-of-detail">Levels of Detail</h4>
+<p>The ideal data of local hydrology, water quality, and aquatic habitat conditions, together with the necessary data on environmental conditions, is hardly fully available. Typically, <strong>scenario conditions are modelled</strong>, as a composite of data, models and expert judgement. Scale, precision and accuracy of this modelling approach should be adapted to the problem at hand. Transparency in data preparation, processing and modelling steps is key to acceptability.<br />
+To support transparency and structure in scenario development, we propose to consider explicit levels of detail:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Data Acquisition</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Off-the-shelf data</td>
+<td>Basic, wide-coverage datasets (satellite, national/regional hydrological products) suitable for large-scale or screening analyses.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Best-available data</td>
+<td>Curated and locally verified datasets with additional manual processing or expert review for improved accuracy.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Contemporary data generation</td>
+<td>High-resolution, targeted data collected for the study (e.g., local hydrological measurements, field surveys).</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Field study</td>
+<td>Detailed field measurements providing high-resolution information about hydrology, water quality and local environmental conditions.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="base-data">Base Data</h4>
+<p>This section introduces some base data commonly used in scenario development. The information is intended to give a general overview. We highly recommend consulting web pages, search engines and AI agents for recent information before you start your development or study.  </p>
+<h5 id="land-use-land-cover-lulc">Land Use Land Cover (LULC)</h5>
+<p>A typical base geodata layer in scenario development is composed from pan-European and national/topographic sources. The table below summarises common products and their typical availability across Europe and individual countries.</p>
+<table>
+<thead>
+<tr>
+<th>Dataset / Product</th>
+<th>Geographic coverage</th>
+<th>Typical spatial resolution / unit</th>
+<th>Access / Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CORINE Land Cover (CLC) / Copernicus Land Monitoring</td>
+<td>Pan-Europe (EEA)</td>
+<td>Vector polygons, minimum mapping unit ≈25 ha (derived raster products ~100 m)</td>
+<td>Open via EEA/Copernicus. Good for consistent, multi-year land-cover mapping but coarse for parcel-scale studies.</td>
+</tr>
+<tr>
+<td>Copernicus High Resolution Layers (HRL)</td>
+<td>Pan-Europe (selected layers)</td>
+<td>Thematic layers (e.g., forests, grasslands) often at 10–20 m equivalent detail</td>
+<td>Open via Copernicus; complements CLC with thematic detail.</td>
+</tr>
+<tr>
+<td>EU-DEM / SRTM / national DEMs</td>
+<td>Pan-Europe (EU-DEM) / global (SRTM) / national high-res</td>
+<td>DEMs at 25 m (EU-DEM) to 90 m (SRTM); national LiDAR-derived DEMs much finer</td>
+<td>EU-DEM open; national DEMs/LiDAR availability varies by country and region.</td>
+</tr>
+<tr>
+<td>National crop cover / thematic crop maps</td>
+<td>Country (examples: Germany, Netherlands, UK, France)</td>
+<td>Varies — from 10 m to parcel level</td>
+<td>Produced by national agencies or research groups. Check national portals for access and licensing.</td>
+</tr>
+<tr>
+<td>IACS / LPIS (administrative parcel data)</td>
+<td>National / regional (EU)</td>
+<td>Parcel-level declarations (farmers' subsidy claims)</td>
+<td>Highly detailed for crop/use per parcel but often restricted. Excellent for parcel-scale scenario building when available.</td>
+</tr>
+<tr>
+<td>OpenStreetMap (OSM) &amp; volunteered data</td>
+<td>Global (incl. Europe)</td>
+<td>Vector features (roads, buildings, landuse polygons)</td>
+<td>Open and continuously updated; useful for topographic features and small-structure mapping.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="hydrological-data">Hydrological Data</h5>
+<p>Hydrological data forms the backbone of aquatic risk scenarios. Key data requirements include:</p>
+<table>
+<thead>
+<tr>
+<th>Data Type</th>
+<th>Description</th>
+<th>Typical Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stream network geometry</td>
+<td>Reach geometries, connectivity, stream order</td>
+<td>National topographic databases, EU-Hydro, OpenStreetMap</td>
+</tr>
+<tr>
+<td>Flow time series</td>
+<td>Discharge (m³/d) for each reach</td>
+<td>Hydrological simulations (e.g., CMF), gauging station records, national hydrological services</td>
+</tr>
+<tr>
+<td>Water depth and volume</td>
+<td>Water depth (m) and volume (m³) per reach over time</td>
+<td>Derived from flow using hydraulic geometry or cross-section data</td>
+</tr>
+<tr>
+<td>Field-to-reach distances</td>
+<td>Minimum distance from each agricultural field to the nearest stream reach</td>
+<td>Computed from field and reach geometries (GIS)</td>
+</tr>
+<tr>
+<td>Catchment delineation</td>
+<td>Sub-catchment boundaries for hydrological routing</td>
+<td>Derived from DEM analysis</td>
+</tr>
+</tbody>
+</table>
+<h5 id="environmental-fate-data">Environmental Fate Data</h5>
+<p>For the environmental fate modelling with CascadeToxswa and StepsRiverNetwork, additional reach-level data is needed:</p>
+<table>
+<thead>
+<tr>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sediment properties</td>
+<td>Organic matter content, bulk density of sediment</td>
+</tr>
+<tr>
+<td>Water body dimensions</td>
+<td>Width, depth, cross-sectional profile of reaches</td>
+</tr>
+<tr>
+<td>Macrophyte coverage</td>
+<td>Percentage coverage by aquatic macrophytes (affects sorption)</td>
+</tr>
+<tr>
+<td>Suspended solids</td>
+<td>Concentration of suspended particulate matter</td>
+</tr>
+</tbody>
+</table>
+<h5 id="weather-data">Weather Data</h5>
+<p>Meteorological data is required for environmental fate modelling (temperature-dependent degradation, volatilisation). Common sources include:</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Coverage</th>
+<th>Resolution</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agri4Cast (JRC)</td>
+<td>Pan-Europe</td>
+<td>25 km grid, daily</td>
+<td>Open access; includes temperature, precipitation, wind, solar radiation</td>
+</tr>
+<tr>
+<td>National meteorological services</td>
+<td>Country-level</td>
+<td>Station-based or gridded</td>
+<td>Often higher resolution than European products</td>
+</tr>
+<tr>
+<td>ERA5 (ECMWF)</td>
+<td>Global</td>
+<td>~31 km, hourly</td>
+<td>Reanalysis product; consistent and long time series</td>
+</tr>
+</tbody>
+</table>
+<h4 id="crop-protection">Crop Protection</h4>
+<p>The user defines PPP uses through the parameterisation (<code>.xrun</code> file), specifying:</p>
+<ul>
+<li><strong>Application rate</strong> (g/ha)</li>
+<li><strong>Application time window</strong> (date range within which applications occur)</li>
+<li><strong>Rautmann drift class</strong> (arable, orchards.early, orchards.late) — determines the spray-drift curve used for deposition calculation</li>
+<li><strong>In-crop buffer</strong> (m) — distance from field edge that is not sprayed</li>
+<li><strong>Drift-reducing technology</strong> (fraction 0–1) — reduction factor applied to spray-drift deposition</li>
+</ul>
+<p>These parameters directly control the exposure pathway from field application to surface water deposition and are key drivers of the aquatic risk assessment.</p>
+<h4 id="substance-properties">Substance Properties</h4>
+<p>Environmental fate modelling requires substance-specific physico-chemical properties. These are defined in the <code>.xrun</code> parameterisation file and include:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Unit</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Molar mass</td>
+<td>g/mol</td>
+<td>Molecular weight of the active substance</td>
+</tr>
+<tr>
+<td>Saturated vapour pressure</td>
+<td>Pa</td>
+<td>Vapour pressure at 20 °C</td>
+</tr>
+<tr>
+<td>Solubility in water</td>
+<td>mg/l</td>
+<td>Water solubility at 20 °C</td>
+</tr>
+<tr>
+<td>DT50 in water</td>
+<td>d</td>
+<td>Half-life in water at 20 °C</td>
+</tr>
+<tr>
+<td>DT50 in sediment</td>
+<td>d</td>
+<td>Half-life in sediment at 20 °C</td>
+</tr>
+<tr>
+<td>KOC</td>
+<td>l/kg</td>
+<td>Organic carbon–water partition coefficient</td>
+</tr>
+<tr>
+<td>Diffusion coefficient</td>
+<td>m²/d</td>
+<td>Diffusion coefficient at 20 °C</td>
+</tr>
+<tr>
+<td>Freundlich exponent</td>
+<td>–</td>
+<td>For sorption to sediment and suspended particles</td>
+</tr>
+</tbody>
+</table>
+<h4 id="species-and-effect-parameters">Species and Effect Parameters</h4>
+<p>Effect modelling using GUTS requires species-specific toxicological parameters. xAR supports up to three species simultaneously. For each species, GUTS-SD and GUTS-IT parameters are defined:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>GUTS-SD</th>
+<th>GUTS-IT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dominant rate constant</td>
+<td>kd (1/h)</td>
+<td>kd (1/h)</td>
+</tr>
+<tr>
+<td>Threshold</td>
+<td>zw (ng/l) — threshold concentration</td>
+<td>mw (ng/l) — median threshold</td>
+</tr>
+<tr>
+<td>Effect parameter</td>
+<td>bw (l/(ng·h)) — killing rate</td>
+<td>β — width of threshold distribution</td>
+</tr>
+</tbody>
+</table>
+<p>The default parameterisation includes three representative macroinvertebrate species:</p>
+<ul>
+<li><strong>Asellus aquaticus</strong> — isopod; also used by the StreamCom population model</li>
+<li><strong>Cloeon dipterum</strong> — mayfly</li>
+<li><strong>Gammarus pulex</strong> — amphipod</li>
+</ul>
+<h2 id="references">References</h2>
+<p>EFSA PPR Panel (2013). Guidance on tiered risk assessment for plant protection products for aquatic organisms in edge-of-field surface waters. EFSA Journal 11(7): 3290. <a href="https://doi.org/10.2903/j.efsa.2013.3290">https://doi.org/10.2903/j.efsa.2013.3290</a><br />
+EFSA PPR Panel (2018). Scientific Opinion on the state of the art of Toxicokinetic/Toxicodynamic (TKTD) effect models for regulatory risk assessment of pesticides for aquatic organisms. EFSA Journal 16(8): 5377. <a href="https://doi.org/10.2903/j.efsa.2018.5377">https://doi.org/10.2903/j.efsa.2018.5377</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.tabs.sticky", "toc.integrate"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>
