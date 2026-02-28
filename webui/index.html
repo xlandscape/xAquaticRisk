@@ -366,8 +366,8 @@
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="Scenario/Project">Project / Scenario *</label>
-                            <select id="Scenario/Project" name="Scenario/Project" required>
+                            <label for="Scenario/LandscapeScenario">Project / Scenario *</label>
+                            <select id="Scenario/LandscapeScenario" name="Scenario/LandscapeScenario" required>
                                 <option value="">Loading scenarios...</option>
                             </select>
                             <div class="help-text">The landscape scenario to use for simulation</div>
@@ -810,7 +810,7 @@
         
         // Known parameter mappings
         const knownParams = [
-            'Scenario/Project', 'Scenario/SimulationStart', 'Scenario/SimulationEnd',
+            'Scenario/LandscapeScenario', 'Scenario/SimulationStart', 'Scenario/SimulationEnd',
             'SimulationInfo/SimID', 'Settings/NumberMC', 'SimulationInfo/NumberParallelProcesses',
             'PppUse/ApplicationRate', 'PppUse/ApplicationTimeWindow',
             'Mitigation/InCropBuffer', 'Mitigation/TechnologyDriftReduction',
@@ -889,7 +889,7 @@
             try {
                 const response = await fetch('/api/scenarios');
                 const scenarios = await response.json();
-                const select = document.getElementById('Scenario/Project');
+                const select = document.getElementById('Scenario/LandscapeScenario');
                 select.innerHTML = '<option value="">Select a scenario...</option>';
                 
                 scenarios.forEach(scenario => {
@@ -1015,7 +1015,7 @@
             
             const params = getFormData();
             
-            if (!params['Scenario/Project']) {
+            if (!params['Scenario/LandscapeScenario']) {
                 showStatus('Please select a scenario', 'error');
                 return;
             }

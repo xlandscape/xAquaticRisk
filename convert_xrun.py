@@ -74,7 +74,7 @@ PARAM_ORDER: Dict[str, List[str]] = {
         "CascadeToxswaWorkers", "DeleteFoldersAtFinish",
         "VerboseLogging", "EnableProfiling", "ProfilingWaitingTime",
     ],
-    "Scenario": ["Project", "SimulationStart", "SimulationEnd"],
+    "Scenario": ["LandscapeScenario", "SimulationStart", "SimulationEnd"],
     "PppUse": ["ApplicationRate", "ApplicationTimeWindow"],
     "Mitigation": ["InCropBuffer", "TechnologyDriftReduction"],
     "Exposure": ["RautmannClass", "DepositionInputFile"],
@@ -218,9 +218,9 @@ COMMENTS: Dict[str, str] = {
         "                         in a sufficient temporal resolution\n"
         "    -->\n"
     ),
-    "Project": (
+    "LandscapeScenario": (
         "    <!--\n"
-        "    Parameter     :  Project\n"
+        "    Parameter     :  LandscapeScenario\n"
         "    Description   :  The scenario used by the simulation\n"
         "    Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.\n"
         "    Remark        :  Make sure that the scenario is present in the scenario sub-folder.\n"

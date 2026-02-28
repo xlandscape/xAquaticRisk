@@ -40,11 +40,11 @@ FileNotFoundError: [Errno 2] No such file or directory: '...\\scenario\\<project
 
 **Explanation**:
 
-The scenario specified in the `<Project>` parameter of the `.xrun` file does not exist or the scenario folder is incomplete.
+The scenario specified in the `<LandscapeScenario>` parameter of the `.xrun` file does not exist or the scenario folder is incomplete.
 
 **Possible solutions**:
 
-- Check that the `<Project>` value in the `.xrun` file matches one of the sub-folders in `xAquaticRisk\scenario\`.
+- Check that the `<LandscapeScenario>` value in the `.xrun` file matches one of the sub-folders in `xAquaticRisk\scenario\`.
 - Verify that the scenario folder contains a `scenario.xproject` file and all required data sub-folders (`geo/`, `hydro/`, `weather/`, `stream_com/`).
 
 ## Simulation Date Out of Range

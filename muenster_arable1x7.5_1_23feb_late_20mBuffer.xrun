@@ -11,7 +11,7 @@
     Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
     Remark        :  Make sure that the scenario is present in the scenario sub-folder.
     -->
-    <Project>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</Project>
+    <LandscapeScenario>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</LandscapeScenario>
 
     <!--
     Parameter     :  SimulationStart

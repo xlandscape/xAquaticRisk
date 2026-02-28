@@ -76,7 +76,7 @@ Example ***.xrun*** file (simplified):
     <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
   </SimulationInfo>
   <Scenario>
-    <Project>scenario/oudebeek-beek7-tdi</Project>
+    <LandscapeScenario>scenario/oudebeek-beek7-tdi</LandscapeScenario>
     <SimulationStart>2015-05-01</SimulationStart>
     <SimulationEnd>2015-05-07</SimulationEnd>
   </Scenario>

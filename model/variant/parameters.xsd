@@ -37,7 +37,7 @@
         <xsd:element name="Scenario">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="Project">
+              <xsd:element name="LandscapeScenario">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:anyURI">
                     <xsd:minLength value="3"/>
