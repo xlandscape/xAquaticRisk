@@ -70,11 +70,11 @@ Example ***.xrun*** file (simplified):
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters xmlns="urn:xAquaticRisk">
-  <SimulationInfo>
-    <SimID>Test_Run_aqRisk</SimID>
+  <Control>
+    <ExperimentID>Test_Run_aqRisk</ExperimentID>
     <NumberParallelProcesses>2</NumberParallelProcesses>
     <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
-  </SimulationInfo>
+  </Control>
   <Scenario>
     <LandscapeScenario>scenario/oudebeek-beek7-tdi</LandscapeScenario>
     <SimulationStart>2015-05-01</SimulationStart>
@@ -116,7 +116,7 @@ Example ***.xrun*** file (simplified):
 
 | Section | Purpose |
 |---|---|
-| **SimulationInfo** | Unique run ID, parallelisation settings, logging and profiling |
+| **Control** | Unique run ID, parallelisation settings, logging and profiling |
 | **Scenario** | Landscape scenario selection and simulation period |
 | **PppUse** | Application rate (g/ha) and application time window(s) |
 | **Mitigation** | In-crop buffer (m) and drift-reducing technology (fraction) |
@@ -128,18 +128,18 @@ Example ***.xrun*** file (simplified):
 
 ## Running xAquaticRisk
 
-To start xAquaticRisk using the sample scenario, **drag `template.xrun` onto `__start__.bat`**. This will start an xAquaticRisk run using the default scenario. Output of the model run can be found in the newly created `\run\<SimID>\` folder.
+To start xAquaticRisk using the sample scenario, **drag `template.xrun` onto `__start__.bat`**. This will start an xAquaticRisk run using the default scenario. Output of the model run can be found in the newly created `\run\<ExperimentID>\` folder.
 
 > [!IMPORTANT]  
-> **SimIDs need to be unique**. xAquaticRisk will create a folder for each run using the SimID defined in the `.xrun` file. The SimID cannot be the same as a folder already contained in the run folder. If you want to run a simulation with the same SimID you need to delete the existing folder first.
+> **ExperimentIDs need to be unique**. xAquaticRisk will create a folder for each run using the ExperimentID defined in the `.xrun` file. The ExperimentID cannot be the same as a folder already contained in the run folder. If you want to run a simulation with the same ExperimentID you need to delete the existing folder first.
 
 A typical simulation workflow:  
 
 1. Copy `template.xrun` and rename it (e.g., `my_experiment.xrun`).  
 2. Open the copy in a text editor and adjust parameters (scenario, substance properties, species, etc.).  
 3. Drag the `.xrun` file onto `__start__.bat`.  
-4. Monitor progress in the console window. Log files are written to `\run\<SimID>\log`.  
-5. When the run completes, find results in `\run\<SimID>\reporting` and analysis outputs.  
+4. Monitor progress in the console window. Log files are written to `\run\<ExperimentID>\log`.  
+5. When the run completes, find results in `\run\<ExperimentID>\reporting` and analysis outputs.  
 
 We are fully aware that XML is not the ideal **user interface**. A **web-based user interface (WebUI)** is available — start it via `webui.bat`.  
 
@@ -149,13 +149,13 @@ We are fully aware that XML is not the ideal **user interface**. A **web-based u
 
 [xLandscape](xLandscape/xLandscape-intro.md) makes use of multidimensional data stores. At present, [HDF](xLandscape/xLandscape-intro.md#multidimensional-data-store) is being used.  
 
-To view the raw output of xAquaticRisk, open `\run\<SimID>\mcs\[mc run ID]\store\arr.dat` with a HDF5 file viewer such as [HDFView](https://portal.hdfgroup.org/downloads/index.html). Expand the folder tree to inspect individual data stores (e.g., PEC values, spray-drift depositions, effect results).
+To view the raw output of xAquaticRisk, open `\run\<ExperimentID>\mcs\[mc run ID]\store\arr.dat` with a HDF5 file viewer such as [HDFView](https://portal.hdfgroup.org/downloads/index.html). Expand the folder tree to inspect individual data stores (e.g., PEC values, spray-drift depositions, effect results).
 
 Right click on an item and click "Open" to view its attributes and data.
 
 ### Reporting
 
-The **ReportingObserver** automatically generates a set of plots and tables in the `\run\<SimID>\reporting` folder. These include:
+The **ReportingObserver** automatically generates a set of plots and tables in the `\run\<ExperimentID>\reporting` folder. These include:
 
 - Hydrological summaries (flow, water depth)
 - PEC time series for selected reaches

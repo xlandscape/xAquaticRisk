@@ -8,10 +8,10 @@
   <xsd:element name="Parameters">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="SimulationInfo">
+        <xsd:element name="Control">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="SimID">
+              <xsd:element name="ExperimentID">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
                     <xsd:minLength value="3"/>
@@ -21,7 +21,7 @@
               <xsd:element name="ParentRun" type="xsd:anyURI"/>
               <xsd:element name="NumberParallelProcesses" type="xsd:nonNegativeInteger"/>
               <xsd:element name="CascadeToxswaWorkers" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="DeleteFoldersAtFinish" type="xsd:boolean"/>
+              <xsd:element name="DeleteComponentProcessingFolders" type="xsd:boolean"/>
               <xsd:element name="VerboseLogging" type="xsd:boolean"/>
               <xsd:element name="EnableProfiling" type="xsd:boolean"/>
               <xsd:element name="ProfilingWaitingTime">

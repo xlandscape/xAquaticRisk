@@ -2,9 +2,9 @@
 """
 convert_xrun.py  –  Convert old-format xAquaticRisk .xrun files to new format.
 
-Reads a legacy .xrun file (with CropStage and/or SimulationInfo at the bottom)
+Reads a legacy .xrun file (with CropStage and/or Control at the bottom)
 and produces:
-  1.  A new-format .xrun file  (SimulationInfo first, RautmannClass)
+  1.  A new-format .xrun file  (Control first, RautmannClass)
   2.  An equivalent .yaml parameterisation file
 
 Usage
@@ -54,7 +54,7 @@ def _tag(local: str) -> str:
 #  Canonical section order (new format) and parameter order within sections
 # ---------------------------------------------------------------------------
 SECTION_ORDER: List[str] = [
-    "SimulationInfo",
+    "Control",
     "Scenario",
     "PppUse",
     "Mitigation",
@@ -69,9 +69,9 @@ SECTION_ORDER: List[str] = [
 # A parameter that appears in the old file but is *not* listed here will be
 # appended at the end of its section, preserving the original relative order.
 PARAM_ORDER: Dict[str, List[str]] = {
-    "SimulationInfo": [
-        "SimID", "ParentRun", "NumberParallelProcesses",
-        "CascadeToxswaWorkers", "DeleteFoldersAtFinish",
+    "Control": [
+        "ExperimentID", "ParentRun", "NumberParallelProcesses",
+        "CascadeToxswaWorkers", "DeleteComponentProcessingFolders",
         "VerboseLogging", "EnableProfiling", "ProfilingWaitingTime",
     ],
     "Scenario": ["LandscapeScenario", "SimulationStart", "SimulationEnd"],
@@ -138,9 +138,9 @@ CROP_STAGE_MAP = {
 # ---------------------------------------------------------------------------
 # fmt: off
 COMMENTS: Dict[str, str] = {
-    "SimID": (
+    "ExperimentID": (
         "    <!--\n"
-        "    Parameter     :  SimID\n"
+        "    Parameter     :  ExperimentID\n"
         "    Description   :  A unique identifier of a simulation run\n"
         "    Values        :  Any characters that are valid in file system identifiers\n"
         "    Remark        :  Running a simulation with the same name as an existing simulation run results in an error.\n"
@@ -182,9 +182,9 @@ COMMENTS: Dict[str, str] = {
         "                     min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors\n"
         "    -->\n"
     ),
-    "DeleteFoldersAtFinish": (
+    "DeleteComponentProcessingFolders": (
         "    <!--\n"
-        "      Parameter     :   DeleteFoldersAtFinish\n"
+        "      Parameter     :   DeleteComponentProcessingFolders\n"
         "      Description   :   Specifies whether processing folders should be deleted after the model run is finished\n"
         "      Values        :   true or false\n"
         "      Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when\n"
@@ -615,11 +615,11 @@ def write_new_xrun(sections: Dict[str, OrderedDict], outpath: str) -> None:
 # ---------------------------------------------------------------------------
 # YAML comment templates (short form – one line per param)
 YAML_COMMENTS: Dict[str, str] = {
-    "SimID":                          "# A unique identifier of a simulation run",
+    "ExperimentID":                          "# A unique identifier of a simulation run",
     "ParentRun":                      "# A file pattern of potential parents for this run (leave empty to disable)",
     "NumberParallelProcesses":        "# The number of Monte Carlo runs that are conducted simultaneously",
     "CascadeToxswaWorkers":           "# The number of processes spawned by CascadeToxswa",
-    "DeleteFoldersAtFinish":          "# Delete processing folders after the model run is finished (true/false)",
+    "DeleteComponentProcessingFolders": "# Delete processing folders after the model run is finished (true/false)",
     "VerboseLogging":                 "# Enable verbose logging (true/false)",
     "EnableProfiling":                "# Enable performance profiling (true/false)",
     "ProfilingWaitingTime":           "# Time interval in seconds between profiling rounds",
@@ -662,7 +662,7 @@ YAML_COMMENTS: Dict[str, str] = {
 
 # Section header comments
 YAML_SECTION_HEADERS: Dict[str, str] = {
-    "SimulationInfo":    "# --- Simulation Info ---",
+    "Control":           "# --- Control ---",
     "Scenario":          "# --- Scenario ---",
     "PppUse":            "# --- PPP Use ---",
     "Mitigation":        "# --- Mitigation ---",
@@ -742,7 +742,7 @@ def write_yaml(sections: Dict[str, OrderedDict], outpath: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Convert old-format xAquaticRisk .xrun files to the new "
-                    "format (SimulationInfo first, RautmannClass) and emit a "
+                    "format (Control first, RautmannClass) and emit a "
                     "parallel .yaml parameterisation file.",
     )
     parser.add_argument(

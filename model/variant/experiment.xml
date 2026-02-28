@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Experiment>
     <General>
         <MCRunTemplate>$(_X3DIR_)/../../variant/mc.xml</MCRunTemplate>
-        <MCBaseDir>$(_EXP_BASE_DIR_)\$(SimID)\mcs</MCBaseDir>
+        <MCBaseDir>$(_EXP_BASE_DIR_)\$(ExperimentID)\mcs</MCBaseDir>
         <NumberMC>$(NumberMC)</NumberMC>
         <NumberParallelProcesses>$(NumberParallelProcesses)</NumberParallelProcesses>
-        <ExperimentDir>$(_EXP_BASE_DIR_)\$(SimID)</ExperimentDir>
+        <ExperimentDir>$(_EXP_BASE_DIR_)\$(ExperimentID)</ExperimentDir>
         <EnableProfiling>$(EnableProfiling)</EnableProfiling>
         <ProfilingWaitingTime>$(ProfilingWaitingTime)</ProfilingWaitingTime>
         <ProfilingPollingDuration>1</ProfilingPollingDuration>
@@ -15,13 +15,13 @@
             <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
         </Observer>
         <Observer module="observer" class="LogFileObserver">
-            <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\experiment.log</LogFile>
+            <LogFile>$(_EXP_BASE_DIR_)\$(ExperimentID)\log\experiment.log</LogFile>
             <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
         </Observer>
         <!-- <Observer module="ReportingObserver" class="ReportingObserver">
-            <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>
-            <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\reporting\$(Species1)_SD</Output_Folder>
-            <Key>$(SimID)</Key>
+            <Data>$(_EXP_BASE_DIR_)\$(ExperimentID)</Data>
+            <Output_Folder>$(_EXP_BASE_DIR_)\$(ExperimentID)\reporting\$(Species1)_SD</Output_Folder>
+            <Key>$(ExperimentID)</Key>
             <CmfCont>$(RunCmfContinuous)</CmfCont>
             <Cascade>$(RunCascadeToxswa)</Cascade>
             <Steps>$(RunStepsRiverNetwork)</Steps>
@@ -75,9 +75,9 @@
             <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
         </Observer> -->
         <!-- <Observer module="ReportingObserver" class="ReportingObserver">
-            <Data>$(_EXP_BASE_DIR_)\$(SimID)</Data>
-            <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\reporting\$(Species1)_IT</Output_Folder>
-            <Key>$(SimID)</Key>
+            <Data>$(_EXP_BASE_DIR_)\$(ExperimentID)</Data>
+            <Output_Folder>$(_EXP_BASE_DIR_)\$(ExperimentID)\reporting\$(Species1)_IT</Output_Folder>
+            <Key>$(ExperimentID)</Key>
             <CmfCont>$(RunCmfContinuous)</CmfCont>
             <Cascade>$(RunCascadeToxswa)</Cascade>
             <Steps>$(RunStepsRiverNetwork)</Steps>
@@ -131,9 +131,9 @@
             <LM_Cascade_Survival_Offset>true</LM_Cascade_Survival_Offset>
         </Observer> -->
         <Observer module="AnalysisObserver" class="AnalysisObserver">
-            <Data>$(_EXP_BASE_DIR_)\$(SimID)\log\experiment.log</Data>
+            <Data>$(_EXP_BASE_DIR_)\$(ExperimentID)\log\experiment.log</Data>
             <Script>C:\LocalWork\xAquaticRisk\analysis\profiling.R</Script>
-            <Output_Folder>$(_EXP_BASE_DIR_)\$(SimID)\log\profile</Output_Folder>
+            <Output_Folder>$(_EXP_BASE_DIR_)\$(ExperimentID)\log\profile</Output_Folder>
         </Observer>
     </Observers>
     <Parts>

@@ -451,9 +451,9 @@
       -->
       <PecDisplayedTime>2015-04-02 12:00</PecDisplayedTime>
   </Analysis>
-  <SimulationInfo>
+  <Control>
     <!--
-    Parameter     :  SimID
+    Parameter     :  ExperimentID
     Description   :  A unique identifier of a simulation run
     Values        :  Any characters that are valid in file system identifiers
     Remark        :  Running a simulation with the same name as an existing simulation run results in an error.
@@ -461,7 +461,7 @@
                      of clearly in the identifier. If conducting a run from the experiment table, register it there and
                      use the naming scheme <experiment id>-<n> where n is the number of the run.
     -->
-    <SimID>muenster28jul_arable1x75_noMitig_late_23feb_20mBuffer</SimID>
+    <ExperimentID>muenster28jul_arable1x75_noMitig_late_23feb_20mBuffer</ExperimentID>
 
     <!--
     Parameter     :  ParentRun
@@ -497,13 +497,13 @@
     <CascadeToxswaWorkers>20</CascadeToxswaWorkers>
 
     <!--
-      Parameter     :   DeleteFoldersAtFinish
+      Parameter     :   DeleteComponentProcessingFolders
       Description   :   Specifies whether processing folders should be deleted after the model run is finished
       Values        :   true or false
       Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when
                         testing
     -->
-    <DeleteFoldersAtFinish>true</DeleteFoldersAtFinish>
+    <DeleteComponentProcessingFolders>true</DeleteComponentProcessingFolders>
 
     <!--
       Parameter     :   VerboseLogging
@@ -531,5 +531,5 @@
                          in a sufficient temporal resolution
     -->
     <ProfilingWaitingTime>5</ProfilingWaitingTime>
-  </SimulationInfo>
+  </Control>
 </Parameters>

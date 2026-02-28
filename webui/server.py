@@ -226,8 +226,8 @@ class XAquaticHandler(SimpleHTTPRequestHandler):
                 params = json.loads(post_data.decode())
                 
                 try:
-                    # Get SimID for filename
-                    sim_id = params.get("Scenario/SimID", params.get("SimID", "Simulation"))
+                    # Get ExperimentID for filename
+                    sim_id = params.get("Control/ExperimentID", params.get("ExperimentID", "Simulation"))
                     output_filename = f"{sim_id}.xrun"
                     output_path = os.path.join(OUTPUT_DIR, output_filename)
                     
@@ -282,9 +282,9 @@ class XAquaticHandler(SimpleHTTPRequestHandler):
                             filename += '.xrun'
                         output_path = os.path.join(save_path, filename)
                     else:
-                        # Save to default location (Simulation.xrun or based on SimID)
+                        # Save to default location (Simulation.xrun or based on ExperimentID)
                         params = data.get("parameters", {})
-                        sim_id = params.get("Scenario/SimID", params.get("SimID", "Simulation"))
+                        sim_id = params.get("Control/ExperimentID", params.get("ExperimentID", "Simulation"))
                         filename = f"{sim_id}.xrun"
                         output_path = os.path.join(OUTPUT_DIR, filename)
                     

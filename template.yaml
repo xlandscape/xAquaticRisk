@@ -6,11 +6,11 @@
 # to __start__.bat instead of an .xrun file.
 # =============================================================================
 
-SimulationInfo:
+Control:
   # A unique identifier of a simulation run
   # Values: Any characters that are valid in file system identifiers
   # Remark: Running a simulation with the same name as an existing run results in an error.
-  SimID: Test_Run_aqRisk
+  ExperimentID: Test_Run_aqRisk
 
   # A file pattern of potential parents for this run
   # Values: Empty or a file pattern yielding at least one X3df data store file.
@@ -29,7 +29,7 @@ SimulationInfo:
 
   # Specifies whether processing folders should be deleted after the model run is finished
   # Values: true or false
-  DeleteFoldersAtFinish: false
+  DeleteComponentProcessingFolders: false
 
   # Specifies whether verbose logging is used
   # Values: true or false

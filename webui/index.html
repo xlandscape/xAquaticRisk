@@ -342,8 +342,8 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="SimulationInfo/SimID">SimID</label>
-                        <input type="text" id="SimulationInfo/SimID" name="SimulationInfo/SimID" 
+                        <label for="Control/ExperimentID">ExperimentID</label>
+                        <input type="text" id="Control/ExperimentID" name="Control/ExperimentID" 
                                placeholder="e.g., Test_Run_aqRisk">
                         <div class="help-text">A unique identifier of a simulation run</div>
                     </div>
@@ -357,8 +357,8 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="SimulationInfo/NumberParallelProcesses">Parallel Processes</label>
-                            <input type="number" step="1" min="1" id="SimulationInfo/NumberParallelProcesses" name="SimulationInfo/NumberParallelProcesses" 
+                            <label for="Control/NumberParallelProcesses">Parallel Processes</label>
+                            <input type="number" step="1" min="1" id="Control/NumberParallelProcesses" name="Control/NumberParallelProcesses" 
                                    placeholder="e.g., 2">
                             <div class="help-text">Number of Monte Carlo runs conducted simultaneously</div>
                         </div>
@@ -811,7 +811,7 @@
         // Known parameter mappings
         const knownParams = [
             'Scenario/LandscapeScenario', 'Scenario/SimulationStart', 'Scenario/SimulationEnd',
-            'SimulationInfo/SimID', 'Settings/NumberMC', 'SimulationInfo/NumberParallelProcesses',
+            'Control/ExperimentID', 'Settings/NumberMC', 'Control/NumberParallelProcesses',
             'PppUse/ApplicationRate', 'PppUse/ApplicationTimeWindow',
             'Mitigation/InCropBuffer', 'Mitigation/TechnologyDriftReduction',
             'Exposure/RautmannClass', 'Exposure/DepositionInputFile',

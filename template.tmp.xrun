@@ -1,48 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Parameters
-        xmlns="urn:xAquaticRisk"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="urn:xAquaticRisk model/variant/parameters.xsd"
->
+<?xml version='1.0' encoding='utf-8'?>
+<Parameters xmlns="urn:xAquaticRisk">
+  <Control>
+    <ExperimentID>Test_Run_aqRisk</ExperimentID>
+    <ParentRun />
+    <NumberParallelProcesses>2</NumberParallelProcesses>
+    <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
+    <DeleteComponentProcessingFolders>false</DeleteComponentProcessingFolders>
+    <VerboseLogging>false</VerboseLogging>
+    <EnableProfiling>false</EnableProfiling>
+    <ProfilingWaitingTime>5</ProfilingWaitingTime>
+  </Control>
   <Scenario>
-    <!--
-    Parameter     :  Project
-    Description   :  The scenario used by the simulation
-    Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
-    Remark        :  Make sure that the scenario is present in the scenario sub-folder.
-    -->
-    <LandscapeScenario>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</LandscapeScenario>
-
-    <!--
-    Parameter     :  SimulationStart
-    Description   :  The first date that is simulated
-    Values        :  A date of format YYYY-MM-DD within the valid range of dates
-    -->
-    <SimulationStart>1991-01-01</SimulationStart>
-
-    <!--
-    Parameter     :  SimulationEnd
-    Description   :  The last date that is simulated
-    Values        :  A date of format YYYY-MM-DD within the valid range of dates
-    -->
-    <SimulationEnd>2000-12-30</SimulationEnd>
+    <LandscapeScenario>scenario/oudebeek-beek7-tdi</LandscapeScenario>
+    <SimulationStart>2015-05-01</SimulationStart>
+    <SimulationEnd>2015-05-07</SimulationEnd>
   </Scenario>
   <PppUse>
-    <ApplicationRate>7.5</ApplicationRate>
-    <ApplicationTimeWindow>04-01 to 04-30</ApplicationTimeWindow>
+    <ApplicationRate>12.5</ApplicationRate>
+    <ApplicationTimeWindow>05-02 to 05-02</ApplicationTimeWindow>
   </PppUse>
   <Mitigation>
     <InCropBuffer>0</InCropBuffer>
     <TechnologyDriftReduction>0</TechnologyDriftReduction>
   </Mitigation>
   <Exposure>
-    <!--
-    Parameter     :  CropStage
-    Description   :  The crop development stage at the time of application
-    Values        :  early or late
-    -->
-    <CropStage>early</CropStage>
-    <DepositionInputFile/>
+    <RautmannClass>orchards.early</RautmannClass>
+    <DepositionInputFile />
   </Exposure>
   <EnvironmentalFate>
     <RunStepsRiverNetwork>true</RunStepsRiverNetwork>
@@ -92,21 +75,11 @@
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
   </Effects>
   <Settings>
-    <NumberMC>3</NumberMC>
+    <NumberMC>1</NumberMC>
     <ExportToSqlite>true</ExportToSqlite>
   </Settings>
   <Analysis>
-      <ReportingReaches>r154</ReportingReaches>
-      <PecDisplayedTime>1991-05-02 12:00</PecDisplayedTime>
+    <ReportingReaches>r577</ReportingReaches>
+    <PecDisplayedTime>2015-05-02 12:00</PecDisplayedTime>
   </Analysis>
-  <Control>
-    <ExperimentID>muenster_old_test</ExperimentID>
-    <ParentRun/>
-    <NumberParallelProcesses>3</NumberParallelProcesses>
-    <CascadeToxswaWorkers>20</CascadeToxswaWorkers>
-    <DeleteComponentProcessingFolders>true</DeleteComponentProcessingFolders>
-    <VerboseLogging>false</VerboseLogging>
-    <EnableProfiling>false</EnableProfiling>
-    <ProfilingWaitingTime>5</ProfilingWaitingTime>
-  </Control>
 </Parameters>

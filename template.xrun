@@ -4,9 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:xAquaticRisk model/variant/parameters.xsd"
 >
-  <SimulationInfo>
+  <Control>
     <!--
-    Parameter     :  SimID
+    Parameter     :  ExperimentID
     Description   :  A unique identifier of a simulation run
     Values        :  Any characters that are valid in file system identifiers
     Remark        :  Running a simulation with the same name as an existing simulation run results in an error.
@@ -14,7 +14,7 @@
                      of clearly in the identifier. If conducting a run from the experiment table, register it there and
                      use the naming scheme <experiment id>-<n> where n is the number of the run.
     -->
-    <SimID>Test_Run_aqRisk</SimID>
+    <ExperimentID>Test_Run_aqRisk</ExperimentID>
 
     <!--
     Parameter     :  ParentRun
@@ -50,13 +50,13 @@
     <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
 
     <!--
-      Parameter     :   DeleteFoldersAtFinish
+      Parameter     :   DeleteComponentProcessingFolders
       Description   :   Specifies whether processing folders should be deleted after the model run is finished
       Values        :   true or false
       Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when
                         testing
     -->
-    <DeleteFoldersAtFinish>false</DeleteFoldersAtFinish>
+    <DeleteComponentProcessingFolders>false</DeleteComponentProcessingFolders>
 
     <!--
       Parameter     :   VerboseLogging
@@ -84,7 +84,7 @@
                          in a sufficient temporal resolution
     -->
     <ProfilingWaitingTime>5</ProfilingWaitingTime>
-  </SimulationInfo>
+  </Control>
   <Scenario>
     <!--
     Parameter     :  LandscapeScenario
