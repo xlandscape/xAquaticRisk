@@ -60,10 +60,10 @@ xAquaticRisk requires a **64-bit Windows** operating system. No additional softw
 
 As every landscape model derived from the xLandscape framework, xAR distinguishes a *parameterisation* from a *configuration* level.  
 
-- ***Parameterisation*** is offered to the (standard) model user as `.xrun` files located at the model root directory. The `.xrun` file is an XML document that defines all user-accessible simulation parameters including scenario selection, simulation period, substance properties, effect model parameters and analysis settings.  
+- ***Parameterisation*** is offered to the (standard) model user as `.xrun` files located at the model root directory. The `.xrun` file is an XML document that defines all user-accessible simulation parameters including scenario selection, simulation period, substance properties, effect model parameters and analysis settings. An equivalent `.yaml` format is also supported.  
 - ***Configuration*** defines the fundamental model behaviour, i.e., which components are active and how they interact. The configuration is defined in `model/variant/mc.xml` and `model/variant/experiment.xml`. Configuration changes are typically not required for standard use.  
 
-The file `template.xrun` is the main parameterisation template shipped with xAquaticRisk. It contains in-line documentation for all parameters.
+The file `template.xrun` is the main parameterisation template shipped with xAquaticRisk. It contains in-line documentation for all parameters. For a complete reference of all parameters, formats and examples, see **[xAquaticRisk Parameterisation](../reference/parameterisation.md)**.
 
 Example ***.xrun*** file (simplified):
 
@@ -113,6 +113,8 @@ Example ***.xrun*** file (simplified):
 
 ### Key Parameter Sections
 
+The table below gives a brief overview. See the **[Parameterisation Reference](../reference/parameterisation.md)** for detailed descriptions, allowed values and defaults for every parameter.
+
 | Section | Purpose |
 |---|---|
 | **Control** | Unique run ID, parallelisation settings, logging and profiling |
@@ -121,7 +123,7 @@ Example ***.xrun*** file (simplified):
 | **Mitigation** | In-crop buffer (m) and drift-reducing technology (fraction) |
 | **Exposure** | Rautmann drift class (arable, orchards.early, orchards.late) or predefined deposition file |
 | **EnvironmentalFate** | Toggle fate models (StepsRiverNetwork, CascadeToxswa); substance physico-chemical properties (molar mass, DT50, KOC, etc.) |
-| **Effects** | Toggle GUTS (LGuts), reach selection, species names and GUTS-SD/IT parameters for up to 3 species |
+| **Effects** | Toggle GUTS (LGuts), species names and GUTS-SD/IT parameters for up to 3 species |
 | **Settings** | Number of Monte Carlo runs, SQLite export |
 | **Analysis** | Reporting reaches, PEC display time |
 

@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Parameters xmlns="urn:xAquaticRisk">
+  <Control>
+    <ExperimentID>muenster_1mar_test1</ExperimentID>
+    <ParentRun />
+    <NumberParallelProcesses>6</NumberParallelProcesses>
+    <CascadeToxswaWorkers>2</CascadeToxswaWorkers>
+    <DeleteComponentProcessingFolders>true</DeleteComponentProcessingFolders>
+    <VerboseLogging>false</VerboseLogging>
+    <EnableProfiling>false</EnableProfiling>
+    <ProfilingWaitingTime>5</ProfilingWaitingTime>
+  </Control>
+  <Scenario>
+    <LandscapeScenario>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</LandscapeScenario>
+    <SimulationStart>1991-04-01</SimulationStart>
+    <SimulationEnd>1991-04-10</SimulationEnd>
+  </Scenario>
+  <PppUse>
+    <ApplicationRate>7.5</ApplicationRate>
+    <ApplicationTimeWindow>04-01 to 04-10</ApplicationTimeWindow>
+  </PppUse>
+  <Mitigation>
+    <InCropBuffer>0</InCropBuffer>
+    <TechnologyDriftReduction>0</TechnologyDriftReduction>
+  </Mitigation>
+  <Exposure>
+    <RautmannClass>orchards.early</RautmannClass>
+    <DepositionInputFile />
+  </Exposure>
+  <EnvironmentalFate>
+    <RunStepsRiverNetwork>false</RunStepsRiverNetwork>
+    <RunCascadeToxswa>true</RunCascadeToxswa>
+    <ThresholdSW>0.001</ThresholdSW>
+    <ThresholdSediment>0.1</ThresholdSediment>
+    <MolarMass>505.2</MolarMass>
+    <SaturatedVapourPressure>1.10E-06</SaturatedVapourPressure>
+    <MolarEnthalpyOfVaporization>95</MolarEnthalpyOfVaporization>
+    <SolubilityInWater>0.001</SolubilityInWater>
+    <MolarEnthalpyOfDissolution>27</MolarEnthalpyOfDissolution>
+    <DiffusionCoefficient>4.30E-05</DiffusionCoefficient>
+    <DT50sw>1000</DT50sw>
+    <MolarActivationEnthalpyOfTransformationInWater>65.4</MolarActivationEnthalpyOfTransformationInWater>
+    <DT50sed>43.9</DT50sed>
+    <MolarActivationEnthalpyOfTransformationInSediment>65.4</MolarActivationEnthalpyOfTransformationInSediment>
+    <KOC>460000</KOC>
+    <ReferenceConcentrationForKOC>1</ReferenceConcentrationForKOC>
+    <FreundlichExponentInSedimentAndSuspendedParticles>0.93</FreundlichExponentInSedimentAndSuspendedParticles>
+    <CoefficientForLinearAdsorptionOnMacrophytes>0</CoefficientForLinearAdsorptionOnMacrophytes>
+  </EnvironmentalFate>
+  <Effects>
+    <RunLGuts>true</RunLGuts>
+    <NumberOfWarmUpYears>1</NumberOfWarmUpYears>
+    <RecoveryPeriodYears>1</RecoveryPeriodYears>
+    <Species1>Asellus aquaticus</Species1>
+    <Species1DominantRateConstantSD>0.01188</Species1DominantRateConstantSD>
+    <Species1ThresholdConcentrationSD>0.05507</Species1ThresholdConcentrationSD>
+    <Species1KillingRateSD>0.002615</Species1KillingRateSD>
+    <Species1DominantRateConstantIT>0.0005541</Species1DominantRateConstantIT>
+    <Species1ThresholdDistributionIT>0.4429</Species1ThresholdDistributionIT>
+    <Species1WidthOfThresholdDistributionIT>1.582</Species1WidthOfThresholdDistributionIT>
+    <Species2>Cloeon dipterum</Species2>
+    <Species2DominantRateConstantSD>0.03719</Species2DominantRateConstantSD>
+    <Species2ThresholdConcentrationSD>4.702</Species2ThresholdConcentrationSD>
+    <Species2KillingRateSD>0.0009361</Species2KillingRateSD>
+    <Species2DominantRateConstantIT>0.01416</Species2DominantRateConstantIT>
+    <Species2ThresholdDistributionIT>36.27</Species2ThresholdDistributionIT>
+    <Species2WidthOfThresholdDistributionIT>1.648</Species2WidthOfThresholdDistributionIT>
+    <Species3>Gammarus pulex</Species3>
+    <Species3DominantRateConstantSD>0.008858</Species3DominantRateConstantSD>
+    <Species3ThresholdConcentrationSD>0.6292</Species3ThresholdConcentrationSD>
+    <Species3KillingRateSD>0.01989</Species3KillingRateSD>
+    <Species3DominantRateConstantIT>0.002324</Species3DominantRateConstantIT>
+    <Species3ThresholdDistributionIT>0.8206</Species3ThresholdDistributionIT>
+    <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
+  </Effects>
+  <Settings>
+    <NumberMC>3</NumberMC>
+    <ExportToSqlite>false</ExportToSqlite>
+  </Settings>
+  <Analysis>
+    <ReportingReaches>r154</ReportingReaches>
+    <PecDisplayedTime>2015-04-02 12:00</PecDisplayedTime>
+  </Analysis>
+</Parameters>

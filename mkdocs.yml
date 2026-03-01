@@ -53,6 +53,7 @@ nav:
     - Introduction: 'scenarios/scenario-intro.md'
     - Example Scenarios: 'scenarios/Example-scenarios.md'
   - Technical Reference:
+    - Parameterisation: 'reference/parameterisation.md'
     - Regulatory Framework: 'reference/regulatory-framework.md'
     - Troubleshooting: 'reference/troubleshooting.md'
   - Glossary: 'reference/glossary.md'

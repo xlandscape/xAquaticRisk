@@ -134,6 +134,24 @@ CROP_STAGE_MAP = {
 }
 
 # ---------------------------------------------------------------------------
+#  Legacy parameter / section renames
+# ---------------------------------------------------------------------------
+# Section renames: old name → new name
+SECTION_RENAMES = {
+    "SimulationInfo": "Control",
+}
+
+# Parameter renames: old name → new name
+PARAM_RENAMES = {
+    "SimID": "ExperimentID",
+    "DeleteFoldersAtFinish": "DeleteComponentProcessingFolders",
+    "Project": "LandscapeScenario",
+}
+
+# Parameters to drop entirely
+DROPPED_PARAMS = {"ReachSelection"}
+
+# ---------------------------------------------------------------------------
 #  Comment blocks for the new xrun output  (keyed by parameter name)
 # ---------------------------------------------------------------------------
 # fmt: off
@@ -524,11 +542,19 @@ def parse_old_xrun(filepath: str) -> Dict[str, OrderedDict]:
 
     for section_elem in root:
         section_local = section_elem.tag.replace(f"{{{NS}}}", "")
+
+        # ---- Section rename (e.g. SimulationInfo → Control) ----
+        section_local = SECTION_RENAMES.get(section_local, section_local)
+
         params: OrderedDict = OrderedDict()
 
         for param_elem in section_elem:
             param_local = param_elem.tag.replace(f"{{{NS}}}", "")
             text = (param_elem.text or "").strip()
+
+            # ---- Drop removed parameters ----
+            if param_local in DROPPED_PARAMS:
+                continue
 
             # ---- CropStage → RautmannClass conversion ----
             if param_local == "CropStage":
@@ -538,6 +564,8 @@ def parse_old_xrun(filepath: str) -> Dict[str, OrderedDict]:
                           f"passing through as RautmannClass={text}")
                 params["RautmannClass"] = mapped
             else:
+                # ---- Parameter renames ----
+                param_local = PARAM_RENAMES.get(param_local, param_local)
                 params[param_local] = text
 
         sections[section_local] = params
@@ -615,7 +643,7 @@ YAML_COMMENTS: Dict[str, str] = {
     "VerboseLogging":                 "# Enable verbose logging (true/false)",
     "EnableProfiling":                "# Enable performance profiling (true/false)",
     "ProfilingWaitingTime":           "# Time interval in seconds between profiling rounds",
-    "Project":                        "# The scenario used by the simulation (scenario/<sub-folder>)",
+    "LandscapeScenario":              "# The scenario used by the simulation (scenario/<sub-folder>)",
     "SimulationStart":                "# The first date that is simulated (YYYY-MM-DD)",
     "SimulationEnd":                  "# The last date that is simulated (YYYY-MM-DD)",
     "ApplicationRate":                "# The application rate in g/ha",

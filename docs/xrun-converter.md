@@ -6,9 +6,16 @@
 
 **Key conversions:**
 - `<CropStage>` element → `<RautmannClass>` (with value mapping: `early` → `orchards.early`, `late` → `orchards.late`, `arable` passes through)
+- `<SimulationInfo>` section → `<Control>` (renamed)
+- `<SimID>` → `<ExperimentID>` (renamed)
+- `<DeleteFoldersAtFinish>` → `<DeleteComponentProcessingFolders>` (renamed)
+- `<Project>` → `<LandscapeScenario>` (renamed)
+- `<ReachSelection>` parameter removed (effects now always run for all reaches)
 - `<Control>` section moved from bottom to top (now the first section after `<Parameters>`, per XSD schema order)
 - All comment blocks refreshed per current template style
-- All 64 parameters preserved with original values
+- All current parameters preserved with original values
+
+For the complete parameter reference, see **[xAquaticRisk Parameterisation](reference/parameterisation.md)**.
 
 ## Usage
 
@@ -117,7 +124,7 @@ Control:
   DeleteComponentProcessingFolders: true
 
 Scenario:
-  Project: scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa
+  LandscapeScenario: scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa
   SimulationStart: "2015-05-01"
   SimulationEnd: "2015-05-07"
 
@@ -127,6 +134,18 @@ Exposure:
 ```
 
 ## Technical details
+
+### Legacy section and parameter renames
+
+The converter handles the following renames from older formats:
+
+| Old name | New name | Type |
+|---|---|---|
+| `SimulationInfo` | `Control` | Section |
+| `SimID` | `ExperimentID` | Parameter |
+| `DeleteFoldersAtFinish` | `DeleteComponentProcessingFolders` | Parameter |
+| `Project` | `LandscapeScenario` | Parameter |
+| `ReachSelection` | *(removed)* | Parameter |
 
 ### CropStage → RautmannClass mapping
 
