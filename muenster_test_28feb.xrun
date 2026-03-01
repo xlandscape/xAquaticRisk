@@ -233,14 +233,6 @@
     <RunLGuts>true</RunLGuts>
 
     <!--
-    Parameter     :  ReachSelection
-    Description   :  The reaches for which LGuts and LPop runs are conducted
-    Values        :  A space separated list of reach identifiers
-    Remark        :  An empty list results in a simulation for all reaches in the scenario.
-    -->
-    <ReachSelection>154 772 575 149</ReachSelection>
-
-    <!--
     Parameter     : NumberOfWarmupYears
     Description   : Number of years to run LPop in order to get stable population cycles
     Values        : Integer value

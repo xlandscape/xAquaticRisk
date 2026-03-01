@@ -93,7 +93,7 @@ PARAM_ORDER: Dict[str, List[str]] = {
         "CoefficientForLinearAdsorptionOnMacrophytes",
     ],
     "Effects": [
-        "RunLGuts", "ReachSelection",
+        "RunLGuts",
         "NumberOfWarmUpYears", "RecoveryPeriodYears",
         "Species1",
         "Species1DominantRateConstantSD",
@@ -430,14 +430,6 @@ COMMENTS: Dict[str, str] = {
         "    Values        :  true or false\n"
         "    -->\n"
     ),
-    "ReachSelection": (
-        "    <!--\n"
-        "    Parameter     :  ReachSelection\n"
-        "    Description   :  The reaches for which LGuts and LPop runs are conducted\n"
-        "    Values        :  A space separated list of reach identifiers\n"
-        "    Remark        :  An empty list results in a simulation for all reaches in the scenario.\n"
-        "    -->\n"
-    ),
     "NumberOfWarmUpYears": (
         "    <!--\n"
         "    Parameter     : NumberOfWarmupYears\n"
@@ -651,7 +643,6 @@ YAML_COMMENTS: Dict[str, str] = {
     "FreundlichExponentInSedimentAndSuspendedParticles": "# Freundlich exponent in sediment and suspended particles",
     "CoefficientForLinearAdsorptionOnMacrophytes":       "# Coefficient for linear adsorption on macrophytes (l/kg)",
     "RunLGuts":                       "# Simulate effects with LGuts (true/false)",
-    "ReachSelection":                 "# Reaches for LGuts/LPop runs (space-separated; empty = all)",
     "NumberOfWarmUpYears":            "# Number of LPop warm-up years for stable population cycles",
     "RecoveryPeriodYears":            "# Number of years after last application to allow recovery",
     "NumberMC":                       "# Number of Monte Carlo runs",

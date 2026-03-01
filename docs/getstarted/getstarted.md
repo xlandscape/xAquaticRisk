@@ -102,7 +102,6 @@ Example ***.xrun*** file (simplified):
   </EnvironmentalFate>
   <Effects>
     <RunLGuts>true</RunLGuts>
-    <ReachSelection>567 570 580 584</ReachSelection>
     <Species1>Asellus aquaticus</Species1>
     <!-- ... GUTS parameters for up to 3 species ... -->
   </Effects>

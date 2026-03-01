@@ -168,11 +168,6 @@ Effects:
   # Values: true or false
   RunLGuts: true
 
-  # The reaches for which LGuts and LPop runs are conducted
-  # Values: A space separated list of reach identifiers
-  # Remark: An empty list results in a simulation for all reaches.
-  ReachSelection: "567 570 580 584"
-
   # Number of years to run LPop in order to get stable population cycles
   # Values: Integer value
   NumberOfWarmUpYears: 1

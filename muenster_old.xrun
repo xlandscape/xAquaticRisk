@@ -66,7 +66,6 @@
   </EnvironmentalFate>
   <Effects>
     <RunLGuts>true</RunLGuts>
-    <ReachSelection>567 570 580 584</ReachSelection>
     <NumberOfWarmUpYears>1</NumberOfWarmUpYears>
     <RecoveryPeriodYears>1</RecoveryPeriodYears>
     <Species1>Asellus aquaticus</Species1>

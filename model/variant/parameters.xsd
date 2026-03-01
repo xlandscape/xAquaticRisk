@@ -231,11 +231,6 @@
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element name="RunLGuts" type="xsd:boolean"/>
-              <xsd:element name="ReachSelection">
-                <xsd:simpleType>
-                  <xsd:list itemType="xsd:positiveInteger"/>
-                </xsd:simpleType>
-              </xsd:element>
               <xsd:element name="NumberOfWarmUpYears" type="xsd:nonNegativeInteger"/>
               <xsd:element name="RecoveryPeriodYears" type="xsd:nonNegativeInteger"/>
               <xsd:element name="Species1">

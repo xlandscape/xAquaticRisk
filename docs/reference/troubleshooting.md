@@ -109,13 +109,11 @@ If GUTS-SD or GUTS-IT parameters are incorrectly specified (e.g., negative value
 If `<RunLGuts>` is set to `true` but no effects appear in the output, it may be because:
 
 - No environmental fate component is enabled (`<RunStepsRiverNetwork>` and `<RunCascadeToxswa>` are both `false`).
-- The `<ReachSelection>` does not match any reach IDs in the scenario.
 - The application rate or exposure is too low to trigger effects given the species' GUTS parameters.
 
 **Possible solutions**:
 
 - Enable at least one environmental fate component.
-- Verify that `<ReachSelection>` contains valid reach IDs from the scenario (check the scenario's geo data). An empty `<ReachSelection>` will run effects for all reaches.
 - Check the PEC output to confirm that exposure concentrations are above the GUTS threshold values.
 
 ## General Tips
