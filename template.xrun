@@ -27,6 +27,16 @@
     <ParentRun/>
 
     <!--
+    Parameter     :  NumberMC
+    Description   :  The number of Monte Carlo runs
+    Values        :  Any positive integer
+    Remark        :  MC runs are conducted (partly) in parallel according to the NumberParallelProcesses parameter.
+    Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long-running simulations,
+                     30 for small simulations and 10 for anything in between.
+    -->
+    <NumberMC>1</NumberMC>
+
+    <!--
     Parameter     :  NumberParallelProcesses
     Description   :  The number of Monte Carlo runs that are conducted simultaneously
     Values        :  Any positive integer
@@ -489,16 +499,6 @@
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
   </Effects>
   <Settings>
-    <!--
-    Parameter     :  NumberMC
-    Description   :  The number of Monte Carlo runs
-    Values        :  Any positive integer
-    Remark        :  MC runs are conducted (partly) in parallel according to the NumberParallelProcesses parameter.
-    Best practice :  Always conduct multiple MC runs (except for technical tests), e.g., 3 for long-running simulations,
-                     30 for small simulations and 10 for anything in between.
-    -->
-    <NumberMC>1</NumberMC>
-
     <!--
     Parameter     :  ExportToSqlite
     Description   :  Specifies whether PECs and individual effects are exported into a SQLite database

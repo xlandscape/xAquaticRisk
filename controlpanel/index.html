@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>xAquaticRisk — Control Panel</title>
+<style>
+/* ── Reset & variables ──────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#181b24;--bg3:#21252f;--border:#2c313d;
+  --text:#c9d1d9;--text2:#8b949e;--accent:#58a6ff;
+  --ok:#3fb950;--info:#c9d1d9;--note:#79c0ff;--warn:#d29922;--err:#f85149;
+  --font:'Segoe UI','Inter',system-ui,sans-serif;
+  --mono:'Cascadia Code','Fira Code','Consolas',monospace;
+  --radius:6px;
+}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;overflow:hidden;height:100vh}
+a{color:var(--accent);text-decoration:none}
+
+/* ── Top bar ────────────────────────────────────────────────────── */
+.topbar{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  height:48px;display:flex;align-items:center;padding:0 1.2rem;gap:.8rem;
+  position:fixed;top:0;left:0;right:0;z-index:100;
+}
+.topbar h1{font-size:1.05rem;font-weight:700;color:#fff;white-space:nowrap}
+.topbar .tag{font-size:.65rem;background:var(--accent);color:#000;padding:1px 8px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+
+/* Tab strip in topbar */
+.tab-strip{display:flex;gap:0;margin-left:2rem}
+.tab-btn{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.55rem 1.2rem;font-size:.82rem;font-weight:600;cursor:pointer;
+  color:var(--text2);border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .15s;
+  font-family:var(--font);
+}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn svg{width:15px;height:15px;fill:currentColor}
+.topbar .spacer{flex:1}
+.topbar .status-pill{font-size:.72rem;padding:2px 10px;border-radius:10px;background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+/* ── Body layout ────────────────────────────────────────────────── */
+.page{display:none;position:fixed;top:48px;bottom:0;left:0;right:0;overflow-y:auto}
+.page.active{display:block}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONFIGURE TAB
+   ═══════════════════════════════════════════════════════════════════ */
+.cfg-wrap{max-width:960px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+
+/* Card */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden}
+.card-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.65rem 1rem;cursor:pointer;user-select:none;
+  font-weight:600;font-size:.85rem;color:var(--text);
+  border-bottom:1px solid var(--border);transition:background .15s;
+}
+.card-header:hover{background:var(--bg3)}
+.card-header .toggle{font-size:.7rem;transition:transform .2s}
+.card-header.collapsed .toggle{transform:rotate(-90deg)}
+.card-body{padding:.9rem 1rem;transition:max-height .3s ease}
+.card-body.collapsed{display:none}
+
+/* Form elements */
+.form-group{margin-bottom:.85rem}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:.45rem .65rem;font-size:.82rem;
+  background:var(--bg);color:var(--text);border:1px solid var(--border);
+  border-radius:4px;font-family:var(--font);transition:border .15s;
+}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent);outline:none}
+.form-group .help-text{font-size:.7rem;color:var(--text2);margin-top:.2rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0 1.2rem}
+
+/* Section sub-heading */
+.section-heading{font-size:.82rem;font-weight:600;color:var(--accent);margin:1.1rem 0 .7rem;padding-bottom:.3rem;border-bottom:1px solid var(--border)}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.5rem 1.1rem;font-size:.82rem;font-weight:600;border-radius:4px;
+  cursor:pointer;border:1px solid transparent;font-family:var(--font);transition:all .15s;
+}
+.btn-primary{background:var(--ok);color:#000;border-color:var(--ok)}
+.btn-primary:hover{background:#2ea043;border-color:#2ea043}
+.btn-secondary{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-secondary:hover{background:#388bfd}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border)}
+.btn-outline:hover{background:var(--bg3);border-color:var(--text2)}
+.btn-sm{padding:.3rem .7rem;font-size:.75rem}
+.btn-danger{background:#da3633;color:#fff;border-color:#da3633}
+.btn-danger:hover{background:#b62324;border-color:#b62324}
+.btn-danger:disabled{opacity:.4;cursor:not-allowed}
+
+.button-group{display:flex;gap:.7rem;padding:1rem;flex-wrap:wrap;justify-content:flex-end}
+
+/* Status messages */
+.status-message{margin:.8rem 1rem;padding:.55rem .8rem;border-radius:4px;font-size:.8rem;display:none}
+.status-message.show{display:block}
+.status-message.success{background:rgba(63,185,80,.12);border:1px solid var(--ok);color:var(--ok)}
+.status-message.error{background:rgba(248,81,73,.12);border:1px solid var(--err);color:var(--err)}
+
+/* Loading */
+.loading{display:none;text-align:center;padding:1rem}
+.loading.show{display:block}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto .5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MONITOR TAB
+   ═══════════════════════════════════════════════════════════════════ */
+.mon-layout{display:flex;height:100%}
+.sidebar{width:320px;min-width:260px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.main-panel{flex:1;overflow-y:auto;padding:1.2rem 1.5rem}
+
+/* Sidebar */
+.sidebar-header{padding:.7rem 1rem;font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.run-card{padding:.6rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.run-card:hover{background:var(--bg3)}
+.run-card.active{background:var(--bg3);border-left:3px solid var(--accent)}
+.run-card .name{font-weight:600;font-size:.83rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.run-card .meta{font-size:.7rem;color:var(--text2);display:flex;gap:.8rem;margin-top:2px}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.status-running{background:var(--accent);animation:pulse 1.5s infinite}
+.status-finished{background:var(--ok)}
+.status-warning{background:var(--warn)}
+.status-error{background:var(--err)}
+.status-initializing{background:var(--text2);animation:pulse 1.5s infinite}
+.status-unknown{background:var(--text2)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Panels */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem}
+.panel-head{padding:.55rem 1rem;font-weight:600;font-size:.82rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+.panel-body{padding:.8rem 1rem}
+
+/* Overview cards */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7rem;margin-bottom:1rem}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:.65rem .8rem;text-align:center}
+.stat-card .label{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.stat-card .value{font-size:1.4rem;font-weight:700;margin-top:.1rem}
+.stat-card .value.ok{color:var(--ok)}
+.stat-card .value.warn{color:var(--warn)}
+.stat-card .value.err{color:var(--err)}
+.stat-card .value.info{color:var(--accent)}
+
+/* MC progress */
+.mc-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.5rem}
+.mc-label{width:170px;font-size:.76rem;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.progress-bar{flex:1;height:16px;background:var(--bg);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.progress-fill.running{background:linear-gradient(90deg,var(--accent),#388bfd);animation:shimmer 2s infinite}
+.progress-fill.finished{background:var(--ok)}
+.progress-fill.warning{background:var(--warn)}
+.progress-fill.error{background:var(--err)}
+.progress-pct{width:45px;font-size:.73rem;text-align:right;color:var(--text2);flex-shrink:0}
+.mc-comp{font-size:.68rem;color:var(--text2);margin-left:178px;margin-top:-3px;margin-bottom:6px}
+@keyframes shimmer{0%{opacity:.85}50%{opacity:1}100%{opacity:.85}}
+
+/* Component pipeline */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.25rem .8rem;font-size:.72rem;font-family:var(--mono)}
+.comp-item{display:flex;align-items:center;gap:.4rem;padding:2px 4px;border-radius:3px}
+.comp-item.done{color:var(--ok)}
+.comp-item.active{color:var(--accent);font-weight:600;background:rgba(88,166,255,.08)}
+.comp-item.pending{color:var(--text2);opacity:.4}
+.comp-icon{width:14px;text-align:center;flex-shrink:0}
+
+/* Log viewer */
+.log-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 .5rem;flex-wrap:wrap}
+.log-tab{padding:.35rem .8rem;font-size:.73rem;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;transition:all .15s}
+.log-tab:hover{color:var(--text)}
+.log-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.log-controls{display:flex;align-items:center;gap:.7rem;padding:.35rem 1rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.log-controls label{font-size:.7rem;color:var(--text2)}
+.log-controls input[type=checkbox]{accent-color:var(--accent)}
+.log-controls select{font-size:.7rem;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;padding:2px 6px}
+.log-output{font-family:var(--mono);font-size:.76rem;line-height:1.6;max-height:50vh;overflow-y:auto;padding:.5rem 1rem;background:var(--bg);white-space:pre-wrap;word-break:break-all}
+.log-line{padding:1px 0}
+.log-line .sev{display:inline-block;width:44px;font-weight:700}
+.sev-ERROR{color:var(--err)}.sev-WARN{color:var(--warn)}.sev-NOTE{color:var(--note)}.sev-OK{color:var(--ok)}.sev-INFO{color:var(--info)}
+.log-line .detail{color:var(--text2);padding-left:44px;display:block}
+
+/* Parameters table */
+.params-table{width:100%;border-collapse:collapse;font-size:.76rem}
+.params-table th{text-align:left;padding:.3rem .6rem;color:var(--text2);border-bottom:1px solid var(--border);font-weight:600}
+.params-table td{padding:.25rem .6rem;border-bottom:1px solid var(--border)}
+.params-table .sec{color:var(--accent);font-weight:600}
+.params-table .param{font-family:var(--mono);color:var(--text)}
+.params-table .val{font-family:var(--mono);color:var(--ok)}
+
+/* Empty state */
+.empty{text-align:center;padding:4rem 2rem;color:var(--text2)}
+.empty h2{font-size:1.08rem;margin-bottom:.4rem}
+.empty p{font-size:.83rem}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text2)}
+</style>
+</head>
+<body>
+
+<!-- ══════════ TOP BAR ══════════ -->
+<div class="topbar">
+  <h1>xAquaticRisk</h1>
+  <span class="tag">Control Panel</span>
+
+  <div class="tab-strip">
+    <button class="tab-btn active" onclick="switchTab('configure')" id="tabConfigure">
+      <svg viewBox="0 0 16 16"><path d="M7.429 1.525a3.5 3.5 0 011.142 0l.548 3.07a.5.5 0 00.405.405l3.07.548a3.5 3.5 0 010 1.142l-3.07.548a.5.5 0 00-.405.405l-.548 3.07a3.5 3.5 0 01-1.142 0l-.548-3.07a.5.5 0 00-.405-.405l-3.07-.548a3.5 3.5 0 010-1.142l3.07-.548a.5.5 0 00.405-.405l.548-3.07z"/></svg>
+      Configure
+    </button>
+    <button class="tab-btn" onclick="switchTab('monitor')" id="tabMonitor">
+      <svg viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 012.5 2h11A1.5 1.5 0 0115 3.5v9a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 12.5v-9zm1.5-.5a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-9a.5.5 0 00-.5-.5h-11z"/><path d="M3 5.5a.5.5 0 01.5-.5h9a.5.5 0 010 1h-9a.5.5 0 01-.5-.5zM3 8a.5.5 0 01.5-.5h5a.5.5 0 010 1h-5A.5.5 0 013 8zm0 2.5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5z"/></svg>
+      Monitor
+    </button>
+  </div>
+
+  <div class="spacer"></div>
+  <span class="status-pill" id="serverPill">Connected</span>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     CONFIGURE PAGE
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="page active" id="pageConfigure">
+  <div class="cfg-wrap">
+
+    <!-- xrun File Operations -->
+    <div class="card">
+      <div class="card-header" onclick="toggleSection(this)">
+        <span>xrun File Operations</span>
+        <span class="toggle">&#9660;</span>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="xrunPath">Path to xrun Files</label>
+          <div style="display:flex;gap:.6rem">
+            <input type="text" id="xrunPath" placeholder="e.g., C:\LocalWork\xAquaticRisk or .\scenario\mydir" style="flex:1">
+            <button type="button" class="btn btn-outline btn-sm" onclick="loadXrunFiles()">Browse</button>
+          </div>
+          <div class="help-text">Enter the directory path where xrun files are located, then click Browse</div>
+        </div>
+        <div class="form-group">
+          <label for="xrunSelect">Open xrun File</label>
+          <div style="display:flex;gap:.6rem;align-items:start">
+            <select id="xrunSelect" style="flex:1">
+              <option value="">Select an xrun file to open…</option>
+            </select>
+            <button type="button" class="btn btn-outline btn-sm" onclick="openXrunFile()">Load</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="saveAsName">Save Parameterisation As</label>
+          <div style="display:flex;gap:.6rem">
+            <input type="text" id="saveAsName" placeholder="e.g., MyParameterisation" style="flex:1">
+            <button type="button" class="btn btn-outline btn-sm" onclick="saveAsXrun()">Save As</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experiment Configuration -->
+    <form id="paramForm">
+      <div class="card">
+        <div class="card-header" onclick="toggleSection(this)">
+          <span>Experiment Configuration</span>
+          <span class="toggle">&#9660;</span>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="Control/ExperimentID">ExperimentID</label>
+            <input type="text" id="Control/ExperimentID" name="Control/ExperimentID" placeholder="e.g., Test_Run_aqRisk">
+            <div class="help-text">A unique identifier of a simulation run</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Control/NumberMC">Number of Monte Carlo Runs</label>
+              <input type="number" step="1" min="1" id="Control/NumberMC" name="Control/NumberMC" placeholder="e.g., 1">
+            </div>
+            <div class="form-group">
+              <label for="Control/NumberParallelProcesses">Parallel Processes</label>
+              <input type="number" step="1" min="1" id="Control/NumberParallelProcesses" name="Control/NumberParallelProcesses" placeholder="e.g., 2">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="Scenario/LandscapeScenario">Landscape Scenario *</label>
+            <select id="Scenario/LandscapeScenario" name="Scenario/LandscapeScenario" required>
+              <option value="">Loading scenarios…</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Scenario/SimulationStart">Simulation Start</label>
+              <input type="text" id="Scenario/SimulationStart" name="Scenario/SimulationStart" placeholder="YYYY-MM-DD">
+            </div>
+            <div class="form-group">
+              <label for="Scenario/SimulationEnd">Simulation End</label>
+              <input type="text" id="Scenario/SimulationEnd" name="Scenario/SimulationEnd" placeholder="YYYY-MM-DD">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PPP Use -->
+      <div class="card">
+        <div class="card-header" onclick="toggleSection(this)">
+          <span>PPP Use (Application)</span>
+          <span class="toggle">&#9660;</span>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="PppUse/ApplicationRate">Application Rate (g/ha)</label>
+              <input type="number" step="any" id="PppUse/ApplicationRate" name="PppUse/ApplicationRate" placeholder="e.g., 12.5">
+            </div>
+            <div class="form-group">
+              <label for="PppUse/ApplicationTimeWindow">Application Time Window</label>
+              <input type="text" id="PppUse/ApplicationTimeWindow" name="PppUse/ApplicationTimeWindow" placeholder="MM-DD to MM-DD">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mitigation -->
+      <div class="card">
+        <div class="card-header" onclick="toggleSection(this)">
+          <span>Mitigation Measures</span>
+          <span class="toggle">&#9660;</span>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Mitigation/InCropBuffer">In-Crop Buffer (m)</label>
+              <input type="number" step="any" id="Mitigation/InCropBuffer" name="Mitigation/InCropBuffer" placeholder="e.g., 0">
+            </div>
+            <div class="form-group">
+              <label for="Mitigation/TechnologyDriftReduction">Drift Reduction (0–1)</label>
+              <input type="number" step="0.01" min="0" max="1" id="Mitigation/TechnologyDriftReduction" name="Mitigation/TechnologyDriftReduction" placeholder="e.g., 0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exposure -->
+      <div class="card">
+        <div class="card-header" onclick="toggleSection(this)">
+          <span>Exposure Settings</span>
+          <span class="toggle">&#9660;</span>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Exposure/RautmannClass">Rautmann Class</label>
+              <select id="Exposure/RautmannClass" name="Exposure/RautmannClass">
+                <option value="orchards.early">Orchards Early</option>
+                <option value="orchards.late">Orchards Late</option>
+                <option value="arable">Arable</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="Exposure/DepositionInputFile">Deposition Input File</label>
+              <input type="text" id="Exposure/DepositionInputFile" name="Exposure/DepositionInputFile" placeholder="Leave empty for default">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Environmental Fate -->
+      <div class="card">
+        <div class="card-header collapsed" onclick="toggleSection(this)">
+          <span>Environmental Fate</span>
+          <span class="toggle">&#9660;</span>
+        </div>
+        <div class="card-body collapsed">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/RunStepsRiverNetwork">Run StepsRiverNetwork</label>
+              <select id="EnvironmentalFate/RunStepsRiverNetwork" name="EnvironmentalFate/RunStepsRiverNetwork">
+                <option value="true">Yes</option><option value="false">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/RunCascadeToxswa">Run CascadeToxswa</label>
+              <select id="EnvironmentalFate/RunCascadeToxswa" name="EnvironmentalFate/RunCascadeToxswa">
+                <option value="true">Yes</option><option value="false">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-heading">Substance Properties</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/MolarMass">Molar Mass (g/mol)</label>
+              <input type="number" step="any" id="EnvironmentalFate/MolarMass" name="EnvironmentalFate/MolarMass">
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/SolubilityInWater">Solubility in Water (mg/l)</label>
+              <input type="number" step="any" id="EnvironmentalFate/SolubilityInWater" name="EnvironmentalFate/SolubilityInWater">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/DT50sw">DT50 Water (days)</label>
+              <input type="number" step="any" id="EnvironmentalFate/DT50sw" name="EnvironmentalFate/DT50sw">
+              <div class="help-text">Half-life in water at 20°C</div>
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/DT50sed">DT50 Sediment (days)</label>
+              <input type="number" step="any" id="EnvironmentalFate/DT50sed" name="EnvironmentalFate/DT50sed">
+              <div class="help-text">Half-life in sediment at 20°C</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/KOC">KOC</label>
+              <input type="number" step="any" id="EnvironmentalFate/KOC" name="EnvironmentalFate/KOC">
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/DiffusionCoefficient">Diffusion Coefficient (m²/d)</label>
+              <input type="text" id="EnvironmentalFate/DiffusionCoefficient" name="EnvironmentalFate/DiffusionCoefficient">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/SaturatedVapourPressure">Saturated Vapour Pressure (Pa)</label>
+              <input type="text" id="EnvironmentalFate/SaturatedVapourPressure" name="EnvironmentalFate/SaturatedVapourPressure">
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/MolarEnthalpyOfVaporization">Molar Enthalpy of Vaporization (kJ/mol)</label>
+              <input type="number" step="any" id="EnvironmentalFate/MolarEnthalpyOfVaporization" name="EnvironmentalFate/MolarEnthalpyOfVaporization">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/MolarEnthalpyOfDissolution">Molar Enthalpy of Dissolution (kJ/mol)</label>
+              <input type="number" step="any" id="EnvironmentalFate/MolarEnthalpyOfDissolution" name="EnvironmentalFate/MolarEnthalpyOfDissolution">
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/ReferenceConcentrationForKOC">Reference Concentration for KOC (mg/l)</label>
+              <input type="number" step="any" id="EnvironmentalFate/ReferenceConcentrationForKOC" name="EnvironmentalFate/ReferenceConcentrationForKOC">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/MolarActivationEnthalpyOfTransformationInWater">Molar Activation Enthalpy in Water (kJ/mol)</label>
+              <input type="number" step="any" id="EnvironmentalFate/MolarActivationEnthalpyOfTransformationInWater" name="EnvironmentalFate/MolarActivationEnthalpyOfTransformationInWater">
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/MolarActivationEnthalpyOfTransformationInSediment">Molar Activation Enthalpy in Sediment (kJ/mol)</label>
+              <input type="number" step="any" id="EnvironmentalFate/MolarActivationEnthalpyOfTransformationInSediment" name="EnvironmentalFate/MolarActivationEnthalpyOfTransformationInSediment">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/FreundlichExponentInSedimentAndSuspendedParticles">Freundlich Exponent</label>
+              <input type="number" step="any" id="EnvironmentalFate/FreundlichExponentInSedimentAndSuspendedParticles" name="EnvironmentalFate/FreundlichExponentInSedimentAndSuspendedParticles">
+              <div class="help-text">In sediment and suspended particles</div>
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/CoefficientForLinearAdsorptionOnMacrophytes">Adsorption on Macrophytes (l/kg)</label>
+              <input type="number" step="any" id="EnvironmentalFate/CoefficientForLinearAdsorptionOnMacrophytes" name="EnvironmentalFate/CoefficientForLinearAdsorptionOnMacrophytes">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="EnvironmentalFate/ThresholdSW">Threshold SW</label>
+              <input type="number" step="any" id="EnvironmentalFate/ThresholdSW" name="EnvironmentalFate/ThresholdSW">
+              <div class="help-text">Surface water precision (StepsRiverNetwork)</div>
+            </div>
+            <div class="form-group">
+              <label for="EnvironmentalFate/ThresholdSediment">Threshold Sediment</label>
+              <input type="number" step="any" id="EnvironmentalFate/ThresholdSediment" name="EnvironmentalFate/ThresholdSediment">
+              <div class="help-text">Sediment precision (StepsRiverNetwork)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Effect Modelling -->
+      <div class="card">
+        <div class="card-header collapsed" onclick="toggleSection(this)">
+          <span>Effect Modelling</span>
+          <span class="toggle">&#9660;</span>
+        </div>
+        <div class="card-body collapsed">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Effects/RunLGuts">Run LGuts</label>
+              <select id="Effects/RunLGuts" name="Effects/RunLGuts">
+                <option value="true">Yes</option><option value="false">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="Effects/NumberOfWarmUpYears">Warm-up Years</label>
+              <input type="number" step="1" min="0" id="Effects/NumberOfWarmUpYears" name="Effects/NumberOfWarmUpYears">
+            </div>
+            <div class="form-group">
+              <label for="Effects/RecoveryPeriodYears">Recovery Period Years</label>
+              <input type="number" step="1" min="0" id="Effects/RecoveryPeriodYears" name="Effects/RecoveryPeriodYears">
+            </div>
+          </div>
+
+          <!-- Species 1 -->
+          <div class="section-heading">Species 1 Parameters</div>
+          <div class="form-group">
+            <label for="Effects/Species1">Species 1 Name</label>
+            <input type="text" id="Effects/Species1" name="Effects/Species1" placeholder="e.g., Asellus aquaticus">
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species1DominantRateConstantSD">SD Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species1DominantRateConstantSD" name="Effects/Species1DominantRateConstantSD"></div>
+            <div class="form-group"><label for="Effects/Species1ThresholdConcentrationSD">SD Threshold Concentration (ng/l)</label><input type="number" step="any" id="Effects/Species1ThresholdConcentrationSD" name="Effects/Species1ThresholdConcentrationSD"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species1KillingRateSD">SD Killing Rate (l/(ng·h))</label><input type="number" step="any" id="Effects/Species1KillingRateSD" name="Effects/Species1KillingRateSD"></div>
+            <div class="form-group"><label for="Effects/Species1DominantRateConstantIT">IT Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species1DominantRateConstantIT" name="Effects/Species1DominantRateConstantIT"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species1ThresholdDistributionIT">IT Threshold Distribution (ng/l)</label><input type="number" step="any" id="Effects/Species1ThresholdDistributionIT" name="Effects/Species1ThresholdDistributionIT"></div>
+            <div class="form-group"><label for="Effects/Species1WidthOfThresholdDistributionIT">IT Width of Threshold Distribution</label><input type="number" step="any" id="Effects/Species1WidthOfThresholdDistributionIT" name="Effects/Species1WidthOfThresholdDistributionIT"></div>
+          </div>
+
+          <!-- Species 2 -->
+          <div class="section-heading">Species 2 Parameters</div>
+          <div class="form-group">
+            <label for="Effects/Species2">Species 2 Name</label>
+            <input type="text" id="Effects/Species2" name="Effects/Species2" placeholder="e.g., Cloeon dipterum">
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species2DominantRateConstantSD">SD Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species2DominantRateConstantSD" name="Effects/Species2DominantRateConstantSD"></div>
+            <div class="form-group"><label for="Effects/Species2ThresholdConcentrationSD">SD Threshold Concentration (ng/l)</label><input type="number" step="any" id="Effects/Species2ThresholdConcentrationSD" name="Effects/Species2ThresholdConcentrationSD"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species2KillingRateSD">SD Killing Rate (l/(ng·h))</label><input type="number" step="any" id="Effects/Species2KillingRateSD" name="Effects/Species2KillingRateSD"></div>
+            <div class="form-group"><label for="Effects/Species2DominantRateConstantIT">IT Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species2DominantRateConstantIT" name="Effects/Species2DominantRateConstantIT"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species2ThresholdDistributionIT">IT Threshold Distribution (ng/l)</label><input type="number" step="any" id="Effects/Species2ThresholdDistributionIT" name="Effects/Species2ThresholdDistributionIT"></div>
+            <div class="form-group"><label for="Effects/Species2WidthOfThresholdDistributionIT">IT Width of Threshold Distribution</label><input type="number" step="any" id="Effects/Species2WidthOfThresholdDistributionIT" name="Effects/Species2WidthOfThresholdDistributionIT"></div>
+          </div>
+
+          <!-- Species 3 -->
+          <div class="section-heading">Species 3 Parameters</div>
+          <div class="form-group">
+            <label for="Effects/Species3">Species 3 Name</label>
+            <input type="text" id="Effects/Species3" name="Effects/Species3" placeholder="e.g., Gammarus pulex">
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species3DominantRateConstantSD">SD Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species3DominantRateConstantSD" name="Effects/Species3DominantRateConstantSD"></div>
+            <div class="form-group"><label for="Effects/Species3ThresholdConcentrationSD">SD Threshold Concentration (ng/l)</label><input type="number" step="any" id="Effects/Species3ThresholdConcentrationSD" name="Effects/Species3ThresholdConcentrationSD"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species3KillingRateSD">SD Killing Rate (l/(ng·h))</label><input type="number" step="any" id="Effects/Species3KillingRateSD" name="Effects/Species3KillingRateSD"></div>
+            <div class="form-group"><label for="Effects/Species3DominantRateConstantIT">IT Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species3DominantRateConstantIT" name="Effects/Species3DominantRateConstantIT"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="Effects/Species3ThresholdDistributionIT">IT Threshold Distribution (ng/l)</label><input type="number" step="any" id="Effects/Species3ThresholdDistributionIT" name="Effects/Species3ThresholdDistributionIT"></div>
+            <div class="form-group"><label for="Effects/Species3WidthOfThresholdDistributionIT">IT Width of Threshold Distribution</label><input type="number" step="any" id="Effects/Species3WidthOfThresholdDistributionIT" name="Effects/Species3WidthOfThresholdDistributionIT"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Parameters (dynamic) -->
+      <div class="card" id="additionalParamsCard" style="display:none">
+        <div class="card-header collapsed" onclick="toggleSection(this)">
+          <span>Additional Parameters</span>
+          <span class="toggle">&#9660;</span>
+        </div>
+        <div class="card-body collapsed" id="additionalParams"></div>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="card">
+        <div class="button-group">
+          <button type="button" class="btn btn-outline" onclick="loadTemplate()">Reset to Template</button>
+          <button type="button" class="btn btn-secondary" onclick="saveConfiguration()">Save</button>
+          <button type="submit" class="btn btn-primary">&#9654; Run Simulation</button>
+        </div>
+        <div class="loading" id="loading"><div class="spinner"></div><p style="font-size:.8rem;color:var(--text2)">Starting simulation…</p></div>
+        <div class="status-message" id="cfgStatus"></div>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     MONITOR PAGE
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="pageMonitor">
+  <div class="mon-layout">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        Simulation Runs
+        <span style="font-size:.65rem;color:var(--text2)" id="refreshInfo">auto-refresh 3 s</span>
+      </div>
+      <div id="runList"></div>
+    </div>
+    <div class="main-panel" id="mainContent">
+      <div class="empty">
+        <h2>No run selected</h2>
+        <p>Select a run from the sidebar to view its progress and logs.<br>
+        The list refreshes automatically while simulations are running.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ══════════════════════════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// Global state
+// ═══════════════════════════════════════════════════════════════════
+let activeXrunPath = null;
+let activeXrunFilename = null;
+let templateParams = {};
+
+// Known param keys (for distinguishing "additional" ones)
+const knownParams = [
+  'Scenario/LandscapeScenario','Scenario/SimulationStart','Scenario/SimulationEnd',
+  'Control/ExperimentID','Control/NumberMC','Control/NumberParallelProcesses',
+  'PppUse/ApplicationRate','PppUse/ApplicationTimeWindow',
+  'Mitigation/InCropBuffer','Mitigation/TechnologyDriftReduction',
+  'Exposure/RautmannClass','Exposure/DepositionInputFile',
+  'EnvironmentalFate/RunStepsRiverNetwork','EnvironmentalFate/RunCascadeToxswa',
+  'EnvironmentalFate/MolarMass','EnvironmentalFate/SolubilityInWater',
+  'EnvironmentalFate/DT50sw','EnvironmentalFate/DT50sed',
+  'EnvironmentalFate/KOC','EnvironmentalFate/DiffusionCoefficient',
+  'EnvironmentalFate/SaturatedVapourPressure','EnvironmentalFate/MolarEnthalpyOfVaporization',
+  'EnvironmentalFate/MolarEnthalpyOfDissolution','EnvironmentalFate/ReferenceConcentrationForKOC',
+  'EnvironmentalFate/MolarActivationEnthalpyOfTransformationInWater',
+  'EnvironmentalFate/MolarActivationEnthalpyOfTransformationInSediment',
+  'EnvironmentalFate/FreundlichExponentInSedimentAndSuspendedParticles',
+  'EnvironmentalFate/CoefficientForLinearAdsorptionOnMacrophytes',
+  'EnvironmentalFate/ThresholdSW','EnvironmentalFate/ThresholdSediment',
+  'Effects/RunLGuts','Effects/NumberOfWarmUpYears','Effects/RecoveryPeriodYears',
+  'Effects/Species1','Effects/Species1DominantRateConstantSD','Effects/Species1ThresholdConcentrationSD',
+  'Effects/Species1KillingRateSD','Effects/Species1DominantRateConstantIT',
+  'Effects/Species1ThresholdDistributionIT','Effects/Species1WidthOfThresholdDistributionIT',
+  'Effects/Species2','Effects/Species2DominantRateConstantSD','Effects/Species2ThresholdConcentrationSD',
+  'Effects/Species2KillingRateSD','Effects/Species2DominantRateConstantIT',
+  'Effects/Species2ThresholdDistributionIT','Effects/Species2WidthOfThresholdDistributionIT',
+  'Effects/Species3','Effects/Species3DominantRateConstantSD','Effects/Species3ThresholdConcentrationSD',
+  'Effects/Species3KillingRateSD','Effects/Species3DominantRateConstantIT',
+  'Effects/Species3ThresholdDistributionIT','Effects/Species3WidthOfThresholdDistributionIT'
+];
+
+// Monitor state
+let selectedRun = null;
+let activeLogTab = "experiment.log";
+let autoScroll = true;
+let filterSev = "ALL";
+let refreshTimer = null;
+let monitorBuiltFor = null;   // run ID whose DOM skeleton is currently rendered
+let lastLogHtml = '';          // dedup: skip log DOM writes when nothing changed
+const REFRESH_MS = 3000;
+
+// ═══════════════════════════════════════════════════════════════════
+// Tab switching
+// ═══════════════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+  document.getElementById('page' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+
+  // Start/stop monitor refresh
+  if (name === 'monitor') {
+    startMonitorRefresh();
+  } else {
+    stopMonitorRefresh();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Configure – section toggle
+// ═══════════════════════════════════════════════════════════════════
+function toggleSection(header) {
+  header.classList.toggle('collapsed');
+  header.nextElementSibling.classList.toggle('collapsed');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Configure – template & scenarios
+// ═══════════════════════════════════════════════════════════════════
+async function loadScenarios() {
+  try {
+    const res = await fetch('/api/scenarios');
+    const scenarios = await res.json();
+    const sel = document.getElementById('Scenario/LandscapeScenario');
+    sel.innerHTML = '<option value="">Select a scenario…</option>';
+    scenarios.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.path; o.textContent = s.name;
+      sel.appendChild(o);
+    });
+  } catch(e) { console.error('loadScenarios', e); }
+}
+
+async function loadTemplate() {
+  try {
+    const res = await fetch('/api/template');
+    templateParams = await res.json();
+
+    for (const [key, info] of Object.entries(templateParams)) {
+      const el = document.getElementById(key);
+      if (el) el.value = info.value || '';
+    }
+
+    // Additional params
+    const box = document.getElementById('additionalParams');
+    const card = document.getElementById('additionalParamsCard');
+    box.innerHTML = '';
+    let extra = false;
+    for (const [key, info] of Object.entries(templateParams)) {
+      if (knownParams.includes(key)) continue;
+      extra = true;
+      const g = document.createElement('div'); g.className = 'form-group';
+      const l = document.createElement('label'); l.htmlFor = key; l.textContent = info.tag || key;
+      const inp = document.createElement('input'); inp.type = 'text'; inp.id = key; inp.name = key; inp.value = info.value || '';
+      g.appendChild(l); g.appendChild(inp);
+      if (info.description) { const h = document.createElement('div'); h.className = 'help-text'; h.textContent = info.description; g.appendChild(h); }
+      box.appendChild(g);
+    }
+    card.style.display = extra ? 'block' : 'none';
+    showCfgStatus('Template loaded', 'success');
+  } catch(e) {
+    showCfgStatus('Error loading template: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Configure – form data helpers
+// ═══════════════════════════════════════════════════════════════════
+function getFormData() {
+  const params = {};
+  for (const key of Object.keys(templateParams)) {
+    const el = document.getElementById(key);
+    if (el && el.value) params[key] = el.value;
+  }
+  return params;
+}
+
+function showCfgStatus(msg, type) {
+  const el = document.getElementById('cfgStatus');
+  el.textContent = msg;
+  el.className = 'status-message show ' + type;
+  if (type === 'success') setTimeout(() => { el.className = 'status-message'; }, 4000);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Configure – save / run
+// ═══════════════════════════════════════════════════════════════════
+async function saveConfiguration() {
+  const params = getFormData();
+  const body = { parameters: params };
+  if (activeXrunPath && activeXrunFilename) {
+    body.path = activeXrunPath;
+    body.filename = activeXrunFilename;
+  }
+  try {
+    const res = await fetch('/api/save', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const r = await res.json();
+    showCfgStatus(r.status === 'success' ? r.message : r.message, r.status === 'success' ? 'success' : 'error');
+  } catch(e) { showCfgStatus('Error: ' + e.message, 'error'); }
+}
+
+document.getElementById('paramForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const params = getFormData();
+  if (!params['Scenario/LandscapeScenario']) { showCfgStatus('Please select a scenario', 'error'); return; }
+  document.getElementById('loading').classList.add('show');
+  try {
+    const res = await fetch('/api/run', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(params) });
+    const r = await res.json();
+    document.getElementById('loading').classList.remove('show');
+    if (r.status === 'success') {
+      showCfgStatus(r.message, 'success');
+      // Auto-switch to monitor tab after a short delay
+      setTimeout(() => {
+        // Pre-select the experiment ID as the run to watch
+        selectedRun = r.experiment_id || null;
+        switchTab('monitor');
+      }, 1200);
+    } else {
+      showCfgStatus(r.message, 'error');
+    }
+  } catch(e) {
+    document.getElementById('loading').classList.remove('show');
+    showCfgStatus('Error: ' + e.message, 'error');
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// Configure – xrun file operations
+// ═══════════════════════════════════════════════════════════════════
+async function loadXrunFiles() {
+  const path = document.getElementById('xrunPath').value.trim();
+  if (!path) { showCfgStatus('Enter a directory path first', 'error'); return; }
+  try {
+    const res = await fetch('/api/xrun-files', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ path }) });
+    const r = await res.json();
+    if (r.status === 'success') {
+      const sel = document.getElementById('xrunSelect');
+      sel.innerHTML = '<option value="">Select an xrun file…</option>';
+      (r.files || []).forEach(f => { const o = document.createElement('option'); o.value = f.name; o.textContent = f.name; sel.appendChild(o); });
+      showCfgStatus(`Found ${r.count} xrun file(s)`, 'success');
+    } else { showCfgStatus(r.message, 'error'); }
+  } catch(e) { showCfgStatus('Error: ' + e.message, 'error'); }
+}
+
+async function openXrunFile() {
+  const filename = document.getElementById('xrunSelect').value;
+  const path = document.getElementById('xrunPath').value.trim();
+  if (!filename || !path) { showCfgStatus('Select an xrun file first', 'error'); return; }
+  try {
+    const res = await fetch('/api/open-xrun', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ filename, path }) });
+    const r = await res.json();
+    if (r.status === 'success') {
+      for (const [k,v] of Object.entries(r.parameters)) { const el = document.getElementById(k); if (el) el.value = v; }
+      activeXrunPath = path;
+      activeXrunFilename = filename;
+      showCfgStatus(`Loaded: ${filename}`, 'success');
+    } else { showCfgStatus(r.message, 'error'); }
+  } catch(e) { showCfgStatus('Error: ' + e.message, 'error'); }
+}
+
+async function saveAsXrun() {
+  const filename = document.getElementById('saveAsName').value;
+  const path = document.getElementById('xrunPath').value.trim();
+  if (!filename || !path) { showCfgStatus('Enter a filename and path', 'error'); return; }
+  try {
+    const res = await fetch('/api/save-as', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ filename, path, parameters: getFormData() }) });
+    const r = await res.json();
+    if (r.status === 'success') {
+      showCfgStatus(r.message, 'success');
+      document.getElementById('saveAsName').value = r.filename;
+      activeXrunPath = path; activeXrunFilename = r.filename;
+      loadXrunFiles();
+    } else { showCfgStatus(r.message, 'error'); }
+  } catch(e) { showCfgStatus('Error: ' + e.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Monitor – API helper
+// ═══════════════════════════════════════════════════════════════════
+async function api(path, opts) { return (await fetch(path, opts)).json(); }
+
+function statusLabel(s) {
+  return {running:'Running',finished:'Finished',warning:'Warnings',error:'Errors',initializing:'Starting',unknown:'Unknown'}[s]||s;
+}
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══════════════════════════════════════════════════════════════════
+// Monitor – sidebar
+// ═══════════════════════════════════════════════════════════════════
+async function loadRuns() {
+  try {
+    const runs = await api('/api/runs');
+    const el = document.getElementById('runList');
+    el.innerHTML = runs.map(r => `
+      <div class="run-card ${selectedRun===r.id?'active':''}" onclick="selectRun('${r.id}')">
+        <div class="name"><span class="status-dot status-${r.status}"></span>${escHtml(r.id)}</div>
+        <div class="meta">
+          <span>${statusLabel(r.status)}</span>
+          <span>MC ${r.mc_finished}/${r.mc_total||'?'}</span>
+          ${r.elapsed?`<span>${escHtml(r.elapsed)}</span>`:''}
+        </div>
+      </div>`).join('');
+  } catch(e) { console.error('loadRuns', e); }
+}
+
+async function selectRun(id) {
+  selectedRun = id;
+  monitorBuiltFor = null;  // force full rebuild when user picks a new run
+  lastLogHtml = '';
+  await loadRuns();
+  await loadDetail();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Monitor – detail view  (incremental update strategy)
+//
+//  • First render (or run change) → buildDetailFull()  sets innerHTML
+//  • Subsequent ticks             → updateDetailInPlace()  patches DOM
+// ═══════════════════════════════════════════════════════════════════
+async function loadDetail() {
+  if (!selectedRun) return;
+  const d = await api(`/api/runs/${selectedRun}`);
+  const main = document.getElementById('mainContent');
+  if (!d || d.error) { main.innerHTML = '<div class="empty"><h2>Run not found</h2></div>'; monitorBuiltFor = null; return; }
+
+  if (monitorBuiltFor === selectedRun) {
+    updateDetailInPlace(d);
+  } else {
+    buildDetailFull(d);
+    monitorBuiltFor = selectedRun;
+  }
+  await loadLog();
+}
+
+/* ── Full build (once per run selection) ─────────────────────────── */
+function buildDetailFull(d) {
+  const logTabs = _logTabList(d);
+  if (!logTabs.includes(activeLogTab)) activeLogTab = logTabs[0];
+
+  let h = '';
+
+  // Overview cards – each value has its own id
+  h += `<div class="overview-grid">
+    <div class="stat-card"><div class="label">Status</div><div class="value" id="ov-status"></div></div>
+    <div class="stat-card"><div class="label">Elapsed</div><div class="value info" id="ov-elapsed"></div></div>
+    <div class="stat-card"><div class="label">MC Runs</div><div class="value info" id="ov-mc"></div></div>
+    <div class="stat-card"><div class="label">Errors</div><div class="value" id="ov-err"></div></div>
+    <div class="stat-card"><div class="label">Warnings</div><div class="value" id="ov-warn"></div></div>
+  </div>`;
+
+  // Abort button (only shown when run is abortable)
+  h += `<div id="abort-bar" style="display:none;padding:0 0 .5rem"><button class="btn btn-danger" id="btn-abort" onclick="abortRun()">&#9632; Abort Simulation</button></div>`;
+
+  // MC progress container
+  h += '<div class="panel"><div class="panel-head">Monte Carlo Progress</div><div class="panel-body" id="mc-progress"></div></div>';
+
+  // Component pipeline container
+  h += '<div class="panel"><div class="panel-head" id="comp-head">Component Pipeline</div><div class="panel-body"><div class="comp-grid" id="comp-grid"></div></div></div>';
+
+  // Log viewer (skeleton)
+  h += `<div class="panel">
+    <div class="panel-head">Log Output</div>
+    <div class="log-tabs" id="logTabs"></div>
+    <div class="log-controls">
+      <label><input type="checkbox" id="chkAutoScroll" ${autoScroll?'checked':''} onchange="autoScroll=this.checked"> Auto-scroll</label>
+      <label>Filter:
+        <select id="selFilter" onchange="filterSev=this.value;loadLog()">
+          <option value="ALL" ${filterSev==='ALL'?'selected':''}>All</option>
+          <option value="ERROR" ${filterSev==='ERROR'?'selected':''}>Errors</option>
+          <option value="WARN" ${filterSev==='WARN'?'selected':''}>Warnings</option>
+          <option value="NOTE" ${filterSev==='NOTE'?'selected':''}>Notes</option>
+          <option value="OK" ${filterSev==='OK'?'selected':''}>OK</option>
+          <option value="INFO" ${filterSev==='INFO'?'selected':''}>Info</option>
+        </select>
+      </label>
+    </div>
+    <div class="log-output" id="logOutput">Loading…</div>
+  </div>`;
+
+  // Parameters table
+  h += '<div id="params-panel"></div>';
+
+  document.getElementById('mainContent').innerHTML = h;
+
+  // Fill in the data for the first time
+  updateDetailInPlace(d);
+}
+
+/* ── In-place patch (every refresh tick) ─────────────────────────── */
+function updateDetailInPlace(d) {
+  // Overview cards
+  const ovStatus = document.getElementById('ov-status');
+  if (ovStatus) {
+    ovStatus.textContent = statusLabel(d.status);
+    ovStatus.className = 'value ' + (d.status==='finished'?'ok':d.status==='error'?'err':d.status==='warning'?'warn':'info');
+  }
+  _txt('ov-elapsed', d.elapsed || '—');
+  _txt('ov-mc', d.mc_runs.length);
+  const ovErr = document.getElementById('ov-err');
+  if (ovErr) { ovErr.textContent = d.severity_counts.ERROR; ovErr.className = 'value ' + (d.severity_counts.ERROR ? 'err' : 'ok'); }
+  const ovWarn = document.getElementById('ov-warn');
+  if (ovWarn) { ovWarn.textContent = d.severity_counts.WARN; ovWarn.className = 'value ' + (d.severity_counts.WARN ? 'warn' : 'ok'); }
+
+  // Abort button visibility
+  const abortBar = document.getElementById('abort-bar');
+  if (abortBar) {
+    abortBar.style.display = d.abortable ? '' : 'none';
+  }
+
+  // MC progress bars
+  const mcBox = document.getElementById('mc-progress');
+  if (mcBox) {
+    let mh = '';
+    for (const mc of d.mc_runs) {
+      const pct = Math.round(mc.progress * 100);
+      const cls = mc.status==='error'?'error':mc.status==='warning'?'warning':mc.status==='finished'?'finished':'running';
+      mh += `<div class="mc-row">
+        <div class="mc-label" title="${escHtml(mc.name)}">${escHtml(mc.name)}</div>
+        <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
+        <div class="progress-pct">${pct}%</div>
+      </div>`;
+      if (mc.current_component) mh += `<div class="mc-comp">&#9654; ${escHtml(mc.current_component)}</div>`;
+    }
+    mcBox.innerHTML = mh;
+  }
+
+  // Component pipeline (first MC)
+  const compGrid = document.getElementById('comp-grid');
+  const compHead = document.getElementById('comp-head');
+  if (compGrid && d.mc_runs.length) {
+    const mc0 = d.mc_runs[0];
+    if (compHead) compHead.textContent = 'Component Pipeline — ' + mc0.name;
+    const doneSet = new Set(mc0.components_done);
+    const stages = mc0.initialized || [];
+    let ch = '';
+    for (const c of stages) {
+      if (doneSet.has(c)) ch += `<div class="comp-item done"><span class="comp-icon">&#10003;</span>${escHtml(c)}</div>`;
+      else if (mc0.current_component === c) ch += `<div class="comp-item active"><span class="comp-icon">&#9654;</span>${escHtml(c)}</div>`;
+      else ch += `<div class="comp-item pending"><span class="comp-icon">&#9679;</span>${escHtml(c)}</div>`;
+    }
+    compGrid.innerHTML = ch;
+  }
+
+  // Log tabs (update if MC count changed)
+  const logTabs = _logTabList(d);
+  if (!logTabs.includes(activeLogTab)) activeLogTab = logTabs[0];
+  const tabsEl = document.getElementById('logTabs');
+  if (tabsEl) {
+    tabsEl.innerHTML = logTabs.map(t =>
+      `<div class="log-tab ${t===activeLogTab?'active':''}" onclick="switchLog('${t}')">${t.replace('.log','')}</div>`
+    ).join('');
+  }
+
+  // Parameters table (rarely changes – rebuild only once)
+  const pp = document.getElementById('params-panel');
+  if (pp && !pp.hasChildNodes() && d.parameters && Object.keys(d.parameters).length) {
+    let ph = `<div class="panel"><div class="panel-head">Parameters</div><div class="panel-body">
+      <table class="params-table"><thead><tr><th>Section</th><th>Parameter</th><th>Value</th></tr></thead><tbody>`;
+    let lastSec = '';
+    for (const [key,val] of Object.entries(d.parameters)) {
+      const [sec,param] = key.split('/');
+      ph += `<tr><td class="sec">${sec!==lastSec?escHtml(sec):''}</td><td class="param">${escHtml(param)}</td><td class="val">${escHtml(val)}</td></tr>`;
+      lastSec = sec;
+    }
+    ph += '</tbody></table></div></div>';
+    pp.innerHTML = ph;
+  }
+}
+
+function _txt(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
+function _logTabList(d) { return ['experiment.log', ...(d.mc_runs||[]).map(mc => `mc_${mc.name}.log`)]; }
+
+// ═══════════════════════════════════════════════════════════════════
+// Monitor – log  (smooth: preserve scroll, skip no-op writes)
+// ═══════════════════════════════════════════════════════════════════
+async function loadLog() {
+  if (!selectedRun) return;
+  const el = document.getElementById('logOutput');
+  if (!el) return;
+  const data = await api(`/api/runs/${selectedRun}/log/${activeLogTab}?tail=500`);
+  if (data.error) { el.innerHTML = `<span style="color:var(--warn)">${escHtml(data.error)}</span>`; lastLogHtml = ''; return; }
+
+  let entries = data.entries || [];
+  if (filterSev !== 'ALL') entries = entries.filter(e => e.sev === filterSev);
+
+  const newHtml = entries.map(e => {
+    const lines = e.msg.split('\n');
+    const main = lines[0];
+    const detail = lines.slice(1).map(l => `<span class="detail">${escHtml(l)}</span>`).join('');
+    return `<div class="log-line"><span class="sev sev-${e.sev}">${e.sev.padEnd(5)}</span> ${escHtml(main)}${detail}</div>`;
+  }).join('');
+
+  // Skip DOM write if content hasn't changed — prevents flicker & scroll jump
+  if (newHtml === lastLogHtml) return;
+
+  // Preserve scroll position for non-auto-scroll users
+  const prevScroll = el.scrollTop;
+  const wasAtBottom = (el.scrollHeight - el.scrollTop - el.clientHeight) < 30;
+
+  el.innerHTML = newHtml;
+  lastLogHtml = newHtml;
+
+  if (autoScroll || wasAtBottom) {
+    el.scrollTop = el.scrollHeight;
+  } else {
+    el.scrollTop = prevScroll;
+  }
+}
+
+function switchLog(name) {
+  activeLogTab = name;
+  lastLogHtml = '';  // force re-render for new tab
+  loadLog();
+  // Update tab highlight without full rebuild
+  const tabsEl = document.getElementById('logTabs');
+  if (tabsEl) {
+    tabsEl.querySelectorAll('.log-tab').forEach(t => {
+      t.classList.toggle('active', t.textContent === name.replace('.log',''));
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Monitor – abort simulation
+// ═══════════════════════════════════════════════════════════════════
+async function abortRun() {
+  if (!selectedRun) return;
+  if (!confirm(`Abort simulation "${selectedRun}"?\n\nThis will forcefully terminate the process and all its children.`)) return;
+
+  const btn = document.getElementById('btn-abort');
+  if (btn) { btn.disabled = true; btn.textContent = 'Aborting…'; }
+
+  try {
+    const res = await api(`/api/runs/${selectedRun}/abort`, { method: 'POST' });
+    if (res.status === 'success') {
+      alert(res.message);
+    } else {
+      alert(res.message || 'Abort failed');
+    }
+  } catch (e) {
+    alert('Abort request failed: ' + e);
+  }
+  // Refresh immediately to reflect new state
+  await loadRuns();
+  if (selectedRun) {
+    const d = await api(`/api/runs/${selectedRun}`);
+    if (d && !d.error) updateDetailInPlace(d);
+  }
+  if (btn) { btn.disabled = false; btn.textContent = '\u25A0 Abort Simulation'; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Monitor – refresh loop
+// ═══════════════════════════════════════════════════════════════════
+function startMonitorRefresh() {
+  if (refreshTimer) return;
+  async function tick() {
+    try {
+      await loadRuns();
+      if (selectedRun) await loadDetail();
+    } catch(e) { console.error(e); }
+    refreshTimer = setTimeout(tick, REFRESH_MS);
+  }
+  tick();
+}
+
+function stopMonitorRefresh() {
+  if (refreshTimer) { clearTimeout(refreshTimer); refreshTimer = null; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  loadScenarios();
+  loadTemplate();
+});
+</script>
+</body>
+</html>

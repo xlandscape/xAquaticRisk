@@ -70,7 +70,7 @@ SECTION_ORDER: List[str] = [
 # appended at the end of its section, preserving the original relative order.
 PARAM_ORDER: Dict[str, List[str]] = {
     "Control": [
-        "ExperimentID", "ParentRun", "NumberParallelProcesses",
+        "ExperimentID", "ParentRun", "NumberMC", "NumberParallelProcesses",
         "CascadeToxswaWorkers", "DeleteComponentProcessingFolders",
         "VerboseLogging", "EnableProfiling", "ProfilingWaitingTime",
     ],
@@ -117,7 +117,7 @@ PARAM_ORDER: Dict[str, List[str]] = {
         "Species3ThresholdDistributionIT",
         "Species3WidthOfThresholdDistributionIT",
     ],
-    "Settings": ["NumberMC", "ExportToSqlite"],
+    "Settings": ["ExportToSqlite"],
     "Analysis": ["ReportingReaches", "PecDisplayedTime"],
 }
 
@@ -150,6 +150,11 @@ PARAM_RENAMES = {
 
 # Parameters to drop entirely
 DROPPED_PARAMS = {"ReachSelection"}
+
+# Parameters that moved between sections: param_name → new_section_name
+PARAM_SECTION_MOVES = {
+    "NumberMC": "Control",
+}
 
 # ---------------------------------------------------------------------------
 #  Comment blocks for the new xrun output  (keyed by parameter name)
@@ -569,6 +574,15 @@ def parse_old_xrun(filepath: str) -> Dict[str, OrderedDict]:
                 params[param_local] = text
 
         sections[section_local] = params
+
+    # ---- Move parameters between sections (e.g. NumberMC: Settings → Control) ----
+    for param_name, target_section in PARAM_SECTION_MOVES.items():
+        for sec_name, sec_params in list(sections.items()):
+            if sec_name != target_section and param_name in sec_params:
+                value = sec_params.pop(param_name)
+                if target_section not in sections:
+                    sections[target_section] = OrderedDict()
+                sections[target_section][param_name] = value
 
     return sections
 

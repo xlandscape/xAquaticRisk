@@ -89,7 +89,7 @@ Parameters are grouped into nine sections, listed here in canonical order:
 | 5 | [Exposure](#exposure) | Rautmann drift class or predefined deposition file |
 | 6 | [EnvironmentalFate](#environmentalfate) | Toggle fate models; substance physico-chemical properties |
 | 7 | [Effects](#effects) | Toggle GUTS effects; warm-up/recovery; species GUTS parameters |
-| 8 | [Settings](#settings) | Monte Carlo runs and export options |
+| 8 | [Settings](#settings) | Export options |
 | 9 | [Analysis](#analysis) | Reporting reaches and PEC display settings |
 
 ---
@@ -102,6 +102,7 @@ Parameters that identify the simulation run, control parallelisation, and manage
 |-----------|-------------|--------|---------|
 | `ExperimentID` | Unique identifier of the simulation run. Results are written to `run/<ExperimentID>/`. | Any valid file-system characters | `Test_Run_aqRisk` |
 | `ParentRun` | File pattern for parent runs (experimental feature). | Empty or a glob yielding X3df files | *(empty)* |
+| `NumberMC` | Number of Monte Carlo runs. | Positive integer | `1` |
 | `NumberParallelProcesses` | Number of Monte Carlo runs conducted simultaneously. | Positive integer | `2` |
 | `CascadeToxswaWorkers` | Number of processes spawned by CascadeToxswa. Only in effect if `RunCascadeToxswa` is `true`. | Positive integer | `12` |
 | `DeleteComponentProcessingFolders` | Delete component processing folders after the run finishes. | `true` / `false` | `false` |
@@ -261,7 +262,6 @@ General simulation settings.
 
 | Parameter | Description | Values | Default |
 |-----------|-------------|--------|---------|
-| `NumberMC` | Number of Monte Carlo runs. | Positive integer | `1` |
 | `ExportToSqlite` | Export PECs and individual effects to a SQLite database. | `true` / `false` | `true` |
 
 !!! tip "Monte Carlo runs"
@@ -293,6 +293,7 @@ The following is the complete content of `template.tmp.xrun` (the compact templa
   <Control>
     <ExperimentID>Test_Run_aqRisk</ExperimentID>
     <ParentRun />
+    <NumberMC>1</NumberMC>
     <NumberParallelProcesses>2</NumberParallelProcesses>
     <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
     <DeleteComponentProcessingFolders>false</DeleteComponentProcessingFolders>
@@ -364,7 +365,6 @@ The following is the complete content of `template.tmp.xrun` (the compact templa
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
   </Effects>
   <Settings>
-    <NumberMC>1</NumberMC>
     <ExportToSqlite>true</ExportToSqlite>
   </Settings>
   <Analysis>
@@ -384,6 +384,7 @@ The following is the complete content of `template.yaml`:
 Control:
   ExperimentID: Test_Run_aqRisk
   ParentRun:
+  NumberMC: 1
   NumberParallelProcesses: 2
   CascadeToxswaWorkers: 12
   DeleteComponentProcessingFolders: false
@@ -455,7 +456,6 @@ Effects:
   Species3WidthOfThresholdDistributionIT: 3.049
 
 Settings:
-  NumberMC: 1
   ExportToSqlite: true
 
 Analysis:

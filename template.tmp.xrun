@@ -3,6 +3,7 @@
   <Control>
     <ExperimentID>Test_Run_aqRisk</ExperimentID>
     <ParentRun />
+    <NumberMC>1</NumberMC>
     <NumberParallelProcesses>2</NumberParallelProcesses>
     <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
     <DeleteComponentProcessingFolders>false</DeleteComponentProcessingFolders>
@@ -74,7 +75,6 @@
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
   </Effects>
   <Settings>
-    <NumberMC>1</NumberMC>
     <ExportToSqlite>true</ExportToSqlite>
   </Settings>
   <Analysis>

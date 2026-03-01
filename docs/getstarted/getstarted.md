@@ -72,6 +72,7 @@ Example ***.xrun*** file (simplified):
 <Parameters xmlns="urn:xAquaticRisk">
   <Control>
     <ExperimentID>Test_Run_aqRisk</ExperimentID>
+    <NumberMC>1</NumberMC>
     <NumberParallelProcesses>2</NumberParallelProcesses>
     <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
   </Control>
@@ -106,7 +107,7 @@ Example ***.xrun*** file (simplified):
     <!-- ... GUTS parameters for up to 3 species ... -->
   </Effects>
   <Settings>
-    <NumberMC>1</NumberMC>
+    <ExportToSqlite>true</ExportToSqlite>
   </Settings>
 </Parameters>
 ```
@@ -142,7 +143,7 @@ A typical simulation workflow:
 4. Monitor progress in the console window or the [Run Dashboard](../reference/dashboard.md). Log files are written to `\run\<ExperimentID>\log`.  
 5. When the run completes, find results in `\run\<ExperimentID>\reporting` and analysis outputs.  
 
-We are fully aware that XML is not the ideal **user interface**. A **web-based user interface (WebUI)** is available — start it via `webui.bat`. To monitor simulation progress visually, use the **[Run Dashboard](../reference/dashboard.md)** — start it via `dashboard.bat`.  
+We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor and a real-time run monitor in a single browser tab — start it via `controlpanel.bat`. The standalone WebUI (`webui.bat`) and Dashboard (`dashboard.bat`) remain available as well.  
 
 ## Viewing and Analysing the Output
 

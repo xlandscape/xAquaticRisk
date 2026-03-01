@@ -91,7 +91,6 @@
     <Species3WidthOfThresholdDistributionIT>3.049</Species3WidthOfThresholdDistributionIT>
   </Effects>
   <Settings>
-    <NumberMC>3</NumberMC>
     <ExportToSqlite>true</ExportToSqlite>
   </Settings>
   <Analysis>
@@ -101,6 +100,7 @@
   <Control>
     <ExperimentID>muenster_old_test</ExperimentID>
     <ParentRun/>
+    <NumberMC>3</NumberMC>
     <NumberParallelProcesses>3</NumberParallelProcesses>
     <CascadeToxswaWorkers>20</CascadeToxswaWorkers>
     <DeleteComponentProcessingFolders>true</DeleteComponentProcessingFolders>

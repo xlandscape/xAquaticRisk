@@ -19,6 +19,7 @@
                 </xsd:simpleType>
               </xsd:element>
               <xsd:element name="ParentRun" type="xsd:anyURI"/>
+              <xsd:element name="NumberMC" type="xsd:positiveInteger"/>
               <xsd:element name="NumberParallelProcesses" type="xsd:nonNegativeInteger"/>
               <xsd:element name="CascadeToxswaWorkers" type="xsd:nonNegativeInteger"/>
               <xsd:element name="DeleteComponentProcessingFolders" type="xsd:boolean"/>
@@ -386,7 +387,6 @@
         <xsd:element name="Settings">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="NumberMC" type="xsd:positiveInteger"/>
               <xsd:element name="ExportToSqlite" type="xsd:boolean"/>
             </xsd:sequence>
           </xsd:complexType>

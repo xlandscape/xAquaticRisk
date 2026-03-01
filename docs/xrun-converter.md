@@ -119,6 +119,7 @@ Example YAML excerpt:
 ```yaml
 Control:
   ExperimentID: muenster_test
+  NumberMC: 3
   NumberParallelProcesses: 3
   CascadeToxswaWorkers: 20
   DeleteComponentProcessingFolders: true

@@ -54,6 +54,7 @@ nav:
     - Example Scenarios: 'scenarios/Example-scenarios.md'
   - Technical Reference:
     - Parameterisation: 'reference/parameterisation.md'
+    - Control Panel: 'reference/controlpanel.md'
     - Run Dashboard: 'reference/dashboard.md'
     - Regulatory Framework: 'reference/regulatory-framework.md'
     - Troubleshooting: 'reference/troubleshooting.md'

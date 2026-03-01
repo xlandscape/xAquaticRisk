@@ -17,6 +17,11 @@ Control:
   # Remark: The feature is currently experimental.
   ParentRun:
 
+  # The number of Monte Carlo runs
+  # Values: Any positive integer
+  # Best practice: Always conduct multiple MC runs (except for technical tests).
+  NumberMC: 1
+
   # The number of Monte Carlo runs that are conducted simultaneously
   # Values: Any positive integer
   # Best practice: min(NumberMC, NumberParallelProcesses) <= available processors
@@ -204,11 +209,6 @@ Effects:
   Species3WidthOfThresholdDistributionIT: 3.049
 
 Settings:
-  # The number of Monte Carlo runs
-  # Values: Any positive integer
-  # Best practice: Always conduct multiple MC runs (except for technical tests).
-  NumberMC: 1
-
   # Specifies whether PECs and individual effects are exported into a SQLite database
   # Values: true or false
   ExportToSqlite: true
