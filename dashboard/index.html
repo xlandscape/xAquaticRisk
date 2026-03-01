@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>xAquaticRisk — Run Dashboard</title>
+<style>
+/* ── Reset & base ───────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#181b24;--bg3:#21252f;--border:#2c313d;
+  --text:#c9d1d9;--text2:#8b949e;--accent:#58a6ff;
+  --ok:#3fb950;--info:#c9d1d9;--note:#79c0ff;--warn:#d29922;--err:#f85149;
+  --font:'Segoe UI','Inter',system-ui,sans-serif;
+  --mono:'Cascadia Code','Fira Code','Consolas',monospace;
+}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5}
+
+/* ── Layout ─────────────────────────────────────────────────────── */
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:.8rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.header h1{font-size:1.15rem;font-weight:600;color:#fff}
+.header .tag{font-size:.7rem;background:var(--accent);color:#000;padding:2px 8px;border-radius:3px;font-weight:600}
+.header .refresh-info{margin-left:auto;font-size:.75rem;color:var(--text2)}
+
+.container{display:flex;height:calc(100vh - 48px)}
+.sidebar{width:320px;min-width:260px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.main{flex:1;overflow-y:auto;padding:1.2rem 1.5rem}
+
+/* ── Sidebar: run list ──────────────────────────────────────────── */
+.sidebar-header{padding:.7rem 1rem;font-size:.8rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.run-card{padding:.65rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.run-card:hover{background:var(--bg3)}
+.run-card.active{background:var(--bg3);border-left:3px solid var(--accent)}
+.run-card .name{font-weight:600;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.run-card .meta{font-size:.72rem;color:var(--text2);display:flex;gap:.8rem;margin-top:2px}
+.run-card .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.status-running{background:var(--accent);animation:pulse 1.5s infinite}
+.status-finished{background:var(--ok)}
+.status-warning{background:var(--warn)}
+.status-error{background:var(--err)}
+.status-initializing{background:var(--text2);animation:pulse 1.5s infinite}
+.status-unknown{background:var(--text2)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Main: detail panels ────────────────────────────────────────── */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:1rem}
+.panel-head{padding:.55rem 1rem;font-weight:600;font-size:.82rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+.panel-body{padding:.8rem 1rem}
+
+/* ── Overview cards ─────────────────────────────────────────────── */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-bottom:1rem}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:.7rem .9rem;text-align:center}
+.stat-card .label{font-size:.7rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.stat-card .value{font-size:1.5rem;font-weight:700;margin-top:.15rem}
+.stat-card .value.ok{color:var(--ok)}
+.stat-card .value.warn{color:var(--warn)}
+.stat-card .value.err{color:var(--err)}
+.stat-card .value.info{color:var(--accent)}
+
+/* ── MC progress bars ───────────────────────────────────────────── */
+.mc-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.5rem}
+.mc-label{width:180px;font-size:.78rem;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.progress-bar{flex:1;height:18px;background:var(--bg);border-radius:3px;overflow:hidden;position:relative}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.progress-fill.running{background:linear-gradient(90deg,var(--accent),#388bfd);animation:shimmer 2s infinite}
+.progress-fill.finished{background:var(--ok)}
+.progress-fill.warning{background:var(--warn)}
+.progress-fill.error{background:var(--err)}
+.progress-pct{width:48px;font-size:.75rem;text-align:right;color:var(--text2);flex-shrink:0}
+.mc-comp{font-size:.7rem;color:var(--text2);margin-left:190px;margin-top:-4px;margin-bottom:6px}
+@keyframes shimmer{0%{opacity:.85}50%{opacity:1}100%{opacity:.85}}
+
+/* ── Log viewer ─────────────────────────────────────────────────── */
+.log-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 .5rem}
+.log-tab{padding:.4rem .9rem;font-size:.75rem;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;transition:all .15s}
+.log-tab:hover{color:var(--text)}
+.log-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.log-controls{display:flex;align-items:center;gap:.7rem;padding:.4rem 1rem;border-bottom:1px solid var(--border)}
+.log-controls label{font-size:.72rem;color:var(--text2)}
+.log-controls input[type=checkbox]{accent-color:var(--accent)}
+.log-controls select,.log-controls input[type=number]{font-size:.72rem;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;padding:2px 6px}
+
+.log-output{font-family:var(--mono);font-size:.78rem;line-height:1.65;max-height:55vh;overflow-y:auto;padding:.6rem 1rem;background:var(--bg);white-space:pre-wrap;word-break:break-all}
+.log-line{padding:1px 0}
+.log-line .sev{display:inline-block;width:46px;font-weight:700}
+.sev-ERROR{color:var(--err)}
+.sev-WARN{color:var(--warn)}
+.sev-NOTE{color:var(--note)}
+.sev-OK{color:var(--ok)}
+.sev-INFO{color:var(--info)}
+.log-line .detail{color:var(--text2);padding-left:46px;display:block}
+
+/* ── Parameters table ───────────────────────────────────────────── */
+.params-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.params-table th{text-align:left;padding:.35rem .6rem;color:var(--text2);border-bottom:1px solid var(--border);font-weight:600}
+.params-table td{padding:.3rem .6rem;border-bottom:1px solid var(--border)}
+.params-table .sec{color:var(--accent);font-weight:600}
+.params-table .param{font-family:var(--mono);color:var(--text)}
+.params-table .val{font-family:var(--mono);color:var(--ok)}
+
+/* ── Empty state ────────────────────────────────────────────────── */
+.empty{text-align:center;padding:4rem 2rem;color:var(--text2)}
+.empty h2{font-size:1.1rem;margin-bottom:.5rem}
+.empty p{font-size:.85rem}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text2)}
+
+/* ── Component stage list ───────────────────────────────────────── */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.3rem .8rem;font-size:.72rem;font-family:var(--mono)}
+.comp-item{display:flex;align-items:center;gap:.4rem;padding:2px 4px;border-radius:3px}
+.comp-item.done{color:var(--ok)}
+.comp-item.active{color:var(--accent);font-weight:600;background:rgba(88,166,255,.08)}
+.comp-item.pending{color:var(--text2);opacity:.4}
+.comp-icon{width:14px;text-align:center;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>xAquaticRisk</h1>
+  <span class="tag">RUN DASHBOARD</span>
+  <span class="refresh-info" id="refreshInfo">Auto-refresh: 3 s</span>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="sidebar-header">Simulation Runs</div>
+    <div id="runList"></div>
+  </div>
+  <div class="main" id="mainContent">
+    <div class="empty">
+      <h2>No run selected</h2>
+      <p>Select a run from the sidebar to view its progress and logs.<br>
+      The list refreshes automatically while simulations are running.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────
+let selectedRun = null;
+let activeLogTab = "experiment.log";
+let autoScroll = true;
+let filterSev = "ALL";
+let refreshInterval = 3000;
+let refreshTimer = null;
+
+// ── API ──────────────────────────────────────────────────────────
+async function api(path) {
+  const r = await fetch(path);
+  return r.json();
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────
+async function loadRuns() {
+  const runs = await api("/api/runs");
+  const el = document.getElementById("runList");
+  el.innerHTML = runs.map(r => `
+    <div class="run-card ${selectedRun===r.id?'active':''}" onclick="selectRun('${r.id}')">
+      <div class="name"><span class="status-dot status-${r.status}"></span>${r.id}</div>
+      <div class="meta">
+        <span>${statusLabel(r.status)}</span>
+        <span>MC: ${r.mc_finished}/${r.mc_total||'?'}</span>
+        ${r.elapsed?`<span>${r.elapsed}</span>`:''}
+      </div>
+    </div>
+  `).join("");
+}
+
+function statusLabel(s) {
+  return {running:"Running",finished:"Finished",warning:"Warnings",error:"Errors",initializing:"Starting",unknown:"Unknown"}[s]||s;
+}
+
+// ── Detail view ──────────────────────────────────────────────────
+async function selectRun(id) {
+  selectedRun = id;
+  await loadRuns();
+  await loadDetail();
+}
+
+async function loadDetail() {
+  if (!selectedRun) return;
+  const d = await api(`/api/runs/${selectedRun}`);
+  if (!d) { document.getElementById("mainContent").innerHTML = '<div class="empty"><h2>Run not found</h2></div>'; return; }
+
+  const logTabs = ["experiment.log", ...(d.mc_runs||[]).map(mc=>`mc_${mc.name}.log`)];
+  if (!logTabs.includes(activeLogTab)) activeLogTab = logTabs[0];
+
+  let html = "";
+
+  // Overview cards
+  html += `<div class="overview-grid">
+    <div class="stat-card"><div class="label">Status</div><div class="value ${d.status==='finished'?'ok':d.status==='error'?'err':d.status==='warning'?'warn':'info'}">${statusLabel(d.status)}</div></div>
+    <div class="stat-card"><div class="label">Elapsed</div><div class="value info">${d.elapsed||'—'}</div></div>
+    <div class="stat-card"><div class="label">MC Runs</div><div class="value info">${d.mc_runs.length}</div></div>
+    <div class="stat-card"><div class="label">Errors</div><div class="value ${d.severity_counts.ERROR?'err':'ok'}">${d.severity_counts.ERROR}</div></div>
+    <div class="stat-card"><div class="label">Warnings</div><div class="value ${d.severity_counts.WARN?'warn':'ok'}">${d.severity_counts.WARN}</div></div>
+  </div>`;
+
+  // MC progress
+  if (d.mc_runs.length) {
+    html += `<div class="panel"><div class="panel-head">Monte Carlo Progress</div><div class="panel-body">`;
+    for (const mc of d.mc_runs) {
+      const pct = Math.round(mc.progress * 100);
+      const cls = mc.status==='error'?'error':mc.status==='warning'?'warning':mc.status==='finished'?'finished':'running';
+      html += `<div class="mc-row">
+        <div class="mc-label" title="${mc.name}">${mc.name}</div>
+        <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
+        <div class="progress-pct">${pct}%</div>
+      </div>`;
+      if (mc.current_component) {
+        html += `<div class="mc-comp">&#9654; ${mc.current_component}</div>`;
+      }
+    }
+    html += `</div></div>`;
+  }
+
+  // Component stages for first MC
+  if (d.mc_runs.length) {
+    const mc0 = d.mc_runs[0];
+    const doneSet = new Set(mc0.components_done);
+    const stages = mc0.initialized || [];
+    html += `<div class="panel"><div class="panel-head">Component Pipeline — ${mc0.name}</div><div class="panel-body"><div class="comp-grid">`;
+    let foundActive = false;
+    for (const c of stages) {
+      if (doneSet.has(c)) {
+        html += `<div class="comp-item done"><span class="comp-icon">&#10003;</span>${c}</div>`;
+      } else if (!foundActive && mc0.current_component === c) {
+        html += `<div class="comp-item active"><span class="comp-icon">&#9654;</span>${c}</div>`;
+        foundActive = true;
+      } else {
+        html += `<div class="comp-item pending"><span class="comp-icon">&#9679;</span>${c}</div>`;
+      }
+    }
+    html += `</div></div></div>`;
+  }
+
+  // Log viewer
+  html += `<div class="panel">
+    <div class="panel-head">Log Output</div>
+    <div class="log-tabs" id="logTabs">${logTabs.map(t=>`<div class="log-tab ${t===activeLogTab?'active':''}" onclick="switchLog('${t}')">${t.replace('.log','')}</div>`).join("")}</div>
+    <div class="log-controls">
+      <label><input type="checkbox" id="chkAutoScroll" ${autoScroll?'checked':''} onchange="autoScroll=this.checked"> Auto-scroll</label>
+      <label>Filter:
+        <select id="selFilter" onchange="filterSev=this.value;loadLog()">
+          <option value="ALL" ${filterSev==='ALL'?'selected':''}>All</option>
+          <option value="ERROR" ${filterSev==='ERROR'?'selected':''}>Errors</option>
+          <option value="WARN" ${filterSev==='WARN'?'selected':''}>Warnings</option>
+          <option value="NOTE" ${filterSev==='NOTE'?'selected':''}>Notes</option>
+          <option value="OK" ${filterSev==='OK'?'selected':''}>OK</option>
+          <option value="INFO" ${filterSev==='INFO'?'selected':''}>Info</option>
+        </select>
+      </label>
+    </div>
+    <div class="log-output" id="logOutput">Loading…</div>
+  </div>`;
+
+  // Parameters
+  if (d.parameters && Object.keys(d.parameters).length) {
+    html += `<div class="panel"><div class="panel-head">Parameters</div><div class="panel-body">
+      <table class="params-table"><thead><tr><th>Section</th><th>Parameter</th><th>Value</th></tr></thead><tbody>`;
+    let lastSec = "";
+    for (const [key, val] of Object.entries(d.parameters)) {
+      const [sec, param] = key.split("/");
+      html += `<tr>
+        <td class="sec">${sec!==lastSec?sec:''}</td>
+        <td class="param">${param}</td>
+        <td class="val">${escHtml(val)}</td>
+      </tr>`;
+      lastSec = sec;
+    }
+    html += `</tbody></table></div></div>`;
+  }
+
+  document.getElementById("mainContent").innerHTML = html;
+  await loadLog();
+}
+
+// ── Log loading ──────────────────────────────────────────────────
+async function loadLog() {
+  if (!selectedRun) return;
+  const logEl = document.getElementById("logOutput");
+  if (!logEl) return;
+  const data = await api(`/api/runs/${selectedRun}/log/${activeLogTab}?tail=500`);
+  if (data.error) { logEl.innerHTML = `<span style="color:var(--warn)">${data.error}</span>`; return; }
+
+  let entries = data.entries || [];
+  if (filterSev !== "ALL") entries = entries.filter(e => e.sev === filterSev);
+
+  logEl.innerHTML = entries.map(e => {
+    const lines = e.msg.split("\n");
+    const main = lines[0];
+    const detail = lines.slice(1).map(l => `<span class="detail">${escHtml(l)}</span>`).join("");
+    return `<div class="log-line"><span class="sev sev-${e.sev}">${e.sev.padEnd(5)}</span> ${escHtml(main)}${detail}</div>`;
+  }).join("");
+
+  if (autoScroll) logEl.scrollTop = logEl.scrollHeight;
+}
+
+function switchLog(name) {
+  activeLogTab = name;
+  loadDetail();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Refresh loop ─────────────────────────────────────────────────
+async function tick() {
+  try {
+    await loadRuns();
+    if (selectedRun) await loadDetail();
+  } catch(e) { console.error(e); }
+  refreshTimer = setTimeout(tick, refreshInterval);
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+tick();
+</script>
+</body>
+</html>
