@@ -17,6 +17,8 @@ import glob
 import json
 import os
 import re
+import subprocess
+import threading
 import time
 import xml.etree.ElementTree as ET
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -24,7 +26,104 @@ from pathlib import Path
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DEFAULT_RUN_DIR = os.path.join(BASE_DIR, "run")
+TEMPLATE_PATH = os.path.join(BASE_DIR, "template.xrun")
+OUTPUT_DIR = BASE_DIR
+START_BAT = os.path.join(BASE_DIR, "__start__.bat")
 PORT = 8050
+
+
+# ---------------------------------------------------------------------------
+# Parameterisation helpers (shared with webui)
+# ---------------------------------------------------------------------------
+
+def get_available_xrun_files(path: str = None) -> list:
+    """Return sorted list of .xrun files in *path*."""
+    if not path:
+        path = BASE_DIR
+    path = os.path.abspath(path)
+    if not os.path.exists(path):
+        return []
+    files = []
+    if os.path.isdir(path):
+        try:
+            for item in os.listdir(path):
+                if item.endswith(".xrun"):
+                    files.append({"name": item, "path": os.path.join(path, item)})
+        except PermissionError:
+            return []
+    return sorted(files, key=lambda x: x["name"])
+
+
+def parse_xrun_template(template_path: str) -> dict:
+    """Parse *template_path* and return parameter metadata dict."""
+    parameters = {}
+    try:
+        with open(template_path, "r", encoding="utf-8") as fh:
+            content = fh.read()
+        tree = ET.parse(template_path)
+        root = tree.getroot()
+
+        def _extract(element, prefix=""):
+            for child in element:
+                tag = child.tag.replace("{urn:xAquaticRisk}", "")
+                full_key = f"{prefix}{tag}" if prefix else tag
+                if len(child) > 0:
+                    _extract(child, f"{full_key}/")
+                else:
+                    value = child.text.strip() if child.text else ""
+                    description = values_hint = remark = ""
+                    pattern = (
+                        rf"<!--\s*Parameter\s*:\s*{tag}\s*Description\s*:\s*(.*?)\s*"
+                        rf"Values\s*:\s*(.*?)\s*(?:Remark\s*:\s*(.*?))?\s*-->"
+                    )
+                    m = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
+                    if m:
+                        description = m.group(1).strip()
+                        values_hint = m.group(2).strip()
+                        if m.group(3):
+                            remark = m.group(3).strip()
+                    parameters[full_key] = {
+                        "value": value,
+                        "tag": tag,
+                        "description": description,
+                        "values_hint": values_hint,
+                        "remark": remark,
+                    }
+        _extract(root)
+    except Exception as exc:
+        print(f"Error parsing template: {exc}")
+    return parameters
+
+
+def create_xrun_file(parameters: dict, output_path: str, template_path: str) -> str:
+    """Write *output_path* from *template_path* with values from *parameters*."""
+    tree = ET.parse(template_path)
+    root = tree.getroot()
+
+    def _update(element, prefix=""):
+        for child in element:
+            tag = child.tag.replace("{urn:xAquaticRisk}", "")
+            full_key = f"{prefix}{tag}" if prefix else tag
+            if len(child) > 0:
+                _update(child, f"{full_key}/")
+            elif full_key in parameters:
+                child.text = parameters[full_key]
+
+    _update(root)
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+    tree.write(output_path, encoding="utf-8", xml_declaration=True)
+    return output_path
+
+
+def get_available_scenarios() -> list:
+    """Return list of scenario directories."""
+    scenario_dir = os.path.join(BASE_DIR, "scenario")
+    scenarios = []
+    if os.path.exists(scenario_dir):
+        for item in os.listdir(scenario_dir):
+            if os.path.isdir(os.path.join(scenario_dir, item)):
+                scenarios.append({"name": item, "path": f"scenario/{item}"})
+    return scenarios
 
 # ---------------------------------------------------------------------------
 # Log parsing helpers
@@ -383,6 +482,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
         if path in ("/", "/index.html"):
             self._serve_file("index.html", "text/html")
+        elif path == "/api/template":
+            self._json_response(parse_xrun_template(TEMPLATE_PATH))
+        elif path == "/api/scenarios":
+            self._json_response(get_available_scenarios())
         elif path == "/api/runs":
             self._json_response(discover_runs(self.run_root))
         elif path.startswith("/api/runs/") and "/log/" in path:
@@ -431,6 +534,102 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     k, v = pair.split("=", 1)
                     qs[k] = v
         return qs
+
+    def do_POST(self):
+        """Handle parameterisation write endpoints."""
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length).decode()) if length else {}
+        except Exception:
+            self._json_response({"status": "error", "message": "Bad request body"})
+            return
+
+        route = self.path.split("?")[0]
+
+        if route == "/api/xrun-files":
+            path = body.get("path", "").strip()
+            if not path:
+                self._json_response({"status": "error", "message": "path required"})
+                return
+            files = get_available_xrun_files(path)
+            self._json_response({"status": "success", "files": files, "count": len(files)})
+
+        elif route == "/api/open-xrun":
+            filename = body.get("filename", "")
+            xrun_dir = os.path.abspath(body.get("path", BASE_DIR))
+            xrun_path = os.path.abspath(os.path.join(xrun_dir, filename))
+            if not os.path.isfile(xrun_path) or not xrun_path.endswith(".xrun"):
+                self._json_response({"status": "error", "message": "File not found"})
+                return
+            try:
+                tree = ET.parse(xrun_path)
+                root = tree.getroot()
+                params = {}
+                def _read(el, prefix=""):
+                    for child in el:
+                        tag = child.tag.replace("{urn:xAquaticRisk}", "")
+                        key = f"{prefix}{tag}" if prefix else tag
+                        if len(child) > 0:
+                            _read(child, f"{key}/")
+                        else:
+                            params[key] = child.text.strip() if child.text else ""
+                _read(root)
+                self._json_response({"status": "success", "parameters": params, "filename": filename})
+            except Exception as exc:
+                self._json_response({"status": "error", "message": str(exc)})
+
+        elif route == "/api/save":
+            parameters = body.get("parameters", body)
+            save_path = body.get("path", OUTPUT_DIR)
+            filename = body.get("filename", "")
+            if not filename:
+                sim_id = parameters.get("Control/ExperimentID", "Simulation")
+                filename = f"{sim_id}.xrun"
+            if not filename.endswith(".xrun"):
+                filename += ".xrun"
+            output_path = os.path.join(os.path.abspath(save_path), filename)
+            try:
+                create_xrun_file(parameters, output_path, TEMPLATE_PATH)
+                self._json_response({"status": "success", "message": f"Saved to {os.path.basename(output_path)}", "xrun_path": output_path})
+            except Exception as exc:
+                self._json_response({"status": "error", "message": str(exc)})
+
+        elif route == "/api/save-as":
+            filename = body.get("filename", "configuration")
+            if not filename.endswith(".xrun"):
+                filename += ".xrun"
+            save_path = os.path.abspath(body.get("path", OUTPUT_DIR))
+            os.makedirs(save_path, exist_ok=True)
+            output_path = os.path.join(save_path, filename)
+            try:
+                create_xrun_file(body.get("parameters", {}), output_path, TEMPLATE_PATH)
+                self._json_response({"status": "success", "message": f"Saved as {filename}", "filename": filename, "xrun_path": output_path})
+            except Exception as exc:
+                self._json_response({"status": "error", "message": str(exc)})
+
+        elif route == "/api/run":
+            parameters = body
+            sim_id = parameters.get("Control/ExperimentID", "Simulation")
+            output_filename = f"{sim_id}.xrun"
+            output_path = os.path.join(OUTPUT_DIR, output_filename)
+            try:
+                create_xrun_file(parameters, output_path, TEMPLATE_PATH)
+                def _launch():
+                    try:
+                        subprocess.Popen(
+                            [START_BAT, output_path],
+                            cwd=BASE_DIR,
+                            creationflags=subprocess.CREATE_NEW_CONSOLE,
+                        )
+                    except Exception as exc:
+                        print(f"Error launching simulation: {exc}")
+                threading.Thread(target=_launch, daemon=True).start()
+                self._json_response({"status": "success", "message": f"Simulation started: {output_filename}", "xrun_path": output_path})
+            except Exception as exc:
+                self._json_response({"status": "error", "message": str(exc)})
+
+        else:
+            self.send_error(404)
 
     def log_message(self, fmt, *args):
         """Suppress default request logging."""

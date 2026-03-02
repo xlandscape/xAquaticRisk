@@ -1,11 +1,15 @@
+"""Rewrites dashboard/index.html with the two-tab layout."""
+import os
+
+HTML = """\
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>xAquaticRisk — Dashboard</title>
+<title>xAquaticRisk \u2014 Dashboard</title>
 <style>
-/* ── Reset & base ─────────────────────────────────────────────── */
+/* \u2500\u2500 Reset & base \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0f1117;--bg2:#181b24;--bg3:#21252f;--border:#2c313d;
@@ -17,25 +21,25 @@
 html{font-size:14px}
 body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-/* ── App shell ──────────────────────────────────────────────── */
+/* \u2500\u2500 App shell \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 .header{background:var(--bg2);border-bottom:1px solid var(--border);padding:.8rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-shrink:0}
 .header h1{font-size:1.15rem;font-weight:600;color:#fff}
 .header .tag{font-size:.7rem;background:var(--accent);color:#000;padding:2px 8px;border-radius:3px;font-weight:600}
 .header .refresh-info{margin-left:auto;font-size:.75rem;color:var(--text2)}
 
-/* ── Top-level tabs ─────────────────────────────────────────────── */
+/* \u2500\u2500 Top-level tabs \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 .top-tabs{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:0;padding:0 1.5rem;flex-shrink:0}
 .top-tab{padding:.55rem 1.2rem;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;transition:all .15s;user-select:none}
 .top-tab:hover{color:var(--text)}
 .top-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-/* ── Tab panels ──────────────────────────────────────────────────── */
+/* \u2500\u2500 Tab panels \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 .tab-panel{flex:1;display:none;overflow:hidden}
 .tab-panel.active{display:flex;flex-direction:column}
 
-/* ══════════════════════════════════════════════════════════════════════
+/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
    PARAMETERISATION TAB
-══════════════════════════════════════════════════════════════════════ */
+\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */
 .param-page{flex:1;overflow-y:auto;padding:1.2rem 1.5rem}
 .param-section{background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:.9rem;overflow:hidden}
 .param-section-head{padding:.6rem 1rem;font-weight:600;font-size:.82rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .15s}
@@ -75,9 +79,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .spinner-inline.show{display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ══════════════════════════════════════════════════════════════════════
+/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
    RUN MONITORING TAB
-══════════════════════════════════════════════════════════════════════ */
+\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */
 .monitor-container{display:flex;flex:1;overflow:hidden}
 .sidebar{width:320px;min-width:240px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
 .main{flex:1;overflow-y:auto;padding:1.2rem 1.5rem}
@@ -157,13 +161,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="param-section-body">
       <div class="form-group">
         <label>Path to xrun Files</label>
-        <div class="input-row"><input type="text" id="xrunPath" placeholder="e.g., C:\LocalWork\xAquaticRisk">
+        <div class="input-row"><input type="text" id="xrunPath" placeholder="e.g., C:\\LocalWork\\xAquaticRisk">
         <button class="btn btn-secondary" onclick="loadXrunFiles()">Browse</button></div>
         <div class="help-text">Directory where xrun files are located</div>
       </div>
       <div class="form-group">
         <label>Open xrun File</label>
-        <div class="input-row"><select id="xrunSelect"><option value="">Select an xrun file…</option></select>
+        <div class="input-row"><select id="xrunSelect"><option value="">Select an xrun file\u2026</option></select>
         <button class="btn btn-outline" onclick="openXrunFile()">Load</button></div>
         <div class="help-text">Select an existing xrun file to load its parameters</div>
       </div>
@@ -193,7 +197,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           <div class="help-text">Simultaneous MC runs</div></div>
       </div>
       <div class="form-group"><label>Scenario *</label>
-        <select id="Scenario/LandscapeScenario"><option value="">Loading scenarios…</option></select>
+        <select id="Scenario/LandscapeScenario"><option value="">Loading scenarios\u2026</option></select>
         <div class="help-text">Landscape scenario to use</div></div>
       <div class="form-row">
         <div class="form-group"><label>Simulation Start Date</label>
@@ -227,7 +231,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="form-group"><label>In-Crop Buffer (m)</label>
           <input type="number" step="any" id="Mitigation/InCropBuffer" placeholder="e.g., 0">
           <div class="help-text">In-crop buffer not applied (meters)</div></div>
-        <div class="form-group"><label>Technology Drift Reduction (0–1)</label>
+        <div class="form-group"><label>Technology Drift Reduction (0\u20131)</label>
           <input type="number" step="0.01" min="0" max="1" id="Mitigation/TechnologyDriftReduction" placeholder="e.g., 0">
           <div class="help-text">Fraction of drift filtered out</div></div>
       </div>
@@ -267,15 +271,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="form-group"><label>Solubility in Water (mg/l)</label><input type="number" step="any" id="EnvironmentalFate/SolubilityInWater"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>DT50 Water (days)</label><input type="number" step="any" id="EnvironmentalFate/DT50sw"><div class="help-text">Half-life in water at 20°C</div></div>
-        <div class="form-group"><label>DT50 Sediment (days)</label><input type="number" step="any" id="EnvironmentalFate/DT50sed"><div class="help-text">Half-life in sediment at 20°C</div></div>
+        <div class="form-group"><label>DT50 Water (days)</label><input type="number" step="any" id="EnvironmentalFate/DT50sw"><div class="help-text">Half-life in water at 20\u00b0C</div></div>
+        <div class="form-group"><label>DT50 Sediment (days)</label><input type="number" step="any" id="EnvironmentalFate/DT50sed"><div class="help-text">Half-life in sediment at 20\u00b0C</div></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>KOC</label><input type="number" step="any" id="EnvironmentalFate/KOC"><div class="help-text">Organic carbon-water partition coefficient</div></div>
-        <div class="form-group"><label>Diffusion Coefficient (m²/d)</label><input type="text" id="EnvironmentalFate/DiffusionCoefficient"></div>
+        <div class="form-group"><label>Diffusion Coefficient (m\u00b2/d)</label><input type="text" id="EnvironmentalFate/DiffusionCoefficient"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Saturated Vapour Pressure (Pa)</label><input type="text" id="EnvironmentalFate/SaturatedVapourPressure"><div class="help-text">At 20°C</div></div>
+        <div class="form-group"><label>Saturated Vapour Pressure (Pa)</label><input type="text" id="EnvironmentalFate/SaturatedVapourPressure"><div class="help-text">At 20\u00b0C</div></div>
         <div class="form-group"><label>Molar Enthalpy of Vaporization (kJ/mol)</label><input type="number" step="any" id="EnvironmentalFate/MolarEnthalpyOfVaporization"></div>
       </div>
       <div class="form-row">
@@ -314,7 +318,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="form-group"><label>SD Threshold Concentration (ng/l)</label><input type="number" step="any" id="Effects/Species1ThresholdConcentrationSD"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>SD Killing Rate (l/(ng·h))</label><input type="number" step="any" id="Effects/Species1KillingRateSD"></div>
+        <div class="form-group"><label>SD Killing Rate (l/(ng\u00b7h))</label><input type="number" step="any" id="Effects/Species1KillingRateSD"></div>
         <div class="form-group"><label>IT Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species1DominantRateConstantIT"></div>
       </div>
       <div class="form-row">
@@ -328,7 +332,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="form-group"><label>SD Threshold Concentration (ng/l)</label><input type="number" step="any" id="Effects/Species2ThresholdConcentrationSD"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>SD Killing Rate (l/(ng·h))</label><input type="number" step="any" id="Effects/Species2KillingRateSD"></div>
+        <div class="form-group"><label>SD Killing Rate (l/(ng\u00b7h))</label><input type="number" step="any" id="Effects/Species2KillingRateSD"></div>
         <div class="form-group"><label>IT Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species2DominantRateConstantIT"></div>
       </div>
       <div class="form-row">
@@ -342,7 +346,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="form-group"><label>SD Threshold Concentration (ng/l)</label><input type="number" step="any" id="Effects/Species3ThresholdConcentrationSD"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>SD Killing Rate (l/(ng·h))</label><input type="number" step="any" id="Effects/Species3KillingRateSD"></div>
+        <div class="form-group"><label>SD Killing Rate (l/(ng\u00b7h))</label><input type="number" step="any" id="Effects/Species3KillingRateSD"></div>
         <div class="form-group"><label>IT Dominant Rate Constant (1/h)</label><input type="number" step="any" id="Effects/Species3DominantRateConstantIT"></div>
       </div>
       <div class="form-row">
@@ -456,7 +460,7 @@ async function loadScenarios() {
     const r = await fetch('/api/scenarios');
     const scenarios = await r.json();
     const sel = document.getElementById('Scenario/LandscapeScenario');
-    sel.innerHTML = '<option value="">Select a scenario…</option>';
+    sel.innerHTML = '<option value="">Select a scenario\u2026</option>';
     scenarios.forEach(s => {
       const o = document.createElement('option');
       o.value = s.path; o.textContent = s.name; sel.appendChild(o);
@@ -527,7 +531,7 @@ async function loadXrunFiles() {
     const res = await r.json();
     if (res.status === 'success') {
       const sel = document.getElementById('xrunSelect');
-      sel.innerHTML = '<option value="">Select an xrun file…</option>';
+      sel.innerHTML = '<option value="">Select an xrun file\u2026</option>';
       (res.files||[]).forEach(f => { const o = document.createElement('option'); o.value = f.name; o.textContent = f.name; sel.appendChild(o); });
       showStatus('Found ' + res.count + ' xrun file(s)', 'success');
     } else { showStatus(res.message, 'error'); }
@@ -582,7 +586,7 @@ async function loadRuns() {
   const el = document.getElementById('runList');
   if (!el) return;
   el.innerHTML = runs.map(r =>
-    '<div class="run-card ' + (selectedRun===r.id?'active':'') + '" onclick="selectRun('' + r.id + '')">' +
+    '<div class="run-card ' + (selectedRun===r.id?'active':'') + '" onclick="selectRun(\'' + r.id + '\')">' +
     '<div class="name"><span class="status-dot status-' + r.status + '"></span>' + r.id + '</div>' +
     '<div class="meta"><span>' + statusLabel(r.status) + '</span><span>MC: ' + r.mc_finished + '/' + (r.mc_total||'?') + '</span>' +
     (r.elapsed ? '<span>' + r.elapsed + '</span>' : '') + '</div></div>'
@@ -605,7 +609,7 @@ async function loadDetail() {
 
   html += '<div class="overview-grid">' +
     '<div class="stat-card"><div class="label">Status</div><div class="value ' + (d.status==='finished'?'ok':d.status==='error'?'err':d.status==='warning'?'warn':'info') + '">' + statusLabel(d.status) + '</div></div>' +
-    '<div class="stat-card"><div class="label">Elapsed</div><div class="value info">' + (d.elapsed||'—') + '</div></div>' +
+    '<div class="stat-card"><div class="label">Elapsed</div><div class="value info">' + (d.elapsed||'\u2014') + '</div></div>' +
     '<div class="stat-card"><div class="label">MC Runs</div><div class="value info">' + d.mc_runs.length + '</div></div>' +
     '<div class="stat-card"><div class="label">Errors</div><div class="value ' + (d.severity_counts.ERROR?'err':'ok') + '">' + d.severity_counts.ERROR + '</div></div>' +
     '<div class="stat-card"><div class="label">Warnings</div><div class="value ' + (d.severity_counts.WARN?'warn':'ok') + '">' + d.severity_counts.WARN + '</div></div>' +
@@ -627,7 +631,7 @@ async function loadDetail() {
   if (d.mc_runs.length) {
     const mc0 = d.mc_runs[0];
     const doneSet = new Set(mc0.components_done);
-    html += '<div class="panel"><div class="panel-head">Component Pipeline — ' + mc0.name + '</div><div class="panel-body"><div class="comp-grid">';
+    html += '<div class="panel"><div class="panel-head">Component Pipeline \u2014 ' + mc0.name + '</div><div class="panel-body"><div class="comp-grid">';
     let foundActive = false;
     for (const c of (mc0.initialized||[])) {
       if (doneSet.has(c)) html += '<div class="comp-item done"><span class="comp-icon">&#10003;</span>' + c + '</div>';
@@ -638,13 +642,13 @@ async function loadDetail() {
   }
 
   html += '<div class="panel"><div class="panel-head">Log Output</div>' +
-    '<div class="log-tabs" id="logTabs">' + logTabs.map(t => '<div class="log-tab ' + (t===activeLogTab?'active':'') + '" onclick="switchLog('' + t + '')">' + t.replace('.log','') + '</div>').join('') + '</div>' +
+    '<div class="log-tabs" id="logTabs">' + logTabs.map(t => '<div class="log-tab ' + (t===activeLogTab?'active':'') + '" onclick="switchLog(\'' + t + '\')">' + t.replace('.log','') + '</div>').join('') + '</div>' +
     '<div class="log-controls">' +
     '<label><input type="checkbox" id="chkAutoScroll" ' + (autoScroll?'checked':'') + ' onchange="autoScroll=this.checked"> Auto-scroll</label>' +
     '<label>Filter: <select id="selFilter" onchange="filterSev=this.value;loadLog()">' +
     ['ALL','ERROR','WARN','NOTE','OK','INFO'].map(v => '<option value="' + v + '" ' + (filterSev===v?'selected':'') + '>' + (v==='ALL'?'All':v) + '</option>').join('') +
     '</select></label></div>' +
-    '<div class="log-output" id="logOutput">Loading…</div></div>';
+    '<div class="log-output" id="logOutput">Loading\u2026</div></div>';
 
   if (d.parameters && Object.keys(d.parameters).length) {
     html += '<div class="panel"><div class="panel-head">Parameters</div><div class="panel-body">' +
@@ -671,7 +675,7 @@ async function loadLog() {
   let entries = data.entries || [];
   if (filterSev !== 'ALL') entries = entries.filter(e => e.sev === filterSev);
   logEl.innerHTML = entries.map(e => {
-    const lines = e.msg.split('\n');
+    const lines = e.msg.split('\\n');
     const detail = lines.slice(1).map(l => '<span class="detail">' + escHtml(l) + '</span>').join('');
     return '<div class="log-line"><span class="sev sev-' + e.sev + '">' + e.sev.padEnd(5) + '</span> ' + escHtml(lines[0]) + detail + '</div>';
   }).join('');
@@ -694,3 +698,9 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+"""
+
+path = r'c:\LocalWork\xAquaticRisk\dashboard\index.html'
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(HTML)
+print(f"Written {len(HTML)} bytes, {HTML.count(chr(10))} lines")
