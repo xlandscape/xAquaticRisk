@@ -104,7 +104,7 @@ Example ***.xrun*** file (simplified):
   <Effects>
     <RunLGuts>true</RunLGuts>
     <Species1>Asellus aquaticus</Species1>
-    <!-- ... GUTS parameters for up to 3 species ... -->
+    <!-- ... GUTS parameters for species ... -->
   </Effects>
   <Settings>
     <ExportToSqlite>true</ExportToSqlite>
