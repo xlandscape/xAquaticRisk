@@ -342,23 +342,23 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="SimulationInfo/SimID">SimID</label>
-                        <input type="text" id="SimulationInfo/SimID" name="SimulationInfo/SimID" 
+                        <label for="Control/ExperimentID">ExperimentID</label>
+                        <input type="text" id="Control/ExperimentID" name="Control/ExperimentID" 
                                placeholder="e.g., Test_Run_aqRisk">
                         <div class="help-text">A unique identifier of a simulation run</div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="Settings/NumberMC">Number of Monte Carlo Runs</label>
-                            <input type="number" step="1" min="1" id="Settings/NumberMC" name="Settings/NumberMC" 
+                            <label for="Control/NumberMC">Number of Monte Carlo Runs</label>
+                            <input type="number" step="1" min="1" id="Control/NumberMC" name="Control/NumberMC" 
                                    placeholder="e.g., 1">
                             <div class="help-text">The number of Monte Carlo runs</div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="SimulationInfo/NumberParallelProcesses">Parallel Processes</label>
-                            <input type="number" step="1" min="1" id="SimulationInfo/NumberParallelProcesses" name="SimulationInfo/NumberParallelProcesses" 
+                            <label for="Control/NumberParallelProcesses">Parallel Processes</label>
+                            <input type="number" step="1" min="1" id="Control/NumberParallelProcesses" name="Control/NumberParallelProcesses" 
                                    placeholder="e.g., 2">
                             <div class="help-text">Number of Monte Carlo runs conducted simultaneously</div>
                         </div>
@@ -620,13 +620,6 @@
                             </select>
                             <div class="help-text">Specifies whether effects are simulated by LGuts</div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="Effects/ReachSelection">Reach Selection</label>
-                            <input type="text" id="Effects/ReachSelection" name="Effects/ReachSelection" 
-                                   placeholder="e.g., 567 570 580 584">
-                            <div class="help-text">Space-separated list of reach identifiers for LGuts/LPop runs</div>
-                        </div>
                     </div>
                     
                     <div class="form-row">
@@ -811,7 +804,7 @@
         // Known parameter mappings
         const knownParams = [
             'Scenario/LandscapeScenario', 'Scenario/SimulationStart', 'Scenario/SimulationEnd',
-            'SimulationInfo/SimID', 'Settings/NumberMC', 'SimulationInfo/NumberParallelProcesses',
+            'Control/ExperimentID', 'Control/NumberMC', 'Control/NumberParallelProcesses',
             'PppUse/ApplicationRate', 'PppUse/ApplicationTimeWindow',
             'Mitigation/InCropBuffer', 'Mitigation/TechnologyDriftReduction',
             'Exposure/RautmannClass', 'Exposure/DepositionInputFile',
@@ -826,7 +819,7 @@
             'EnvironmentalFate/FreundlichExponentInSedimentAndSuspendedParticles',
             'EnvironmentalFate/CoefficientForLinearAdsorptionOnMacrophytes',
             'EnvironmentalFate/ThresholdSW', 'EnvironmentalFate/ThresholdSediment',
-            'Effects/RunLGuts', 'Effects/ReachSelection', 'Effects/NumberOfWarmUpYears', 'Effects/RecoveryPeriodYears',
+            'Effects/RunLGuts', 'Effects/NumberOfWarmUpYears', 'Effects/RecoveryPeriodYears',
             'Effects/Species1', 'Effects/Species1DominantRateConstantSD', 'Effects/Species1ThresholdConcentrationSD',
             'Effects/Species1KillingRateSD', 'Effects/Species1DominantRateConstantIT', 'Effects/Species1ThresholdDistributionIT',
             'Effects/Species1WidthOfThresholdDistributionIT',

@@ -20,7 +20,7 @@ Beyond the use of xAR in a risk assessment and management context and given its 
   
 ## Intro
 
-xAquaticRisk is a landscape model to **simulate spray-drift deposition into surface waters**, **environmental fate of pesticides** in stream networks, as well as **exposure** of and **effects** on aquatic invertebrate populations **in space and time** using real-world **landscape data**.  
+xAquaticRisk is a landscape model to **simulate spray-drift deposition into surface waters**, **environmental fate of pesticides** in stream networks, as well as **exposure** of and **effects** on aquatic invertebrate populations **in space and time** using real-world **landscape data**. For details on how to parameterise simulation runs, see the [Parameterisation Reference](reference/parameterisation.md).  
 Its conceptual basis is [**generic**](#concepts-and-design) and open to be used for any aquatic organism and catchment, whereas initial parameterisations and scenarios focus on **macroinvertebrate species** such as *Asellus aquaticus*, *Cloeon dipterum* and *Gammarus pulex*. xAR is based on the **modular landscape modelling framework** [xLandscape](xLandscape/xLandscape-intro.md#xlandscape).
   
 Pesticide concentrations in surface water are driven by spray-drift deposition, hydrological transport from treated fields, and environmental fate processes (degradation, sorption, volatilisation). The spatial and temporal patterns of predicted environmental concentrations (PECs) in the stream network are essential information for modelling effects on aquatic organisms. Thus, dynamic exposure representation builds the basis for modelling individual-level and population-level effects.  

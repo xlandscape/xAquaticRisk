@@ -106,7 +106,7 @@ xsi:schemaLocation="urn:xLandscapeModelScenarioInfo ../../model/core/base/scenar
 
     - LandscapeScenario: scenario/test-scenario
     - CropProtectionScenario: test-scenario
-    - SimID: a string that does not already exist in the run folder
+    - ExperimentID: a string that does not already exist in the run folder
     - SimulationStart and SimulationEnd: set the first and last date to be simulated
 
 After these steps are completed, the **new scenario files should have the following structure**:

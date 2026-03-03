@@ -214,7 +214,7 @@ Next, we will configure the landscape model parameterization for this PPP use sc
     - `CropProtectionScenario`: xCropProtection-tutorial.xml (including .xml)
     - `OutputApplicationType`: This defines whether the output of xCropProtection has the scale product or active substance. This should be set to product for this demo
     - `SimulationStart` and `SimulationEnd`: Set these to any two dates (with `SimulationStart` occurring before `SimulationEnd`). For this tutorial, it is recommended to simulate only 1 year.
-    - `SimID`: Should be a short, descriptive string that represents this simulation. The SimID cannot be the same as any already existing simulation run in the *run* folder. For this tutorial, use *tutorial-run*
+    - `ExperimentID`: Should be a short, descriptive string that represents this simulation. The ExperimentID cannot be the same as any already existing simulation run in the *run* folder. For this tutorial, use *tutorial-run*
 3. Any elements not listed here should remain as they are.
 4. Save this file.
 

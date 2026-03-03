@@ -11,12 +11,12 @@ FileExistsError: [WinError 183] Cannot create a file when that file already exis
 
 **Explanation**:
 
-A folder with the same name as `SimID` already exists in the `\run\` folder.
+A folder with the same name as `ExperimentID` already exists in the `\run\` folder.
 
 **Possible solutions**:
 
 - Delete or move the existing folder, then re-run the simulation.
-- Change the `SimID` value in your `.xrun` file to one that does not already exist in the `\run\` folder.
+- Change the `ExperimentID` value in your `.xrun` file to one that does not already exist in the `\run\` folder.
 
 ## FileNotFoundError
 
@@ -84,7 +84,7 @@ Long simulation runs with many Monte Carlo iterations and/or many parallel proce
 
 - Reduce `<NumberParallelProcesses>` and/or `<CascadeToxswaWorkers>`.
 - Apply the rule of thumb: `min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorkers <= available CPU cores`.
-- Set `<DeleteFoldersAtFinish>` to `true` to free disk space during the run.
+- Set `<DeleteComponentProcessingFolders>` to `true` to free disk space during the run.
 - Run fewer Monte Carlo iterations (`<NumberMC>`) for initial testing.
 
 ## HDFView Error
@@ -109,17 +109,15 @@ If GUTS-SD or GUTS-IT parameters are incorrectly specified (e.g., negative value
 If `<RunLGuts>` is set to `true` but no effects appear in the output, it may be because:
 
 - No environmental fate component is enabled (`<RunStepsRiverNetwork>` and `<RunCascadeToxswa>` are both `false`).
-- The `<ReachSelection>` does not match any reach IDs in the scenario.
 - The application rate or exposure is too low to trigger effects given the species' GUTS parameters.
 
 **Possible solutions**:
 
 - Enable at least one environmental fate component.
-- Verify that `<ReachSelection>` contains valid reach IDs from the scenario (check the scenario's geo data). An empty `<ReachSelection>` will run effects for all reaches.
 - Check the PEC output to confirm that exposure concentrations are above the GUTS threshold values.
 
 ## General Tips
 
-- **Check log files**: After a simulation, log files are written to `\run\<SimID>\log\`. These contain detailed information about each component's execution .
+- **Check log files**: After a simulation, log files are written to `\run\<ExperimentID>\log\`. These contain detailed information about each component's execution .
 - **Start small**: For initial testing, use short simulation periods (a few days) and a single Monte Carlo run (`<NumberMC>1</NumberMC>`).
 - **Validate incrementally**: Enable components one at a time (e.g., first run with only StepsRiverNetwork, then add CascadeToxswa, then add LGuts) to isolate issues.

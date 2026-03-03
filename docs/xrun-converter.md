@@ -6,9 +6,16 @@
 
 **Key conversions:**
 - `<CropStage>` element → `<RautmannClass>` (with value mapping: `early` → `orchards.early`, `late` → `orchards.late`, `arable` passes through)
-- `<SimulationInfo>` section moved from bottom to top (now the first section after `<Parameters>`, per XSD schema order)
+- `<SimulationInfo>` section → `<Control>` (renamed)
+- `<SimID>` → `<ExperimentID>` (renamed)
+- `<DeleteFoldersAtFinish>` → `<DeleteComponentProcessingFolders>` (renamed)
+- `<Project>` → `<LandscapeScenario>` (renamed)
+- `<ReachSelection>` parameter removed (effects now always run for all reaches)
+- `<Control>` section moved from bottom to top (now the first section after `<Parameters>`, per XSD schema order)
 - All comment blocks refreshed per current template style
-- All 64 parameters preserved with original values
+- All current parameters preserved with original values
+
+For the complete parameter reference, see **[xAquaticRisk Parameterisation](reference/parameterisation.md)**.
 
 ## Usage
 
@@ -60,7 +67,7 @@ python convert_xrun.py  muenster_old.xrun  --no-xrun
 
 Old xrun files have:
 - `<CropStage>` element (with values `early` or `late`) in the `<Exposure>` section
-- `<SimulationInfo>` section at the **bottom** (after `<Analysis>`)
+- `<Control>` section at the **bottom** (after `<Analysis>`)
 - Parameters spread across multiple sections in any order
 
 Example old structure:
@@ -71,9 +78,9 @@ Example old structure:
   <PppUse>...</PppUse>
   <!-- ... other sections ... -->
   <Analysis>...</Analysis>
-  <SimulationInfo>
+  <Control>
     <!-- Simulation settings at the end -->
-  </SimulationInfo>
+  </Control>
 </Parameters>
 ```
 
@@ -81,17 +88,17 @@ Example old structure:
 
 Converted xrun files have:
 - `<RautmannClass>` element (with values `orchards.early`, `orchards.late`, or `arable`) in the `<Exposure>` section
-- `<SimulationInfo>` section at the **top** (first section, per XSD schema)
-- All sections in canonical order: `SimulationInfo`, `Scenario`, `PppUse`, `Mitigation`, `Exposure`, `EnvironmentalFate`, `Effects`, `Settings`, `Analysis`
+- `<Control>` section at the **top** (first section, per XSD schema)
+- All sections in canonical order: `Control`, `Scenario`, `PppUse`, `Mitigation`, `Exposure`, `EnvironmentalFate`, `Effects`, `Settings`, `Analysis`
 - Comment blocks for all parameters per current template style
 
 Example new xrun structure:
 ```xml
 <?xml version="1.0"?>
 <Parameters xmlns="urn:xAquaticRisk" ...>
-  <SimulationInfo>
+  <Control>
     <!-- Simulation settings at the top -->
-  </SimulationInfo>
+  </Control>
   <Scenario>...</Scenario>
   <PppUse>...</PppUse>
   <!-- ... other sections in order ... -->
@@ -110,14 +117,15 @@ The generated `.yaml` file is an exact equivalent to the converted `.xrun`:
 
 Example YAML excerpt:
 ```yaml
-SimulationInfo:
-  SimID: muenster_test
+Control:
+  ExperimentID: muenster_test
+  NumberMC: 3
   NumberParallelProcesses: 3
   CascadeToxswaWorkers: 20
-  DeleteFoldersAtFinish: true
+  DeleteComponentProcessingFolders: true
 
 Scenario:
-  Project: scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa
+  LandscapeScenario: scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa
   SimulationStart: "2015-05-01"
   SimulationEnd: "2015-05-07"
 
@@ -127,6 +135,18 @@ Exposure:
 ```
 
 ## Technical details
+
+### Legacy section and parameter renames
+
+The converter handles the following renames from older formats:
+
+| Old name | New name | Type |
+|---|---|---|
+| `SimulationInfo` | `Control` | Section |
+| `SimID` | `ExperimentID` | Parameter |
+| `DeleteFoldersAtFinish` | `DeleteComponentProcessingFolders` | Parameter |
+| `Project` | `LandscapeScenario` | Parameter |
+| `ReachSelection` | *(removed)* | Parameter |
 
 ### CropStage → RautmannClass mapping
 
@@ -141,7 +161,7 @@ If an unknown value is encountered, it is passed through with a warning.
 ### Section ordering (XSD-compliant)
 
 The converter respects the canonical section order defined in `parameters.xsd`:
-1. `SimulationInfo`
+1. `Control`
 2. `Scenario`
 3. `PppUse`
 4. `Mitigation`
