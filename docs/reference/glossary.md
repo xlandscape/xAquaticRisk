@@ -126,7 +126,7 @@ In the context of aquatic risk assessment, a *Scenario* refers to a set of condi
 4. **Agricultural practices**: Crop types, application regimes, mitigation measures.  
 5. **Ecological conditions**: Species parameters, population dynamics data.
 
-In xAquaticRisk, scenarios are stored in sub-folders of `xAquaticRisk\scenario\` and selected via the `<Project>` parameter.
+In xAquaticRisk, scenarios are stored in sub-folders of `xAquaticRisk\scenario\` and selected via the `<LandscapeScenario>` parameter.
 
 ## Simulation
 

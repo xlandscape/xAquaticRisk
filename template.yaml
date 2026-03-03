@@ -6,16 +6,21 @@
 # to __start__.bat instead of an .xrun file.
 # =============================================================================
 
-SimulationInfo:
+Control:
   # A unique identifier of a simulation run
   # Values: Any characters that are valid in file system identifiers
   # Remark: Running a simulation with the same name as an existing run results in an error.
-  SimID: Test_Run_aqRisk
+  ExperimentID: Test_Run_aqRisk
 
   # A file pattern of potential parents for this run
   # Values: Empty or a file pattern yielding at least one X3df data store file.
   # Remark: The feature is currently experimental.
   ParentRun:
+
+  # The number of Monte Carlo runs
+  # Values: Any positive integer
+  # Best practice: Always conduct multiple MC runs (except for technical tests).
+  NumberMC: 1
 
   # The number of Monte Carlo runs that are conducted simultaneously
   # Values: Any positive integer
@@ -29,7 +34,7 @@ SimulationInfo:
 
   # Specifies whether processing folders should be deleted after the model run is finished
   # Values: true or false
-  DeleteFoldersAtFinish: false
+  DeleteComponentProcessingFolders: false
 
   # Specifies whether verbose logging is used
   # Values: true or false
@@ -47,7 +52,7 @@ Scenario:
   # The scenario used by the simulation
   # Values: scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.
   # Remark: Make sure that the scenario is present in the scenario sub-folder.
-  Project: scenario/oudebeek-beek7-tdi
+  LandscapeScenario: scenario/oudebeek-beek7-tdi
 
   # The first date that is simulated
   # Values: A date of format YYYY-MM-DD within the valid range of dates
@@ -168,11 +173,6 @@ Effects:
   # Values: true or false
   RunLGuts: true
 
-  # The reaches for which LGuts and LPop runs are conducted
-  # Values: A space separated list of reach identifiers
-  # Remark: An empty list results in a simulation for all reaches.
-  ReachSelection: "567 570 580 584"
-
   # Number of years to run LPop in order to get stable population cycles
   # Values: Integer value
   NumberOfWarmUpYears: 1
@@ -209,11 +209,6 @@ Effects:
   Species3WidthOfThresholdDistributionIT: 3.049
 
 Settings:
-  # The number of Monte Carlo runs
-  # Values: Any positive integer
-  # Best practice: Always conduct multiple MC runs (except for technical tests).
-  NumberMC: 1
-
   # Specifies whether PECs and individual effects are exported into a SQLite database
   # Values: true or false
   ExportToSqlite: true

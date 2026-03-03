@@ -8,10 +8,10 @@
   <xsd:element name="Parameters">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="SimulationInfo">
+        <xsd:element name="Control">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="SimID">
+              <xsd:element name="ExperimentID">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:string">
                     <xsd:minLength value="3"/>
@@ -19,9 +19,10 @@
                 </xsd:simpleType>
               </xsd:element>
               <xsd:element name="ParentRun" type="xsd:anyURI"/>
+              <xsd:element name="NumberMC" type="xsd:positiveInteger"/>
               <xsd:element name="NumberParallelProcesses" type="xsd:nonNegativeInteger"/>
               <xsd:element name="CascadeToxswaWorkers" type="xsd:nonNegativeInteger"/>
-              <xsd:element name="DeleteFoldersAtFinish" type="xsd:boolean"/>
+              <xsd:element name="DeleteComponentProcessingFolders" type="xsd:boolean"/>
               <xsd:element name="VerboseLogging" type="xsd:boolean"/>
               <xsd:element name="EnableProfiling" type="xsd:boolean"/>
               <xsd:element name="ProfilingWaitingTime">
@@ -37,7 +38,7 @@
         <xsd:element name="Scenario">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="Project">
+              <xsd:element name="LandscapeScenario">
                 <xsd:simpleType>
                   <xsd:restriction base="xsd:anyURI">
                     <xsd:minLength value="3"/>
@@ -231,11 +232,6 @@
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element name="RunLGuts" type="xsd:boolean"/>
-              <xsd:element name="ReachSelection">
-                <xsd:simpleType>
-                  <xsd:list itemType="xsd:positiveInteger"/>
-                </xsd:simpleType>
-              </xsd:element>
               <xsd:element name="NumberOfWarmUpYears" type="xsd:nonNegativeInteger"/>
               <xsd:element name="RecoveryPeriodYears" type="xsd:nonNegativeInteger"/>
               <xsd:element name="Species1">
@@ -391,7 +387,6 @@
         <xsd:element name="Settings">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="NumberMC" type="xsd:positiveInteger"/>
               <xsd:element name="ExportToSqlite" type="xsd:boolean"/>
             </xsd:sequence>
           </xsd:complexType>

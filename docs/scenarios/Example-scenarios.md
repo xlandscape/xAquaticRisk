@@ -1,6 +1,6 @@
 # Example Scenarios
 
-xAquaticRisk ships with several landscape scenarios representing different catchments and agricultural contexts. These scenarios are located in the `xAquaticRisk\scenario\` folder and can be selected via the `<Project>` parameter in the `.xrun` parameterisation file.
+xAquaticRisk ships with several landscape scenarios representing different catchments and agricultural contexts. These scenarios are located in the `xAquaticRisk\scenario\` folder and can be selected via the `<LandscapeScenario>` parameter in the `.xrun` parameterisation file.
 
 # Oudebeek-Beek7 (Belgium)
 
@@ -34,7 +34,7 @@ The scenario includes StreamCom species parameter databases and biomass data for
 To use this scenario, set the following in your `.xrun` file:
 
 ```xml
-<Project>scenario/oudebeek-beek7-tdi</Project>
+<LandscapeScenario>scenario/oudebeek-beek7-tdi</LandscapeScenario>
 ```
 
 The scenario supports simulation periods within the range of the provided hydrological time series. Consult the scenario README for the exact valid date range.
@@ -106,7 +106,7 @@ Time series cover the period from 1991-01-01 to 2018-12-31. Water depth was prep
 To use this scenario, set the following in your `.xrun` file:
 
 ```xml
-<Project>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</Project>
+<LandscapeScenario>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</LandscapeScenario>
 ```
 
 Example parameterisation files for the Münster scenario are provided at the xAquaticRisk root directory:

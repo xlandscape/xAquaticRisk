@@ -9,7 +9,7 @@
             <Include_Modules>true</Include_Modules>
         </Observer>
         <Observer module="observer" class="LogFileObserver">
-            <LogFile>$(_EXP_BASE_DIR_)\$(SimID)\log\mc_$(_MC_NAME_).log</LogFile>
+            <LogFile>$(_EXP_BASE_DIR_)\$(ExperimentID)\log\mc_$(_MC_NAME_).log</LogFile>
             <show_messages_get_values_ok>$(VerboseLogging)</show_messages_get_values_ok>
         </Observer>
     </Observers>
@@ -4158,7 +4158,7 @@
                 $(LeafLitterEntryDensity)
             </LeafLitterEntryDensity>
         </StreamCom4_CascadeToxswa>
-        <DeleteFolder module="components" class="DeleteFolder" enabled="$(DeleteFoldersAtFinish)">
+        <DeleteFolder module="components" class="DeleteFolder" enabled="$(DeleteComponentProcessingFolders)">
             <Path>$(_MCS_BASE_DIR_)\$(_MC_NAME_)\processing</Path>
         </DeleteFolder>
     </Composition>

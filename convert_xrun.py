@@ -2,9 +2,9 @@
 """
 convert_xrun.py  –  Convert old-format xAquaticRisk .xrun files to new format.
 
-Reads a legacy .xrun file (with CropStage and/or SimulationInfo at the bottom)
+Reads a legacy .xrun file (with CropStage and/or Control at the bottom)
 and produces:
-  1.  A new-format .xrun file  (SimulationInfo first, RautmannClass)
+  1.  A new-format .xrun file  (Control first, RautmannClass)
   2.  An equivalent .yaml parameterisation file
 
 Usage
@@ -54,7 +54,7 @@ def _tag(local: str) -> str:
 #  Canonical section order (new format) and parameter order within sections
 # ---------------------------------------------------------------------------
 SECTION_ORDER: List[str] = [
-    "SimulationInfo",
+    "Control",
     "Scenario",
     "PppUse",
     "Mitigation",
@@ -69,12 +69,12 @@ SECTION_ORDER: List[str] = [
 # A parameter that appears in the old file but is *not* listed here will be
 # appended at the end of its section, preserving the original relative order.
 PARAM_ORDER: Dict[str, List[str]] = {
-    "SimulationInfo": [
-        "SimID", "ParentRun", "NumberParallelProcesses",
-        "CascadeToxswaWorkers", "DeleteFoldersAtFinish",
+    "Control": [
+        "ExperimentID", "ParentRun", "NumberMC", "NumberParallelProcesses",
+        "CascadeToxswaWorkers", "DeleteComponentProcessingFolders",
         "VerboseLogging", "EnableProfiling", "ProfilingWaitingTime",
     ],
-    "Scenario": ["Project", "SimulationStart", "SimulationEnd"],
+    "Scenario": ["LandscapeScenario", "SimulationStart", "SimulationEnd"],
     "PppUse": ["ApplicationRate", "ApplicationTimeWindow"],
     "Mitigation": ["InCropBuffer", "TechnologyDriftReduction"],
     "Exposure": ["RautmannClass", "DepositionInputFile"],
@@ -93,7 +93,7 @@ PARAM_ORDER: Dict[str, List[str]] = {
         "CoefficientForLinearAdsorptionOnMacrophytes",
     ],
     "Effects": [
-        "RunLGuts", "ReachSelection",
+        "RunLGuts",
         "NumberOfWarmUpYears", "RecoveryPeriodYears",
         "Species1",
         "Species1DominantRateConstantSD",
@@ -117,7 +117,7 @@ PARAM_ORDER: Dict[str, List[str]] = {
         "Species3ThresholdDistributionIT",
         "Species3WidthOfThresholdDistributionIT",
     ],
-    "Settings": ["NumberMC", "ExportToSqlite"],
+    "Settings": ["ExportToSqlite"],
     "Analysis": ["ReportingReaches", "PecDisplayedTime"],
 }
 
@@ -134,13 +134,36 @@ CROP_STAGE_MAP = {
 }
 
 # ---------------------------------------------------------------------------
+#  Legacy parameter / section renames
+# ---------------------------------------------------------------------------
+# Section renames: old name → new name
+SECTION_RENAMES = {
+    "SimulationInfo": "Control",
+}
+
+# Parameter renames: old name → new name
+PARAM_RENAMES = {
+    "SimID": "ExperimentID",
+    "DeleteFoldersAtFinish": "DeleteComponentProcessingFolders",
+    "Project": "LandscapeScenario",
+}
+
+# Parameters to drop entirely
+DROPPED_PARAMS = {"ReachSelection"}
+
+# Parameters that moved between sections: param_name → new_section_name
+PARAM_SECTION_MOVES = {
+    "NumberMC": "Control",
+}
+
+# ---------------------------------------------------------------------------
 #  Comment blocks for the new xrun output  (keyed by parameter name)
 # ---------------------------------------------------------------------------
 # fmt: off
 COMMENTS: Dict[str, str] = {
-    "SimID": (
+    "ExperimentID": (
         "    <!--\n"
-        "    Parameter     :  SimID\n"
+        "    Parameter     :  ExperimentID\n"
         "    Description   :  A unique identifier of a simulation run\n"
         "    Values        :  Any characters that are valid in file system identifiers\n"
         "    Remark        :  Running a simulation with the same name as an existing simulation run results in an error.\n"
@@ -182,9 +205,9 @@ COMMENTS: Dict[str, str] = {
         "                     min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors\n"
         "    -->\n"
     ),
-    "DeleteFoldersAtFinish": (
+    "DeleteComponentProcessingFolders": (
         "    <!--\n"
-        "      Parameter     :   DeleteFoldersAtFinish\n"
+        "      Parameter     :   DeleteComponentProcessingFolders\n"
         "      Description   :   Specifies whether processing folders should be deleted after the model run is finished\n"
         "      Values        :   true or false\n"
         "      Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when\n"
@@ -218,9 +241,9 @@ COMMENTS: Dict[str, str] = {
         "                         in a sufficient temporal resolution\n"
         "    -->\n"
     ),
-    "Project": (
+    "LandscapeScenario": (
         "    <!--\n"
-        "    Parameter     :  Project\n"
+        "    Parameter     :  LandscapeScenario\n"
         "    Description   :  The scenario used by the simulation\n"
         "    Values        :  scenario/<xyz> where <xyz> is one of the sub-folders in the scenario folder.\n"
         "    Remark        :  Make sure that the scenario is present in the scenario sub-folder.\n"
@@ -430,14 +453,6 @@ COMMENTS: Dict[str, str] = {
         "    Values        :  true or false\n"
         "    -->\n"
     ),
-    "ReachSelection": (
-        "    <!--\n"
-        "    Parameter     :  ReachSelection\n"
-        "    Description   :  The reaches for which LGuts and LPop runs are conducted\n"
-        "    Values        :  A space separated list of reach identifiers\n"
-        "    Remark        :  An empty list results in a simulation for all reaches in the scenario.\n"
-        "    -->\n"
-    ),
     "NumberOfWarmUpYears": (
         "    <!--\n"
         "    Parameter     : NumberOfWarmupYears\n"
@@ -532,11 +547,19 @@ def parse_old_xrun(filepath: str) -> Dict[str, OrderedDict]:
 
     for section_elem in root:
         section_local = section_elem.tag.replace(f"{{{NS}}}", "")
+
+        # ---- Section rename (e.g. SimulationInfo → Control) ----
+        section_local = SECTION_RENAMES.get(section_local, section_local)
+
         params: OrderedDict = OrderedDict()
 
         for param_elem in section_elem:
             param_local = param_elem.tag.replace(f"{{{NS}}}", "")
             text = (param_elem.text or "").strip()
+
+            # ---- Drop removed parameters ----
+            if param_local in DROPPED_PARAMS:
+                continue
 
             # ---- CropStage → RautmannClass conversion ----
             if param_local == "CropStage":
@@ -546,9 +569,20 @@ def parse_old_xrun(filepath: str) -> Dict[str, OrderedDict]:
                           f"passing through as RautmannClass={text}")
                 params["RautmannClass"] = mapped
             else:
+                # ---- Parameter renames ----
+                param_local = PARAM_RENAMES.get(param_local, param_local)
                 params[param_local] = text
 
         sections[section_local] = params
+
+    # ---- Move parameters between sections (e.g. NumberMC: Settings → Control) ----
+    for param_name, target_section in PARAM_SECTION_MOVES.items():
+        for sec_name, sec_params in list(sections.items()):
+            if sec_name != target_section and param_name in sec_params:
+                value = sec_params.pop(param_name)
+                if target_section not in sections:
+                    sections[target_section] = OrderedDict()
+                sections[target_section][param_name] = value
 
     return sections
 
@@ -615,15 +649,15 @@ def write_new_xrun(sections: Dict[str, OrderedDict], outpath: str) -> None:
 # ---------------------------------------------------------------------------
 # YAML comment templates (short form – one line per param)
 YAML_COMMENTS: Dict[str, str] = {
-    "SimID":                          "# A unique identifier of a simulation run",
+    "ExperimentID":                          "# A unique identifier of a simulation run",
     "ParentRun":                      "# A file pattern of potential parents for this run (leave empty to disable)",
     "NumberParallelProcesses":        "# The number of Monte Carlo runs that are conducted simultaneously",
     "CascadeToxswaWorkers":           "# The number of processes spawned by CascadeToxswa",
-    "DeleteFoldersAtFinish":          "# Delete processing folders after the model run is finished (true/false)",
+    "DeleteComponentProcessingFolders": "# Delete processing folders after the model run is finished (true/false)",
     "VerboseLogging":                 "# Enable verbose logging (true/false)",
     "EnableProfiling":                "# Enable performance profiling (true/false)",
     "ProfilingWaitingTime":           "# Time interval in seconds between profiling rounds",
-    "Project":                        "# The scenario used by the simulation (scenario/<sub-folder>)",
+    "LandscapeScenario":              "# The scenario used by the simulation (scenario/<sub-folder>)",
     "SimulationStart":                "# The first date that is simulated (YYYY-MM-DD)",
     "SimulationEnd":                  "# The last date that is simulated (YYYY-MM-DD)",
     "ApplicationRate":                "# The application rate in g/ha",
@@ -651,7 +685,6 @@ YAML_COMMENTS: Dict[str, str] = {
     "FreundlichExponentInSedimentAndSuspendedParticles": "# Freundlich exponent in sediment and suspended particles",
     "CoefficientForLinearAdsorptionOnMacrophytes":       "# Coefficient for linear adsorption on macrophytes (l/kg)",
     "RunLGuts":                       "# Simulate effects with LGuts (true/false)",
-    "ReachSelection":                 "# Reaches for LGuts/LPop runs (space-separated; empty = all)",
     "NumberOfWarmUpYears":            "# Number of LPop warm-up years for stable population cycles",
     "RecoveryPeriodYears":            "# Number of years after last application to allow recovery",
     "NumberMC":                       "# Number of Monte Carlo runs",
@@ -662,7 +695,7 @@ YAML_COMMENTS: Dict[str, str] = {
 
 # Section header comments
 YAML_SECTION_HEADERS: Dict[str, str] = {
-    "SimulationInfo":    "# --- Simulation Info ---",
+    "Control":           "# --- Control ---",
     "Scenario":          "# --- Scenario ---",
     "PppUse":            "# --- PPP Use ---",
     "Mitigation":        "# --- Mitigation ---",
@@ -742,7 +775,7 @@ def write_yaml(sections: Dict[str, OrderedDict], outpath: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Convert old-format xAquaticRisk .xrun files to the new "
-                    "format (SimulationInfo first, RautmannClass) and emit a "
+                    "format (Control first, RautmannClass) and emit a "
                     "parallel .yaml parameterisation file.",
     )
     parser.add_argument(
