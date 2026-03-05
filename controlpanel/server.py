@@ -146,6 +146,25 @@ def get_scenarios() -> list:
     ]
 
 
+def get_scenario_extent(scenario_path: str) -> dict:
+    """Read TemporalExtent from scenario.xproject and return from/to dates."""
+    full_path = os.path.join(BASE_DIR, scenario_path, "scenario.xproject")
+    if not os.path.isfile(full_path):
+        return {"error": f"scenario.xproject not found in {scenario_path}"}
+    try:
+        tree = ET.parse(full_path)
+        root = tree.getroot()
+        # Strip any namespace from tags
+        def _text(tag):
+            for el in root.iter():
+                if re.sub(r"\{.*?\}", "", el.tag) == tag:
+                    return (el.text or "").strip()
+            return ""
+        return {"from_date": _text("FromDate"), "to_date": _text("ToDate")}
+    except Exception as exc:
+        return {"error": str(exc)}
+
+
 # ═══════════════════════════════════════════════════════════════════
 # Dashboard / monitoring helpers  (from dashboard/server.py)
 # ═══════════════════════════════════════════════════════════════════
@@ -442,6 +461,9 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             self._json_response(parse_xrun_template(TEMPLATE_PATH))
         elif path == "/api/scenarios":
             self._json_response(get_scenarios())
+        elif path == "/api/scenario-extent":
+            scenario_path = self._query_params().get("path", "")
+            self._json_response(get_scenario_extent(scenario_path))
 
         # -- monitoring --
         elif path == "/api/runs":

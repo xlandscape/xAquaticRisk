@@ -293,7 +293,7 @@ a{color:var(--accent);text-decoration:none}
           </div>
           <div class="form-group">
             <label for="Scenario/LandscapeScenario">Landscape Scenario *</label>
-            <select id="Scenario/LandscapeScenario" name="Scenario/LandscapeScenario" required>
+            <select id="Scenario/LandscapeScenario" name="Scenario/LandscapeScenario" required onchange="onScenarioChange(this.value)">
               <option value="">Loading scenarios…</option>
             </select>
           </div>
@@ -708,6 +708,22 @@ async function loadScenarios() {
       sel.appendChild(o);
     });
   } catch(e) { console.error('loadScenarios', e); }
+}
+
+async function onScenarioChange(scenarioPath) {
+  if (!scenarioPath) return;
+  try {
+    const res = await fetch('/api/scenario-extent?path=' + encodeURIComponent(scenarioPath));
+    const data = await res.json();
+    if (data.from_date) {
+      const startEl = document.getElementById('Scenario/SimulationStart');
+      if (!startEl.value) startEl.value = data.from_date;
+    }
+    if (data.to_date) {
+      const endEl = document.getElementById('Scenario/SimulationEnd');
+      if (!endEl.value) endEl.value = data.to_date;
+    }
+  } catch(e) { console.error('onScenarioChange', e); }
 }
 
 async function loadTemplate() {
