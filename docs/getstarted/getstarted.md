@@ -140,10 +140,10 @@ A typical simulation workflow:
 1. Copy `template.xrun` and rename it (e.g., `my_experiment.xrun`).  
 2. Open the copy in a text editor and adjust parameters (scenario, substance properties, species, etc.).  
 3. Drag the `.xrun` file onto `__start__.bat`.  
-4. Monitor progress in the console window or the [Run Dashboard](../reference/dashboard.md). Log files are written to `\run\<ExperimentID>\log`.  
+4. Monitor progress in the console window or the Control Panel. Log files are written to `\run\<ExperimentID>\log`.  
 5. When the run completes, find results in `\run\<ExperimentID>\reporting` and analysis outputs.  
 
-We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor and a real-time run monitor in a single browser tab — start it via `controlpanel.bat`. The standalone WebUI (`webui.bat`) and Dashboard (`dashboard.bat`) remain available as well.  
+We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor, real-time run monitor, and analysis tools in a single browser tab — start it via `controlpanel.bat`. The standalone WebUI (`webui.bat`) remains available as well.  
 
 ## Viewing and Analysing the Output
 
