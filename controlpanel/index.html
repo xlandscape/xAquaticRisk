@@ -194,6 +194,17 @@ a{color:var(--accent);text-decoration:none}
 .params-table .param{font-family:var(--mono);color:var(--text)}
 .params-table .val{font-family:var(--mono);color:var(--ok)}
 
+/* Analysis – percentile table */
+.anl-tbl{border-collapse:collapse;font-size:.75rem;white-space:nowrap;min-width:100%}
+.anl-tbl th{padding:.3rem .65rem;background:var(--bg3);color:var(--text2);
+  font-weight:600;border:1px solid var(--border);text-align:center;position:sticky;top:0}
+.anl-tbl th.row-hdr{text-align:left;color:var(--text2);min-width:3.5rem}
+.anl-tbl td{padding:.25rem .65rem;border:1px solid var(--border);text-align:right;
+  font-family:var(--mono);color:var(--text)}
+.anl-tbl tr:hover td,.anl-tbl tr:hover th{background:var(--bg2)}
+.anl-tbl .row-hdr{color:var(--accent);font-weight:600;text-align:left;background:var(--bg3)}
+.anl-tbl .hi{color:var(--err)}.anl-tbl .lo{color:var(--ok)}
+
 /* Empty state */
 .empty{text-align:center;padding:4rem 2rem;color:var(--text2)}
 .empty h2{font-size:1.08rem;margin-bottom:.4rem}
@@ -700,9 +711,10 @@ a{color:var(--accent);text-decoration:none}
         <div class="form-group">
           <label for="anlOutputDir">Output Folder</label>
           <input type="text" id="anlOutputDir"
-                 placeholder="Leave empty to auto-create in analysis_output/">
-          <div class="help-text">Folder where Excel tables and PNG plots are saved.
-            Empty = <code>analysis_output/&lt;job-id&gt;/</code> inside xAquaticRisk.</div>
+                 placeholder="Leave empty to use analysis_output/">
+          <div class="help-text">Parent folder for results. A sub-folder named
+            <code>{experiment}_{mc_run}__{YYYYMMDDHHMMSS}</code> is always created inside it.
+            Empty&nbsp;= <code>analysis_output/</code> inside xAquaticRisk.</div>
         </div>
       </div>
     </div>
@@ -783,6 +795,17 @@ a{color:var(--accent);text-decoration:none}
       <div class="panel">
         <div class="panel-head" id="anlProgressHead">Analysis Progress</div>
         <div class="log-output" id="anlLog" style="max-height:320px">Waiting…</div>
+      </div>
+
+      <!-- PECsw percentile table -->
+      <div class="panel" id="anlPecswTablePanel" style="display:none">
+        <div class="panel-head" style="display:flex;justify-content:space-between;align-items:center">
+          <span>PECsw Percentile Table&nbsp;<span style="font-size:.7rem;font-weight:400;color:var(--text2)">[ng/L] &mdash; rows: temporal percentiles, columns: spatial percentiles</span></span>
+          <button type="button" class="btn btn-outline btn-sm" onclick="toggleAnlTable()" id="btnTogglePecswTable">&#9660; hide</button>
+        </div>
+        <div id="anlPecswTableWrap" style="overflow-x:auto;padding:.5rem 1rem 1rem">
+          <table id="anlPecswTable" class="anl-tbl"></table>
+        </div>
       </div>
 
       <!-- Output files -->
@@ -1565,7 +1588,63 @@ function renderAnlLog(lines) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Analysis – polling
+// Analysis – PECsw table
+// ═══════════════════════════════════════════════════════════════════
+async function loadAnlPecswTable() {
+  if (!anlCurrentJobId) return;
+  try {
+    const d = await api(`/api/analysis/table/${anlCurrentJobId}`);
+    if (d.error) return;
+    renderAnlPecswTable(d);
+  } catch(e) { /* table not yet written – silently skip */ }
+}
+
+function renderAnlPecswTable(d) {
+  const panel = document.getElementById('anlPecswTablePanel');
+  const tbl   = document.getElementById('anlPecswTable');
+  if (!panel || !tbl || !d.rows || !d.columns) return;
+
+  // Find global max to colour-scale values
+  const allVals = d.rows.flatMap(r => r.values);
+  const gMax = Math.max(...allVals);
+  const gMin = Math.min(...allVals.filter(v => v > 0));
+
+  // Header row
+  const pct = p => `Px${Math.round(p * 100)}`;
+  const cols = d.columns; // already formatted strings
+  let html = '<thead><tr>';
+  html += `<th class="row-hdr" title="Temporal percentile">pt ↓ / px →</th>`;
+  cols.forEach(c => html += `<th>${escHtml(String(c))}</th>`);
+  html += '</tr></thead><tbody>';
+
+  // Data rows
+  d.rows.forEach(row => {
+    const ptLabel = `Pt${Math.round(row.pt * 100)}`;
+    html += `<tr><th class="row-hdr">${escHtml(ptLabel)}</th>`;
+    row.values.forEach(v => {
+      const fmtV = v === 0 ? '0' : v < 0.001 ? v.toExponential(2) : v.toFixed(4);
+      // colour: high = warm, low-but-nonzero = cool, zero = muted
+      let cls = '';
+      if (v > 0 && gMax > 0) {
+        const rel = (v - gMin) / (gMax - gMin || 1);
+        cls = rel > 0.75 ? ' class="hi"' : rel < 0.15 ? ' class="lo"' : '';
+      }
+      html += `<td${cls}>${fmtV}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  tbl.innerHTML = html;
+  panel.style.display = '';
+}
+
+function toggleAnlTable() {
+  const wrap = document.getElementById('anlPecswTableWrap');
+  const btn  = document.getElementById('btnTogglePecswTable');
+  const hidden = wrap.style.display === 'none';
+  wrap.style.display = hidden ? '' : 'none';
+  btn.textContent = hidden ? '\u25BC hide' : '\u25B6 show';
+}
 // ═══════════════════════════════════════════════════════════════════
 function startAnlPolling() {
   if (anlPollTimer) return;
@@ -1606,6 +1685,9 @@ async function loadAnlOutputs() {
     const files  = document.getElementById('anlOutputFiles');
     const gallery = document.getElementById('anlGallery');
     panel.style.display = '';
+
+    // Load PECsw percentile table (independent of file chips)
+    await loadAnlPecswTable();
 
     // File chip buttons
     files.innerHTML = data.files.map(f => {
@@ -1672,6 +1754,9 @@ async function startAnalysis() {
   stopAnlPolling();
   document.getElementById('anlResults').style.display = 'none';
   document.getElementById('anlOutputPanel').style.display = 'none';
+  document.getElementById('anlPecswTablePanel').style.display = 'none';
+  document.getElementById('anlPecswTableWrap').style.display = '';
+  document.getElementById('btnTogglePecswTable').textContent = '\u25BC hide';
   document.getElementById('anlGallery').innerHTML = '';
   document.getElementById('anlOutputFiles').innerHTML = '';
   document.getElementById('anlLog').textContent = 'Waiting…';

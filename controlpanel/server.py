@@ -326,6 +326,8 @@ def analysis_job_outputs(job_id):
             if not os.path.isfile(fp) or fn == "analysis.log":
                 continue
             ext = os.path.splitext(fn)[1].lower()
+            if ext == ".json":          # internal data files – not shown as chips
+                continue
             ftype = ("image"  if ext in (".png", ".jpg", ".svg") else
                      "excel"  if ext == ".xlsx"                    else
                      "other")
@@ -578,6 +580,17 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         elif path.startswith("/api/analysis/outputs/"):
             job_id = path.rstrip("/").split("/")[4]
             self._json_response(analysis_job_outputs(job_id))
+        elif path.startswith("/api/analysis/table/"):
+            job_id = path.rstrip("/").split("/")[4]
+            with _analysis_lock:
+                job = _analysis_jobs.get(job_id)
+            if job is None:
+                return self._json_response({"error": "Job not found"}, 404)
+            tbl = os.path.join(job["output_dir"], "pecsw_table.json")
+            if not os.path.isfile(tbl):
+                return self._json_response({"error": "Table not yet available"}, 404)
+            with open(tbl, encoding="utf-8") as fh:
+                self._json_response(json.load(fh))
         elif path.startswith("/api/analysis/file/"):
             # /api/analysis/file/<job_id>/<filename>
             p = path.split("/", 5)
@@ -810,12 +823,12 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         scenario_path = (os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
                          if scenario_rel else BASE_DIR)
         scenario_name = (data.get("scenario_name") or "").strip()
-        ts      = datetime.datetime.now().strftime("%y%m%d%H%M%S")
-        job_id  = f"{experiment[:20]}_{mc_run[:8]}_{ts}"
-        out_raw = (data.get("output_dir") or "").strip()
-        out_dir = (os.path.abspath(out_raw)
-                   if out_raw
-                   else os.path.join(ANALYSIS_OUTPUT_ROOT, job_id))
+        ts        = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        subfolder = f"{experiment}_{mc_run}__{ts}"
+        job_id    = subfolder
+        out_raw   = (data.get("output_dir") or "").strip()
+        base_dir  = os.path.abspath(out_raw) if out_raw else ANALYSIS_OUTPUT_ROOT
+        out_dir   = os.path.join(base_dir, subfolder)
         os.makedirs(out_dir, exist_ok=True)
         log_path = os.path.join(out_dir, "analysis.log")
         cmd = [

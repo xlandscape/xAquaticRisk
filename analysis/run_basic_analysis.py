@@ -271,6 +271,21 @@ def main():
                         "perc_x: right / perc_t: down")
             log("ok", "PEC percentile tables exported to Excel")
 
+            # write PECsw table as JSON for web display
+            import json as _json
+            pecsw_json = {
+                "columns": list(PECsw_x_t.columns),
+                "rows": [
+                    {"pt": round(float(idx), 4),
+                     "values": [round(float(v), 4) for v in row]}
+                    for idx, row in PECsw_x_t.iterrows()
+                ],
+                "unit": "ng/L",
+            }
+            with open("pecsw_table.json", "w") as _jf:
+                _json.dump(pecsw_json, _jf)
+            log("ok", "PECsw table written to pecsw_table.json")
+
             # ── single-reach time series ──────────────────────────────────────
             if reach_list_single:
                 rid = reach_list_single[0]
