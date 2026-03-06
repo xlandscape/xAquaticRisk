@@ -35,23 +35,34 @@ import glob
 import json
 import os
 import re
+import shutil
 import subprocess
+import sys
 import threading
 import time
 import xml.etree.ElementTree as ET
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
+from urllib.parse import urlparse, parse_qs, unquote_plus
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DEFAULT_RUN_DIR = os.path.join(BASE_DIR, "run")
 TEMPLATE_PATH = os.path.join(BASE_DIR, "template.xrun")
 OUTPUT_DIR = BASE_DIR
 START_BAT = os.path.join(BASE_DIR, "__start__.bat")
+ANALYSIS_SCRIPT = os.path.join(BASE_DIR, "analysis", "run_basic_analysis.py")
+ANALYSIS_OUTPUT_ROOT = os.path.join(BASE_DIR, "analysis_output")
+_venv_py = os.path.join(BASE_DIR, "analysis", ".venv", "Scripts", "python.exe")
+ANALYSIS_PYTHON = _venv_py if os.path.isfile(_venv_py) else sys.executable
 PORT = 8090
 
 # Track running simulation processes: {experiment_id: subprocess.Popen}
 _running_processes = {}
 _proc_lock = threading.Lock()
+
+# Track analysis jobs: {job_id: {"proc", "output_dir", "started_at", "log_path"}}
+_analysis_jobs = {}
+_analysis_lock = threading.Lock()
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -246,6 +257,80 @@ def _count_lines(path):
             return sum(1 for _ in fh)
     except OSError:
         return 0
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Analysis helpers
+# ═══════════════════════════════════════════════════════════════════
+
+def list_runs_with_mcs(run_root):
+    """Return [{ experiment, mcs: [{id, has_store}] }], sorted newest first."""
+    result = []
+    if not os.path.isdir(run_root):
+        return result
+    for entry in sorted(os.listdir(run_root), reverse=True):
+        run_path = os.path.join(run_root, entry)
+        if not os.path.isdir(run_path):
+            continue
+        mcs_path = os.path.join(run_path, "mcs")
+        mcs = []
+        if os.path.isdir(mcs_path):
+            for mc in sorted(os.listdir(mcs_path)):
+                mc_path = os.path.join(mcs_path, mc)
+                if os.path.isdir(mc_path):
+                    has_store = os.path.isfile(
+                        os.path.join(mc_path, "store", "arr.dat"))
+                    mcs.append({"id": mc, "has_store": has_store})
+        if mcs:
+            result.append({"experiment": entry, "mcs": mcs})
+    return result
+
+
+def analysis_job_status(job_id):
+    """Return status dict for an analysis job."""
+    with _analysis_lock:
+        job = _analysis_jobs.get(job_id)
+    if job is None:
+        return {"error": "Job not found"}
+    proc = job["proc"]
+    running   = proc.poll() is None
+    exit_code = proc.poll()
+    log_lines = []
+    if os.path.isfile(job["log_path"]):
+        try:
+            with open(job["log_path"], "r", encoding="utf-8", errors="replace") as fh:
+                log_lines = [l.rstrip() for l in fh.readlines()[-300:]]
+        except OSError:
+            pass
+    return {
+        "job_id":      job_id,
+        "running":     running,
+        "exit_code":   exit_code,
+        "output_dir":  job["output_dir"],
+        "started_at":  job["started_at"],
+        "log_lines":   log_lines,
+    }
+
+
+def analysis_job_outputs(job_id):
+    """List output files produced by an analysis job."""
+    with _analysis_lock:
+        job = _analysis_jobs.get(job_id)
+    if job is None:
+        return {"error": "Job not found"}
+    output_dir = job["output_dir"]
+    files = []
+    if os.path.isdir(output_dir):
+        for fn in sorted(os.listdir(output_dir)):
+            fp = os.path.join(output_dir, fn)
+            if not os.path.isfile(fp) or fn == "analysis.log":
+                continue
+            ext = os.path.splitext(fn)[1].lower()
+            ftype = ("image"  if ext in (".png", ".jpg", ".svg") else
+                     "excel"  if ext == ".xlsx"                    else
+                     "other")
+            files.append({"name": fn, "size": os.path.getsize(fp), "type": ftype})
+    return {"files": files, "output_dir": output_dir}
 
 
 def discover_runs(run_root):
@@ -468,6 +553,8 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         # -- monitoring --
         elif path == "/api/runs":
             self._json_response(discover_runs(self.run_root))
+        elif path == "/api/analysis/default-run-dir":
+            self._json_response({"run_dir": self.run_root})
         elif path.startswith("/api/runs/") and "/log/" in path:
             parts = path.split("/")
             run_id = parts[3]
@@ -478,6 +565,25 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             run_id = path.split("/")[3]
             detail = run_detail(self.run_root, run_id)
             self._json_response(detail if detail else {"error": "not found"})
+
+        # -- analysis --
+        elif path == "/api/analysis/runs" or self.path.startswith("/api/analysis/runs?"):
+            qs = parse_qs(urlparse(self.path).query)
+            run_root_raw = qs.get("run_root", [""])[0].strip()
+            run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
+            self._json_response(list_runs_with_mcs(run_root))
+        elif path.startswith("/api/analysis/status/"):
+            job_id = path.rstrip("/").split("/")[4]
+            self._json_response(analysis_job_status(job_id))
+        elif path.startswith("/api/analysis/outputs/"):
+            job_id = path.rstrip("/").split("/")[4]
+            self._json_response(analysis_job_outputs(job_id))
+        elif path.startswith("/api/analysis/file/"):
+            # /api/analysis/file/<job_id>/<filename>
+            p = path.split("/", 5)
+            job_id   = p[4] if len(p) > 4 else ""
+            filename = p[5] if len(p) > 5 else ""
+            self._serve_analysis_file(job_id, filename)
 
         else:
             super().do_GET()
@@ -499,8 +605,12 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 self._handle_open_xrun()
             elif path.startswith("/api/runs/") and path.endswith("/abort"):
                 self._handle_abort(path)
+            elif path.startswith("/api/runs/") and path.endswith("/delete"):
+                self._handle_delete(path)
+            elif path == "/api/analysis/start":
+                self._handle_analysis_start()
             else:
-                self.send_error(404)
+                self._json_response({"status": "error", "message": f"Unknown endpoint: {path}"}, 404)
         except Exception as exc:
             self._json_response({"status": "error", "message": str(exc)}, 500)
 
@@ -620,6 +730,167 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 {"status": "error", "message": f"Failed to kill process: {exc}"},
                 500,
             )
+
+    def _handle_delete(self, path):
+        """Permanently delete a simulation run folder (aborting it first if still running)."""
+        # path = /api/runs/<id>/delete
+        parts = path.strip("/").split("/")
+        run_id = parts[2] if len(parts) >= 4 else None
+        if not run_id:
+            return self._json_response(
+                {"status": "error", "message": "Missing run ID"}, 400
+            )
+
+        # Security: reject any run_id that contains path separators or traversal sequences
+        if any(c in run_id for c in (os.sep, '/', '\\', '..')):
+            return self._json_response(
+                {"status": "error", "message": "Invalid run ID"}, 400
+            )
+
+        run_path = os.path.abspath(os.path.join(self.run_root, run_id))
+        run_root_abs = os.path.abspath(self.run_root)
+        if not run_path.startswith(run_root_abs + os.sep):
+            return self._json_response(
+                {"status": "error", "message": "Invalid run ID"}, 400
+            )
+
+        if not os.path.isdir(run_path):
+            return self._json_response(
+                {"status": "error", "message": f"Run '{run_id}' not found"}, 404
+            )
+
+        # If the simulation is still tracked as running, abort it first
+        with _proc_lock:
+            proc = _running_processes.get(run_id)
+            if proc is not None and proc.poll() is None:
+                try:
+                    subprocess.run(
+                        ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+                        capture_output=True,
+                        timeout=10,
+                    )
+                except Exception:
+                    pass
+            _running_processes.pop(run_id, None)
+
+        try:
+            shutil.rmtree(run_path)
+            print(f"Deleted run folder: {run_path}")
+            return self._json_response({
+                "status": "success",
+                "message": f"Run '{run_id}' deleted.",
+            })
+        except Exception as exc:
+            return self._json_response(
+                {"status": "error", "message": f"Failed to delete run: {exc}"},
+                500,
+            )
+
+    def _handle_analysis_start(self):
+        """Launch run_basic_analysis.py as a subprocess for a selected MC run."""
+        data = self._read_json_body() or {}
+        experiment = (data.get("experiment") or "").strip()
+        mc_run     = (data.get("mc_run")     or "").strip()
+        if not experiment or not mc_run:
+            return self._json_response(
+                {"status": "error", "message": "experiment and mc_run are required"}, 400)
+        for val, name in [(experiment, "experiment"), (mc_run, "mc_run")]:
+            if any(c in val for c in (os.sep, "/", "\\", "..")):
+                return self._json_response(
+                    {"status": "error", "message": f"Invalid {name}"}, 400)
+        run_root_raw = (data.get("run_root") or "").strip()
+        run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
+        mc_path = os.path.abspath(
+            os.path.join(run_root, experiment, "mcs", mc_run))
+        if not os.path.isdir(mc_path):
+            return self._json_response(
+                {"status": "error",
+                 "message": f"MC run folder not found: {mc_path}"}, 404)
+        scenario_rel  = (data.get("scenario_path") or "").strip()
+        scenario_path = (os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
+                         if scenario_rel else BASE_DIR)
+        scenario_name = (data.get("scenario_name") or "").strip()
+        ts      = datetime.datetime.now().strftime("%y%m%d%H%M%S")
+        job_id  = f"{experiment[:20]}_{mc_run[:8]}_{ts}"
+        out_raw = (data.get("output_dir") or "").strip()
+        out_dir = (os.path.abspath(out_raw)
+                   if out_raw
+                   else os.path.join(ANALYSIS_OUTPUT_ROOT, job_id))
+        os.makedirs(out_dir, exist_ok=True)
+        log_path = os.path.join(out_dir, "analysis.log")
+        cmd = [
+            ANALYSIS_PYTHON, ANALYSIS_SCRIPT,
+            "--mc-path",       mc_path,
+            "--scenario-path", scenario_path,
+            "--scenario-name", scenario_name,
+            "--output-dir",    out_dir,
+            "--run-pec",       str(data.get("run_pec",       True)).lower(),
+            "--run-guts",      str(data.get("run_guts",      True)).lower(),
+            "--exposed-only",  str(data.get("exposed_only",  False)).lower(),
+        ]
+        for flag, key in [
+            ("--reach-ids-single", "reach_ids_single"),
+            ("--reach-ids-group",  "reach_ids_group"),
+            ("--plotzoom-from",    "plotzoom_from"),
+            ("--plotzoom-to",      "plotzoom_to"),
+        ]:
+            val = (data.get(key) or "").strip()
+            if val:
+                cmd += [flag, val]
+        try:
+            with open(log_path, "w", encoding="utf-8") as lf:
+                proc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
+                                        cwd=BASE_DIR)
+            with _analysis_lock:
+                _analysis_jobs[job_id] = {
+                    "proc":       proc,
+                    "output_dir": out_dir,
+                    "log_path":   log_path,
+                    "started_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+            print(f"Analysis started: job={job_id} pid={proc.pid}")
+            return self._json_response({
+                "status":  "success",
+                "job_id":  job_id,
+                "message": f"Analysis started (job: {job_id})",
+            })
+        except Exception as exc:
+            return self._json_response(
+                {"status": "error",
+                 "message": f"Failed to start analysis: {exc}"}, 500)
+
+    def _serve_analysis_file(self, job_id, filename):
+        """Serve an output file (image / Excel) from an analysis job."""
+        with _analysis_lock:
+            job = _analysis_jobs.get(job_id)
+        if job is None:
+            return self._json_response({"error": "Job not found"}, 404)
+        filename  = os.path.basename(filename)
+        file_path = os.path.join(job["output_dir"], filename)
+        if not os.path.isfile(file_path):
+            return self.send_error(404)
+        ext = os.path.splitext(filename)[1].lower()
+        ct_map = {
+            ".png":  "image/png",
+            ".jpg":  "image/jpeg",
+            ".svg":  "image/svg+xml",
+            ".xlsx": ("application/vnd.openxmlformats-officedocument"
+                      ".spreadsheetml.sheet"),
+        }
+        ct = ct_map.get(ext, "application/octet-stream")
+        try:
+            with open(file_path, "rb") as fh:
+                raw = fh.read()
+            self.send_response(200)
+            self.send_header("Content-Type", ct)
+            self.send_header("Content-Length", str(len(raw)))
+            if ext not in (".png", ".jpg", ".svg"):
+                self.send_header("Content-Disposition",
+                                 f'attachment; filename="{filename}"')
+            self.end_headers()
+            self.wfile.write(raw)
+        except (OSError, ConnectionError):
+            pass
 
     def _handle_open_xrun(self):
         data = self._read_json_body()

@@ -222,6 +222,10 @@ a{color:var(--accent);text-decoration:none}
       <svg viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 012.5 2h11A1.5 1.5 0 0115 3.5v9a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 12.5v-9zm1.5-.5a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-9a.5.5 0 00-.5-.5h-11z"/><path d="M3 5.5a.5.5 0 01.5-.5h9a.5.5 0 010 1h-9a.5.5 0 01-.5-.5zM3 8a.5.5 0 01.5-.5h5a.5.5 0 010 1h-5A.5.5 0 013 8zm0 2.5a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5z"/></svg>
       Monitor
     </button>
+    <button class="tab-btn" onclick="switchTab('analysis')" id="tabAnalysis">
+      <svg viewBox="0 0 16 16"><path d="M0 0h1v15h15v1H0V0zm10 3.5a.5.5 0 01.5-.5h4a.5.5 0 01.5.5v4a.5.5 0 01-1 0V4.9l-3.613 4.417a.5.5 0 01-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 01-.808-.588l4-5.5a.5.5 0 01.758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 01-.5-.5z"/></svg>
+      Analysis
+    </button>
   </div>
 
   <div class="spacer"></div>
@@ -618,6 +622,185 @@ a{color:var(--accent);text-decoration:none}
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
+     ANALYSIS PAGE
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="pageAnalysis">
+  <div class="cfg-wrap">
+
+    <!-- ─ Run Selection ─────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-header" onclick="toggleSection(this)">
+        <span>Select Simulation Run</span><span class="toggle">&#9660;</span>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="anlRunRoot">Simulation Run Folder</label>
+          <div style="display:flex;gap:.4rem">
+            <input type="text" id="anlRunRoot" placeholder="Loading…"
+                   style="flex:1" oninput="onAnlRunRootInput()">
+            <button type="button" class="btn btn-outline btn-sm"
+                    onclick="refreshAnlRuns()" title="Reload experiment list from this folder">
+              &#8635; Refresh
+            </button>
+          </div>
+          <div class="help-text">Folder that contains the experiment sub-folders (e.g. <code>run/</code>).
+            Change this to load experiments stored elsewhere on disk.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="anlExperiment">Experiment</label>
+            <select id="anlExperiment" onchange="onAnlExperimentChange()">
+              <option value="">Loading runs…</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="anlMcRun">Monte Carlo Run</label>
+            <select id="anlMcRun">
+              <option value="">Select experiment first…</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ Scenario ──────────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-header" onclick="toggleSection(this)">
+        <span>Scenario</span><span class="toggle">&#9660;</span>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="anlScenario">Scenario Folder</label>
+            <select id="anlScenario" onchange="onAnlScenarioSelect()">
+              <option value="">Loading…</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="anlScenarioName">Scenario Name</label>
+            <input type="text" id="anlScenarioName" list="anlScenarioNameList"
+                   placeholder="e.g. Muenster" oninput="onAnlScenarioNameInput()">
+            <datalist id="anlScenarioNameList">
+              <option value="Rummen"><option value="Muenster"><option value="Oudebeek">
+              <option value="Oudebeek-Beek7"><option value="Muschenheim">
+              <option value="Bruchenbruecken"><option value="Funne"><option value="GKB">
+            </datalist>
+            <div class="help-text">Used for built-in reach-list defaults; leave empty if using custom IDs below</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ Output Folder ─────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-header" onclick="toggleSection(this)">
+        <span>Output</span><span class="toggle">&#9660;</span>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="anlOutputDir">Output Folder</label>
+          <input type="text" id="anlOutputDir"
+                 placeholder="Leave empty to auto-create in analysis_output/">
+          <div class="help-text">Folder where Excel tables and PNG plots are saved.
+            Empty = <code>analysis_output/&lt;job-id&gt;/</code> inside xAquaticRisk.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ Analysis Settings (collapsible) ──────────────────────────── -->
+    <div class="card">
+      <div class="card-header collapsed" onclick="toggleSection(this)">
+        <span>Analysis Settings</span><span class="toggle">&#9660;</span>
+      </div>
+      <div class="card-body collapsed">
+        <div class="form-row">
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+              <input type="checkbox" id="anlRunPec" checked
+                     style="accent-color:var(--ok);width:14px;height:14px">
+              Run Exposure Analysis (PECsw / PECsed)
+            </label>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+              <input type="checkbox" id="anlRunGuts" checked
+                     style="accent-color:var(--ok);width:14px;height:14px">
+              Run Effect Analysis (GUTS survival / LP50)
+            </label>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:.3rem">
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+            <input type="checkbox" id="anlExposedOnly"
+                   style="accent-color:var(--warn);width:14px;height:14px">
+            Restrict to exposed stream segments only (PECsw&nbsp;&gt;&nbsp;0)
+          </label>
+        </div>
+        <div class="section-heading" style="margin-top:.8rem;font-size:.75rem;
+             text-transform:uppercase;letter-spacing:.04em;color:var(--text2)">Time Series Plots</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="anlReachSingle">Single-reach Reach IDs</label>
+            <input type="text" id="anlReachSingle"
+                   placeholder="e.g. 154  (comma-separated; empty = scenario default)">
+          </div>
+          <div class="form-group">
+            <label for="anlReachGroup">Group-plot Reach IDs</label>
+            <input type="text" id="anlReachGroup"
+                   placeholder="e.g. 772,575,149">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="anlZoomFrom">Plot Zoom Start</label>
+            <input type="text" id="anlZoomFrom" placeholder="YYYY-MM-DD">
+          </div>
+          <div class="form-group">
+            <label for="anlZoomTo">Plot Zoom End</label>
+            <input type="text" id="anlZoomTo" placeholder="YYYY-MM-DD">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ Action bar ────────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-body" style="padding:.8rem 1rem .6rem">
+        <button type="button" class="btn btn-primary" id="btnRunAnalysis"
+                onclick="startAnalysis()">&#9654; Run Analysis</button>
+        <div class="loading" id="anlLoading">
+          <div class="spinner"></div>
+          <p style="font-size:.8rem;color:var(--text2)">Starting analysis…</p>
+        </div>
+        <div class="status-message" id="anlStatus"></div>
+      </div>
+    </div>
+
+    <!-- ─ Results panel (shown after job started) ───────────────────── -->
+    <div id="anlResults" style="display:none">
+
+      <!-- Progress log -->
+      <div class="panel">
+        <div class="panel-head" id="anlProgressHead">Analysis Progress</div>
+        <div class="log-output" id="anlLog" style="max-height:320px">Waiting…</div>
+      </div>
+
+      <!-- Output files -->
+      <div class="panel" id="anlOutputPanel" style="display:none">
+        <div class="panel-head">Generated Files</div>
+        <div class="panel-body" id="anlOutputFiles"
+             style="display:flex;flex-wrap:wrap;gap:.7rem;padding:.6rem 1rem"></div>
+      </div>
+
+      <!-- Image gallery -->
+      <div id="anlGallery"></div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
      JAVASCRIPT
      ══════════════════════════════════════════════════════════════════ -->
 <script>
@@ -682,6 +865,10 @@ function switchTab(name) {
     startMonitorRefresh();
   } else {
     stopMonitorRefresh();
+  }
+  // Refresh analysis run list whenever the Analysis tab is opened
+  if (name === 'analysis') {
+    loadAnlRuns();
   }
 }
 
@@ -944,8 +1131,11 @@ function buildDetailFull(d) {
     <div class="stat-card"><div class="label">Warnings</div><div class="value" id="ov-warn"></div></div>
   </div>`;
 
-  // Abort button (only shown when run is abortable)
-  h += `<div id="abort-bar" style="display:none;padding:0 0 .5rem"><button class="btn btn-danger" id="btn-abort" onclick="abortRun()">&#9632; Abort Simulation</button></div>`;
+  // Action buttons bar
+  h += `<div id="action-bar" style="display:flex;gap:.6rem;padding:0 0 .6rem;flex-wrap:wrap">
+    <button class="btn btn-danger btn-sm" id="btn-stop" onclick="stopRun()" style="display:none">&#9632; Stop</button>
+    <button class="btn btn-danger btn-sm" id="btn-delete" onclick="deleteRun()">&#128465; Delete Run</button>
+  </div>`;
 
   // MC progress container
   h += '<div class="panel"><div class="panel-head">Monte Carlo Progress</div><div class="panel-body" id="mc-progress"></div></div>';
@@ -997,10 +1187,11 @@ function updateDetailInPlace(d) {
   const ovWarn = document.getElementById('ov-warn');
   if (ovWarn) { ovWarn.textContent = d.severity_counts.WARN; ovWarn.className = 'value ' + (d.severity_counts.WARN ? 'warn' : 'ok'); }
 
-  // Abort button visibility
-  const abortBar = document.getElementById('abort-bar');
-  if (abortBar) {
-    abortBar.style.display = d.abortable ? '' : 'none';
+  // Stop button visibility (shown when abortable or run appears active)
+  const stopBtn = document.getElementById('btn-stop');
+  if (stopBtn) {
+    const active = d.abortable || d.status === 'running' || d.status === 'initializing';
+    stopBtn.style.display = active ? '' : 'none';
   }
 
   // MC progress bars
@@ -1117,24 +1308,24 @@ function switchLog(name) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Monitor – abort simulation
+// Monitor – stop simulation
 // ═══════════════════════════════════════════════════════════════════
-async function abortRun() {
+async function stopRun() {
   if (!selectedRun) return;
-  if (!confirm(`Abort simulation "${selectedRun}"?\n\nThis will forcefully terminate the process and all its children.`)) return;
+  if (!confirm(`Stop simulation "${selectedRun}"?\n\nThis will forcefully terminate the process and all its children.`)) return;
 
-  const btn = document.getElementById('btn-abort');
-  if (btn) { btn.disabled = true; btn.textContent = 'Aborting…'; }
+  const btn = document.getElementById('btn-stop');
+  if (btn) { btn.disabled = true; btn.textContent = 'Stopping…'; }
 
   try {
     const res = await api(`/api/runs/${selectedRun}/abort`, { method: 'POST' });
     if (res.status === 'success') {
       alert(res.message);
     } else {
-      alert(res.message || 'Abort failed');
+      alert(res.message || 'Stop failed');
     }
   } catch (e) {
-    alert('Abort request failed: ' + e);
+    alert('Stop request failed: ' + e);
   }
   // Refresh immediately to reflect new state
   await loadRuns();
@@ -1142,7 +1333,49 @@ async function abortRun() {
     const d = await api(`/api/runs/${selectedRun}`);
     if (d && !d.error) updateDetailInPlace(d);
   }
-  if (btn) { btn.disabled = false; btn.textContent = '\u25A0 Abort Simulation'; }
+  if (btn) { btn.disabled = false; btn.textContent = '\u25A0 Stop'; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Monitor – delete run
+// ═══════════════════════════════════════════════════════════════════
+async function deleteRun() {
+  if (!selectedRun) return;
+
+  // Fetch current state so we can warn if active
+  let isActive = false;
+  try {
+    const d = await api(`/api/runs/${selectedRun}`);
+    isActive = d && (d.abortable || d.status === 'running' || d.status === 'initializing');
+  } catch (e) { /* ignore – proceed with delete */ }
+
+  let msg = `Delete run "${selectedRun}"?\n\nThis will permanently remove all run data from disk and cannot be undone.`;
+  if (isActive) {
+    msg = `Run "${selectedRun}" is currently active.\n\nDeleting will stop the simulation and permanently remove all run data.\n\nContinue?`;
+  }
+  if (!confirm(msg)) return;
+
+  const btn = document.getElementById('btn-delete');
+  if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
+
+  try {
+    const res = await api(`/api/runs/${selectedRun}/delete`, { method: 'POST' });
+    if (res.status === 'success') {
+      const deleted = selectedRun;
+      selectedRun = null;
+      monitorBuiltFor = null;
+      lastLogHtml = '';
+      document.getElementById('mainContent').innerHTML =
+        `<div class="empty"><h2>Run deleted</h2><p>"${deleted}" has been removed.</p></div>`;
+      await loadRuns();
+    } else {
+      alert(res.message || 'Delete failed');
+      if (btn) { btn.disabled = false; btn.textContent = '\uD83D\uDDD1 Delete Run'; }
+    }
+  } catch (e) {
+    alert('Delete request failed: ' + e);
+    if (btn) { btn.disabled = false; btn.textContent = '\uD83D\uDDD1 Delete Run'; }
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1170,7 +1403,303 @@ function stopMonitorRefresh() {
 document.addEventListener('DOMContentLoaded', () => {
   loadScenarios();
   loadTemplate();
+  loadAnlRuns();
+  loadAnlScenarios();
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// Analysis – scenario defaults (mirrors notebook match statement)
+// ═══════════════════════════════════════════════════════════════════
+const ANL_SCENARIO_DEFAULTS = {
+  'Rummen':          { single: '1388,1610,1738,1505', group: '1610,1738,1505', zoomFrom: '1995-05-01', zoomTo: '1995-06-01' },
+  'Oudebeek':        { single: '42',                  group: '',               zoomFrom: '',           zoomTo: ''           },
+  'Oudebeek-Beek7':  { single: '42',                  group: '',               zoomFrom: '',           zoomTo: ''           },
+  'Muenster':        { single: '154',                  group: '772,575,149',   zoomFrom: '2000-05-01', zoomTo: '2000-06-01' },
+  'Muschenheim':     { single: '315,230,151,149,735',  group: '151,149,735',   zoomFrom: '',           zoomTo: ''           },
+  'Bruchenbruecken': { single: '660',                  group: '652,653,4443',  zoomFrom: '1991-05-01', zoomTo: '1991-06-01' },
+  'Funne':           { single: '12,22,527',            group: '99,97,167',     zoomFrom: '2010-05-01', zoomTo: '2010-06-01' },
+  'GKB':             { single: '166',                  group: '12,144,165',    zoomFrom: '2010-04-01', zoomTo: '2010-07-01' },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// Analysis – state
+// ═══════════════════════════════════════════════════════════════════
+let anlRunsData      = [];   // [{experiment, mcs:[{id,has_store}]}]
+let anlCurrentJobId  = null;
+let anlPollTimer     = null;
+
+// ═══════════════════════════════════════════════════════════════════
+// Analysis – load runs + scenarios
+// ═══════════════════════════════════════════════════════════════════
+async function loadAnlRuns() {
+  // On first call populate the run-root field from the server default
+  const rootInput = document.getElementById('anlRunRoot');
+  if (!rootInput.value) {
+    try {
+      const d = await api('/api/analysis/default-run-dir');
+      rootInput.value = d.run_dir || '';
+    } catch(e) { /* ignore */ }
+  }
+  await refreshAnlRuns();
+}
+
+async function refreshAnlRuns() {
+  const runRoot = document.getElementById('anlRunRoot').value.trim();
+  const url = runRoot
+    ? `/api/analysis/runs?run_root=${encodeURIComponent(runRoot)}`
+    : '/api/analysis/runs';
+  try {
+    anlRunsData = await api(url);
+    const sel = document.getElementById('anlExperiment');
+    sel.innerHTML = '<option value="">Select experiment\u2026</option>';
+    anlRunsData.forEach(r => {
+      const o = document.createElement('option');
+      o.value = r.experiment; o.textContent = r.experiment;
+      sel.appendChild(o);
+    });
+    // Reset MC dropdown
+    document.getElementById('anlMcRun').innerHTML =
+      '<option value="">Select experiment first\u2026</option>';
+  } catch(e) { console.error('refreshAnlRuns', e); }
+}
+
+function onAnlRunRootInput() {
+  // Debounce: refresh 600 ms after user stops typing
+  clearTimeout(onAnlRunRootInput._t);
+  onAnlRunRootInput._t = setTimeout(refreshAnlRuns, 600);
+}
+
+async function loadAnlScenarios() {
+  try {
+    const scenarios = await api('/api/scenarios');
+    const sel = document.getElementById('anlScenario');
+    sel.innerHTML = '<option value="">(none)</option>';
+    scenarios.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.path; o.textContent = s.name;
+      sel.appendChild(o);
+    });
+  } catch(e) { console.error('loadAnlScenarios', e); }
+}
+
+function onAnlExperimentChange() {
+  const exp   = document.getElementById('anlExperiment').value;
+  const mcSel = document.getElementById('anlMcRun');
+  mcSel.innerHTML = '<option value="">Select MC run…</option>';
+  if (!exp) return;
+  const entry = anlRunsData.find(r => r.experiment === exp);
+  if (!entry) return;
+  entry.mcs.forEach(mc => {
+    const o = document.createElement('option');
+    o.value = mc.id;
+    o.textContent = mc.id + (mc.has_store ? '' : '  ⚠ no store');
+    o.disabled = !mc.has_store;
+    mcSel.appendChild(o);
+  });
+}
+
+function onAnlScenarioSelect() {
+  const sel  = document.getElementById('anlScenario');
+  const name = document.getElementById('anlScenarioName');
+  if (!name.value) {
+    // Auto-fill scenario name from folder name as a hint
+    const folder = sel.options[sel.selectedIndex]?.text || '';
+    name.placeholder = folder || 'e.g. Muenster';
+  }
+  // If the folder name matches a known scenario, prefill settings
+  const folderName = sel.options[sel.selectedIndex]?.text || '';
+  const matched = Object.keys(ANL_SCENARIO_DEFAULTS).find(
+    k => folderName.toLowerCase().includes(k.toLowerCase())
+  );
+  if (matched && !name.value) {
+    name.value = matched;
+    applyAnlScenarioDefaults(matched);
+  }
+}
+
+function onAnlScenarioNameInput() {
+  const name = document.getElementById('anlScenarioName').value.trim();
+  applyAnlScenarioDefaults(name);
+}
+
+function applyAnlScenarioDefaults(name) {
+  const d = ANL_SCENARIO_DEFAULTS[name];
+  if (!d) return;
+  // Only fill fields that are currently empty (don't overwrite user edits)
+  const single   = document.getElementById('anlReachSingle');
+  const group    = document.getElementById('anlReachGroup');
+  const zoomFrom = document.getElementById('anlZoomFrom');
+  const zoomTo   = document.getElementById('anlZoomTo');
+  if (!single.value)   single.value   = d.single;
+  if (!group.value)    group.value    = d.group;
+  if (!zoomFrom.value) zoomFrom.value = d.zoomFrom;
+  if (!zoomTo.value)   zoomTo.value   = d.zoomTo;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Analysis – status helpers
+// ═══════════════════════════════════════════════════════════════════
+function showAnlStatus(msg, type) {
+  const el = document.getElementById('anlStatus');
+  el.textContent = msg;
+  el.className = 'status-message show ' + type;
+  if (type === 'success') setTimeout(() => { el.className = 'status-message'; }, 5000);
+}
+
+function anlLogSevClass(line) {
+  if (line.startsWith('ERROR')) return 'sev-ERROR';
+  if (line.startsWith('WARN ')) return 'sev-WARN';
+  if (line.startsWith('OK   ')) return 'sev-OK';
+  if (line.startsWith('INFO ')) return 'sev-INFO';
+  return 'sev-INFO';
+}
+
+function renderAnlLog(lines) {
+  const el = document.getElementById('anlLog');
+  if (!el) return;
+  const wasBottom = (el.scrollHeight - el.scrollTop - el.clientHeight) < 40;
+  el.innerHTML = lines.map(l =>
+    `<div class="log-line"><span class="sev ${anlLogSevClass(l)}">${escHtml(l.slice(0,5))}</span> ${escHtml(l.slice(6))}</div>`
+  ).join('');
+  if (wasBottom) el.scrollTop = el.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Analysis – polling
+// ═══════════════════════════════════════════════════════════════════
+function startAnlPolling() {
+  if (anlPollTimer) return;
+  async function tick() {
+    if (!anlCurrentJobId) return;
+    try {
+      const s = await api(`/api/analysis/status/${anlCurrentJobId}`);
+      if (s.error) { stopAnlPolling(); return; }
+      renderAnlLog(s.log_lines || []);
+      const head = document.getElementById('anlProgressHead');
+      if (head) head.textContent = s.running
+        ? 'Analysis Running…'
+        : `Analysis ${s.exit_code === 0 ? 'Complete' : 'Finished (exit ' + s.exit_code + ')'}  –  ${s.started_at}`;
+      if (!s.running) {
+        stopAnlPolling();
+        await loadAnlOutputs();
+        const btn = document.getElementById('btnRunAnalysis');
+        if (btn) { btn.disabled = false; btn.textContent = '\u25B6 Run Analysis'; }
+        if (s.exit_code === 0) showAnlStatus('Analysis complete.', 'success');
+        else showAnlStatus(`Analysis finished with exit code ${s.exit_code}. Check log for errors.`, 'error');
+      }
+    } catch(e) { console.error('anl poll', e); }
+    if (anlPollTimer) anlPollTimer = setTimeout(tick, 2000);
+  }
+  anlPollTimer = setTimeout(tick, 1500);
+}
+
+function stopAnlPolling() {
+  if (anlPollTimer) { clearTimeout(anlPollTimer); anlPollTimer = null; }
+}
+
+async function loadAnlOutputs() {
+  if (!anlCurrentJobId) return;
+  try {
+    const data = await api(`/api/analysis/outputs/${anlCurrentJobId}`);
+    if (data.error || !data.files || !data.files.length) return;
+    const panel  = document.getElementById('anlOutputPanel');
+    const files  = document.getElementById('anlOutputFiles');
+    const gallery = document.getElementById('anlGallery');
+    panel.style.display = '';
+
+    // File chip buttons
+    files.innerHTML = data.files.map(f => {
+      const icon  = f.type === 'image' ? '\uD83D\uDDBC' : f.type === 'excel' ? '\uD83D\uDCC8' : '\uD83D\uDCCE';
+      const url   = `/api/analysis/file/${anlCurrentJobId}/${encodeURIComponent(f.name)}`;
+      const kb    = (f.size / 1024).toFixed(1);
+      return `<a href="${url}" download="${escHtml(f.name)}"
+        style="display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .7rem;
+               background:var(--bg3);border:1px solid var(--border);border-radius:4px;
+               font-size:.75rem;color:var(--text);text-decoration:none"
+        title="${escHtml(f.name)} (${kb} KB)">${icon} ${escHtml(f.name)}</a>`;
+    }).join('');
+
+    // Image gallery
+    const images = data.files.filter(f => f.type === 'image');
+    if (images.length) {
+      gallery.innerHTML = images.map(f => {
+        const url = `/api/analysis/file/${anlCurrentJobId}/${encodeURIComponent(f.name)}`;
+        return `<div class="panel" style="margin-bottom:.8rem">
+          <div class="panel-head">${escHtml(f.name)}</div>
+          <div class="panel-body" style="padding:.5rem;text-align:center">
+            <img src="${url}" alt="${escHtml(f.name)}"
+                 style="max-width:100%;border-radius:4px;cursor:zoom-in"
+                 onclick="window.open(this.src,'_blank')">
+          </div></div>`;
+      }).join('');
+    }
+  } catch(e) { console.error('loadAnlOutputs', e); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Analysis – start
+// ═══════════════════════════════════════════════════════════════════
+async function startAnalysis() {
+  const experiment = document.getElementById('anlExperiment').value;
+  const mc_run     = document.getElementById('anlMcRun').value;
+  if (!experiment || !mc_run) {
+    showAnlStatus('Please select an experiment and MC run.', 'error');
+    return;
+  }
+
+  const body = {
+    experiment,
+    mc_run,
+    run_root:        document.getElementById('anlRunRoot').value.trim(),
+    scenario_path:   document.getElementById('anlScenario').value,
+    scenario_name:   document.getElementById('anlScenarioName').value.trim(),
+    output_dir:      document.getElementById('anlOutputDir').value.trim(),
+    run_pec:         document.getElementById('anlRunPec').checked,
+    run_guts:        document.getElementById('anlRunGuts').checked,
+    exposed_only:    document.getElementById('anlExposedOnly').checked,
+    reach_ids_single: document.getElementById('anlReachSingle').value.trim(),
+    reach_ids_group:  document.getElementById('anlReachGroup').value.trim(),
+    plotzoom_from:   document.getElementById('anlZoomFrom').value.trim(),
+    plotzoom_to:     document.getElementById('anlZoomTo').value.trim(),
+  };
+
+  const btn = document.getElementById('btnRunAnalysis');
+  btn.disabled = true; btn.textContent = 'Starting…';
+  document.getElementById('anlLoading').classList.add('show');
+
+  // Reset results panel
+  anlCurrentJobId = null;
+  stopAnlPolling();
+  document.getElementById('anlResults').style.display = 'none';
+  document.getElementById('anlOutputPanel').style.display = 'none';
+  document.getElementById('anlGallery').innerHTML = '';
+  document.getElementById('anlOutputFiles').innerHTML = '';
+  document.getElementById('anlLog').textContent = 'Waiting…';
+
+  try {
+    const r = await api('/api/analysis/start', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+    });
+    document.getElementById('anlLoading').classList.remove('show');
+    if (r.status === 'success') {
+      anlCurrentJobId = r.job_id;
+      document.getElementById('anlResults').style.display = '';
+      document.getElementById('anlProgressHead').textContent = 'Analysis Running…';
+      showAnlStatus(r.message, 'success');
+      btn.textContent = '\u23F3 Running…';
+      startAnlPolling();
+    } else {
+      showAnlStatus(r.message || 'Failed to start analysis', 'error');
+      btn.disabled = false; btn.textContent = '\u25B6 Run Analysis';
+    }
+  } catch(e) {
+    document.getElementById('anlLoading').classList.remove('show');
+    showAnlStatus('Error: ' + e.message, 'error');
+    btn.disabled = false; btn.textContent = '\u25B6 Run Analysis';
+  }
+}
 </script>
 </body>
 </html>
