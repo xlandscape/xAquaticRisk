@@ -46,7 +46,7 @@
                      if RunCascadeToxswa is false, else
                      min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
     -->
-    <NumberParallelProcesses>2</NumberParallelProcesses>
+    <NumberParallelProcesses>1</NumberParallelProcesses>
 
     <!--
     Parameter     :  CascadeToxswaWorkers
@@ -57,7 +57,7 @@
     Best practice :  To best use the available hardware, apply this rule of thumb:
                      min(NumberMC, NumberParallelProcesses) * CascadeToxswaWorker <= available processors
     -->
-    <CascadeToxswaWorkers>12</CascadeToxswaWorkers>
+    <CascadeToxswaWorkers>2</CascadeToxswaWorkers>
 
     <!--
       Parameter     :   DeleteComponentProcessingFolders
@@ -66,7 +66,7 @@
       Best practice :   Should be set to true for a complete 26-year run to save memory, but can be set to false when
                         testing
     -->
-    <DeleteComponentProcessingFolders>false</DeleteComponentProcessingFolders>
+    <DeleteComponentProcessingFolders>true</DeleteComponentProcessingFolders>
 
     <!--
       Parameter     :   VerboseLogging
@@ -505,7 +505,7 @@
     Values        :  true or false
     Best practice :  The export feature is experimental and should be set to false for longer simulation runs.
     -->
-    <ExportToSqlite>true</ExportToSqlite>
+    <ExportToSqlite>false</ExportToSqlite>
   </Settings>
   <Analysis>
       <!--

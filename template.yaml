@@ -25,16 +25,16 @@ Control:
   # The number of Monte Carlo runs that are conducted simultaneously
   # Values: Any positive integer
   # Best practice: min(NumberMC, NumberParallelProcesses) <= available processors
-  NumberParallelProcesses: 2
+  NumberParallelProcesses: 1
 
   # The number of processes spawned by CascadeToxswa
   # Values: Any positive integer
   # Remark: Only in effect if RunCascadeToxswa is true.
-  CascadeToxswaWorkers: 12
+  CascadeToxswaWorkers: 2
 
   # Specifies whether processing folders should be deleted after the model run is finished
   # Values: true or false
-  DeleteComponentProcessingFolders: false
+  DeleteComponentProcessingFolders: true
 
   # Specifies whether verbose logging is used
   # Values: true or false
@@ -211,7 +211,7 @@ Effects:
 Settings:
   # Specifies whether PECs and individual effects are exported into a SQLite database
   # Values: true or false
-  ExportToSqlite: true
+  ExportToSqlite: false
 
 Analysis:
   # Pre-selection of reaches for which detailed reports are generated
