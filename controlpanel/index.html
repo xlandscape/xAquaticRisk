@@ -259,10 +259,10 @@ a{color:var(--accent);text-decoration:none}
         <div class="form-group">
           <label for="xrunPath">Path to xrun Files</label>
           <div style="display:flex;gap:.6rem">
-            <input type="text" id="xrunPath" placeholder="e.g., C:\LocalWork\xAquaticRisk or .\scenario\mydir" style="flex:1">
-            <button type="button" class="btn btn-outline btn-sm" onclick="loadXrunFiles()">Browse</button>
+            <input type="text" id="xrunPath" placeholder="e.g., parameterisation or C:\LocalWork\xAquaticRisk" value="parameterisation" style="flex:1">
+            <button type="button" class="btn btn-outline btn-sm" onclick="browseFolder()">Browse…</button>
           </div>
-          <div class="help-text">Enter the directory path where xrun files are located, then click Browse</div>
+          <div class="help-text">Directory path where xrun files are located — defaults to the <em>parameterisation</em> subfolder</div>
         </div>
         <div class="form-group">
           <label for="xrunSelect">Open xrun File</label>
@@ -1033,6 +1033,18 @@ document.getElementById('paramForm').addEventListener('submit', async function(e
 // ═══════════════════════════════════════════════════════════════════
 // Configure – xrun file operations
 // ═══════════════════════════════════════════════════════════════════
+async function browseFolder() {
+  const current = document.getElementById('xrunPath').value.trim();
+  try {
+    const res = await fetch('/api/browse-folder?initial=' + encodeURIComponent(current));
+    const r = await res.json();
+    if (r.path) {
+      document.getElementById('xrunPath').value = r.path;
+      loadXrunFiles();
+    }
+  } catch(e) { showCfgStatus('Error opening folder dialog: ' + e.message, 'error'); }
+}
+
 async function loadXrunFiles() {
   const path = document.getElementById('xrunPath').value.trim();
   if (!path) { showCfgStatus('Enter a directory path first', 'error'); return; }
@@ -1057,6 +1069,8 @@ async function openXrunFile() {
     const r = await res.json();
     if (r.status === 'success') {
       for (const [k,v] of Object.entries(r.parameters)) { const el = document.getElementById(k); if (el) el.value = v; }
+      const scenarioVal = r.parameters['Scenario/LandscapeScenario'];
+      if (scenarioVal) onScenarioChange(scenarioVal);
       activeXrunPath = path;
       activeXrunFilename = filename;
       showCfgStatus(`Loaded: ${filename}`, 'success');
@@ -1426,6 +1440,7 @@ function stopMonitorRefresh() {
 document.addEventListener('DOMContentLoaded', () => {
   loadScenarios();
   loadTemplate();
+  loadXrunFiles();
   loadAnlRuns();
   loadAnlScenarios();
 });

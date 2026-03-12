@@ -46,14 +46,21 @@ from pathlib import Path
 from urllib.parse import urlparse, parse_qs, unquote_plus
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+CPANEL_DIR = os.path.abspath(os.path.dirname(__file__))
+_PICKER_SCRIPT = os.path.join(CPANEL_DIR, "folder_picker.py")
 DEFAULT_RUN_DIR = os.path.join(BASE_DIR, "run")
-TEMPLATE_PATH = os.path.join(BASE_DIR, "template.xrun")
-OUTPUT_DIR = BASE_DIR
+OUTPUT_DIR = os.path.join(BASE_DIR, "parameterisation")
+TEMPLATE_PATH = os.path.join(OUTPUT_DIR, "template.xrun")
 START_BAT = os.path.join(BASE_DIR, "__start__.bat")
 ANALYSIS_SCRIPT = os.path.join(BASE_DIR, "analysis", "run_basic_analysis.py")
 ANALYSIS_OUTPUT_ROOT = os.path.join(BASE_DIR, "analysis_output")
+_embedded_analysis_py = os.path.join(BASE_DIR, "analysis", "python", "python.exe")
 _venv_py = os.path.join(BASE_DIR, "analysis", ".venv", "Scripts", "python.exe")
-ANALYSIS_PYTHON = _venv_py if os.path.isfile(_venv_py) else sys.executable
+ANALYSIS_PYTHON = (
+    _embedded_analysis_py if os.path.isfile(_embedded_analysis_py) else
+    _venv_py if os.path.isfile(_venv_py) else
+    sys.executable
+)
 PORT = 8090
 
 # Track running simulation processes: {experiment_id: subprocess.Popen}
@@ -143,6 +150,19 @@ def create_xrun_file(parameters: dict, output_path: str, template_path: str) -> 
     update(root)
     tree.write(output_path, encoding="utf-8", xml_declaration=True)
     return output_path
+
+
+def browse_folder(initial_dir: str = None) -> str:
+    """Open a native folder-picker dialog via folder_picker.py."""
+    start = initial_dir or OUTPUT_DIR
+    try:
+        result = subprocess.run(
+            [sys.executable, _PICKER_SCRIPT, start],
+            capture_output=True, text=True, timeout=120,
+        )
+        return result.stdout.strip()
+    except Exception:
+        return ""
 
 
 def get_scenarios() -> list:
@@ -546,6 +566,10 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         # -- parameterisation --
         elif path == "/api/template":
             self._json_response(parse_xrun_template(TEMPLATE_PATH))
+        elif path == "/api/browse-folder":
+            initial = self._query_params().get("initial", "")
+            chosen = browse_folder(initial or None)
+            self._json_response({"path": chosen})
         elif path == "/api/scenarios":
             self._json_response(get_scenarios())
         elif path == "/api/scenario-extent":
@@ -944,15 +968,17 @@ def main():
     args = ap.parse_args()
 
     ControlPanelHandler.run_root = os.path.abspath(args.run_dir)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     server = HTTPServer(("0.0.0.0", args.port), ControlPanelHandler)
     print("=" * 60)
     print("  xAquaticRisk Control Panel")
     print("=" * 60)
-    print(f"  URL         : http://localhost:{args.port}")
-    print(f"  Template    : {TEMPLATE_PATH}")
-    print(f"  Run folder  : {ControlPanelHandler.run_root}")
-    print(f"  Scenarios   : {os.path.join(BASE_DIR, 'scenario')}")
+    print(f"  URL              : http://localhost:{args.port}")
+    print(f"  Template         : {TEMPLATE_PATH}")
+    print(f"  Parameterisation : {OUTPUT_DIR}")
+    print(f"  Run folder       : {ControlPanelHandler.run_root}")
+    print(f"  Scenarios        : {os.path.join(BASE_DIR, 'scenario')}")
     print("=" * 60)
     print("  Press Ctrl+C to stop.\n")
     try:

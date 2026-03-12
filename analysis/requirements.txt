@@ -1,0 +1,13 @@
+# analysis/requirements.txt
+# Packages required by run_basic_analysis.py (the server-launched analysis job).
+#
+# Install into the portable Python by running setup_analysis_python.bat,
+# or manually:
+#   analysis\python\python.exe -m pip install -r analysis\requirements.txt
+
+h5py
+matplotlib
+numpy
+openpyxl
+pandas
+seaborn

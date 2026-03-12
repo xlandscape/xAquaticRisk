@@ -1,0 +1,5 @@
+# Ignore all user parameterisation files; only track the shipped templates.
+*
+!.gitignore
+!template.xrun
+!template.yaml

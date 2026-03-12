@@ -785,7 +785,7 @@ def main() -> None:
     parser.add_argument(
         "--outdir",
         default=None,
-        help="Directory for the output files (default: same directory as input)",
+        help="Directory for the output files (default: parameterisation/ subfolder next to this script)",
     )
     parser.add_argument(
         "--suffix",
@@ -810,7 +810,8 @@ def main() -> None:
         print(f"ERROR: Input file not found: {inpath}", file=sys.stderr)
         sys.exit(1)
 
-    outdir = Path(args.outdir) if args.outdir else inpath.parent
+    _default_outdir = Path(__file__).resolve().parent / "parameterisation"
+    outdir = Path(args.outdir) if args.outdir else _default_outdir
     outdir.mkdir(parents=True, exist_ok=True)
 
     stem = inpath.stem + args.suffix

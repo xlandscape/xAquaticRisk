@@ -1,0 +1,9 @@
+# controlpanel/requirements.txt
+# Documents the packages installed into the bundled Python
+# (model/core/bin/python-3.9.7-amd64) that are required by the Control Panel.
+#
+# These are already installed in the bundled Python and ship with the repository.
+# If you need to re-install (e.g. after upgrading the bundled Python), run:
+#   <bundled_python> -m pip install -r controlpanel/requirements.txt
+#
+wxPython

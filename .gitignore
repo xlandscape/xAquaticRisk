@@ -1,5 +1,7 @@
 .idea/
 analysis/.ipynb_checkpoints/
+analysis/.venv/
+analysis/python/
 scenario/
 °*
 site/
