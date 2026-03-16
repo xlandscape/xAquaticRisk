@@ -904,7 +904,12 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
     # ── GET routes ────────────────────────────────────────────────
 
     def do_GET(self):
-        path = self.path.split("?")[0]
+        raw_path = self.path.split("?")[0]
+        path = unquote_plus(raw_path)
+
+        # Keep this endpoint robust against encoded/trailing-slash variations.
+        if path.rstrip("/") == "/api/analysis-portable-check":
+            return self._json_response(check_analysis_portable())
 
         if path in ("/", "/index.html"):
             self._serve_file("index.html", "text/html")
@@ -919,10 +924,6 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             self._json_response(get_scenario_extent(scenario_path))
         elif path == "/api/log-warning-downgrades":
             self._json_response({"rules": get_warning_downgrade_rules()})
-
-        # -- analysis portable check --
-        elif path == "/api/analysis-portable-check":
-            self._json_response(check_analysis_portable())
 
         # -- monitoring --
         elif path == "/api/runs":
