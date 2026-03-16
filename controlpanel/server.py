@@ -55,17 +55,13 @@ START_BAT = os.path.join(BASE_DIR, "__start__.bat")
 ANALYSIS_SCRIPT = os.path.join(BASE_DIR, "analysis", "run_basic_analysis.py")
 ANALYSIS_OUTPUT_ROOT = os.path.join(BASE_DIR, "analysis_output")
 _embedded_analysis_py = os.path.join(BASE_DIR, "analysis", "python", "python.exe")
-_venv_py = os.path.join(BASE_DIR, "analysis", ".venv", "Scripts", "python.exe")
-ANALYSIS_PYTHON = (
-    _embedded_analysis_py if os.path.isfile(_embedded_analysis_py) else
-    _venv_py if os.path.isfile(_venv_py) else
-    sys.executable
-)
+ANALYSIS_PYTHON = _embedded_analysis_py
 PORT = 8090
 PARAM_FILE_EXTENSIONS = (".xrun", ".yaml", ".yml")
 
 # Track running simulation processes: {experiment_id: subprocess.Popen}
 _running_processes = {}
+_running_started_at = {}
 _proc_lock = threading.Lock()
 
 # Track analysis jobs: {job_id: {"proc", "output_dir", "started_at", "log_path"}}
@@ -111,6 +107,11 @@ def check_analysis_portable():
     return result
 
 
+def get_analysis_python():
+    """Return bundled analysis Python interpreter path if available."""
+    return ANALYSIS_PYTHON if os.path.isfile(ANALYSIS_PYTHON) else None
+
+
 # ═══════════════════════════════════════════════════════════════════
 # Parameterisation helpers  (from webui/server.py)
 # ═══════════════════════════════════════════════════════════════════
@@ -123,10 +124,19 @@ def get_available_parameter_files(path: str = None) -> list:
     if not os.path.isdir(path):
         return []
     try:
+        files = []
+        for f in os.listdir(path):
+            if os.path.splitext(f)[1].lower() not in PARAM_FILE_EXTENSIONS:
+                continue
+            full = os.path.join(path, f)
+            try:
+                mtime = os.path.getmtime(full)
+                modified = datetime.datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M:%S")
+            except OSError:
+                modified = ""
+            files.append({"name": f, "path": full, "modified": modified})
         return sorted(
-            [{"name": f, "path": os.path.join(path, f)}
-             for f in os.listdir(path)
-             if os.path.splitext(f)[1].lower() in PARAM_FILE_EXTENSIONS],
+            files,
             key=lambda x: x["name"],
         )
     except PermissionError:
@@ -376,6 +386,49 @@ def get_scenario_extent(scenario_path: str) -> dict:
 
 _SEV_RE = re.compile(r"^(ERROR|WARN |NOTE |OK   |INFO )\s(.*)$")
 
+# Downgrade selected non-fatal errors to WARN for monitor readability.
+_ERROR_TO_WARN_RULES = [
+    {
+        "id": "gdal_minmax_no_valid_pixels",
+        "match": re.compile(r"^Failed to compute min/max, no valid pixels found in sampling\. \(GDAL error 1\)$"),
+        "description": "GDAL min/max sampling failure with no valid pixels.",
+    },
+]
+
+# Reclassify all WARN entries to NOTE for cleaner monitoring logs.
+_WARN_TO_NOTE_RULES = [
+    {
+        "id": "all_warn_to_note",
+        "match": re.compile(r"^.*$"),
+        "description": "Global policy: every WARN log entry is displayed as NOTE.",
+    },
+]
+
+
+def _warning_downgrade_rule(msg: str):
+    for rule in _WARN_TO_NOTE_RULES:
+        if rule["match"].match(msg):
+            return rule
+    return None
+
+
+def _error_downgrade_rule(msg: str):
+    for rule in _ERROR_TO_WARN_RULES:
+        if rule["match"].match(msg):
+            return rule
+    return None
+
+
+def get_warning_downgrade_rules():
+    return [
+        {
+            "id": r["id"],
+            "pattern": r["match"].pattern,
+            "description": r["description"],
+        }
+        for r in _WARN_TO_NOTE_RULES
+    ]
+
 
 def _parse_log_lines(path: str, tail: int = 0):
     """Return parsed log entries ``[{sev, msg}, ...]``."""
@@ -394,7 +447,20 @@ def _parse_log_lines(path: str, tail: int = 0):
         if m:
             if current is not None:
                 entries.append(current)
-            current = {"sev": m.group(1).strip(), "msg": m.group(2)}
+            sev = m.group(1).strip()
+            msg = m.group(2)
+            entry = {"sev": sev, "msg": msg}
+            if sev == "ERROR":
+                rule = _error_downgrade_rule(msg)
+                if rule is not None:
+                    entry["sev"] = "WARN"
+                    entry["reclassified_from"] = "ERROR"
+                    entry["reclassification_rule"] = rule["id"]
+            if sev == "WARN":
+                entry["sev"] = "NOTE"
+                entry["reclassified_from"] = "WARN"
+                entry["reclassification_rule"] = "all_warn_to_note"
+            current = entry
         elif current is not None:
             current["msg"] += "\n" + raw.strip()
     if current is not None:
@@ -408,15 +474,17 @@ def _extract_mc_progress(entries):
     for e in entries:
         msg = e["msg"]
         if msg.startswith("Initializing component "):
-            name = msg[len("Initializing component "):]
+            name = msg[len("Initializing component "):].strip()
             if name not in initialized:
                 initialized.append(name)
         elif msg.startswith("Running component "):
-            current = msg[len("Running component "):]
+            current = msg[len("Running component "):].strip()
         elif msg.startswith("Component ") and msg.endswith(" finished"):
-            name = msg[len("Component "):-len(" finished")]
+            name = msg[len("Component "):-len(" finished")].strip()
             done.append(name)
-            current = None
+            # Only clear active component when that same component finished.
+            if current == name:
+                current = None
     return initialized, done, current
 
 
@@ -451,6 +519,13 @@ def _count_lines(path):
             return sum(1 for _ in fh)
     except OSError:
         return 0
+
+
+def _format_elapsed_from_seconds(total_seconds: float) -> str:
+    total = max(0, int(total_seconds))
+    h, rem = divmod(total, 3600)
+    m, s = divmod(rem, 60)
+    return f"{h}:{m:02d}:{s:02d}"
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -537,6 +612,7 @@ def discover_runs(run_root):
             p = _running_processes[rid]
             if p.poll() is not None:          # process has exited
                 del _running_processes[rid]
+                _running_started_at.pop(rid, None)
 
     runs = []
     if not os.path.isdir(run_root):
@@ -595,6 +671,13 @@ def discover_runs(run_root):
             "modified": mtime,
             "abortable": entry in _running_processes,
         })
+
+        if not elapsed and status in ("running", "initializing"):
+            with _proc_lock:
+                started = _running_started_at.get(entry)
+            if started is not None:
+                runs[-1]["elapsed"] = _format_elapsed_from_seconds(time.time() - started)
+
     runs.sort(key=lambda r: r["modified"], reverse=True)
     return runs
 
@@ -617,18 +700,30 @@ def run_detail(run_root, run_id):
         entries = _parse_log_lines(ml)
         sev = _severity_counts(entries)
         initialized, done, current = _extract_mc_progress(entries)
-        mc_status, mc_elapsed = "running", ""
-        for e in reversed(entries):
-            if "MC run finished" in e["msg"]:
-                mc_status = "finished"
-            if "MC run completed with errors" in e["msg"]:
-                mc_status = "error"
-            if "MC run completed with warnings" in e["msg"] and mc_status != "error":
-                mc_status = "warning"
-            if e["msg"].startswith("Elapsed time:") and mc_status in ("finished", "error", "warning"):
-                mc_elapsed = e["msg"][len("Elapsed time:"):].strip()
-                break
+        has_finished = any("MC run finished" in e["msg"] for e in entries)
+        has_error_completion = any("MC run completed with errors" in e["msg"] for e in entries)
+        has_warning_completion = any("MC run completed with warnings" in e["msg"] for e in entries)
+
+        if has_error_completion:
+            mc_status = "error"
+        elif has_warning_completion:
+            mc_status = "warning"
+        elif has_finished:
+            mc_status = "finished"
+        else:
+            mc_status = "running"
+
+        mc_elapsed = ""
+        if mc_status in ("finished", "error", "warning"):
+            for e in reversed(entries):
+                if e["msg"].startswith("Elapsed time:"):
+                    mc_elapsed = e["msg"][len("Elapsed time:"):].strip()
+                    break
+
         total = len(initialized) if initialized else 1
+        progress = round(len(done) / total, 4)
+        if mc_status in ("finished", "warning", "error"):
+            progress = 1.0
         mc_runs.append({
             "name": mc_name,
             "status": mc_status,
@@ -636,7 +731,7 @@ def run_detail(run_root, run_id):
             "initialized": initialized,
             "components_done": done,
             "current_component": current,
-            "progress": round(len(done) / total, 4),
+            "progress": progress,
             "severity_counts": sev,
         })
 
@@ -652,6 +747,12 @@ def run_detail(run_root, run_id):
             status = "warning"
         if e["msg"].startswith("Elapsed time:"):
             elapsed = e["msg"][len("Elapsed time:"):].strip()
+
+    if not elapsed and status in ("running", "initializing"):
+        with _proc_lock:
+            started = _running_started_at.get(run_id)
+        if started is not None:
+            elapsed = _format_elapsed_from_seconds(time.time() - started)
 
     return {
         "id": run_id,
@@ -740,6 +841,8 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         elif path == "/api/scenario-extent":
             scenario_path = self._query_params().get("path", "")
             self._json_response(get_scenario_extent(scenario_path))
+        elif path == "/api/log-warning-downgrades":
+            self._json_response({"rules": get_warning_downgrade_rules()})
 
         # -- analysis portable check --
         elif path == "/api/analysis-portable-check":
@@ -833,9 +936,16 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
 
     def _handle_run(self):
         params = self._read_json_body()
-        sim_id = params.get(
+        base_sim_id = params.get(
             "Control/ExperimentID", params.get("ExperimentID", "Simulation")
         )
+        ts = datetime.datetime.now().strftime("%H%M%S%d%m%y")
+        sim_id = f"{base_sim_id}_{ts}"
+
+        # Use timestamped experiment ID for execution folder names under run/.
+        params["Control/ExperimentID"] = sim_id
+        params["ExperimentID"] = sim_id
+
         output_filename = f"{sim_id}.xrun"
         output_path = os.path.join(OUTPUT_DIR, output_filename)
         create_xrun_file(params, output_path, TEMPLATE_PATH)
@@ -849,6 +959,7 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 )
                 with _proc_lock:
                     _running_processes[sim_id] = proc
+                    _running_started_at[sim_id] = time.time()
             except Exception as e:
                 print(f"Error starting simulation: {e}")
 
@@ -934,6 +1045,7 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             )
             with _proc_lock:
                 _running_processes.pop(run_id, None)
+                _running_started_at.pop(run_id, None)
             print(f"Aborted simulation '{run_id}' (PID {pid})")
             return self._json_response({
                 "status": "success",
@@ -986,6 +1098,7 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 except Exception:
                     pass
             _running_processes.pop(run_id, None)
+            _running_started_at.pop(run_id, None)
 
         try:
             shutil.rmtree(run_path)
@@ -1020,6 +1133,36 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             return self._json_response(
                 {"status": "error",
                  "message": f"MC run folder not found: {mc_path}"}, 404)
+
+        # Enforce fully portable analysis runtime (no system Python fallback).
+        portable = check_analysis_portable()
+        if not portable.get("ready"):
+            details = portable.get("details") or "Portable analysis runtime is not ready."
+            return self._json_response(
+                {
+                    "status": "error",
+                    "message": (
+                        f"Analysis runtime not ready: {details} "
+                        "Run setup_analysis_python.bat once, then restart the control panel."
+                    ),
+                    "portable": portable,
+                },
+                400,
+            )
+
+        analysis_python = get_analysis_python()
+        if not analysis_python:
+            return self._json_response(
+                {
+                    "status": "error",
+                    "message": (
+                        "analysis/python/python.exe not found. "
+                        "Run setup_analysis_python.bat and restart the control panel."
+                    ),
+                },
+                400,
+            )
+
         scenario_rel  = (data.get("scenario_path") or "").strip()
         scenario_path = (os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
                          if scenario_rel else BASE_DIR)
@@ -1033,7 +1176,7 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         os.makedirs(out_dir, exist_ok=True)
         log_path = os.path.join(out_dir, "analysis.log")
         cmd = [
-            ANALYSIS_PYTHON, ANALYSIS_SCRIPT,
+            analysis_python, ANALYSIS_SCRIPT,
             "--mc-path",       mc_path,
             "--scenario-path", scenario_path,
             "--scenario-name", scenario_name,

@@ -874,6 +874,7 @@ let filterSev = "ALL";
 let refreshTimer = null;
 let monitorBuiltFor = null;   // run ID whose DOM skeleton is currently rendered
 let lastLogHtml = '';          // dedup: skip log DOM writes when nothing changed
+let warningDowngradeRules = [];
 const REFRESH_MS = 3000;
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1091,7 +1092,13 @@ async function loadXrunFiles() {
     if (r.status === 'success') {
       const sel = document.getElementById('xrunSelect');
       sel.innerHTML = '<option value="">Select a parameterisation file…</option>';
-      (r.files || []).forEach(f => { const o = document.createElement('option'); o.value = f.name; o.textContent = f.name; sel.appendChild(o); });
+      (r.files || []).forEach(f => {
+        const o = document.createElement('option');
+        o.value = f.name;
+        const ts = f.modified ? ` (${f.modified})` : '';
+        o.textContent = f.name + ts;
+        sel.appendChild(o);
+      });
       showCfgStatus(`Found ${r.count} parameterisation file(s)`, 'success');
     } else { showCfgStatus(r.message, 'error'); }
   } catch(e) { showCfgStatus('Error: ' + e.message, 'error'); }
@@ -1135,6 +1142,28 @@ async function saveAsXrun() {
 // Monitor – API helper
 // ═══════════════════════════════════════════════════════════════════
 async function api(path, opts) { return (await fetch(path, opts)).json(); }
+
+async function loadWarningDowngradeRules() {
+  try {
+    const d = await api('/api/log-warning-downgrades');
+    warningDowngradeRules = d.rules || [];
+  } catch (e) {
+    warningDowngradeRules = [];
+  }
+}
+
+function renderWarningDowngradeRules() {
+  const box = document.getElementById('warnDowngradeList');
+  if (!box) return;
+  if (!warningDowngradeRules.length) {
+    box.innerHTML = '<div style="font-size:.72rem;color:var(--text2)">No warning downgrades configured.</div>';
+    return;
+  }
+  box.innerHTML = warningDowngradeRules.map(r =>
+    `<div style="font-size:.72rem;color:var(--text2);margin:.2rem 0">` +
+    `<span style="color:var(--note);font-weight:600">${escHtml(r.id)}</span> — ${escHtml(r.description)}</div>`
+  ).join('');
+}
 
 function statusLabel(s) {
   return {running:'Running',finished:'Finished',warning:'Warnings',error:'Errors',initializing:'Starting',unknown:'Unknown'}[s]||s;
@@ -1233,6 +1262,10 @@ function buildDetailFull(d) {
           <option value="INFO" ${filterSev==='INFO'?'selected':''}>Info</option>
         </select>
       </label>
+      <details style="margin-left:auto;min-width:280px">
+        <summary style="cursor:pointer;font-size:.72rem;color:var(--text2)">WARN downgraded to NOTE</summary>
+        <div id="warnDowngradeList" style="padding:.35rem .2rem .2rem"></div>
+      </details>
     </div>
     <div class="log-output" id="logOutput">Loading…</div>
   </div>`;
@@ -1241,6 +1274,7 @@ function buildDetailFull(d) {
   h += '<div id="params-panel"></div>';
 
   document.getElementById('mainContent').innerHTML = h;
+  renderWarningDowngradeRules();
 
   // Fill in the data for the first time
   updateDetailInPlace(d);
@@ -1285,19 +1319,20 @@ function updateDetailInPlace(d) {
     mcBox.innerHTML = mh;
   }
 
-  // Component pipeline (first MC)
+  // Component pipeline (aggregated over all MC runs)
   const compGrid = document.getElementById('comp-grid');
   const compHead = document.getElementById('comp-head');
   if (compGrid && d.mc_runs.length) {
-    const mc0 = d.mc_runs[0];
-    if (compHead) compHead.textContent = 'Component Pipeline — ' + mc0.name;
-    const doneSet = new Set(mc0.components_done);
-    const stages = mc0.initialized || [];
+    if (compHead) compHead.textContent = 'Component Pipeline — all MC runs';
+    const p = _buildAggregatePipeline(d.mc_runs);
     let ch = '';
-    for (const c of stages) {
-      if (doneSet.has(c)) ch += `<div class="comp-item done"><span class="comp-icon">&#10003;</span>${escHtml(c)}</div>`;
-      else if (mc0.current_component === c) ch += `<div class="comp-item active"><span class="comp-icon">&#9654;</span>${escHtml(c)}</div>`;
-      else ch += `<div class="comp-item pending"><span class="comp-icon">&#9679;</span>${escHtml(c)}</div>`;
+    for (const key of p.stageOrder) {
+      const name = p.displayName.get(key) || key;
+      const initN = p.initCount.get(key) || 0;
+      const doneN = p.doneCount.get(key) || 0;
+      if (p.active.has(key)) ch += `<div class="comp-item active"><span class="comp-icon">&#9654;</span>${escHtml(name)}</div>`;
+      else if (initN > 0 && doneN >= initN) ch += `<div class="comp-item done"><span class="comp-icon">&#10003;</span>${escHtml(name)}</div>`;
+      else ch += `<div class="comp-item pending"><span class="comp-icon">&#9679;</span>${escHtml(name)}</div>`;
     }
     compGrid.innerHTML = ch;
   }
@@ -1330,6 +1365,40 @@ function updateDetailInPlace(d) {
 
 function _txt(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
 function _logTabList(d) { return ['experiment.log', ...(d.mc_runs||[]).map(mc => `mc_${mc.name}.log`)]; }
+
+function _normComponentName(name) {
+  return String(name || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function _buildAggregatePipeline(mcRuns) {
+  const stageOrder = [];
+  const seen = new Set();
+  const active = new Set();
+  const doneCount = new Map();
+  const initCount = new Map();
+  const displayName = new Map();
+
+  for (const mc of (mcRuns || [])) {
+    const initialized = mc.initialized || [];
+    const done = new Set((mc.components_done || []).map(_normComponentName));
+
+    for (const c of initialized) {
+      const key = _normComponentName(c);
+      if (!key) continue;
+      if (!seen.has(key)) {
+        seen.add(key);
+        stageOrder.push(key);
+        displayName.set(key, c);
+      }
+      initCount.set(key, (initCount.get(key) || 0) + 1);
+      if (done.has(key)) doneCount.set(key, (doneCount.get(key) || 0) + 1);
+    }
+
+    if (mc.current_component) active.add(_normComponentName(mc.current_component));
+  }
+
+  return { stageOrder, active, doneCount, initCount, displayName };
+}
 
 // ═══════════════════════════════════════════════════════════════════
 // Monitor – log  (smooth: preserve scroll, skip no-op writes)
@@ -1476,6 +1545,7 @@ function stopMonitorRefresh() {
 // ═══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   initializeScenarioDateAutofill();
+  await loadWarningDowngradeRules();
   await loadScenarios();
   await loadTemplate();
   loadXrunFiles();
