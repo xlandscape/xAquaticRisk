@@ -25,6 +25,7 @@ url=https://github.com/xlandscape/Analysis-Observer.git
 [submodule "model/core"]
     path = model/core
     url = https://github.com/xlandscape/LandscapeModel-Core.git
+    branch = xAquaticRisk-Dev
 [submodule "scenario/oudebeek-beek7-tdi"]
     path = scenario/oudebeek-beek7-tdi
     url = https://github.com/xlandscape/Scenario-OudebeekBeek7TDI.git
