@@ -41,13 +41,13 @@ import sys
 import threading
 import time
 import xml.etree.ElementTree as ET
+from collections import OrderedDict
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs, unquote_plus
+from urllib.parse import urlparse, parse_qs
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CPANEL_DIR = os.path.abspath(os.path.dirname(__file__))
-_PICKER_SCRIPT = os.path.join(CPANEL_DIR, "folder_picker.py")
 DEFAULT_RUN_DIR = os.path.join(BASE_DIR, "run")
 OUTPUT_DIR = os.path.join(BASE_DIR, "parameterisation")
 TEMPLATE_PATH = os.path.join(OUTPUT_DIR, "template.xrun")
@@ -62,6 +62,7 @@ ANALYSIS_PYTHON = (
     sys.executable
 )
 PORT = 8090
+PARAM_FILE_EXTENSIONS = (".xrun", ".yaml", ".yml")
 
 # Track running simulation processes: {experiment_id: subprocess.Popen}
 _running_processes = {}
@@ -73,11 +74,49 @@ _analysis_lock = threading.Lock()
 
 
 # ═══════════════════════════════════════════════════════════════════
+# Analysis portable-runtime check
+# ═══════════════════════════════════════════════════════════════════
+
+def check_analysis_portable():
+    """Check if analysis/python/python.exe exists and all required packages are importable."""
+    analysis_py = os.path.join(BASE_DIR, "analysis", "python", "python.exe")
+    required = ["h5py", "numpy", "pandas", "matplotlib", "seaborn", "openpyxl"]
+    result = {
+        "ready": False,
+        "missing_python": not os.path.isfile(analysis_py),
+        "missing_packages": [],
+        "details": ""
+    }
+    if result["missing_python"]:
+        result["details"] = "analysis/python/python.exe not found. Run setup_analysis_python.bat and bundle the folder."
+        return result
+    try:
+        code = (
+            "import importlib.util; mods = %r; "
+            "missing = [m for m in mods if not importlib.util.find_spec(m)]; "
+            "print(','.join(missing))"
+        ) % (required,)
+        proc = subprocess.run(
+            [analysis_py, "-c", code],
+            capture_output=True, text=True, timeout=30
+        )
+        missing = proc.stdout.strip().split(",") if proc.returncode == 0 else required
+        missing = [m for m in missing if m]
+        result["missing_packages"] = missing
+        result["ready"] = (len(missing) == 0)
+        result["details"] = ("All required packages present." if result["ready"]
+                             else f"Missing packages: {', '.join(missing)}")
+    except Exception as e:
+        result["details"] = f"Error checking analysis/python: {e}"
+    return result
+
+
+# ═══════════════════════════════════════════════════════════════════
 # Parameterisation helpers  (from webui/server.py)
 # ═══════════════════════════════════════════════════════════════════
 
-def get_available_xrun_files(path: str = None) -> list:
-    """List .xrun files in *path*."""
+def get_available_parameter_files(path: str = None) -> list:
+    """List .xrun/.yaml files in *path*."""
     if not path:
         path = BASE_DIR
     path = os.path.abspath(path)
@@ -86,7 +125,8 @@ def get_available_xrun_files(path: str = None) -> list:
     try:
         return sorted(
             [{"name": f, "path": os.path.join(path, f)}
-             for f in os.listdir(path) if f.endswith(".xrun")],
+             for f in os.listdir(path)
+             if os.path.splitext(f)[1].lower() in PARAM_FILE_EXTENSIONS],
             key=lambda x: x["name"],
         )
     except PermissionError:
@@ -152,17 +192,151 @@ def create_xrun_file(parameters: dict, output_path: str, template_path: str) -> 
     return output_path
 
 
-def browse_folder(initial_dir: str = None) -> str:
-    """Open a native folder-picker dialog via folder_picker.py."""
-    start = initial_dir or OUTPUT_DIR
-    try:
-        result = subprocess.run(
-            [sys.executable, _PICKER_SCRIPT, start],
-            capture_output=True, text=True, timeout=120,
-        )
-        return result.stdout.strip()
-    except Exception:
+def parse_xrun_file(xrun_path: str) -> dict:
+    """Parse an xrun file into flat Control/Param keys."""
+    tree = ET.parse(xrun_path)
+    params = {}
+
+    def extract(element, prefix=""):
+        for child in element:
+            tag = child.tag.replace("{urn:xAquaticRisk}", "")
+            key = f"{prefix}{tag}" if prefix else tag
+            if len(child) > 0:
+                extract(child, f"{key}/")
+            else:
+                params[key] = (child.text or "").strip()
+
+    extract(tree.getroot())
+    return params
+
+
+def _strip_inline_yaml_comment(value: str) -> str:
+    in_quote = None
+    escaped = False
+    for i, ch in enumerate(value):
+        if escaped:
+            escaped = False
+            continue
+        if ch == "\\":
+            escaped = True
+            continue
+        if ch in ('"', "'"):
+            if in_quote is None:
+                in_quote = ch
+            elif in_quote == ch:
+                in_quote = None
+            continue
+        if ch == "#" and in_quote is None:
+            if i == 0 or value[i - 1].isspace():
+                return value[:i].rstrip()
+    return value.rstrip()
+
+
+def _yaml_unquote(value: str) -> str:
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+        body = value[1:-1]
+        if value[0] == '"':
+            return body.replace('\\"', '"').replace('\\\\', '\\')
+        return body.replace("''", "'")
+    if value.lower() in ("null", "~"):
         return ""
+    return value
+
+
+def parse_yaml_file(yaml_path: str) -> dict:
+    """Parse a simple nested YAML parameter file into flat Section/Param keys."""
+    params = {}
+    current_section = None
+
+    with open(yaml_path, "r", encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.rstrip("\r\n")
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+
+            # Section header: SectionName:
+            if not line.startswith(" ") and stripped.endswith(":") and stripped.count(":") == 1:
+                current_section = stripped[:-1].strip()
+                continue
+
+            # Key/value inside section: two-space indentation
+            if current_section and line.startswith("  "):
+                kv = line.strip()
+                if ":" not in kv:
+                    continue
+                key, value = kv.split(":", 1)
+                key = key.strip()
+                value = _yaml_unquote(_strip_inline_yaml_comment(value))
+                if key:
+                    params[f"{current_section}/{key}"] = value
+
+    return params
+
+
+def parse_parameter_file(file_path: str) -> dict:
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext == ".xrun":
+        return parse_xrun_file(file_path)
+    if ext in (".yaml", ".yml"):
+        return parse_yaml_file(file_path)
+    raise ValueError(f"Unsupported file extension: {ext}")
+
+
+def _yaml_render_scalar(value: str) -> str:
+    text = "" if value is None else str(value)
+    if text == "":
+        return ""
+    if re.fullmatch(r"(?i:true|false)", text):
+        return text.lower()
+    if re.fullmatch(r"[-+]?\d+(?:\.\d+)?", text):
+        return text
+    escaped = text.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"'
+
+
+def write_yaml_file(parameters: dict, output_path: str) -> str:
+    """Write parameters to a YAML file using section/key structure."""
+    sections = OrderedDict()
+    for full_key, raw_value in parameters.items():
+        if "/" not in full_key:
+            continue
+        section, key = full_key.split("/", 1)
+        if not section or not key:
+            continue
+        if section not in sections:
+            sections[section] = OrderedDict()
+        sections[section][key] = "" if raw_value is None else str(raw_value)
+
+    with open(output_path, "w", encoding="utf-8", newline="\n") as fh:
+        for section, entries in sections.items():
+            fh.write(f"{section}:\n")
+            for key, value in entries.items():
+                fh.write(f"  {key}: {_yaml_render_scalar(value)}\n")
+            fh.write("\n")
+    return output_path
+
+
+def write_parameter_file(parameters: dict, output_path: str) -> str:
+    ext = os.path.splitext(output_path)[1].lower()
+    if ext == ".xrun":
+        return create_xrun_file(parameters, output_path, TEMPLATE_PATH)
+    if ext in (".yaml", ".yml"):
+        return write_yaml_file(parameters, output_path)
+    raise ValueError(f"Unsupported file extension: {ext}")
+
+
+def normalize_parameter_filename(filename: str, default_ext: str = ".xrun") -> str:
+    base = (filename or "").strip()
+    if not base:
+        raise ValueError("Filename is required")
+    ext = os.path.splitext(base)[1].lower()
+    if ext:
+        if ext not in PARAM_FILE_EXTENSIONS:
+            raise ValueError("Unsupported file extension. Use .xrun, .yaml or .yml")
+        return base
+    return base + default_ext
 
 
 def get_scenarios() -> list:
@@ -544,13 +718,8 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             self.send_error(404)
 
     def _query_params(self):
-        qs = {}
-        if "?" in self.path:
-            for pair in self.path.split("?", 1)[1].split("&"):
-                if "=" in pair:
-                    k, v = pair.split("=", 1)
-                    qs[k] = v
-        return qs
+        parsed = parse_qs(urlparse(self.path).query, keep_blank_values=True)
+        return {key: values[-1] if values else "" for key, values in parsed.items()}
 
     def log_message(self, fmt, *args):
         pass  # suppress per-request logging
@@ -566,15 +735,15 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         # -- parameterisation --
         elif path == "/api/template":
             self._json_response(parse_xrun_template(TEMPLATE_PATH))
-        elif path == "/api/browse-folder":
-            initial = self._query_params().get("initial", "")
-            chosen = browse_folder(initial or None)
-            self._json_response({"path": chosen})
         elif path == "/api/scenarios":
             self._json_response(get_scenarios())
         elif path == "/api/scenario-extent":
             scenario_path = self._query_params().get("path", "")
             self._json_response(get_scenario_extent(scenario_path))
+
+        # -- analysis portable check --
+        elif path == "/api/analysis-portable-check":
+            self._json_response(check_analysis_portable())
 
         # -- monitoring --
         elif path == "/api/runs":
@@ -659,7 +828,7 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             return self._json_response(
                 {"status": "error", "message": "Path not provided"}, 400
             )
-        files = get_available_xrun_files(data["path"].strip())
+        files = get_available_parameter_files(data["path"].strip())
         self._json_response({"status": "success", "files": files, "count": len(files)})
 
     def _handle_run(self):
@@ -695,29 +864,37 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         data = self._read_json_body()
         params = data.get("parameters", data)
         if "path" in data and "filename" in data:
-            fn = data["filename"]
-            if not fn.endswith(".xrun"):
-                fn += ".xrun"
-            output = os.path.join(os.path.abspath(data["path"]), fn)
+            fn = normalize_parameter_filename(data["filename"])
+            save_dir = os.path.abspath(data["path"])
+            stem = Path(fn).stem
         else:
             sid = params.get("Control/ExperimentID", "Simulation")
-            output = os.path.join(OUTPUT_DIR, f"{sid}.xrun")
-        create_xrun_file(params, output, TEMPLATE_PATH)
+            save_dir = OUTPUT_DIR
+            stem = sid
+
+        os.makedirs(save_dir, exist_ok=True)
+        xrun_output = os.path.join(save_dir, f"{stem}.xrun")
+        yaml_output = os.path.join(save_dir, f"{stem}.yaml")
+
+        write_parameter_file(params, xrun_output)
+        write_parameter_file(params, yaml_output)
         self._json_response({
             "status": "success",
-            "message": f"Configuration saved to: {os.path.basename(output)}",
-            "xrun_path": output,
+            "message": (
+                f"Configuration saved to: {os.path.basename(xrun_output)} and "
+                f"{os.path.basename(yaml_output)}"
+            ),
+            "xrun_path": xrun_output,
+            "yaml_path": yaml_output,
         })
 
     def _handle_save_as(self):
         data = self._read_json_body()
-        fn = data.get("filename", "configuration")
-        if not fn.endswith(".xrun"):
-            fn += ".xrun"
+        fn = normalize_parameter_filename(data.get("filename", "configuration"))
         save_dir = os.path.abspath(data.get("path", OUTPUT_DIR))
         os.makedirs(save_dir, exist_ok=True)
         output = os.path.join(save_dir, fn)
-        create_xrun_file(data.get("parameters", {}), output, TEMPLATE_PATH)
+        write_parameter_file(data.get("parameters", {}), output)
         self._json_response({
             "status": "success",
             "message": f"Configuration saved as: {fn}",
@@ -934,22 +1111,16 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         xrun_dir = os.path.abspath(data.get("path", BASE_DIR))
         xrun_path = os.path.join(xrun_dir, data.get("filename", ""))
         xrun_path = os.path.abspath(xrun_path)
-        if not os.path.isfile(xrun_path) or not xrun_path.endswith(".xrun"):
+        if not os.path.isfile(xrun_path):
             return self._json_response(
                 {"status": "error", "message": "File not found"}, 404
             )
-        tree = ET.parse(xrun_path)
-        params = {}
-
-        def extract(element, prefix=""):
-            for child in element:
-                tag = child.tag.replace("{urn:xAquaticRisk}", "")
-                key = f"{prefix}{tag}" if prefix else tag
-                if len(child) > 0:
-                    extract(child, f"{key}/")
-                else:
-                    params[key] = (child.text or "").strip()
-        extract(tree.getroot())
+        ext = os.path.splitext(xrun_path)[1].lower()
+        if ext not in PARAM_FILE_EXTENSIONS:
+            return self._json_response(
+                {"status": "error", "message": "Unsupported file extension"}, 400
+            )
+        params = parse_parameter_file(xrun_path)
         self._json_response({
             "status": "success",
             "parameters": params,

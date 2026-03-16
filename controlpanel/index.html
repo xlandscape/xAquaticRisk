@@ -241,6 +241,7 @@ a{color:var(--accent);text-decoration:none}
 
   <div class="spacer"></div>
   <span class="status-pill" id="serverPill">Connected</span>
+  <span class="status-pill" id="analysisPill" title="Checking analysis Python runtime…" style="background:var(--bg3);color:var(--text2);margin-left:.7rem">Checking…</span>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -257,20 +258,20 @@ a{color:var(--accent);text-decoration:none}
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label for="xrunPath">Path to xrun Files</label>
+          <label for="xrunPath">Path to Parameterisation Files (.xrun / .yaml)</label>
           <div style="display:flex;gap:.6rem">
             <input type="text" id="xrunPath" placeholder="e.g., parameterisation or C:\LocalWork\xAquaticRisk" value="parameterisation" style="flex:1">
-            <button type="button" class="btn btn-outline btn-sm" onclick="browseFolder()">Browse…</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="loadXrunFiles()">Load</button>
           </div>
-          <div class="help-text">Directory path where xrun files are located — defaults to the <em>parameterisation</em> subfolder</div>
+          <div class="help-text">Defaults to the <em>parameterisation</em> subfolder. Enter another folder path and click <em>Load</em> to refresh the file list.</div>
         </div>
         <div class="form-group">
-          <label for="xrunSelect">Open xrun File</label>
+          <label for="xrunSelect">Open Parameterisation File</label>
           <div style="display:flex;gap:.6rem;align-items:start">
             <select id="xrunSelect" style="flex:1">
-              <option value="">Select an xrun file to open…</option>
+              <option value="">Select a parameterisation file to open…</option>
             </select>
-            <button type="button" class="btn btn-outline btn-sm" onclick="openXrunFile()">Load</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="openXrunFile()">Open</button>
           </div>
         </div>
         <div class="form-group">
@@ -308,7 +309,7 @@ a{color:var(--accent);text-decoration:none}
           </div>
           <div class="form-group">
             <label for="Scenario/LandscapeScenario">Landscape Scenario *</label>
-            <select id="Scenario/LandscapeScenario" name="Scenario/LandscapeScenario" required onchange="onScenarioChange(this.value)">
+            <select id="Scenario/LandscapeScenario" name="Scenario/LandscapeScenario" required onchange="onScenarioChange(this.value, true)">
               <option value="">Loading scenarios…</option>
             </select>
           </div>
@@ -833,6 +834,7 @@ a{color:var(--accent);text-decoration:none}
 let activeXrunPath = null;
 let activeXrunFilename = null;
 let templateParams = {};
+const scenarioExtentCache = new Map();
 
 // Known param keys (for distinguishing "additional" ones)
 const knownParams = [
@@ -920,20 +922,67 @@ async function loadScenarios() {
   } catch(e) { console.error('loadScenarios', e); }
 }
 
-async function onScenarioChange(scenarioPath) {
+async function getScenarioExtent(scenarioPath) {
+  if (!scenarioPath) return null;
+  if (scenarioExtentCache.has(scenarioPath)) {
+    return scenarioExtentCache.get(scenarioPath);
+  }
+  const res = await fetch('/api/scenario-extent?path=' + encodeURIComponent(scenarioPath));
+  const data = await res.json();
+  scenarioExtentCache.set(scenarioPath, data);
+  return data;
+}
+
+async function applyScenarioExtentDefaults(scenarioPath, { fillStart = true, fillEnd = true, overwrite = false } = {}) {
+  if (!scenarioPath) return;
+  const data = await getScenarioExtent(scenarioPath);
+  const startEl = document.getElementById('Scenario/SimulationStart');
+  const endEl = document.getElementById('Scenario/SimulationEnd');
+
+  if (fillStart && data?.from_date && (overwrite || !startEl.value.trim())) {
+    startEl.value = data.from_date;
+  }
+  if (fillEnd && data?.to_date && (overwrite || !endEl.value.trim())) {
+    endEl.value = data.to_date;
+  }
+}
+
+async function onScenarioChange(scenarioPath, overwrite = false) {
   if (!scenarioPath) return;
   try {
-    const res = await fetch('/api/scenario-extent?path=' + encodeURIComponent(scenarioPath));
-    const data = await res.json();
-    if (data.from_date) {
-      const startEl = document.getElementById('Scenario/SimulationStart');
-      if (!startEl.value) startEl.value = data.from_date;
-    }
-    if (data.to_date) {
-      const endEl = document.getElementById('Scenario/SimulationEnd');
-      if (!endEl.value) endEl.value = data.to_date;
-    }
+    await applyScenarioExtentDefaults(scenarioPath, { overwrite });
   } catch(e) { console.error('onScenarioChange', e); }
+}
+
+function initializeScenarioDateAutofill() {
+  const scenarioEl = document.getElementById('Scenario/LandscapeScenario');
+  const startEl = document.getElementById('Scenario/SimulationStart');
+  const endEl = document.getElementById('Scenario/SimulationEnd');
+
+  const restoreDefault = async (field) => {
+    const scenarioPath = scenarioEl.value;
+    if (!scenarioPath) return;
+    try {
+      await applyScenarioExtentDefaults(scenarioPath, {
+        fillStart: field === 'start',
+        fillEnd: field === 'end'
+      });
+    } catch (e) {
+      console.error('restoreScenarioDateDefault', e);
+    }
+  };
+
+  startEl.addEventListener('input', () => {
+    if (!startEl.value.trim()) {
+      restoreDefault('start');
+    }
+  });
+
+  endEl.addEventListener('input', () => {
+    if (!endEl.value.trim()) {
+      restoreDefault('end');
+    }
+  });
 }
 
 async function loadTemplate() {
@@ -1031,20 +1080,8 @@ document.getElementById('paramForm').addEventListener('submit', async function(e
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// Configure – xrun file operations
+// Configure – parameterisation file operations
 // ═══════════════════════════════════════════════════════════════════
-async function browseFolder() {
-  const current = document.getElementById('xrunPath').value.trim();
-  try {
-    const res = await fetch('/api/browse-folder?initial=' + encodeURIComponent(current));
-    const r = await res.json();
-    if (r.path) {
-      document.getElementById('xrunPath').value = r.path;
-      loadXrunFiles();
-    }
-  } catch(e) { showCfgStatus('Error opening folder dialog: ' + e.message, 'error'); }
-}
-
 async function loadXrunFiles() {
   const path = document.getElementById('xrunPath').value.trim();
   if (!path) { showCfgStatus('Enter a directory path first', 'error'); return; }
@@ -1053,9 +1090,9 @@ async function loadXrunFiles() {
     const r = await res.json();
     if (r.status === 'success') {
       const sel = document.getElementById('xrunSelect');
-      sel.innerHTML = '<option value="">Select an xrun file…</option>';
+      sel.innerHTML = '<option value="">Select a parameterisation file…</option>';
       (r.files || []).forEach(f => { const o = document.createElement('option'); o.value = f.name; o.textContent = f.name; sel.appendChild(o); });
-      showCfgStatus(`Found ${r.count} xrun file(s)`, 'success');
+      showCfgStatus(`Found ${r.count} parameterisation file(s)`, 'success');
     } else { showCfgStatus(r.message, 'error'); }
   } catch(e) { showCfgStatus('Error: ' + e.message, 'error'); }
 }
@@ -1063,7 +1100,7 @@ async function loadXrunFiles() {
 async function openXrunFile() {
   const filename = document.getElementById('xrunSelect').value;
   const path = document.getElementById('xrunPath').value.trim();
-  if (!filename || !path) { showCfgStatus('Select an xrun file first', 'error'); return; }
+  if (!filename || !path) { showCfgStatus('Select a parameterisation file first', 'error'); return; }
   try {
     const res = await fetch('/api/open-xrun', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ filename, path }) });
     const r = await res.json();
@@ -1437,13 +1474,50 @@ function stopMonitorRefresh() {
 // ═══════════════════════════════════════════════════════════════════
 // Init
 // ═══════════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  loadScenarios();
-  loadTemplate();
+document.addEventListener('DOMContentLoaded', async () => {
+  initializeScenarioDateAutofill();
+  await loadScenarios();
+  await loadTemplate();
   loadXrunFiles();
   loadAnlRuns();
   loadAnlScenarios();
+  checkAnalysisPortableStatus();
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// Analysis Python Portable Status
+// ═══════════════════════════════════════════════════════════════════
+async function checkAnalysisPortableStatus() {
+  const pill = document.getElementById('analysisPill');
+  if (!pill) return;
+  pill.textContent = 'Checking…';
+  pill.style.background = 'var(--bg3)';
+  pill.style.color = 'var(--text2)';
+  pill.title = 'Checking analysis Python runtime…';
+  try {
+    const res = await fetch('/api/analysis-portable-check');
+    const data = await res.json();
+    if (data.ready) {
+      pill.textContent = 'Analysis Python ready';
+      pill.style.background = 'var(--ok)';
+      pill.style.color = '#000';
+      pill.title = 'Portable analysis/python/python.exe and all required packages are present.';
+    } else {
+      pill.textContent = 'Analysis Python missing';
+      pill.style.background = 'var(--err)';
+      pill.style.color = '#fff';
+      let msg = 'Portable analysis Python runtime is NOT ready. ';
+      if (data.missing_python) msg += '\nMissing: analysis/python/python.exe';
+      if (data.missing_packages && data.missing_packages.length) msg += `\nMissing packages: ${data.missing_packages.join(', ')}`;
+      pill.title = msg;
+    }
+  } catch (e) {
+    pill.textContent = 'Analysis Python check failed';
+    pill.style.background = 'var(--warn)';
+    pill.style.color = '#000';
+    pill.title = 'Could not check analysis Python runtime.';
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════════
 // Analysis – scenario defaults (mirrors notebook match statement)
