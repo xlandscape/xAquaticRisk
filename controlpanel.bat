@@ -1,14 +1,21 @@
 @echo off
+setlocal
+
 echo ============================================================
 echo Starting xAquaticRisk Control Panel...
 echo ============================================================
 echo.
 
-REM Try to use the bundled Python first, then fall back to system Python
-if exist "%~dp0model\core\bin\python-3.9.7-amd64\python.exe" (
-    "%~dp0model\core\bin\python-3.9.7-amd64\python.exe" "%~dp0controlpanel\server.py" %*
-) else (
-    python "%~dp0controlpanel\server.py" %*
+set "CONTROLPANEL_PY=%~dp0controlpanel\python\python.exe"
+if not exist "%CONTROLPANEL_PY%" (
+    echo ERROR: Control Panel runtime not found.
+    echo Expected: %CONTROLPANEL_PY%
+    echo.
+    echo Run setup_controlpanel_python.bat once and keep controlpanel\python\ in the copied model folder.
+    pause
+    exit /b 1
 )
+
+"%CONTROLPANEL_PY%" "%~dp0controlpanel\server.py" %*
 
 pause

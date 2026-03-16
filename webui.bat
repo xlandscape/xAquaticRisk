@@ -1,14 +1,21 @@
 @echo off
+setlocal
+
 echo ============================================================
 echo Starting xAquatic Model Web Interface...
 echo ============================================================
 echo.
 
-REM Try to use the bundled Python first, then fall back to system Python
-if exist "%~dp0model\core\bin\python-3.9.7-amd64\python.exe" (
-    "%~dp0model\core\bin\python-3.9.7-amd64\python.exe" "%~dp0webui\server.py"
-) else (
-    python "%~dp0webui\server.py"
+set "WEBUI_PY=%~dp0webui\python\python.exe"
+if not exist "%WEBUI_PY%" (
+    echo ERROR: WebUI runtime not found.
+    echo Expected: %WEBUI_PY%
+    echo.
+    echo Run setup_webui_python.bat once and keep webui\python\ in the copied model folder.
+    pause
+    exit /b 1
 )
+
+"%WEBUI_PY%" "%~dp0webui\server.py" %*
 
 pause

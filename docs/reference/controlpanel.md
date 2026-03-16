@@ -16,14 +16,14 @@ Double-click **`controlpanel.bat`** in the model root directory.
 ### Command-line launch
 
 ```powershell
-# Using the project virtual environment
-.venv\Scripts\python.exe  controlpanel\server.py
+# Using the bundled Python runtime
+model\core\bin\python-3.9.7-amd64\python.exe  controlpanel\server.py
 
 # Custom port
-.venv\Scripts\python.exe  controlpanel\server.py  --port 9000
+model\core\bin\python-3.9.7-amd64\python.exe  controlpanel\server.py  --port 9000
 
 # Monitor a different run folder
-.venv\Scripts\python.exe  controlpanel\server.py  --run-dir  C:\other\run
+model\core\bin\python-3.9.7-amd64\python.exe  controlpanel\server.py  --run-dir  C:\other\run
 ```
 
 | Option | Description | Default |
@@ -74,6 +74,16 @@ A real-time dashboard for tracking simulation runs. Identical in functionality t
 
 !!! warning "Abort limitation"
     Only simulations launched from the **current** Control Panel session can be aborted. If you restart the server, PID tracking is lost and the abort button will not appear for previously started runs.
+
+---
+
+## Analysis runtime
+
+The Control Panel starts `analysis/run_basic_analysis.py` with the dedicated embedded runtime at `analysis\python\python.exe`.
+
+To keep analysis xcopy-deployable, that runtime is stored completely inside `analysis\python\`. Populate it once by running `setup_analysis_python.bat` before you package or copy the model folder to another machine.
+
+If the folder is missing or incomplete, the Control Panel now stops before launching the job and returns a setup error instead of a Python traceback.
 
 ---
 

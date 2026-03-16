@@ -44,7 +44,8 @@ import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from typing import Optional
+from urllib.parse import urlparse, parse_qs, unquote_plus
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CPANEL_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -54,8 +55,18 @@ TEMPLATE_PATH = os.path.join(OUTPUT_DIR, "template.xrun")
 START_BAT = os.path.join(BASE_DIR, "__start__.bat")
 ANALYSIS_SCRIPT = os.path.join(BASE_DIR, "analysis", "run_basic_analysis.py")
 ANALYSIS_OUTPUT_ROOT = os.path.join(BASE_DIR, "analysis_output")
-_embedded_analysis_py = os.path.join(BASE_DIR, "analysis", "python", "python.exe")
-ANALYSIS_PYTHON = _embedded_analysis_py
+ANALYSIS_RUNTIME_DIR = os.path.join(BASE_DIR, "analysis", "python")
+_embedded_analysis_py = os.path.join(ANALYSIS_RUNTIME_DIR, "python.exe")
+ANALYSIS_REQUIRED_MODULES = [
+    "h5py",
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "openpyxl",
+    "geopandas",
+    "pyogrio",
+]
 PORT = 8090
 PARAM_FILE_EXTENSIONS = (".xrun", ".yaml", ".yml")
 
@@ -69,6 +80,68 @@ _analysis_jobs = {}
 _analysis_lock = threading.Lock()
 
 
+def _analysis_subprocess_env() -> dict:
+    """Return the environment used for analysis subprocesses."""
+    env = os.environ.copy()
+    # Isolate analysis subprocesses from parent Python runtime path settings.
+    env.pop("PYTHONPATH", None)
+    env.pop("PYTHONHOME", None)
+    env["PYTHONNOUSERSITE"] = "1"
+    return env
+
+
+def _pick_analysis_python() -> Optional[str]:
+    """Resolve the preferred Python executable for analysis jobs."""
+    if os.path.isfile(_embedded_analysis_py):
+        return _embedded_analysis_py
+    return None
+
+
+def _analysis_runtime_error() -> Optional[str]:
+    """Return a user-facing analysis runtime error, if any."""
+    if not os.path.isfile(ANALYSIS_SCRIPT):
+        return f"Analysis script not found: {ANALYSIS_SCRIPT}"
+    analysis_python = _pick_analysis_python()
+    if not analysis_python:
+        return (
+            "Analysis runtime is missing. Expected embedded Python at "
+            f"{_embedded_analysis_py}. Run setup_analysis_python.bat before distributing or copying the model folder."
+        )
+
+    probe = [
+        analysis_python,
+        "-c",
+        (
+            "import importlib.util; "
+            f"mods={tuple(ANALYSIS_REQUIRED_MODULES)!r}; "
+            "missing=[m for m in mods if importlib.util.find_spec(m) is None]; "
+            "print(','.join(missing))"
+        ),
+    ]
+    try:
+        result = subprocess.run(
+            probe,
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=BASE_DIR,
+            env=_analysis_subprocess_env(),
+        )
+    except OSError as exc:
+        return f"Failed to verify analysis runtime: {exc}"
+
+    missing = (result.stdout or "").strip()
+    if result.returncode != 0:
+        detail = (result.stderr or missing or "unknown error").strip()
+        return f"Failed to verify analysis runtime: {detail}"
+    if missing:
+        return (
+            "Analysis runtime is incomplete: missing Python packages "
+            f"[{missing}]. Run setup_analysis_python.bat and include analysis/python in the copied folder."
+        )
+    return None
+
+
 # ═══════════════════════════════════════════════════════════════════
 # Analysis portable-runtime check
 # ═══════════════════════════════════════════════════════════════════
@@ -76,7 +149,6 @@ _analysis_lock = threading.Lock()
 def check_analysis_portable():
     """Check if analysis/python/python.exe exists and all required packages are importable."""
     analysis_py = os.path.join(BASE_DIR, "analysis", "python", "python.exe")
-    required = ["h5py", "numpy", "pandas", "matplotlib", "seaborn", "openpyxl", "geopandas", "pyogrio"]
     result = {
         "ready": False,
         "missing_python": not os.path.isfile(analysis_py),
@@ -91,12 +163,16 @@ def check_analysis_portable():
             "import importlib.util; mods = %r; "
             "missing = [m for m in mods if not importlib.util.find_spec(m)]; "
             "print(','.join(missing))"
-        ) % (required,)
+        ) % (ANALYSIS_REQUIRED_MODULES,)
         proc = subprocess.run(
             [analysis_py, "-c", code],
-            capture_output=True, text=True, timeout=30
+            capture_output=True,
+            text=True,
+            timeout=30,
+            cwd=BASE_DIR,
+            env=_analysis_subprocess_env(),
         )
-        missing = proc.stdout.strip().split(",") if proc.returncode == 0 else required
+        missing = proc.stdout.strip().split(",") if proc.returncode == 0 else ANALYSIS_REQUIRED_MODULES
         missing = [m for m in missing if m]
         result["missing_packages"] = missing
         result["ready"] = (len(missing) == 0)
@@ -109,7 +185,7 @@ def check_analysis_portable():
 
 def get_analysis_python():
     """Return bundled analysis Python interpreter path if available."""
-    return ANALYSIS_PYTHON if os.path.isfile(ANALYSIS_PYTHON) else None
+    return _pick_analysis_python()
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1134,35 +1210,16 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 {"status": "error",
                  "message": f"MC run folder not found: {mc_path}"}, 404)
 
-        # Enforce fully portable analysis runtime (no system Python fallback).
-        portable = check_analysis_portable()
-        if not portable.get("ready"):
-            details = portable.get("details") or "Portable analysis runtime is not ready."
+        runtime_error = _analysis_runtime_error()
+        if runtime_error:
             return self._json_response(
-                {
-                    "status": "error",
-                    "message": (
-                        f"Analysis runtime not ready: {details} "
-                        "Run setup_analysis_python.bat once, then restart the control panel."
-                    ),
-                    "portable": portable,
-                },
-                400,
-            )
-
-        analysis_python = get_analysis_python()
+                {"status": "error", "message": runtime_error}, 500)
+        analysis_python = _pick_analysis_python()
         if not analysis_python:
             return self._json_response(
-                {
-                    "status": "error",
-                    "message": (
-                        "analysis/python/python.exe not found. "
-                        "Run setup_analysis_python.bat and restart the control panel."
-                    ),
-                },
-                400,
+                {"status": "error", "message": "Analysis runtime disappeared during startup. Please retry."},
+                500,
             )
-
         scenario_rel  = (data.get("scenario_path") or "").strip()
         scenario_path = (os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
                          if scenario_rel else BASE_DIR)
@@ -1197,7 +1254,8 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         try:
             with open(log_path, "w", encoding="utf-8") as lf:
                 proc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
-                                        cwd=BASE_DIR)
+                                        cwd=BASE_DIR,
+                                        env=_analysis_subprocess_env())
             with _analysis_lock:
                 _analysis_jobs[job_id] = {
                     "proc":       proc,
