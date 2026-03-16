@@ -2,6 +2,10 @@
 analysis/.ipynb_checkpoints/
 analysis/.venv/
 analysis/python/
+controlpanel/python/
+webui/python/
+__pycache__/
+*.pyc
 scenario/
 °*
 site/
