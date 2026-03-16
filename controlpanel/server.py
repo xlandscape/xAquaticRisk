@@ -76,7 +76,7 @@ _analysis_lock = threading.Lock()
 def check_analysis_portable():
     """Check if analysis/python/python.exe exists and all required packages are importable."""
     analysis_py = os.path.join(BASE_DIR, "analysis", "python", "python.exe")
-    required = ["h5py", "numpy", "pandas", "matplotlib", "seaborn", "openpyxl"]
+    required = ["h5py", "numpy", "pandas", "matplotlib", "seaborn", "openpyxl", "geopandas", "pyogrio"]
     result = {
         "ready": False,
         "missing_python": not os.path.isfile(analysis_py),

@@ -648,15 +648,20 @@ a{color:var(--accent);text-decoration:none}
         <div class="form-group">
           <label for="anlRunRoot">Simulation Run Folder</label>
           <div style="display:flex;gap:.4rem">
-            <input type="text" id="anlRunRoot" placeholder="Loading…"
+            <input type="text" id="anlRunRoot" placeholder="run/"
                    style="flex:1" oninput="onAnlRunRootInput()">
             <button type="button" class="btn btn-outline btn-sm"
                     onclick="refreshAnlRuns()" title="Reload experiment list from this folder">
               &#8635; Refresh
             </button>
+            <button type="button" class="btn btn-outline btn-sm"
+                    onclick="resetAnlRunRoot()" title="Reset to default run/ folder">
+              &#8962; Default
+            </button>
           </div>
-          <div class="help-text">Folder that contains the experiment sub-folders (e.g. <code>run/</code>).
-            Change this to load experiments stored elsewhere on disk.</div>
+          <div class="help-text">Defaults to the <code>run/</code> sub-folder of xAquaticRisk.
+            You can also type an absolute path (e.g.\ <code>D:\xAquatic_Experiments_Store\run</code>)
+            to load experiments stored elsewhere on disk.</div>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -1613,13 +1618,16 @@ let anlPollTimer     = null;
 // ═══════════════════════════════════════════════════════════════════
 // Analysis – load runs + scenarios
 // ═══════════════════════════════════════════════════════════════════
+let _anlDefaultRunDir = '';
+
 async function loadAnlRuns() {
-  // On first call populate the run-root field from the server default
+  // Pre-fill the run-root field with the server default (run/ folder) on first load
   const rootInput = document.getElementById('anlRunRoot');
   if (!rootInput.value) {
     try {
       const d = await api('/api/analysis/default-run-dir');
-      rootInput.value = d.run_dir || '';
+      _anlDefaultRunDir = d.run_dir || '';
+      rootInput.value = _anlDefaultRunDir;
     } catch(e) { /* ignore */ }
   }
   await refreshAnlRuns();
@@ -1649,6 +1657,12 @@ function onAnlRunRootInput() {
   // Debounce: refresh 600 ms after user stops typing
   clearTimeout(onAnlRunRootInput._t);
   onAnlRunRootInput._t = setTimeout(refreshAnlRuns, 600);
+}
+
+function resetAnlRunRoot() {
+  const rootInput = document.getElementById('anlRunRoot');
+  rootInput.value = _anlDefaultRunDir;
+  refreshAnlRuns();
 }
 
 async function loadAnlScenarios() {

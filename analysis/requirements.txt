@@ -5,9 +5,11 @@
 # or manually:
 #   analysis\python\python.exe -m pip install -r analysis\requirements.txt
 
+geopandas
 h5py
 matplotlib
 numpy
 openpyxl
 pandas
+pyogrio
 seaborn

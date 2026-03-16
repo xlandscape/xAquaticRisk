@@ -262,13 +262,17 @@ def main():
             PECsed_x_t = pecsed_perc_by_reach.apply(
                 lambda r: row_percentiles(r, pec_spatial_percentiles), axis=1)
 
+            num_fmt_pec = "0.0000"
             with pd.ExcelWriter(excel_filename, engine="openpyxl", mode="a",
                                 if_sheet_exists="replace") as writer:
                 PECsw_x_t.to_excel(writer,  sheet_name="PECsw_percentiles_x_t")
                 PECsed_x_t.to_excel(writer, sheet_name="PECsed_percentiles_x_t")
                 for sn in ("PECsw_percentiles_x_t", "PECsed_percentiles_x_t"):
-                    writer.sheets[sn].cell(row=1, column=1).value = (
-                        "perc_x: right / perc_t: down")
+                    ws = writer.sheets[sn]
+                    ws.cell(row=1, column=1).value = "perc_x: right / perc_t: down"
+                    for row in ws.iter_rows(min_row=2, min_col=2, max_col=30, max_row=30):
+                        for cell in row:
+                            cell.number_format = num_fmt_pec
             log("ok", "PEC percentile tables exported to Excel")
 
             # write PECsw table as JSON for web display
@@ -479,6 +483,7 @@ def main():
                 "lp50_it_sp2": "GUTSperc_LP50ItSp2",
                 "lp50_it_sp3": "GUTSperc_LP50ItSp3",
             }
+            num_fmt_guts = "0.000"
             with pd.ExcelWriter(excel_filename, engine="openpyxl", mode="a",
                                 if_sheet_exists="replace") as writer:
                 for key, sheet in GUTS_SHEET_MAP.items():
@@ -488,8 +493,11 @@ def main():
                     perc_x_t = perc_by_reach.apply(
                         lambda r: row_percentiles(r, guts_spatial_percentiles), axis=1)
                     perc_x_t.to_excel(writer, sheet_name=sheet)
-                    writer.sheets[sheet].cell(row=1, column=1).value = (
-                        "perc_x: right / perc_t: down")
+                    ws = writer.sheets[sheet]
+                    ws.cell(row=1, column=1).value = "perc_x: right / perc_t: down"
+                    for row in ws.iter_rows(min_row=2, min_col=2, max_col=30, max_row=30):
+                        for cell in row:
+                            cell.number_format = num_fmt_guts
             log("ok", "GUTS percentile tables exported to Excel")
 
             # ── LP50 histogram & Strahler heatmap ─────────────────────────────
@@ -544,7 +552,7 @@ def main():
                         axes_flat = axes.flatten()
                         for i, feat in enumerate(features):
                             if i < len(axes_flat):
-                                sns.heatmap(combined[feat], annot=True, fmt="g",
+                                sns.heatmap(combined[feat], annot=True, fmt="d",
                                             cmap="YlGnBu", ax=axes_flat[i], cbar=False)
                                 axes_flat[i].set_title(f"Year {feat}")
                                 axes_flat[i].set_xlabel("LP50 Bin")
