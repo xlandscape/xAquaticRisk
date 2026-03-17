@@ -672,7 +672,7 @@ a{color:var(--accent);text-decoration:none}
           </div>
           <div class="form-group">
             <label for="anlMcRun">Monte Carlo Run</label>
-            <select id="anlMcRun">
+            <select id="anlMcRun" onchange="onAnlMcRunChange()">
               <option value="">Select experiment first…</option>
             </select>
           </div>
@@ -1611,7 +1611,7 @@ const ANL_SCENARIO_DEFAULTS = {
 // ═══════════════════════════════════════════════════════════════════
 // Analysis – state
 // ═══════════════════════════════════════════════════════════════════
-let anlRunsData      = [];   // [{experiment, mcs:[{id,has_store}]}]
+let anlRunsData      = [];   // [{experiment, mcs:[{id,has_store}], landscape_scenario}]
 let anlCurrentJobId  = null;
 let anlPollTimer     = null;
 
@@ -1692,6 +1692,48 @@ function onAnlExperimentChange() {
     o.disabled = !mc.has_store;
     mcSel.appendChild(o);
   });
+}
+
+function onAnlMcRunChange() {
+  const exp = document.getElementById('anlExperiment').value;
+  if (!exp) return;
+  const entry = anlRunsData.find(r => r.experiment === exp);
+  applyAnlScenarioFromExperiment(entry, { requireMc: true });
+}
+
+function applyAnlScenarioFromExperiment(entry, { requireMc = false } = {}) {
+  if (!entry) return;
+  if (requireMc && !document.getElementById('anlMcRun').value) return;
+
+  const scenarioPath = (entry.landscape_scenario || '').trim();
+  if (!scenarioPath) return;
+
+  const sel = document.getElementById('anlScenario');
+  const name = document.getElementById('anlScenarioName');
+  const options = Array.from(sel.options || []);
+  let opt = options.find(o => o.value === scenarioPath);
+
+  // Keep scenario path selectable even when it does not exist in /scenario anymore.
+  if (!opt) {
+    const fallbackText = scenarioPath.split('/').pop() || scenarioPath;
+    opt = document.createElement('option');
+    opt.value = scenarioPath;
+    opt.textContent = `${fallbackText} (from experiment)`;
+    sel.appendChild(opt);
+  }
+
+  sel.value = scenarioPath;
+  onAnlScenarioSelect();
+
+  const folderName = opt.textContent.replace(' (from experiment)', '').trim();
+  const matched = Object.keys(ANL_SCENARIO_DEFAULTS).find(
+    k => folderName.toLowerCase().includes(k.toLowerCase())
+  );
+  const defaultName = matched || folderName;
+  if (defaultName) {
+    name.value = defaultName;
+    applyAnlScenarioDefaults(defaultName);
+  }
 }
 
 function onAnlScenarioSelect() {

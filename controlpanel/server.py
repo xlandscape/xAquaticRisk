@@ -609,7 +609,7 @@ def _format_elapsed_from_seconds(total_seconds: float) -> str:
 # ═══════════════════════════════════════════════════════════════════
 
 def list_runs_with_mcs(run_root):
-    """Return [{ experiment, mcs: [{id, has_store}] }], sorted newest first."""
+    """Return analysis runs with MC and scenario metadata, sorted newest first."""
     result = []
     if not os.path.isdir(run_root):
         return result
@@ -617,6 +617,12 @@ def list_runs_with_mcs(run_root):
         run_path = os.path.join(run_root, entry)
         if not os.path.isdir(run_path):
             continue
+        params = _parse_user_xml(run_path)
+        landscape_scenario = (
+            params.get("Scenario/LandscapeScenario")
+            or params.get("Scenario/Project")
+            or ""
+        ).strip()
         mcs_path = os.path.join(run_path, "mcs")
         mcs = []
         if os.path.isdir(mcs_path):
@@ -627,7 +633,11 @@ def list_runs_with_mcs(run_root):
                         os.path.join(mc_path, "store", "arr.dat"))
                     mcs.append({"id": mc, "has_store": has_store})
         if mcs:
-            result.append({"experiment": entry, "mcs": mcs})
+            result.append({
+                "experiment": entry,
+                "mcs": mcs,
+                "landscape_scenario": landscape_scenario,
+            })
     return result
 
 
