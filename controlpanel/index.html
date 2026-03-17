@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>xAquaticRisk — Control Panel</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <style>
 /* ── Reset & variables ──────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -210,12 +211,34 @@ a{color:var(--accent);text-decoration:none}
 .empty h2{font-size:1.08rem;margin-bottom:.4rem}
 .empty p{font-size:.83rem}
 
+/* Explorer */
+.expl-wrap{max-width:1400px;margin:0 auto;padding:1.1rem 1.2rem 2rem}
+.expl-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:1rem}
+.expl-map-card{min-height:520px}
+.expl-map{width:100%;height:500px;background:var(--bg);border:1px solid var(--border);border-radius:6px;position:relative;overflow:hidden}
+.expl-chart{width:100%;height:500px;background:var(--bg);border:1px solid var(--border);border-radius:6px}
+.expl-toolbar{display:grid;grid-template-columns:2fr 1fr 1fr auto auto;gap:.6rem;align-items:end}
+.expl-selection{font-size:.78rem;color:var(--text2);margin-top:.55rem}
+.expl-selection strong{color:var(--text)}
+.expl-chip-list{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.45rem;max-height:90px;overflow:auto}
+.expl-chip{font-size:.72rem;background:var(--bg3);border:1px solid var(--border);border-radius:999px;padding:.15rem .55rem;color:var(--text)}
+.expl-note{font-size:.72rem;color:var(--text2);margin-top:.35rem}
+.expl-map-hint{position:absolute;top:.5rem;left:.5rem;z-index:5;background:rgba(15,17,23,.92);border:1px solid var(--border);padding:.3rem .45rem;border-radius:4px;font-size:.72rem;color:var(--text2)}
+.expl-box{position:absolute;border:1px dashed var(--accent);background:rgba(88,166,255,.16);pointer-events:none;z-index:7}
+
+@media (max-width: 1150px){
+  .expl-grid{grid-template-columns:1fr}
+  .expl-toolbar{grid-template-columns:1fr 1fr}
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--text2)}
 </style>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
 <body>
 
@@ -236,6 +259,10 @@ a{color:var(--accent);text-decoration:none}
     <button class="tab-btn" onclick="switchTab('analysis')" id="tabAnalysis">
       <svg viewBox="0 0 16 16"><path d="M0 0h1v15h15v1H0V0zm10 3.5a.5.5 0 01.5-.5h4a.5.5 0 01.5.5v4a.5.5 0 01-1 0V4.9l-3.613 4.417a.5.5 0 01-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 01-.808-.588l4-5.5a.5.5 0 01.758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 01-.5-.5z"/></svg>
       Analysis
+    </button>
+    <button class="tab-btn" onclick="switchTab('explorer')" id="tabExplorer">
+      <svg viewBox="0 0 16 16"><path d="M15.817.113A.5.5 0 0 0 15.31 0h-.083a.5.5 0 0 0-.238.06L10.5 2.31 6 0 1.276 2.362A.5.5 0 0 0 1 2.81v12.69a.5.5 0 0 0 .724.447L6 13.69l4.5 2.25 4.724-2.362a.5.5 0 0 0 .276-.447V.5a.5.5 0 0 0-.183-.387zM6.5 1.31l3 1.5v11.88l-3-1.5V1.31zm-1 11.88-3 1.5V3.31l3-1.5v11.38zm8 0-3 1.5V2.81l3-1.5v11.88z"/></svg>
+      Explorer
     </button>
   </div>
 
@@ -830,6 +857,71 @@ a{color:var(--accent);text-decoration:none}
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
+     EXPLORER PAGE
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="pageExplorer">
+  <div class="expl-wrap">
+    <div class="card">
+      <div class="card-header" onclick="toggleSection(this)">
+        <span>Stream Map + PECsw Time Series</span><span class="toggle">&#9660;</span>
+      </div>
+      <div class="card-body">
+        <div class="expl-toolbar">
+          <div class="form-group" style="margin-bottom:0">
+            <label for="explRunSelect">Run / MC Selection</label>
+            <select id="explRunSelect"></select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label for="explResolution">Resolution</label>
+            <select id="explResolution">
+              <option value="auto" selected>Auto</option>
+              <option value="daily">Daily</option>
+              <option value="hourly">Hourly</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label for="explTimeFrom">Time Start</label>
+            <input type="text" id="explTimeFrom" placeholder="YYYY-MM-DD">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label for="explTimeTo">Time End</label>
+            <input type="text" id="explTimeTo" placeholder="YYYY-MM-DD">
+          </div>
+          <div style="display:flex;gap:.45rem;align-items:end;padding-bottom:.05rem">
+            <button class="btn btn-outline btn-sm" onclick="reloadExplorerData()">Reload</button>
+            <button class="btn btn-outline btn-sm" onclick="clearExplorerSelection()">Clear Selection</button>
+          </div>
+        </div>
+        <div class="expl-selection">
+          Selected reaches: <strong id="explSelectedCount">0</strong>
+          <span id="explMetaText" style="margin-left:.8rem"></span>
+          <div class="expl-chip-list" id="explSelectedChips"></div>
+          <div class="expl-note">Click a segment to toggle selection. Hold Ctrl or Shift for additive selection. Hold Alt and drag for box-select.</div>
+        </div>
+        <div class="status-message" id="explStatus" style="margin: .75rem 0 0"></div>
+      </div>
+    </div>
+
+    <div class="expl-grid">
+      <div class="panel expl-map-card">
+        <div class="panel-head">Stream Network</div>
+        <div class="panel-body" style="padding:.55rem">
+          <div id="explMap" class="expl-map">
+            <div class="expl-map-hint">Alt + drag to select multiple segments</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">PECsw Time Series [ng/L]</div>
+        <div class="panel-body" style="padding:.55rem">
+          <div id="explChart" class="expl-chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
      JAVASCRIPT
      ══════════════════════════════════════════════════════════════════ -->
 <script>
@@ -882,6 +974,17 @@ let lastLogHtml = '';          // dedup: skip log DOM writes when nothing change
 let warningDowngradeRules = [];
 const REFRESH_MS = 3000;
 
+// Explorer state
+let explRuns = [];
+let explMap = null;
+let explMapReady = false;
+let explSelectedReachIds = new Set();
+let explCurrentSelectionKey = null;
+let explCurrentRun = null;
+let explIsBoxSelecting = false;
+let explBoxDiv = null;
+let explBoxStart = null;
+
 // ═══════════════════════════════════════════════════════════════════
 // Tab switching
 // ═══════════════════════════════════════════════════════════════════
@@ -900,6 +1003,10 @@ function switchTab(name) {
   // Refresh analysis run list whenever the Analysis tab is opened
   if (name === 'analysis') {
     loadAnlRuns();
+  }
+  if (name === 'explorer') {
+    ensureExplorerMap();
+    loadExplorerRuns();
   }
 }
 
@@ -1146,7 +1253,24 @@ async function saveAsXrun() {
 // ═══════════════════════════════════════════════════════════════════
 // Monitor – API helper
 // ═══════════════════════════════════════════════════════════════════
-async function api(path, opts) { return (await fetch(path, opts)).json(); }
+async function api(path, opts) {
+  const res = await fetch(path, opts);
+  const body = await res.text();
+  try {
+    const data = JSON.parse(body);
+    if (!res.ok) {
+      const msg = data?.message || `HTTP ${res.status}`;
+      throw new Error(`${msg} (${res.status})`);
+    }
+    return data;
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      const head = body.slice(0, 80).replace(/\s+/g, ' ');
+      throw new Error(`Expected JSON from ${path}, got: ${head}`);
+    }
+    throw e;
+  }
+}
 
 async function loadWarningDowngradeRules() {
   try {
@@ -1546,6 +1670,427 @@ function stopMonitorRefresh() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// Explorer – helpers and state sync
+// ═══════════════════════════════════════════════════════════════════
+function showExplStatus(msg, type) {
+  const el = document.getElementById('explStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'status-message show ' + type;
+  if (type === 'success') setTimeout(() => { el.className = 'status-message'; }, 3500);
+}
+
+function updateExplorerSelectionUi() {
+  const ids = Array.from(explSelectedReachIds);
+  const countEl = document.getElementById('explSelectedCount');
+  const chips = document.getElementById('explSelectedChips');
+  if (countEl) countEl.textContent = String(ids.length);
+  if (chips) {
+    chips.innerHTML = ids.slice(0, 80).map(id => `<span class="expl-chip">${escHtml(id)}</span>`).join('');
+  }
+}
+
+function getExplorerRunRoot() {
+  const runRoot = (document.getElementById('anlRunRoot')?.value || '').trim();
+  return runRoot;
+}
+
+function currentExplorerSelection() {
+  const sel = document.getElementById('explRunSelect');
+  const val = sel?.value || '';
+  if (!val || !val.includes('||')) return null;
+  const [experiment, mc_run] = val.split('||');
+  return { experiment, mc_run };
+}
+
+function getExplorerRunEntry() {
+  const chosen = currentExplorerSelection();
+  if (!chosen) return null;
+  return explRuns.find(r =>
+    r.experiment === chosen.experiment && (r.mcs || []).some(mc => mc.id === chosen.mc_run)
+  ) || null;
+}
+
+function applyExplorerSimulationPeriod(force = false) {
+  const selectedOption = document.getElementById('explRunSelect')?.selectedOptions?.[0] || null;
+  const startValue = selectedOption?.dataset?.simulationStart || '';
+  const endValue = selectedOption?.dataset?.simulationEnd || '';
+  const entry = (!startValue && !endValue) ? getExplorerRunEntry() : null;
+  const fromEl = document.getElementById('explTimeFrom');
+  const toEl = document.getElementById('explTimeTo');
+  const simulationStart = startValue || entry?.simulation_start || '';
+  const simulationEnd = endValue || entry?.simulation_end || '';
+  if (fromEl && simulationStart && (force || !fromEl.value.trim())) {
+    fromEl.value = simulationStart;
+  }
+  if (toEl && simulationEnd && (force || !toEl.value.trim())) {
+    toEl.value = simulationEnd;
+  }
+}
+
+function ensureExplorerMap() {
+  if (explMap || typeof maplibregl === 'undefined') {
+    if (!explMap && typeof maplibregl === 'undefined') {
+      showExplStatus('Map library failed to load (MapLibre).', 'error');
+    }
+    return;
+  }
+  const mapEl = document.getElementById('explMap');
+  if (!mapEl) return;
+
+  explMap = new maplibregl.Map({
+    container: 'explMap',
+    style: {
+      version: 8,
+      sources: {},
+      layers: [{
+        id: 'background',
+        type: 'background',
+        paint: { 'background-color': '#0f1117' }
+      }]
+    },
+    center: [8, 51],
+    zoom: 5,
+    attributionControl: false,
+  });
+
+  explMap.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+
+  explMap.on('load', () => {
+    explMapReady = true;
+    if (!explMap.getSource('expl-reaches')) {
+      explMap.addSource('expl-reaches', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      explMap.addSource('expl-selected', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      explMap.addLayer({
+        id: 'expl-reach-line',
+        type: 'line',
+        source: 'expl-reaches',
+        paint: { 'line-color': '#6a7484', 'line-width': 1.6, 'line-opacity': 0.9 }
+      });
+      explMap.addLayer({
+        id: 'expl-reach-selected',
+        type: 'line',
+        source: 'expl-selected',
+        paint: { 'line-color': '#58a6ff', 'line-width': 3.2, 'line-opacity': 1.0 }
+      });
+
+      explMap.on('click', 'expl-reach-line', onExplorerMapClick);
+      setupExplorerBoxSelection();
+    }
+  });
+}
+
+async function loadExplorerRuns() {
+  const sel = document.getElementById('explRunSelect');
+  if (!sel) return;
+  const runRoot = getExplorerRunRoot();
+  const url = runRoot
+    ? `/api/map-explorer/runs?run_root=${encodeURIComponent(runRoot)}`
+    : '/api/map-explorer/runs';
+  const renderRunOptions = (runs) => {
+    explRuns = runs;
+    sel.innerHTML = '<option value="">Select run / MC...</option>';
+    for (const item of runs) {
+      for (const mc of item.mcs || []) {
+        const option = document.createElement('option');
+        option.value = `${item.experiment}||${mc.id}`;
+        option.dataset.simulationStart = item.simulation_start || '';
+        option.dataset.simulationEnd = item.simulation_end || '';
+        const marker = item.geometry_available ? '' : ' [no geometry]';
+        option.textContent = `${item.experiment} / ${mc.id} (${item.scenario_name})${marker}`;
+        sel.appendChild(option);
+      }
+    }
+  };
+
+  try {
+    const response = await api(url);
+    const runs = response.runs || [];
+    renderRunOptions(runs);
+    if (!runs.length) {
+      sel.innerHTML = '<option value="">No compatible runs found</option>';
+      showExplStatus('No compatible runs found. Run analysis-capable experiments first.', 'error');
+      return;
+    }
+    if (!sel.value && sel.options.length > 1) {
+      sel.selectedIndex = 1;
+    }
+    applyExplorerSimulationPeriod(true);
+    await reloadExplorerData();
+    return;
+  } catch (primaryError) {
+    // Fallback for stale backend instances that do not have /api/map-explorer/runs yet.
+    try {
+      const fallbackUrl = runRoot
+        ? `/api/analysis/runs?run_root=${encodeURIComponent(runRoot)}`
+        : '/api/analysis/runs';
+      const analysisRuns = await api(fallbackUrl);
+      const mapped = (analysisRuns || []).map(r => ({
+        experiment: r.experiment,
+        scenario_path: r.landscape_scenario || '',
+        scenario_name: (r.landscape_scenario || '').split('/').pop() || 'unknown',
+        geometry_available: true,
+        mcs: (r.mcs || []).filter(m => m.has_store),
+      })).filter(r => (r.mcs || []).length);
+
+      renderRunOptions(mapped);
+      if (!mapped.length) {
+        sel.innerHTML = '<option value="">No compatible runs found</option>';
+        showExplStatus('No compatible runs found. ' + primaryError.message, 'error');
+        return;
+      }
+      if (!sel.value && sel.options.length > 1) {
+        sel.selectedIndex = 1;
+      }
+      applyExplorerSimulationPeriod(true);
+      showExplStatus('Explorer loaded via compatibility fallback. Please restart control panel to use new map API.', 'success');
+      await reloadExplorerData();
+    } catch (fallbackError) {
+      showExplStatus('Failed to load explorer runs: ' + primaryError.message + ' | fallback failed: ' + fallbackError.message, 'error');
+    }
+  }
+}
+
+function setExplorerSelectionSource() {
+  if (!explMapReady || !explMap) return;
+  const source = explMap.getSource('expl-reaches');
+  const selectedSource = explMap.getSource('expl-selected');
+  if (!source || !selectedSource) return;
+  const data = source._data || { type: 'FeatureCollection', features: [] };
+  const selectedFeatures = (data.features || []).filter(f => {
+    const rid = f?.properties?.reach_id;
+    return rid && explSelectedReachIds.has(String(rid));
+  });
+  selectedSource.setData({ type: 'FeatureCollection', features: selectedFeatures });
+}
+
+async function reloadExplorerData() {
+  ensureExplorerMap();
+  const chosen = currentExplorerSelection();
+  if (!chosen) return;
+  applyExplorerSimulationPeriod(true);
+  const runRoot = getExplorerRunRoot();
+  try {
+    const res = await api('/api/map-explorer/geometry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ run_root: runRoot, ...chosen })
+    });
+    if (res.status !== 'success') {
+      showExplStatus(res.message || 'Failed to load map geometry.', 'error');
+      return;
+    }
+    explCurrentRun = chosen;
+    explSelectedReachIds.clear();
+    updateExplorerSelectionUi();
+
+    if (explMapReady && explMap?.getSource('expl-reaches')) {
+      explMap.getSource('expl-reaches').setData(res.geojson);
+      setExplorerSelectionSource();
+      const b = res.meta?.bounds || [];
+      if (b.length === 4 && Number.isFinite(b[0]) && Number.isFinite(b[1])) {
+        explMap.fitBounds([[b[0], b[1]], [b[2], b[3]]], { padding: 30, duration: 500 });
+      }
+    }
+    const meta = document.getElementById('explMetaText');
+    if (meta) {
+      meta.textContent = `Features: ${res.meta?.feature_count || 0} | ID field: ${res.meta?.reach_id_field || 'unknown'}`;
+    }
+    renderExplorerChart([], [], { resolution_used: 'none' });
+    showExplStatus('Stream map loaded.', 'success');
+  } catch (e) {
+    const msg = String(e && e.message ? e.message : e);
+    if (msg.includes('HTTP 404') && msg.includes('/api/map-explorer/geometry')) {
+      showExplStatus('Failed to load map geometry: backend route not found. Restart controlpanel so the updated server is running.', 'error');
+    } else {
+      showExplStatus('Failed to load map geometry: ' + msg, 'error');
+    }
+  }
+}
+
+function onExplorerMapClick(event) {
+  const feature = event?.features?.[0];
+  const rid = feature?.properties?.reach_id;
+  if (!rid) return;
+  const id = String(rid);
+  const additive = !!(event.originalEvent?.ctrlKey || event.originalEvent?.shiftKey);
+  if (!additive) {
+    explSelectedReachIds.clear();
+  }
+  if (explSelectedReachIds.has(id)) explSelectedReachIds.delete(id);
+  else explSelectedReachIds.add(id);
+
+  setExplorerSelectionSource();
+  updateExplorerSelectionUi();
+  loadExplorerTimeseries();
+}
+
+function clearExplorerSelection() {
+  explSelectedReachIds.clear();
+  setExplorerSelectionSource();
+  updateExplorerSelectionUi();
+  renderExplorerChart([], [], { resolution_used: 'none' });
+}
+
+async function loadExplorerTimeseries({ timeFrom = null, timeTo = null, resolution = null } = {}) {
+  if (!explCurrentRun) return;
+  const reachIds = Array.from(explSelectedReachIds);
+  if (!reachIds.length) {
+    renderExplorerChart([], [], { resolution_used: 'none' });
+    return;
+  }
+
+  const chosenResolution = resolution || document.getElementById('explResolution')?.value || 'auto';
+  const fromInput = timeFrom ?? (document.getElementById('explTimeFrom')?.value.trim() || null);
+  const toInput = timeTo ?? (document.getElementById('explTimeTo')?.value.trim() || null);
+  const body = {
+    ...explCurrentRun,
+    run_root: getExplorerRunRoot(),
+    reach_ids: reachIds,
+    time_from: fromInput,
+    time_to: toInput,
+    resolution: chosenResolution,
+  };
+  const reqKey = JSON.stringify(body);
+  explCurrentSelectionKey = reqKey;
+
+  try {
+    const res = await api('/api/map-explorer/timeseries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (explCurrentSelectionKey !== reqKey) return;
+    if (res.status !== 'success') {
+      showExplStatus(res.message || 'Failed to load timeseries data.', 'error');
+      return;
+    }
+    renderExplorerChart(res.times || [], res.series || [], res.meta || {});
+    const missing = res.meta?.missing_reaches || [];
+    const requested = res.meta?.requested_resolution || 'auto';
+    const used = res.meta?.resolution_used || 'none';
+    if (requested !== used) {
+      showExplStatus(`Resolution downgraded from ${requested} to ${used} due to data size.`, 'warning');
+    } else if (missing.length) {
+      showExplStatus(`Loaded with missing reaches: ${missing.slice(0, 8).join(', ')}`, 'error');
+    }
+  } catch (e) {
+    if (explCurrentSelectionKey !== reqKey) return;
+    showExplStatus('Failed to load timeseries: ' + e.message, 'error');
+  }
+}
+
+function renderExplorerChart(times, series, meta) {
+  const chart = document.getElementById('explChart');
+  if (!chart || typeof Plotly === 'undefined') {
+    showExplStatus('Chart library failed to load (Plotly).', 'error');
+    return;
+  }
+  const traces = (series || []).map((s, idx) => ({
+    x: times,
+    y: s.values,
+    type: 'scattergl',
+    mode: 'lines',
+    name: `Reach ${s.reach_id}`,
+    line: { width: 1.6 },
+    hovertemplate: 'Reach ' + s.reach_id + '<br>%{x}<br>%{y:.3f} ng/L<extra></extra>'
+  }));
+
+  const layout = {
+    paper_bgcolor: '#0f1117',
+    plot_bgcolor: '#0f1117',
+    font: { color: '#c9d1d9', size: 12, family: 'Segoe UI, Inter, system-ui, sans-serif' },
+    margin: { l: 52, r: 24, t: 30, b: 48 },
+    xaxis: { title: 'Time', gridcolor: '#2c313d', zerolinecolor: '#2c313d' },
+    yaxis: { title: 'PECsw [ng/L]', gridcolor: '#2c313d', zerolinecolor: '#2c313d' },
+    legend: { orientation: 'h', y: 1.1, x: 0 },
+    dragmode: 'zoom',
+    title: traces.length
+      ? `Selected reaches: ${traces.length} | Resolution: ${meta.resolution_used || 'n/a'}`
+      : 'Select one or more stream reaches on the map',
+  };
+
+  Plotly.react(chart, traces, layout, {
+    displaylogo: false,
+    responsive: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+    scrollZoom: true,
+  });
+
+  chart.removeAllListeners?.('plotly_relayout');
+  chart.on?.('plotly_relayout', (ev) => {
+    const usingAuto = (document.getElementById('explResolution')?.value || 'auto') === 'auto';
+    if (!usingAuto || !meta || meta.resolution_used !== 'daily') return;
+    const from = ev['xaxis.range[0]'];
+    const to = ev['xaxis.range[1]'];
+    if (!from || !to) return;
+    const fromDt = new Date(from);
+    const toDt = new Date(to);
+    const days = (toDt - fromDt) / (1000 * 60 * 60 * 24);
+    if (Number.isFinite(days) && days <= 14) {
+      loadExplorerTimeseries({ timeFrom: from, timeTo: to, resolution: 'hourly' });
+    }
+  });
+}
+
+function setupExplorerBoxSelection() {
+  const canvas = explMap?.getCanvasContainer?.();
+  if (!canvas) return;
+  canvas.addEventListener('mousedown', (e) => {
+    if (!e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    explIsBoxSelecting = true;
+    explBoxStart = [e.clientX, e.clientY];
+    explMap.dragPan.disable();
+    explBoxDiv = document.createElement('div');
+    explBoxDiv.className = 'expl-box';
+    canvas.appendChild(explBoxDiv);
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (!explIsBoxSelecting || !explBoxDiv || !explBoxStart) return;
+    const minX = Math.min(explBoxStart[0], e.clientX);
+    const minY = Math.min(explBoxStart[1], e.clientY);
+    const maxX = Math.max(explBoxStart[0], e.clientX);
+    const maxY = Math.max(explBoxStart[1], e.clientY);
+    const rect = canvas.getBoundingClientRect();
+    explBoxDiv.style.left = (minX - rect.left) + 'px';
+    explBoxDiv.style.top = (minY - rect.top) + 'px';
+    explBoxDiv.style.width = (maxX - minX) + 'px';
+    explBoxDiv.style.height = (maxY - minY) + 'px';
+  });
+
+  const finish = (e) => {
+    if (!explIsBoxSelecting) return;
+    const additive = !!(e.ctrlKey || e.shiftKey);
+    const rect = canvas.getBoundingClientRect();
+    const start = [explBoxStart[0] - rect.left, explBoxStart[1] - rect.top];
+    const end = [e.clientX - rect.left, e.clientY - rect.top];
+    const min = [Math.min(start[0], end[0]), Math.min(start[1], end[1])];
+    const max = [Math.max(start[0], end[0]), Math.max(start[1], end[1])];
+    if ((max[0] - min[0]) > 6 && (max[1] - min[1]) > 6) {
+      const feats = explMap.queryRenderedFeatures([min, max], { layers: ['expl-reach-line'] });
+      if (!additive) explSelectedReachIds.clear();
+      for (const f of feats) {
+        const rid = f?.properties?.reach_id;
+        if (rid) explSelectedReachIds.add(String(rid));
+      }
+      setExplorerSelectionSource();
+      updateExplorerSelectionUi();
+      loadExplorerTimeseries();
+    }
+    if (explBoxDiv?.parentNode) explBoxDiv.parentNode.removeChild(explBoxDiv);
+    explBoxDiv = null;
+    explBoxStart = null;
+    explIsBoxSelecting = false;
+    explMap.dragPan.enable();
+  };
+
+  canvas.addEventListener('mouseup', finish);
+  canvas.addEventListener('mouseleave', finish);
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // Init
 // ═══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1557,6 +2102,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadAnlRuns();
   loadAnlScenarios();
   checkAnalysisPortableStatus();
+
+  const explRun = document.getElementById('explRunSelect');
+  const explRes = document.getElementById('explResolution');
+  const explFrom = document.getElementById('explTimeFrom');
+  const explTo = document.getElementById('explTimeTo');
+  if (explRun) explRun.addEventListener('change', () => {
+    applyExplorerSimulationPeriod(true);
+    reloadExplorerData();
+  });
+  if (explRes) explRes.addEventListener('change', () => loadExplorerTimeseries());
+  if (explFrom) explFrom.addEventListener('change', () => loadExplorerTimeseries());
+  if (explTo) explTo.addEventListener('change', () => loadExplorerTimeseries());
+  renderExplorerChart([], [], { resolution_used: 'none' });
 });
 
 // ═══════════════════════════════════════════════════════════════════

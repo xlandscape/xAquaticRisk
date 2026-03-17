@@ -32,6 +32,7 @@ Usage::
 import argparse
 import datetime
 import glob
+import hashlib
 import json
 import os
 import re
@@ -46,6 +47,21 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse, parse_qs, unquote_plus
+
+try:
+    import h5py  # type: ignore
+except Exception:  # pragma: no cover - optional runtime dependency
+    h5py = None
+
+try:
+    import geopandas as gpd  # type: ignore
+except Exception:  # pragma: no cover - optional runtime dependency
+    gpd = None
+
+try:
+    import pandas as pd  # type: ignore
+except Exception:  # pragma: no cover - optional runtime dependency
+    pd = None
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CPANEL_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -78,6 +94,53 @@ _proc_lock = threading.Lock()
 # Track analysis jobs: {job_id: {"proc", "output_dir", "started_at", "log_path"}}
 _analysis_jobs = {}
 _analysis_lock = threading.Lock()
+
+_map_geometry_cache = OrderedDict()
+_map_timeseries_cache = OrderedDict()
+_map_cache_lock = threading.Lock()
+_MAP_GEOMETRY_CACHE_LIMIT = 8
+_MAP_TIMESERIES_CACHE_LIMIT = 32
+_MAP_HOURLY_MAX_POINTS = 500000
+
+
+def _cache_get(cache: OrderedDict, key):
+    with _map_cache_lock:
+        value = cache.get(key)
+        if value is not None:
+            cache.move_to_end(key)
+        return value
+
+
+def _cache_set(cache: OrderedDict, key, value, limit: int):
+    with _map_cache_lock:
+        cache[key] = value
+        cache.move_to_end(key)
+        while len(cache) > limit:
+            cache.popitem(last=False)
+
+
+def _embedded_json_call(script: str, payload: dict):
+    analysis_python = _pick_analysis_python()
+    if not analysis_python:
+        raise RuntimeError(
+            "Map explorer dependencies are unavailable in control panel runtime and embedded analysis runtime is missing"
+        )
+    cmd = [analysis_python, "-c", script, json.dumps(payload)]
+    proc = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        cwd=BASE_DIR,
+        env=_analysis_subprocess_env(),
+        check=False,
+    )
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "unknown error").strip()
+        raise RuntimeError(f"Embedded runtime call failed: {detail}")
+    try:
+        return json.loads(proc.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Embedded runtime returned invalid JSON: {exc}") from exc
 
 
 def _analysis_subprocess_env() -> dict:
@@ -604,6 +667,570 @@ def _format_elapsed_from_seconds(total_seconds: float) -> str:
     return f"{h}:{m:02d}:{s:02d}"
 
 
+def _normalize_reach_id(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if re.fullmatch(r"[-+]?\d+(?:\.0+)?", text):
+        return str(int(float(text)))
+    return text
+
+
+def _coerce_list_of_reach_ids(values):
+    result = []
+    seen = set()
+    for raw in values or []:
+        rid = _normalize_reach_id(raw)
+        if rid is None or rid in seen:
+            continue
+        seen.add(rid)
+        result.append(rid)
+    return result
+
+
+def _decode_text(raw):
+    if isinstance(raw, bytes):
+        return raw.decode("utf-8", errors="replace")
+    return str(raw)
+
+
+def _resolve_mc_store_paths(run_root, experiment, mc_run):
+    for val, name in ((experiment, "experiment"), (mc_run, "mc_run")):
+        if any(c in val for c in (os.sep, "/", "\\", "..")):
+            raise ValueError(f"Invalid {name}")
+
+    run_root_abs = os.path.abspath(run_root)
+    run_path = os.path.abspath(os.path.join(run_root_abs, experiment))
+    if not run_path.startswith(run_root_abs + os.sep):
+        raise ValueError("Invalid experiment path")
+    if not os.path.isdir(run_path):
+        raise FileNotFoundError(f"Run folder not found: {run_path}")
+
+    mc_path = os.path.abspath(os.path.join(run_path, "mcs", mc_run))
+    if not mc_path.startswith(run_path + os.sep):
+        raise ValueError("Invalid MC path")
+    if not os.path.isdir(mc_path):
+        raise FileNotFoundError(f"MC run not found: {mc_path}")
+
+    arr_path = os.path.join(mc_path, "store", "arr.dat")
+    if not os.path.isfile(arr_path):
+        raise FileNotFoundError(f"Store file not found: {arr_path}")
+
+    params = _parse_user_xml(run_path)
+    scenario_rel = (
+        params.get("Scenario/LandscapeScenario")
+        or params.get("Scenario/Project")
+        or ""
+    ).strip()
+    if not scenario_rel:
+        raise FileNotFoundError("Scenario path is missing in run metadata")
+
+    scenario_path = os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
+    if not scenario_path.startswith(BASE_DIR + os.sep):
+        raise ValueError("Invalid scenario path")
+    if not os.path.isdir(scenario_path):
+        raise FileNotFoundError(f"Scenario folder not found: {scenario_path}")
+
+    return {
+        "run_path": run_path,
+        "mc_path": mc_path,
+        "arr_path": arr_path,
+        "scenario_rel": scenario_rel,
+        "scenario_path": scenario_path,
+    }
+
+
+def _find_reach_shapefile(scenario_path):
+    preferred = os.path.join(scenario_path, "geo", "Reachlist_shp.shp")
+    if os.path.isfile(preferred):
+        return preferred
+    geo_dir = os.path.join(scenario_path, "geo")
+    if os.path.isdir(geo_dir):
+        shp_files = sorted(glob.glob(os.path.join(geo_dir, "*.shp")))
+        if shp_files:
+            return shp_files[0]
+    shp_files = sorted(glob.glob(os.path.join(scenario_path, "**", "*.shp"), recursive=True))
+    return shp_files[0] if shp_files else None
+
+
+def _load_reach_ids_from_hdf(arr_path):
+    if h5py is None:
+        raise RuntimeError("h5py is not available in this Python runtime")
+    with h5py.File(arr_path, "r") as hf:
+        if "CascadeToxswa/ConLiqWatTgtAvg" not in hf:
+            raise KeyError("Dataset CascadeToxswa/ConLiqWatTgtAvg not found")
+        ds = hf["CascadeToxswa/ConLiqWatTgtAvg"]
+        names_ref = ds.attrs.get("dim1_element_names")
+        if names_ref is None:
+            raise KeyError("dim1_element_names attribute missing")
+        try:
+            raw_ids = hf[names_ref][:]
+        except Exception:
+            names_path = _decode_text(names_ref)
+            if names_path not in hf:
+                raise KeyError(f"Reach names dataset not found: {names_path}")
+            raw_ids = hf[names_path][:]
+    return _coerce_list_of_reach_ids(_decode_text(v) for v in raw_ids)
+
+
+def _select_reach_id_column(gdf, reach_ids_hint):
+    non_geom = [c for c in gdf.columns if c != "geometry"]
+    if not non_geom:
+        return None
+
+    preferred_names = [
+        "reach_id", "reachid", "id", "key", "reach", "name", "segment_id",
+    ]
+
+    hints = set(reach_ids_hint or [])
+    best_col = None
+    best_score = -1
+    for col in non_geom:
+        values = gdf[col].dropna().head(1000)
+        if values.empty:
+            continue
+        score = 0
+        if hints:
+            score = sum(1 for v in values if _normalize_reach_id(v) in hints)
+        col_name = col.lower()
+        if any(p == col_name for p in preferred_names):
+            score += 10
+        elif any(p in col_name for p in preferred_names):
+            score += 4
+        if score > best_score:
+            best_score = score
+            best_col = col
+    return best_col or non_geom[0]
+
+
+def _build_map_geometry_embedded(arr_path, scenario_path):
+    script = r'''
+import glob
+import json
+import os
+import re
+import sys
+import geopandas as gpd
+import h5py
+
+def norm(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if re.fullmatch(r"[-+]?\d+(?:\.0+)?", text):
+        return str(int(float(text)))
+    return text
+
+def find_shp(scenario_path):
+    preferred = os.path.join(scenario_path, "geo", "Reachlist_shp.shp")
+    if os.path.isfile(preferred):
+        return preferred
+    geo_dir = os.path.join(scenario_path, "geo")
+    if os.path.isdir(geo_dir):
+        files = sorted(glob.glob(os.path.join(geo_dir, "*.shp")))
+        if files:
+            return files[0]
+    files = sorted(glob.glob(os.path.join(scenario_path, "**", "*.shp"), recursive=True))
+    return files[0] if files else None
+
+payload = json.loads(sys.argv[1])
+arr_path = payload["arr_path"]
+scenario_path = payload["scenario_path"]
+shp_path = find_shp(scenario_path)
+if not shp_path:
+    raise RuntimeError("No shapefile found for selected scenario")
+
+with h5py.File(arr_path, "r") as hf:
+    ds = hf["CascadeToxswa/ConLiqWatTgtAvg"]
+    names_ref = ds.attrs["dim1_element_names"]
+    try:
+        raw_ids = hf[names_ref][:]
+    except Exception:
+        names_path = names_ref.decode("utf-8", errors="replace") if isinstance(names_ref, bytes) else str(names_ref)
+        raw_ids = hf[names_path][:]
+    reach_ids = {norm(v.decode("utf-8", errors="replace") if isinstance(v, bytes) else v) for v in raw_ids}
+
+gdf = gpd.read_file(shp_path)
+if gdf.empty:
+    raise RuntimeError("Shapefile has no features")
+source_crs = str(gdf.crs) if gdf.crs else ""
+if gdf.crs is not None:
+    try:
+        if not gdf.crs.is_geographic:
+            gdf = gdf.to_crs(epsg=4326)
+    except Exception:
+        pass
+
+non_geom = [c for c in gdf.columns if c != "geometry"]
+if not non_geom:
+    raise RuntimeError("No attribute columns available in shapefile")
+
+preferred = ["reach_id", "reachid", "id", "key", "reach", "name", "segment_id"]
+best_col = non_geom[0]
+best_score = -1
+for col in non_geom:
+    vals = gdf[col].dropna().head(1000)
+    score = sum(1 for v in vals if norm(v) in reach_ids)
+    col_l = col.lower()
+    if col_l in preferred:
+        score += 10
+    elif any(p in col_l for p in preferred):
+        score += 4
+    if score > best_score:
+        best_score = score
+        best_col = col
+
+gdf = gdf.dropna(subset=["geometry"]) 
+gdf["__reach_id__"] = gdf[best_col].map(norm)
+gdf = gdf.dropna(subset=["__reach_id__"])
+gdf = gdf[gdf["__reach_id__"].isin(reach_ids)]
+if gdf.empty:
+    raise RuntimeError("No stream features could be mapped to PECsw reach IDs")
+
+minx, miny, maxx, maxy = gdf.total_bounds
+geojson = json.loads(gdf[["__reach_id__", "geometry"]].to_json())
+for f in geojson.get("features", []):
+    rid = f.get("properties", {}).get("__reach_id__")
+    f["properties"] = {"reach_id": rid}
+
+print(json.dumps({
+    "geojson": geojson,
+    "meta": {
+        "reach_id_field": best_col,
+        "feature_count": len(geojson.get("features", [])),
+        "bounds": [float(minx), float(miny), float(maxx), float(maxy)],
+        "shapefile": shp_path,
+        "source_crs": source_crs,
+        "map_crs": "EPSG:4326",
+    },
+}))
+'''
+    return _embedded_json_call(script, {"arr_path": arr_path, "scenario_path": scenario_path})
+
+
+def _build_map_timeseries_embedded(arr_path, reach_ids, time_from=None, time_to=None, resolution="auto"):
+    script = r'''
+import json
+import re
+import sys
+import h5py
+import pandas as pd
+
+def norm(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if re.fullmatch(r"[-+]?\d+(?:\.0+)?", text):
+        return str(int(float(text)))
+    return text
+
+payload = json.loads(sys.argv[1])
+arr_path = payload["arr_path"]
+requested = [norm(v) for v in payload.get("reach_ids", []) if norm(v)]
+requested = list(dict.fromkeys(requested))
+time_from = payload.get("time_from")
+time_to = payload.get("time_to")
+resolution = (payload.get("resolution") or "auto").lower()
+
+with h5py.File(arr_path, "r") as hf:
+    ds = hf["CascadeToxswa/ConLiqWatTgtAvg"]
+    names_ref = ds.attrs["dim1_element_names"]
+    try:
+        raw_ids = hf[names_ref][:]
+    except Exception:
+        names_path = names_ref.decode("utf-8", errors="replace") if isinstance(names_ref, bytes) else str(names_ref)
+        raw_ids = hf[names_path][:]
+    all_ids = [norm(v.decode("utf-8", errors="replace") if isinstance(v, bytes) else v) for v in raw_ids]
+    idx = {rid: i for i, rid in enumerate(all_ids) if rid}
+
+    present = [rid for rid in requested if rid in idx]
+    missing = [rid for rid in requested if rid not in idx]
+    if not present:
+        raise RuntimeError("None of the requested reach IDs exist in PECsw data")
+
+    start_raw = ds.attrs.get("dim0_offset")
+    start_text = start_raw.decode("utf-8", errors="replace") if isinstance(start_raw, bytes) else str(start_raw)
+    start_dt = pd.to_datetime(start_text, errors="coerce")
+    if pd.isna(start_dt):
+        start_dt = pd.Timestamp("1970-01-01T00:00:00")
+    full_index = pd.date_range(start=start_dt, periods=ds.shape[0], freq="h")
+
+    from_dt = pd.to_datetime(time_from, errors="coerce") if time_from else full_index[0]
+    to_dt = pd.to_datetime(time_to, errors="coerce") if time_to else full_index[-1]
+    if pd.isna(from_dt):
+        from_dt = full_index[0]
+    if pd.isna(to_dt):
+        to_dt = full_index[-1]
+    if to_dt < from_dt:
+        raise RuntimeError("time_to must be greater than or equal to time_from")
+
+    i0 = max(0, int(full_index.searchsorted(from_dt, side="left")))
+    i1 = min(len(full_index)-1, int(full_index.searchsorted(to_dt, side="right") - 1))
+    if i1 < i0:
+        raise RuntimeError("Selected time window does not overlap with available data")
+
+    part_index = full_index[i0:i1+1]
+    if resolution not in ("auto", "daily", "hourly"):
+        resolution = "auto"
+    if resolution == "auto":
+        resolution = "hourly" if len(part_index) <= 24 * 14 else "daily"
+    
+    # Auto-downgrade hourly to daily if payload would be too large (500k points)
+    if resolution == "hourly" and len(part_index) * len(present) > 500000:
+        resolution = "daily"
+
+    # h5py requires indices in increasing order; create mapping to restore original order
+    cols = [idx[rid] for rid in present]
+    sorted_cols_enum = sorted(enumerate(cols), key=lambda x: x[1])
+    sorted_cols = [x[1] for x in sorted_cols_enum]
+    sort_order = [x[0] for x in sorted_cols_enum]
+    
+    arr = ds[i0:i1+1, sorted_cols] * 1_000_000.0
+    # Reorder columns back to match original present order
+    arr = arr[:, [sort_order.index(i) for i in range(len(sort_order))]]
+
+frame = pd.DataFrame(arr, index=part_index, columns=present)
+if resolution == "daily":
+    frame = frame.resample("D").max()
+
+times = [t.isoformat() for t in frame.index.to_pydatetime()]
+series = [{"reach_id": rid, "values": frame[rid].astype(float).round(6).tolist()} for rid in present]
+
+print(json.dumps({
+    "times": times,
+    "series": series,
+    "meta": {
+        "units": "ng/L",
+        "resolution_used": resolution,
+        "requested_resolution": (payload.get("resolution") or "auto").lower(),
+        "time_from": times[0] if times else None,
+        "time_to": times[-1] if times else None,
+        "requested_reach_count": len(requested),
+        "returned_reach_count": len(present),
+        "missing_reaches": missing,
+        "available_time_start": full_index[0].isoformat(),
+        "available_time_end": full_index[-1].isoformat(),
+    },
+}))
+'''
+    return _embedded_json_call(
+        script,
+        {
+            "arr_path": arr_path,
+            "reach_ids": reach_ids,
+            "time_from": time_from,
+            "time_to": time_to,
+            "resolution": resolution,
+        },
+    )
+
+
+def _build_map_geometry(arr_path, scenario_path):
+    if gpd is None or h5py is None:
+        return _build_map_geometry_embedded(arr_path, scenario_path)
+
+    shp_path = _find_reach_shapefile(scenario_path)
+    if not shp_path:
+        raise FileNotFoundError("No shapefile found for selected scenario")
+
+    cache_key = hashlib.sha1(f"{arr_path}|{shp_path}".encode("utf-8")).hexdigest()
+    cached = _cache_get(_map_geometry_cache, cache_key)
+    if cached is not None:
+        return cached
+
+    reach_ids = _load_reach_ids_from_hdf(arr_path)
+    gdf = gpd.read_file(shp_path)
+    if gdf.empty:
+        raise ValueError("Shapefile has no features")
+    source_crs = str(gdf.crs) if gdf.crs else ""
+    if gdf.crs is not None:
+        try:
+            if not gdf.crs.is_geographic:
+                gdf = gdf.to_crs(epsg=4326)
+        except Exception:
+            pass
+    reach_col = _select_reach_id_column(gdf, set(reach_ids))
+    if reach_col is None:
+        raise ValueError("Could not determine reach identifier column")
+
+    gdf = gdf.dropna(subset=["geometry"])
+    gdf["__reach_id__"] = gdf[reach_col].map(_normalize_reach_id)
+    gdf = gdf.dropna(subset=["__reach_id__"])
+    gdf = gdf[gdf["__reach_id__"].isin(set(reach_ids))]
+    if gdf.empty:
+        raise ValueError("No stream features could be mapped to PECsw reach IDs")
+
+    minx, miny, maxx, maxy = gdf.total_bounds
+    geom_json = json.loads(gdf[["__reach_id__", "geometry"]].to_json())
+    for feature in geom_json.get("features", []):
+        rid = feature.get("properties", {}).get("__reach_id__")
+        feature["properties"] = {"reach_id": rid}
+
+    payload = {
+        "geojson": geom_json,
+        "meta": {
+            "reach_id_field": reach_col,
+            "feature_count": len(geom_json.get("features", [])),
+            "bounds": [float(minx), float(miny), float(maxx), float(maxy)],
+            "shapefile": shp_path,
+            "source_crs": source_crs,
+            "map_crs": "EPSG:4326",
+        },
+    }
+    _cache_set(_map_geometry_cache, cache_key, payload, _MAP_GEOMETRY_CACHE_LIMIT)
+    return payload
+
+
+def _resolve_resolution(requested, dt_index):
+    requested = (requested or "auto").lower()
+    if requested in ("hour", "hr"):
+        requested = "hourly"
+    if requested not in ("auto", "daily", "hourly"):
+        requested = "auto"
+    if requested == "auto":
+        if len(dt_index) <= 24 * 14:
+            return "hourly"
+        return "daily"
+    return requested
+
+
+def _build_map_timeseries(arr_path, reach_ids, time_from=None, time_to=None, resolution="auto"):
+    if h5py is None or pd is None:
+        return _build_map_timeseries_embedded(
+            arr_path,
+            reach_ids,
+            time_from=time_from,
+            time_to=time_to,
+            resolution=resolution,
+        )
+    if not reach_ids:
+        raise ValueError("At least one reach_id is required")
+
+    norm_reach_ids = _coerce_list_of_reach_ids(reach_ids)
+    cache_key = hashlib.sha1(json.dumps({
+        "arr": arr_path,
+        "ids": norm_reach_ids,
+        "from": time_from or "",
+        "to": time_to or "",
+        "res": resolution or "auto",
+    }, sort_keys=True).encode("utf-8")).hexdigest()
+    cached = _cache_get(_map_timeseries_cache, cache_key)
+    if cached is not None:
+        return cached
+
+    with h5py.File(arr_path, "r") as hf:
+        if "CascadeToxswa/ConLiqWatTgtAvg" not in hf:
+            raise KeyError("Dataset CascadeToxswa/ConLiqWatTgtAvg not found")
+        ds = hf["CascadeToxswa/ConLiqWatTgtAvg"]
+        names_ref = ds.attrs.get("dim1_element_names")
+        try:
+            raw_ids = hf[names_ref][:]
+        except Exception:
+            names_path = _decode_text(names_ref)
+            raw_ids = hf[names_path][:]
+        all_reach_ids = _coerce_list_of_reach_ids(_decode_text(v) for v in raw_ids)
+        idx_by_reach = {rid: idx for idx, rid in enumerate(all_reach_ids)}
+
+        requested_present = [rid for rid in norm_reach_ids if rid in idx_by_reach]
+        missing = [rid for rid in norm_reach_ids if rid not in idx_by_reach]
+        if not requested_present:
+            raise ValueError("None of the requested reach IDs exist in PECsw data")
+
+        start_raw = ds.attrs.get("dim0_offset")
+        start_dt = pd.to_datetime(_decode_text(start_raw), errors="coerce")
+        if pd.isna(start_dt):
+            start_dt = pd.Timestamp("1970-01-01T00:00:00")
+
+        full_index = pd.date_range(start=start_dt, periods=ds.shape[0], freq="h")
+        from_dt = pd.to_datetime(time_from, errors="coerce") if time_from else full_index[0]
+        to_dt = pd.to_datetime(time_to, errors="coerce") if time_to else full_index[-1]
+        if pd.isna(from_dt):
+            from_dt = full_index[0]
+        if pd.isna(to_dt):
+            to_dt = full_index[-1]
+        if to_dt < from_dt:
+            raise ValueError("time_to must be greater than or equal to time_from")
+
+        i0 = max(0, int(full_index.searchsorted(from_dt, side="left")))
+        i1 = min(len(full_index) - 1, int(full_index.searchsorted(to_dt, side="right") - 1))
+        if i1 < i0:
+            raise ValueError("Selected time window does not overlap with available data")
+
+        sel_index = full_index[i0:i1 + 1]
+        resolution_used = _resolve_resolution(resolution, sel_index)
+
+        # Auto-downgrade hourly to daily if payload would be too large
+        if resolution_used == "hourly" and len(sel_index) * len(requested_present) > _MAP_HOURLY_MAX_POINTS:
+            resolution_used = "daily"
+
+        # h5py requires indices in increasing order; create mapping to restore original order
+        col_indices = [idx_by_reach[rid] for rid in requested_present]
+        sorted_indices = sorted(enumerate(col_indices), key=lambda x: x[1])
+        sorted_col_indices = [x[1] for x in sorted_indices]
+        sort_order = [x[0] for x in sorted_indices]
+        
+        arr = ds[i0:i1 + 1, sorted_col_indices] * 1_000_000.0
+        # Reorder columns back to match requested_present order
+        arr = arr[:, [sort_order.index(i) for i in range(len(sort_order))]]
+
+    frame = pd.DataFrame(arr, index=sel_index, columns=requested_present)
+    if resolution_used == "daily":
+        frame = frame.resample("D").max()
+
+    times = [t.isoformat() for t in frame.index.to_pydatetime()]
+    series = [{"reach_id": rid, "values": frame[rid].astype(float).round(6).tolist()} for rid in requested_present]
+    payload = {
+        "times": times,
+        "series": series,
+        "meta": {
+            "units": "ng/L",
+            "resolution_used": resolution_used,
+            "requested_resolution": (resolution or "auto").lower(),
+            "time_from": times[0] if times else None,
+            "time_to": times[-1] if times else None,
+            "requested_reach_count": len(norm_reach_ids),
+            "returned_reach_count": len(requested_present),
+            "missing_reaches": missing,
+            "available_time_start": full_index[0].isoformat(),
+            "available_time_end": full_index[-1].isoformat(),
+        },
+    }
+    _cache_set(_map_timeseries_cache, cache_key, payload, _MAP_TIMESERIES_CACHE_LIMIT)
+    return payload
+
+
+def list_map_explorer_runs(run_root):
+    """Return runs that have scenario geometry and arr.dat store for map explorer."""
+    candidates = list_runs_with_mcs(run_root)
+    items = []
+    for entry in candidates:
+        experiment = entry["experiment"]
+        run_path = os.path.join(run_root, experiment)
+        params = _parse_user_xml(run_path)
+        scenario_rel = (entry.get("landscape_scenario") or "").strip()
+        scenario_path = os.path.abspath(os.path.join(BASE_DIR, scenario_rel)) if scenario_rel else ""
+        shapefile = _find_reach_shapefile(scenario_path) if scenario_path and os.path.isdir(scenario_path) else None
+        valid_mcs = [mc for mc in entry.get("mcs", []) if mc.get("has_store")]
+        if not valid_mcs:
+            continue
+        items.append({
+            "experiment": experiment,
+            "scenario_path": scenario_rel,
+            "scenario_name": os.path.basename(scenario_path) if scenario_path else "unknown",
+            "geometry_available": bool(shapefile),
+            "simulation_start": (params.get("Scenario/SimulationStart") or "").strip(),
+            "simulation_end": (params.get("Scenario/SimulationEnd") or "").strip(),
+            "mcs": valid_mcs,
+        })
+    return items
+
+
 # ═══════════════════════════════════════════════════════════════════
 # Analysis helpers
 # ═══════════════════════════════════════════════════════════════════
@@ -916,6 +1543,8 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         raw_path = self.path.split("?")[0]
         path = unquote_plus(raw_path)
+        if path != "/":
+            path = path.rstrip("/")
 
         # Keep this endpoint robust against encoded/trailing-slash variations.
         if path.rstrip("/") == "/api/analysis-portable-check":
@@ -938,6 +1567,11 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         # -- monitoring --
         elif path == "/api/runs":
             self._json_response(discover_runs(self.run_root))
+        elif path == "/api/map-explorer/runs" or self.path.startswith("/api/map-explorer/runs?"):
+            qs = parse_qs(urlparse(self.path).query)
+            run_root_raw = qs.get("run_root", [""])[0].strip()
+            run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
+            self._json_response({"runs": list_map_explorer_runs(run_root)})
         elif path == "/api/analysis/default-run-dir":
             self._json_response({"run_dir": self.run_root})
         elif path.startswith("/api/runs/") and "/log/" in path:
@@ -987,7 +1621,10 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
     # ── POST routes ───────────────────────────────────────────────
 
     def do_POST(self):
-        path = self.path
+        raw_path = self.path.split("?")[0]
+        path = unquote_plus(raw_path)
+        if path != "/":
+            path = path.rstrip("/")
         try:
             if path == "/api/xrun-files":
                 self._handle_xrun_files()
@@ -999,6 +1636,10 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 self._handle_save_as()
             elif path == "/api/open-xrun":
                 self._handle_open_xrun()
+            elif path == "/api/map-explorer/geometry":
+                self._handle_map_geometry()
+            elif path == "/api/map-explorer/timeseries":
+                self._handle_map_timeseries()
             elif path.startswith("/api/runs/") and path.endswith("/abort"):
                 self._handle_abort(path)
             elif path.startswith("/api/runs/") and path.endswith("/delete"):
@@ -1011,6 +1652,54 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             self._json_response({"status": "error", "message": str(exc)}, 500)
 
     # ── POST handlers ─────────────────────────────────────────────
+
+    def _handle_map_geometry(self):
+        data = self._read_json_body() or {}
+        experiment = (data.get("experiment") or "").strip()
+        mc_run = (data.get("mc_run") or "").strip()
+        run_root_raw = (data.get("run_root") or "").strip()
+        run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
+        if not experiment or not mc_run:
+            return self._json_response(
+                {"status": "error", "message": "experiment and mc_run are required"},
+                400,
+            )
+        try:
+            paths = _resolve_mc_store_paths(run_root, experiment, mc_run)
+            geom_payload = _build_map_geometry(paths["arr_path"], paths["scenario_path"])
+            self._json_response({
+                "status": "success",
+                "scenario_path": paths["scenario_rel"],
+                "geojson": geom_payload["geojson"],
+                "meta": geom_payload["meta"],
+            })
+        except Exception as exc:
+            self._json_response({"status": "error", "message": str(exc)}, 400)
+
+    def _handle_map_timeseries(self):
+        data = self._read_json_body() or {}
+        experiment = (data.get("experiment") or "").strip()
+        mc_run = (data.get("mc_run") or "").strip()
+        run_root_raw = (data.get("run_root") or "").strip()
+        run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
+        if not experiment or not mc_run:
+            return self._json_response(
+                {"status": "error", "message": "experiment and mc_run are required"},
+                400,
+            )
+        try:
+            reach_ids = _coerce_list_of_reach_ids(data.get("reach_ids") or [])
+            paths = _resolve_mc_store_paths(run_root, experiment, mc_run)
+            payload = _build_map_timeseries(
+                paths["arr_path"],
+                reach_ids,
+                time_from=(data.get("time_from") or "").strip() or None,
+                time_to=(data.get("time_to") or "").strip() or None,
+                resolution=(data.get("resolution") or "auto").strip() or "auto",
+            )
+            self._json_response({"status": "success", **payload})
+        except Exception as exc:
+            self._json_response({"status": "error", "message": str(exc)}, 400)
 
     def _handle_xrun_files(self):
         data = self._read_json_body()
