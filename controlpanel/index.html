@@ -216,6 +216,7 @@ a{color:var(--accent);text-decoration:none}
 .expl-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:1rem}
 .expl-map-card{min-height:520px}
 .expl-map{width:100%;height:500px;background:var(--bg);border:1px solid var(--border);border-radius:6px;position:relative;overflow:hidden}
+#explLabelCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4}
 .expl-chart{width:100%;height:500px;background:var(--bg);border:1px solid var(--border);border-radius:6px}
 .expl-toolbar{display:grid;grid-template-columns:2fr 1fr 1fr auto auto;gap:.6rem;align-items:end}
 .expl-selection{font-size:.78rem;color:var(--text2);margin-top:.55rem}
@@ -908,6 +909,7 @@ a{color:var(--accent);text-decoration:none}
         <div class="panel-body" style="padding:.55rem">
           <div id="explMap" class="expl-map">
             <div class="expl-map-hint">Alt + drag to select multiple segments</div>
+            <canvas id="explLabelCanvas"></canvas>
           </div>
         </div>
       </div>
@@ -984,6 +986,7 @@ let explCurrentRun = null;
 let explIsBoxSelecting = false;
 let explBoxDiv = null;
 let explBoxStart = null;
+let explReachGeoJSON = null;
 
 // ═══════════════════════════════════════════════════════════════════
 // Tab switching
@@ -1742,11 +1745,18 @@ function ensureExplorerMap() {
     container: 'explMap',
     style: {
       version: 8,
-      sources: {},
+      sources: {
+        'expl-esri-world-imagery': {
+          type: 'raster',
+          tiles: ['https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+          tileSize: 256,
+          attribution: 'Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+        }
+      },
       layers: [{
-        id: 'background',
-        type: 'background',
-        paint: { 'background-color': '#0f1117' }
+        id: 'expl-esri-world-imagery',
+        type: 'raster',
+        source: 'expl-esri-world-imagery'
       }]
     },
     center: [8, 51],
@@ -1755,27 +1765,48 @@ function ensureExplorerMap() {
   });
 
   explMap.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+  explMap.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
   explMap.on('load', () => {
     explMapReady = true;
     if (!explMap.getSource('expl-reaches')) {
+      explMap.addSource('expl-lulc', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       explMap.addSource('expl-reaches', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       explMap.addSource('expl-selected', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      explMap.addLayer({
+        id: 'expl-lulc-fill',
+        type: 'fill',
+        source: 'expl-lulc',
+        paint: {
+          'fill-color': '#000000',
+          'fill-opacity': 0
+        }
+      });
+      explMap.addLayer({
+        id: 'expl-lulc-outline',
+        type: 'line',
+        source: 'expl-lulc',
+        paint: {
+          'line-color': '#a0622a',
+          'line-width': 1.0,
+          'line-opacity': 0.8
+        }
+      });
       explMap.addLayer({
         id: 'expl-reach-line',
         type: 'line',
         source: 'expl-reaches',
-        paint: { 'line-color': '#6a7484', 'line-width': 1.6, 'line-opacity': 0.9 }
+        paint: { 'line-color': '#2f7de1', 'line-width': 1.6, 'line-opacity': 0.92 }
       });
       explMap.addLayer({
         id: 'expl-reach-selected',
         type: 'line',
         source: 'expl-selected',
-        paint: { 'line-color': '#58a6ff', 'line-width': 3.2, 'line-opacity': 1.0 }
+        paint: { 'line-color': '#8fd3ff', 'line-width': 3.2, 'line-opacity': 1.0 }
       });
-
       explMap.on('click', 'expl-reach-line', onExplorerMapClick);
       setupExplorerBoxSelection();
+      explMap.on('render', scheduleDrawReachLabels);
     }
   });
 }
@@ -1885,6 +1916,8 @@ async function reloadExplorerData() {
     updateExplorerSelectionUi();
 
     if (explMapReady && explMap?.getSource('expl-reaches')) {
+      explMap.getSource('expl-lulc').setData(res.lulc_geojson || { type: 'FeatureCollection', features: [] });
+      explReachGeoJSON = res.geojson;
       explMap.getSource('expl-reaches').setData(res.geojson);
       setExplorerSelectionSource();
       const b = res.meta?.bounds || [];
@@ -1894,10 +1927,10 @@ async function reloadExplorerData() {
     }
     const meta = document.getElementById('explMetaText');
     if (meta) {
-      meta.textContent = `Features: ${res.meta?.feature_count || 0} | ID field: ${res.meta?.reach_id_field || 'unknown'}`;
+      meta.textContent = `Features: ${res.meta?.feature_count || 0} | LULC: ${res.lulc_meta?.feature_count || 0} | ID field: ${res.meta?.reach_id_field || 'unknown'}`;
     }
     renderExplorerChart([], [], { resolution_used: 'none' });
-    showExplStatus('Stream map loaded.', 'success');
+    showExplStatus((res.lulc_meta?.feature_count || 0) > 0 ? 'Stream map and LULC overlay loaded.' : 'Stream map loaded.', 'success');
   } catch (e) {
     const msg = String(e && e.message ? e.message : e);
     if (msg.includes('HTTP 404') && msg.includes('/api/map-explorer/geometry')) {
@@ -2031,6 +2064,63 @@ function renderExplorerChart(times, series, meta) {
       loadExplorerTimeseries({ timeFrom: from, timeTo: to, resolution: 'hourly' });
     }
   });
+}
+
+function _lineStringMidpoint(coords) {
+  if (!coords || coords.length === 0) return null;
+  return coords[Math.floor(coords.length / 2)];
+}
+
+function drawReachLabels() {
+  const canvas = document.getElementById('explLabelCanvas');
+  if (!canvas || !explMap || !explMapReady || !explReachGeoJSON) return;
+  const container = canvas.parentElement;
+  const W = container.offsetWidth;
+  const H = container.offsetHeight;
+  const dpr = window.devicePixelRatio || 1;
+  if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  if (explMap.getZoom() < 11) return;
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  for (const feature of (explReachGeoJSON.features || [])) {
+    const rid = feature?.properties?.reach_id;
+    if (!rid) continue;
+    const geom = feature?.geometry;
+    if (!geom) continue;
+    let midCoord;
+    if (geom.type === 'LineString') {
+      midCoord = _lineStringMidpoint(geom.coordinates);
+    } else if (geom.type === 'MultiLineString') {
+      const ring = geom.coordinates[Math.floor(geom.coordinates.length / 2)];
+      midCoord = _lineStringMidpoint(ring);
+    }
+    if (!midCoord) continue;
+    const pt = explMap.project(midCoord);
+    if (pt.x < -20 || pt.x > W + 20 || pt.y < -20 || pt.y > H + 20) continue;
+    const label = String(rid);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(10,10,15,0.85)';
+    ctx.strokeText(label, pt.x, pt.y);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(label, pt.x, pt.y);
+  }
+}
+
+let _labelRafPending = false;
+function scheduleDrawReachLabels() {
+  if (_labelRafPending) return;
+  _labelRafPending = true;
+  requestAnimationFrame(() => { _labelRafPending = false; drawReachLabels(); });
 }
 
 function setupExplorerBoxSelection() {

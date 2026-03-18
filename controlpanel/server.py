@@ -743,9 +743,11 @@ def _resolve_mc_store_paths(run_root, experiment, mc_run):
 
 
 def _find_reach_shapefile(scenario_path):
-    preferred = os.path.join(scenario_path, "geo", "Reachlist_shp.shp")
-    if os.path.isfile(preferred):
-        return preferred
+    preferred_names = ["Reachlist_shp.shp", "ReachList_shp.shp"]
+    for name in preferred_names:
+        preferred = os.path.join(scenario_path, "geo", name)
+        if os.path.isfile(preferred):
+            return preferred
     geo_dir = os.path.join(scenario_path, "geo")
     if os.path.isdir(geo_dir):
         shp_files = sorted(glob.glob(os.path.join(geo_dir, "*.shp")))
@@ -753,6 +755,69 @@ def _find_reach_shapefile(scenario_path):
             return shp_files[0]
     shp_files = sorted(glob.glob(os.path.join(scenario_path, "**", "*.shp"), recursive=True))
     return shp_files[0] if shp_files else None
+
+
+def _find_lulc_shapefile(scenario_path):
+    preferred_names = ["LULC.shp", "lulc.shp"]
+    for name in preferred_names:
+        preferred = os.path.join(scenario_path, "geo", name)
+        if os.path.isfile(preferred):
+            return preferred
+    return None
+
+
+def _normalize_map_gdf(gdf):
+    source_crs = str(gdf.crs) if gdf.crs else ""
+    if gdf.crs is not None:
+        try:
+            if not gdf.crs.is_geographic:
+                gdf = gdf.to_crs(epsg=4326)
+        except Exception:
+            pass
+    gdf = gdf.dropna(subset=["geometry"])
+    return gdf, source_crs
+
+
+def _build_lulc_geojson(shp_path):
+    if not shp_path:
+        return {
+            "geojson": {"type": "FeatureCollection", "features": []},
+            "meta": {
+                "feature_count": 0,
+                "shapefile": None,
+                "source_crs": "",
+                "map_crs": "EPSG:4326",
+            },
+        }
+
+    if gpd is None:
+        raise RuntimeError("geopandas is not available in this Python runtime")
+
+    gdf = gpd.read_file(shp_path)
+    if gdf.empty:
+        return {
+            "geojson": {"type": "FeatureCollection", "features": []},
+            "meta": {
+                "feature_count": 0,
+                "shapefile": shp_path,
+                "source_crs": str(gdf.crs) if gdf.crs else "",
+                "map_crs": "EPSG:4326",
+            },
+        }
+
+    gdf, source_crs = _normalize_map_gdf(gdf)
+    geojson = json.loads(gdf[["geometry"]].to_json())
+    for feature in geojson.get("features", []):
+        feature["properties"] = {}
+    return {
+        "geojson": geojson,
+        "meta": {
+            "feature_count": len(geojson.get("features", [])),
+            "shapefile": shp_path,
+            "source_crs": source_crs,
+            "map_crs": "EPSG:4326",
+        },
+    }
 
 
 def _load_reach_ids_from_hdf(arr_path):
@@ -826,9 +891,10 @@ def norm(value):
     return text
 
 def find_shp(scenario_path):
-    preferred = os.path.join(scenario_path, "geo", "Reachlist_shp.shp")
-    if os.path.isfile(preferred):
-        return preferred
+    for name in ("Reachlist_shp.shp", "ReachList_shp.shp"):
+        preferred = os.path.join(scenario_path, "geo", name)
+        if os.path.isfile(preferred):
+            return preferred
     geo_dir = os.path.join(scenario_path, "geo")
     if os.path.isdir(geo_dir):
         files = sorted(glob.glob(os.path.join(geo_dir, "*.shp")))
@@ -837,10 +903,18 @@ def find_shp(scenario_path):
     files = sorted(glob.glob(os.path.join(scenario_path, "**", "*.shp"), recursive=True))
     return files[0] if files else None
 
+def find_lulc_shp(scenario_path):
+    for name in ("LULC.shp", "lulc.shp"):
+        preferred = os.path.join(scenario_path, "geo", name)
+        if os.path.isfile(preferred):
+            return preferred
+    return None
+
 payload = json.loads(sys.argv[1])
 arr_path = payload["arr_path"]
 scenario_path = payload["scenario_path"]
 shp_path = find_shp(scenario_path)
+lulc_path = find_lulc_shp(scenario_path)
 if not shp_path:
     raise RuntimeError("No shapefile found for selected scenario")
 
@@ -897,8 +971,37 @@ for f in geojson.get("features", []):
     rid = f.get("properties", {}).get("__reach_id__")
     f["properties"] = {"reach_id": rid}
 
+lulc_geojson = {"type": "FeatureCollection", "features": []}
+lulc_meta = {
+    "feature_count": 0,
+    "shapefile": lulc_path,
+    "source_crs": "",
+    "map_crs": "EPSG:4326",
+}
+if lulc_path:
+    lulc_gdf = gpd.read_file(lulc_path)
+    if not lulc_gdf.empty:
+        lulc_source_crs = str(lulc_gdf.crs) if lulc_gdf.crs else ""
+        if lulc_gdf.crs is not None:
+            try:
+                if not lulc_gdf.crs.is_geographic:
+                    lulc_gdf = lulc_gdf.to_crs(epsg=4326)
+            except Exception:
+                pass
+        lulc_gdf = lulc_gdf.dropna(subset=["geometry"])
+        lulc_geojson = json.loads(lulc_gdf[["geometry"]].to_json())
+        for f in lulc_geojson.get("features", []):
+            f["properties"] = {}
+        lulc_meta = {
+            "feature_count": len(lulc_geojson.get("features", [])),
+            "shapefile": lulc_path,
+            "source_crs": lulc_source_crs,
+            "map_crs": "EPSG:4326",
+        }
+
 print(json.dumps({
     "geojson": geojson,
+    "lulc_geojson": lulc_geojson,
     "meta": {
         "reach_id_field": best_col,
         "feature_count": len(geojson.get("features", [])),
@@ -907,6 +1010,7 @@ print(json.dumps({
         "source_crs": source_crs,
         "map_crs": "EPSG:4326",
     },
+    "lulc_meta": lulc_meta,
 }))
 '''
     return _embedded_json_call(script, {"arr_path": arr_path, "scenario_path": scenario_path})
@@ -1036,10 +1140,11 @@ def _build_map_geometry(arr_path, scenario_path):
         return _build_map_geometry_embedded(arr_path, scenario_path)
 
     shp_path = _find_reach_shapefile(scenario_path)
+    lulc_path = _find_lulc_shapefile(scenario_path)
     if not shp_path:
         raise FileNotFoundError("No shapefile found for selected scenario")
 
-    cache_key = hashlib.sha1(f"{arr_path}|{shp_path}".encode("utf-8")).hexdigest()
+    cache_key = hashlib.sha1(f"{arr_path}|{shp_path}|{lulc_path or ''}".encode("utf-8")).hexdigest()
     cached = _cache_get(_map_geometry_cache, cache_key)
     if cached is not None:
         return cached
@@ -1048,18 +1153,11 @@ def _build_map_geometry(arr_path, scenario_path):
     gdf = gpd.read_file(shp_path)
     if gdf.empty:
         raise ValueError("Shapefile has no features")
-    source_crs = str(gdf.crs) if gdf.crs else ""
-    if gdf.crs is not None:
-        try:
-            if not gdf.crs.is_geographic:
-                gdf = gdf.to_crs(epsg=4326)
-        except Exception:
-            pass
+    gdf, source_crs = _normalize_map_gdf(gdf)
     reach_col = _select_reach_id_column(gdf, set(reach_ids))
     if reach_col is None:
         raise ValueError("Could not determine reach identifier column")
 
-    gdf = gdf.dropna(subset=["geometry"])
     gdf["__reach_id__"] = gdf[reach_col].map(_normalize_reach_id)
     gdf = gdf.dropna(subset=["__reach_id__"])
     gdf = gdf[gdf["__reach_id__"].isin(set(reach_ids))]
@@ -1072,8 +1170,11 @@ def _build_map_geometry(arr_path, scenario_path):
         rid = feature.get("properties", {}).get("__reach_id__")
         feature["properties"] = {"reach_id": rid}
 
+    lulc_payload = _build_lulc_geojson(lulc_path)
+
     payload = {
         "geojson": geom_json,
+        "lulc_geojson": lulc_payload["geojson"],
         "meta": {
             "reach_id_field": reach_col,
             "feature_count": len(geom_json.get("features", [])),
@@ -1082,6 +1183,7 @@ def _build_map_geometry(arr_path, scenario_path):
             "source_crs": source_crs,
             "map_crs": "EPSG:4326",
         },
+        "lulc_meta": lulc_payload["meta"],
     }
     _cache_set(_map_geometry_cache, cache_key, payload, _MAP_GEOMETRY_CACHE_LIMIT)
     return payload
@@ -1671,7 +1773,9 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 "status": "success",
                 "scenario_path": paths["scenario_rel"],
                 "geojson": geom_payload["geojson"],
+                "lulc_geojson": geom_payload.get("lulc_geojson", {"type": "FeatureCollection", "features": []}),
                 "meta": geom_payload["meta"],
+                "lulc_meta": geom_payload.get("lulc_meta", {}),
             })
         except Exception as exc:
             self._json_response({"status": "error", "message": str(exc)}, 400)
