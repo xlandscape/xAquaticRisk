@@ -1044,6 +1044,176 @@ def _rewrite_subset_readme(readme_path, source_rel, start_date, end_date, subset
         handle.write("\n".join(existing_lines + note_lines) + "\n")
 
 
+def _expand_reach_selection_downstream(scenario_abs: str, selected_reach_ids: list) -> tuple:
+    """
+    Given a set of selected reach IDs, returns a topologically-closed superset
+    by walking each reach's 'downstream' link until reaching 'Outlet' or a
+    reach already in the set.  The scenario shapefile's 'key' and 'downstream'
+    columns drive the traversal.
+
+    Returns (expanded_ids, added_ids) where both are lists of normalised
+    reach-ID strings.  If the shapefile is unavailable the original list is
+    returned unchanged.
+    """
+    shp_path = _find_reach_shapefile(scenario_abs)
+    if not shp_path or not os.path.isfile(shp_path):
+        return list(selected_reach_ids), []
+
+    # Build a key -> downstream map from the shapefile.
+    # Works whether geopandas is available locally or not.
+    def _build_topology(shp_path):
+        """Returns dict {norm_key: norm_downstream_or_None}."""
+        if gpd is not None:
+            gdf = gpd.read_file(shp_path)
+            topo = {}
+            for _, row in gdf.iterrows():
+                k = _normalize_reach_id(row.get("key"))
+                d = _normalize_reach_id(row.get("downstream"))
+                if k is not None:
+                    # "Outlet" stays as None (no further downstream)
+                    topo[k] = d if (d is not None and d.strip().upper() != "OUTLET") else None
+            return topo
+
+        # Fallback: embedded subprocess with analysis Python
+        script = r'''
+import json, sys
+import geopandas as gpd
+import re
+
+def norm(v):
+    if v is None:
+        return None
+    s = str(v).strip()
+    if not s:
+        return None
+    try:
+        return str(int(float(s)))
+    except (ValueError, OverflowError):
+        return s
+
+payload = json.loads(sys.argv[1])
+gdf = gpd.read_file(payload["shp_path"])
+topo = {}
+for _, row in gdf.iterrows():
+    k = norm(row.get("key"))
+    d = norm(row.get("downstream"))
+    if k is not None:
+        topo[k] = d if (d is not None and d.upper() != "OUTLET") else None
+print(json.dumps({"topo": topo}))
+'''
+        result = _embedded_json_call(script, {"shp_path": shp_path})
+        return result.get("topo", {})
+
+    try:
+        topo = _build_topology(shp_path)
+    except Exception:
+        return list(selected_reach_ids), []
+
+    # Walk downstream from every selected reach and collect all reached nodes
+    all_reach_keys = set(topo.keys())
+    selected_set = set(selected_reach_ids)
+    added = set()
+
+    for reach_id in list(selected_set):
+        current = topo.get(reach_id)
+        while current is not None and current not in selected_set and current not in added:
+            if current not in all_reach_keys:
+                break  # dangling reference – stop walking
+            added.add(current)
+            current = topo.get(current)
+
+    expanded = list(selected_set | added)
+    return expanded, list(added)
+
+
+def _slice_reach_shapefile_for_subset(scenario_abs: str, selected_reach_ids: list):
+    """Filter copied reach shapefile so geometry-derived inputs match sliced hydrology reaches."""
+    if not selected_reach_ids:
+        return
+    shp_path = _find_reach_shapefile(scenario_abs)
+    if not shp_path or not os.path.isfile(shp_path):
+        return
+
+    selected = set(_coerce_list_of_reach_ids(selected_reach_ids))
+
+    if gpd is not None:
+        gdf = gpd.read_file(shp_path)
+        if gdf.empty:
+            raise ValueError("Reach shapefile has no features")
+        reach_col = _select_reach_id_column(gdf, selected)
+        if reach_col is None:
+            raise ValueError("Could not determine reach identifier column in reach shapefile")
+        gdf["__reach_id__"] = gdf[reach_col].map(_normalize_reach_id)
+        filtered = gdf[gdf["__reach_id__"].isin(selected)].copy()
+        if filtered.empty:
+            raise ValueError("No selected reaches were found in reach shapefile")
+        filtered = filtered.drop(columns=["__reach_id__"])
+        base, _ = os.path.splitext(shp_path)
+        for ext in (".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix", ".fix"):
+            try:
+                os.remove(base + ext)
+            except FileNotFoundError:
+                pass
+        filtered.to_file(shp_path)
+        return
+
+    script = r'''
+import json
+import os
+import re
+import sys
+import geopandas as gpd
+
+def norm(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if re.fullmatch(r"[-+]?\d+(?:\.0+)?", text):
+        return str(int(float(text)))
+    return text
+
+payload = json.loads(sys.argv[1])
+shp_path = payload["shp_path"]
+selected = set(payload["selected"])
+gdf = gpd.read_file(shp_path)
+if gdf.empty:
+    raise RuntimeError("Reach shapefile has no features")
+non_geom = [c for c in gdf.columns if c != "geometry"]
+if not non_geom:
+    raise RuntimeError("Reach shapefile has no attribute columns")
+preferred = ["reach_id", "reachid", "id", "key", "reach", "name", "segment_id"]
+best_col = non_geom[0]
+best_score = -1
+for col in non_geom:
+    vals = gdf[col].dropna().head(1000)
+    score = sum(1 for v in vals if norm(v) in selected)
+    lower_col = col.lower()
+    if lower_col in preferred:
+        score += 10
+    elif any(p in lower_col for p in preferred):
+        score += 4
+    if score > best_score:
+        best_score = score
+        best_col = col
+
+gdf["__reach_id__"] = gdf[best_col].map(norm)
+filtered = gdf[gdf["__reach_id__"].isin(selected)].copy()
+if filtered.empty:
+    raise RuntimeError("No selected reaches were found in reach shapefile")
+filtered = filtered.drop(columns=["__reach_id__"])
+base, _ = os.path.splitext(shp_path)
+for ext in (".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix", ".fix"):
+    path = base + ext
+    if os.path.exists(path):
+        os.remove(path)
+filtered.to_file(shp_path)
+print(json.dumps({"status": "ok", "feature_count": int(len(filtered))}))
+'''
+    _embedded_json_call(script, {"shp_path": shp_path, "selected": list(selected)})
+
+
 def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None, selected_reaches=None) -> dict:
     def _emit(pct: int, message: str):
         if cancel_cb and cancel_cb():
@@ -1058,7 +1228,7 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
 
     _emit(6, "Validating subset window")
     clean_name = _validate_subset_scenario_name(target_name)
-    selected_reaches = _coerce_list_of_reach_ids(selected_reaches or [])
+    user_selected_reaches = _coerce_list_of_reach_ids(selected_reaches or [])
     start_date = _parse_iso_date(subset_start, "subset_start")
     end_date = _parse_iso_date(subset_end, "subset_end")
     _validate_subset_window(inspected, start_date, end_date)
@@ -1068,6 +1238,16 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
     target_rel = f"scenario/{clean_name}"
     if os.path.exists(target_abs):
         raise ValueError(f"Target scenario already exists: {target_rel}")
+
+    # Expand reach selection to ensure topological completeness: every selected
+    # reach's downstream chain must also be included so the simulation model can
+    # resolve the 'downstream' pointer for each reach in its reach list.
+    topology_added = []
+    if user_selected_reaches:
+        _emit(7, "Expanding reach selection for network topology")
+        selected_reaches, topology_added = _expand_reach_selection_downstream(source_abs, user_selected_reaches)
+    else:
+        selected_reaches = user_selected_reaches
 
     subset_hdf_start = datetime.datetime.combine(start_date, datetime.time(1, 0))
     subset_hdf_end = datetime.datetime.combine(end_date + datetime.timedelta(days=1), datetime.time(0, 0))
@@ -1080,6 +1260,10 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
     try:
         _emit(8, "Copying scenario template")
         _copy_scenario_template(source_abs, target_abs, progress_cb=_emit, pct_from=8, pct_to=30, cancel_cb=cancel_cb)
+
+        if selected_reaches:
+            _emit(30, "Slicing reach geometry")
+            _slice_reach_shapefile_for_subset(target_abs, selected_reaches)
 
         target_hdf = _scenario_hydro_path(target_abs)
         _emit(31, "Slicing hydrology HDF5")
@@ -1142,10 +1326,15 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
         "hdf_time_to": _format_hydro_datetime(subset_hdf_end),
         "timeseries_csv_count": sliced_csvs,
         "selected_reach_count": len(selected_reaches),
+        "user_selected_reach_count": len(user_selected_reaches),
+        "topology_added_reach_count": len(topology_added),
         "selected_reaches": selected_reaches,
         "warnings": [
             "hydro/doc statistics were copied from the source scenario and were not recalculated for the subset period."
-        ],
+        ] + (
+            [f"Reach selection was automatically expanded from {len(user_selected_reaches)} to {len(selected_reaches)} reaches to preserve network topology."]
+            if topology_added else []
+        ),
     }
 
 
