@@ -105,7 +105,17 @@ a{color:var(--accent);text-decoration:none}
 .status-message{margin:.8rem 1rem;padding:.55rem .8rem;border-radius:4px;font-size:.8rem;display:none}
 .status-message.show{display:block}
 .status-message.success{background:rgba(63,185,80,.12);border:1px solid var(--ok);color:var(--ok)}
+.status-message.warning{background:rgba(210,153,34,.12);border:1px solid var(--warn);color:var(--warn)}
+.status-message.note{background:rgba(121,192,255,.12);border:1px solid var(--note);color:var(--note)}
 .status-message.error{background:rgba(248,81,73,.12);border:1px solid var(--err);color:var(--err)}
+
+.subset-meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;margin-top:.55rem}
+.subset-stat{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:.6rem .75rem}
+.subset-stat .label{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.subset-stat .value{font-size:.83rem;color:var(--text);margin-top:.18rem;font-family:var(--mono)}
+.subset-warnings{margin-top:.7rem;padding-left:1rem;color:var(--warn);font-size:.75rem}
+.subset-warnings:empty{display:none}
+.subset-summary{font-size:.75rem;color:var(--text2);margin-top:.55rem}
 
 /* Loading */
 .loading{display:none;text-align:center;padding:1rem}
@@ -264,6 +274,10 @@ a{color:var(--accent);text-decoration:none}
     <button class="tab-btn" onclick="switchTab('explorer')" id="tabExplorer">
       <svg viewBox="0 0 16 16"><path d="M15.817.113A.5.5 0 0 0 15.31 0h-.083a.5.5 0 0 0-.238.06L10.5 2.31 6 0 1.276 2.362A.5.5 0 0 0 1 2.81v12.69a.5.5 0 0 0 .724.447L6 13.69l4.5 2.25 4.724-2.362a.5.5 0 0 0 .276-.447V.5a.5.5 0 0 0-.183-.387zM6.5 1.31l3 1.5v11.88l-3-1.5V1.31zm-1 11.88-3 1.5V3.31l3-1.5v11.38zm8 0-3 1.5V2.81l3-1.5v11.88z"/></svg>
       Explorer
+    </button>
+    <button class="tab-btn" onclick="switchTab('landscape')" id="tabLandscape">
+      <svg viewBox="0 0 16 16"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54A.505.505 0 0 1 1 12.5v-9a.5.5 0 0 1 .5-.5h13z"/></svg>
+      Landscape Scenario
     </button>
   </div>
 
@@ -640,6 +654,91 @@ a{color:var(--accent);text-decoration:none}
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
+     LANDSCAPE SCENARIO PAGE
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="pageLandscape">
+  <div class="cfg-wrap">
+
+    <div class="card">
+      <div class="card-header" onclick="toggleSection(this)">
+        <span>Temporal Subset</span>
+        <span class="toggle">&#9660;</span>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="subsetSourceScenario">Source Landscape Scenario</label>
+          <div style="display:flex;gap:.6rem;align-items:flex-end">
+            <select id="subsetSourceScenario" style="flex:1" onchange="onSubsetSourceChange()">
+              <option value="">Select a scenario…</option>
+            </select>
+            <button type="button" class="btn btn-outline btn-sm" onclick="useCurrentScenarioForSubset()">Sync from Parameterisation</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="inspectSubsetScenario()">Inspect</button>
+          </div>
+          <div class="help-text">Inspects <em>hydro/hydro_reaches.h5</em> and derives the real valid day range from the hydrology runtime contract.</div>
+        </div>
+
+        <div class="subset-meta-grid">
+          <div class="subset-stat">
+            <div class="label">Project Extent</div>
+            <div class="value" id="subsetProjectExtent">-</div>
+          </div>
+          <div class="subset-stat">
+            <div class="label">Hydrology HDF5</div>
+            <div class="value" id="subsetHdfExtent">-</div>
+          </div>
+          <div class="subset-stat">
+            <div class="label">Effective Day Range</div>
+            <div class="value" id="subsetEffectiveExtent">-</div>
+          </div>
+          <div class="subset-stat">
+            <div class="label">Hydro Reaches / CSVs</div>
+            <div class="value" id="subsetHydroStats">-</div>
+          </div>
+        </div>
+
+        <div class="subset-summary" id="subsetSummary">Select a scenario to inspect its hydrology-backed temporal window.</div>
+        <ul class="subset-warnings" id="subsetWarnings"></ul>
+
+        <div class="section-heading">Create Subset Scenario</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="subsetTargetName">New Scenario Folder Name</label>
+            <input type="text" id="subsetTargetName" placeholder="e.g., muenster-T-Di-02.5-subset-1995-05">
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-outline btn-sm" onclick="fillSubsetDatesFromEffective()">Use Effective Min/Max</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="subsetStartDate">Subset Start Date</label>
+            <input type="text" id="subsetStartDate" placeholder="YYYY-MM-DD">
+          </div>
+          <div class="form-group">
+            <label for="subsetEndDate">Subset End Date</label>
+            <input type="text" id="subsetEndDate" placeholder="YYYY-MM-DD">
+          </div>
+        </div>
+        <div class="help-text">The generated scenario will copy the source scenario, trim <em>hydro_reaches.h5</em> and <em>hydro/TimeSeries/*.csv</em>, and update the subset scenario metadata.</div>
+        <div style="margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap">
+          <button type="button" class="btn btn-secondary" id="subsetCreateBtn" onclick="createScenarioSubset()">Create Subset Scenario</button>
+          <button type="button" class="btn btn-outline btn-sm" id="subsetCancelBtn" onclick="cancelScenarioSubsetJob()" style="display:none">Cancel</button>
+        </div>
+        <div class="mc-row" id="subsetProgressRow" style="margin-top:.7rem;display:none">
+          <div class="progress-bar" title="Subset creation progress">
+            <div class="progress-fill running" id="subsetProgressFill" style="width:0%"></div>
+          </div>
+          <div class="progress-pct" id="subsetProgressPct">0%</div>
+        </div>
+        <div class="status-message" id="subsetStatus" style="margin:.75rem 0 0"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
      MONITOR PAGE
      ══════════════════════════════════════════════════════════════════ -->
 <div class="page" id="pageMonitor">
@@ -934,6 +1033,9 @@ let activeXrunPath = null;
 let activeXrunFilename = null;
 let templateParams = {};
 const scenarioExtentCache = new Map();
+const scenarioInspectCache = new Map();
+let subsetJobPollTimer = null;
+let activeSubsetJobId = null;
 
 // Known param keys (for distinguishing "additional" ones)
 const knownParams = [
@@ -1029,11 +1131,19 @@ async function loadScenarios() {
     const res = await fetch('/api/scenarios');
     const scenarios = await res.json();
     const sel = document.getElementById('Scenario/LandscapeScenario');
+    const subsetSel = document.getElementById('subsetSourceScenario');
     sel.innerHTML = '<option value="">Select a scenario…</option>';
+    if (subsetSel) subsetSel.innerHTML = '<option value="">Select a scenario…</option>';
     scenarios.forEach(s => {
       const o = document.createElement('option');
       o.value = s.path; o.textContent = s.name;
       sel.appendChild(o);
+      if (subsetSel) {
+        const clone = document.createElement('option');
+        clone.value = s.path;
+        clone.textContent = s.name;
+        subsetSel.appendChild(clone);
+      }
     });
   } catch(e) { console.error('loadScenarios', e); }
 }
@@ -1067,7 +1177,267 @@ async function onScenarioChange(scenarioPath, overwrite = false) {
   if (!scenarioPath) return;
   try {
     await applyScenarioExtentDefaults(scenarioPath, { overwrite });
+    const subsetSel = document.getElementById('subsetSourceScenario');
+    if (subsetSel && !subsetSel.value) {
+      subsetSel.value = scenarioPath;
+      await inspectSubsetScenario();
+    }
   } catch(e) { console.error('onScenarioChange', e); }
+}
+
+function showSubsetStatus(msg, type) {
+  const el = document.getElementById('subsetStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'status-message show ' + type;
+  if (type === 'success' || type === 'note') {
+    setTimeout(() => { el.className = 'status-message'; }, 5000);
+  }
+}
+
+function renderSubsetInspection(data) {
+  const project = data?.project_extent || {};
+  const hdf = data?.hdf_extent || {};
+  const effective = data?.effective_extent || {};
+  const warnings = data?.warnings || [];
+  document.getElementById('subsetProjectExtent').textContent = (project.from_date && project.to_date)
+    ? `${project.from_date} → ${project.to_date}`
+    : 'Unavailable';
+  document.getElementById('subsetHdfExtent').textContent = (hdf.from_datetime && hdf.to_datetime)
+    ? `${hdf.from_datetime} → ${hdf.to_datetime}`
+    : 'Unavailable';
+  document.getElementById('subsetEffectiveExtent').textContent = (effective.from_date && effective.to_date)
+    ? `${effective.from_date} → ${effective.to_date}`
+    : 'Unavailable';
+  document.getElementById('subsetHydroStats').textContent = `${hdf.reach_count || 0} reaches / ${data?.files?.timeseries_csv_count || 0} CSVs`;
+
+  const summaryBits = [];
+  if (data?.scenario_path) summaryBits.push(`Source: ${data.scenario_path}`);
+  if (effective.from_date && effective.to_date) summaryBits.push(`Valid slice window: ${effective.from_date} to ${effective.to_date}`);
+  document.getElementById('subsetSummary').textContent = summaryBits.join(' | ') || 'No scenario inspection data available.';
+
+  const warningsEl = document.getElementById('subsetWarnings');
+  warningsEl.innerHTML = warnings.map(w => `<li>${escHtml(w)}</li>`).join('');
+}
+
+async function inspectSubsetScenario(force = false) {
+  const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
+  if (!scenarioPath) {
+    showSubsetStatus('Select a source scenario first.', 'error');
+    return null;
+  }
+  if (!force && scenarioInspectCache.has(scenarioPath)) {
+    const cached = scenarioInspectCache.get(scenarioPath);
+    renderSubsetInspection(cached);
+    return cached;
+  }
+  try {
+    const data = await api('/api/scenario-inspect?path=' + encodeURIComponent(scenarioPath));
+    scenarioInspectCache.set(scenarioPath, data);
+    renderSubsetInspection(data);
+    showSubsetStatus('Scenario inspected.', data.warnings?.length ? 'warning' : 'success');
+    return data;
+  } catch (e) {
+    showSubsetStatus('Inspection failed: ' + e.message, 'error');
+    return null;
+  }
+}
+
+function fillSubsetDatesFromEffective() {
+  const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
+  const data = scenarioInspectCache.get(scenarioPath);
+  if (!data?.effective_extent?.from_date || !data?.effective_extent?.to_date) {
+    showSubsetStatus('Inspect a scenario first to load the effective date window.', 'error');
+    return;
+  }
+  document.getElementById('subsetStartDate').value = data.effective_extent.from_date;
+  document.getElementById('subsetEndDate').value = data.effective_extent.to_date;
+}
+
+async function onSubsetSourceChange() {
+  const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
+  if (!scenarioPath) return;
+  await inspectSubsetScenario();
+}
+
+function useCurrentScenarioForSubset() {
+  const current = document.getElementById('Scenario/LandscapeScenario')?.value || '';
+  const subsetSel = document.getElementById('subsetSourceScenario');
+  if (!current || !subsetSel) {
+    showSubsetStatus('Select a landscape scenario in the parameterisation section first.', 'error');
+    return;
+  }
+  subsetSel.value = current;
+  inspectSubsetScenario();
+}
+
+function setSubsetCreateBusy(isBusy) {
+  const btn = document.getElementById('subsetCreateBtn');
+  const cancelBtn = document.getElementById('subsetCancelBtn');
+  if (btn) btn.disabled = !!isBusy;
+  if (cancelBtn) {
+    cancelBtn.style.display = isBusy ? 'inline-flex' : 'none';
+    cancelBtn.disabled = !isBusy;
+  }
+}
+
+function setSubsetProgress(pct, state = 'running') {
+  const row = document.getElementById('subsetProgressRow');
+  const fill = document.getElementById('subsetProgressFill');
+  const label = document.getElementById('subsetProgressPct');
+  if (!row || !fill || !label) return;
+  const clamped = Math.max(0, Math.min(100, Number(pct) || 0));
+  row.style.display = 'flex';
+  fill.style.width = clamped + '%';
+  fill.className = 'progress-fill ' + (state || 'running');
+  label.textContent = Math.round(clamped) + '%';
+}
+
+function stopSubsetJobPolling() {
+  if (subsetJobPollTimer) {
+    clearInterval(subsetJobPollTimer);
+    subsetJobPollTimer = null;
+  }
+  activeSubsetJobId = null;
+}
+
+async function cancelScenarioSubsetJob() {
+  if (!activeSubsetJobId) {
+    showSubsetStatus('No active subset job to cancel.', 'warning');
+    return;
+  }
+  try {
+    const btn = document.getElementById('subsetCancelBtn');
+    if (btn) btn.disabled = true;
+    await api('/api/scenario-subset/cancel/' + encodeURIComponent(activeSubsetJobId), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: '{}',
+    });
+    showSubsetStatus('Cancellation requested. Waiting for safe stop and cleanup…', 'warning');
+  } catch (e) {
+    showSubsetStatus('Failed to request cancellation: ' + e.message, 'error');
+    const btn = document.getElementById('subsetCancelBtn');
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function applyCreatedSubset(res) {
+  document.getElementById('Scenario/LandscapeScenario').value = res.scenario_path;
+  document.getElementById('Scenario/SimulationStart').value = res.simulation_start;
+  document.getElementById('Scenario/SimulationEnd').value = res.simulation_end;
+  document.getElementById('subsetSourceScenario').value = res.scenario_path;
+  scenarioInspectCache.delete(res.scenario_path);
+  await loadScenarios();
+  document.getElementById('Scenario/LandscapeScenario').value = res.scenario_path;
+  document.getElementById('subsetSourceScenario').value = res.scenario_path;
+  await inspectSubsetScenario(true);
+  const warnText = (res.warnings || []).join(' ');
+  showSubsetStatus(
+    warnText
+      ? `Created subset scenario ${res.scenario_path}. ${warnText}`
+      : `Created subset scenario ${res.scenario_path}. Parameterisation fields were updated to the new scenario.`,
+    (res.warnings || []).length ? 'warning' : 'success'
+  );
+  showCfgStatus(`Parameterisation updated to ${res.scenario_path}`, 'success');
+}
+
+async function pollSubsetJob(jobId) {
+  activeSubsetJobId = jobId;
+  setSubsetCreateBusy(true);
+  setSubsetProgress(1, 'running');
+  const tick = async () => {
+    try {
+      const job = await api('/api/scenario-subset/status/' + encodeURIComponent(jobId));
+      const pct = Number(job.progress_pct || 0);
+      if (job.running) {
+        setSubsetProgress(pct, 'running');
+        if (job.message) showSubsetStatus(job.message, 'note');
+        if (job.cancel_requested) showSubsetStatus('Cancellation requested. Cleaning up…', 'warning');
+        return;
+      }
+      if (job.cancelled) {
+        setSubsetProgress(Math.max(pct, 1), 'warning');
+        showSubsetStatus(job.message || 'Subset creation was cancelled.', 'warning');
+        stopSubsetJobPolling();
+        setSubsetCreateBusy(false);
+        return;
+      }
+      if (job.error) {
+        setSubsetProgress(Math.max(pct, 1), 'error');
+        showSubsetStatus('Subset creation failed: ' + job.error, 'error');
+        stopSubsetJobPolling();
+        setSubsetCreateBusy(false);
+        return;
+      }
+      setSubsetProgress(100, 'finished');
+      stopSubsetJobPolling();
+      setSubsetCreateBusy(false);
+      if (job.result) {
+        await applyCreatedSubset(job.result);
+      } else {
+        showSubsetStatus('Subset job finished without result payload.', 'warning');
+      }
+    } catch (e) {
+      showSubsetStatus('Subset progress check failed: ' + e.message, 'error');
+      stopSubsetJobPolling();
+      setSubsetCreateBusy(false);
+    }
+  };
+  await tick();
+  subsetJobPollTimer = setInterval(tick, 1000);
+}
+
+async function createScenarioSubset() {
+  if (activeSubsetJobId) {
+    showSubsetStatus('A subset creation job is already running.', 'warning');
+    return;
+  }
+  const source_scenario = document.getElementById('subsetSourceScenario')?.value || '';
+  const target_name = document.getElementById('subsetTargetName')?.value.trim() || '';
+  const subset_start = document.getElementById('subsetStartDate')?.value.trim() || '';
+  const subset_end = document.getElementById('subsetEndDate')?.value.trim() || '';
+  if (!source_scenario || !target_name || !subset_start || !subset_end) {
+    showSubsetStatus('source scenario, target name, subset start, and subset end are required.', 'error');
+    return;
+  }
+  try {
+    showSubsetStatus('Starting subset creation job...', 'note');
+    const payload = { source_scenario, target_name, subset_start, subset_end };
+    let res;
+    try {
+      res = await api('/api/scenario-subset/start', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      const msg = String(e?.message || e || '');
+      if (msg.includes('Unknown endpoint: /api/scenario-subset/start') || msg.includes('(404)')) {
+        // Backward compatibility when server process is still on pre-progress route set.
+        setSubsetCreateBusy(true);
+        setSubsetProgress(10, 'running');
+        showSubsetStatus('Server does not expose async progress endpoint yet; running in compatibility mode.', 'warning');
+        const syncRes = await api('/api/scenario-subset', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload),
+        });
+        setSubsetProgress(100, 'finished');
+        await applyCreatedSubset(syncRes);
+        setSubsetCreateBusy(false);
+        return;
+      }
+      throw e;
+    }
+    if (!res.job_id) {
+      throw new Error('Server did not return a subset job id.');
+    }
+    await pollSubsetJob(res.job_id);
+  } catch (e) {
+    showSubsetStatus('Subset creation failed: ' + e.message, 'error');
+    setSubsetCreateBusy(false);
+  }
 }
 
 function initializeScenarioDateAutofill() {
@@ -1229,7 +1599,11 @@ async function openXrunFile() {
     if (r.status === 'success') {
       for (const [k,v] of Object.entries(r.parameters)) { const el = document.getElementById(k); if (el) el.value = v; }
       const scenarioVal = r.parameters['Scenario/LandscapeScenario'];
-      if (scenarioVal) onScenarioChange(scenarioVal);
+      if (scenarioVal) {
+        const subsetSel = document.getElementById('subsetSourceScenario');
+        if (subsetSel) subsetSel.value = scenarioVal;
+        onScenarioChange(scenarioVal);
+      }
       activeXrunPath = path;
       activeXrunFilename = filename;
       showCfgStatus(`Loaded: ${filename}`, 'success');
@@ -2188,6 +2562,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadWarningDowngradeRules();
   await loadScenarios();
   await loadTemplate();
+  useCurrentScenarioForSubset();
   loadXrunFiles();
   loadAnlRuns();
   loadAnlScenarios();

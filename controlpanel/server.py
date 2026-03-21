@@ -30,6 +30,7 @@ Usage::
 """
 
 import argparse
+import csv
 import datetime
 import glob
 import hashlib
@@ -41,6 +42,7 @@ import subprocess
 import sys
 import threading
 import time
+import uuid
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -67,6 +69,7 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CPANEL_DIR = os.path.abspath(os.path.dirname(__file__))
 DEFAULT_RUN_DIR = os.path.join(BASE_DIR, "run")
 OUTPUT_DIR = os.path.join(BASE_DIR, "parameterisation")
+SCENARIO_DIR = os.path.join(BASE_DIR, "scenario")
 TEMPLATE_PATH = os.path.join(OUTPUT_DIR, "template.xrun")
 START_BAT = os.path.join(BASE_DIR, "__start__.bat")
 ANALYSIS_SCRIPT = os.path.join(BASE_DIR, "analysis", "run_basic_analysis.py")
@@ -85,6 +88,8 @@ ANALYSIS_REQUIRED_MODULES = [
 ]
 PORT = 8090
 PARAM_FILE_EXTENSIONS = (".xrun", ".yaml", ".yml")
+HYDRO_TIME_FORMAT = "%Y-%m-%dT%H:%M"
+HYDRO_ARRAY_DATASETS = ("flow", "depth", "volume", "area")
 
 # Track running simulation processes: {experiment_id: subprocess.Popen}
 _running_processes = {}
@@ -95,12 +100,20 @@ _proc_lock = threading.Lock()
 _analysis_jobs = {}
 _analysis_lock = threading.Lock()
 
+# Track scenario subset jobs: {job_id: {running, completed, progress_pct, message, ...}}
+_subset_jobs = {}
+_subset_lock = threading.Lock()
+
 _map_geometry_cache = OrderedDict()
 _map_timeseries_cache = OrderedDict()
 _map_cache_lock = threading.Lock()
 _MAP_GEOMETRY_CACHE_LIMIT = 8
 _MAP_TIMESERIES_CACHE_LIMIT = 32
 _MAP_HOURLY_MAX_POINTS = 500000
+
+
+class SubsetJobCancelled(Exception):
+    """Raised when a running subset creation job is cancelled by the user."""
 
 
 def _cache_get(cache: OrderedDict, key):
@@ -490,33 +503,720 @@ def normalize_parameter_filename(filename: str, default_ext: str = ".xrun") -> s
 
 def get_scenarios() -> list:
     """Return list of scenario directories."""
-    scenario_dir = os.path.join(BASE_DIR, "scenario")
-    if not os.path.isdir(scenario_dir):
+    if not os.path.isdir(SCENARIO_DIR):
         return []
     return [
         {"name": d, "path": f"scenario/{d}"}
-        for d in sorted(os.listdir(scenario_dir))
-        if os.path.isdir(os.path.join(scenario_dir, d))
+        for d in sorted(os.listdir(SCENARIO_DIR))
+        if os.path.isdir(os.path.join(SCENARIO_DIR, d))
     ]
 
 
-def get_scenario_extent(scenario_path: str) -> dict:
-    """Read TemporalExtent from scenario.xproject and return from/to dates."""
-    full_path = os.path.join(BASE_DIR, scenario_path, "scenario.xproject")
-    if not os.path.isfile(full_path):
-        return {"error": f"scenario.xproject not found in {scenario_path}"}
+def _strip_xml_ns(tag: str) -> str:
+    return re.sub(r"\{.*?\}", "", tag)
+
+
+def _find_xml_text(root, tag: str) -> str:
+    for element in root.iter():
+        if _strip_xml_ns(element.tag) == tag:
+            return (element.text or "").strip()
+    return ""
+
+
+def _normalize_scenario_rel_path(scenario_path: str) -> str:
+    rel = (scenario_path or "").strip().replace("\\", "/")
+    rel = rel.lstrip("/")
+    if rel.startswith("./"):
+        rel = rel[2:]
+    if not rel:
+        raise ValueError("Scenario path is required")
+    if not rel.startswith("scenario/"):
+        rel = f"scenario/{rel}"
+    return rel.rstrip("/")
+
+
+def _resolve_scenario_path(scenario_path: str) -> tuple[str, str]:
+    rel = _normalize_scenario_rel_path(scenario_path)
+    abs_path = os.path.abspath(os.path.join(BASE_DIR, rel))
+    if not (abs_path == SCENARIO_DIR or abs_path.startswith(SCENARIO_DIR + os.sep)):
+        raise ValueError("Invalid scenario path")
+    return rel, abs_path
+
+
+def _validate_subset_scenario_name(name: str) -> str:
+    clean = (name or "").strip()
+    if not clean:
+        raise ValueError("Target scenario name is required")
+    if clean in (".", "..") or "/" in clean or "\\" in clean:
+        raise ValueError("Target scenario name must be a single folder name")
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", clean):
+        raise ValueError("Target scenario name may only contain letters, numbers, dots, hyphens, and underscores")
+    return clean
+
+
+def _scenario_project_display_name(folder_name: str) -> str:
+    # scenario.xproject Name only allows letters, numbers and spaces by schema
+    text = re.sub(r"[^A-Za-z0-9 ]+", " ", str(folder_name or "").strip())
+    text = re.sub(r"\s+", " ", text).strip()
+    if not text:
+        return "Scenario"
+    if len(text) == 1:
+        return f"{text} 0"
+    return text
+
+
+def _scenario_project_path(abs_path: str) -> str:
+    return os.path.join(abs_path, "scenario.xproject")
+
+
+def _scenario_readme_path(abs_path: str) -> str:
+    return os.path.join(abs_path, "readme.txt")
+
+
+def _scenario_hydro_path(abs_path: str) -> str:
+    return os.path.join(abs_path, "hydro", "hydro_reaches.h5")
+
+
+def _scenario_timeseries_dir(abs_path: str) -> str:
+    return os.path.join(abs_path, "hydro", "TimeSeries")
+
+
+def _parse_scenario_project_extent(project_path: str) -> dict:
+    if not os.path.isfile(project_path):
+        return {}
+    tree = ET.parse(project_path)
+    root = tree.getroot()
+    return {
+        "from_date": _find_xml_text(root, "FromDate") or None,
+        "to_date": _find_xml_text(root, "ToDate") or None,
+        "name": _find_xml_text(root, "Name") or None,
+    }
+
+
+def _parse_readme_extent(readme_path: str) -> dict:
+    if not os.path.isfile(readme_path):
+        return {}
     try:
-        tree = ET.parse(full_path)
-        root = tree.getroot()
-        # Strip any namespace from tags
-        def _text(tag):
-            for el in root.iter():
-                if re.sub(r"\{.*?\}", "", el.tag) == tag:
-                    return (el.text or "").strip()
-            return ""
-        return {"from_date": _text("FromDate"), "to_date": _text("ToDate")}
+        with open(readme_path, "r", encoding="utf-8", errors="replace") as handle:
+            first_line = handle.readline().strip()
+    except OSError:
+        return {}
+    match = re.search(
+        r"(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\s+to\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})",
+        first_line,
+    )
+    if not match:
+        return {}
+    return {"from_datetime": match.group(1), "to_datetime": match.group(2), "summary": first_line}
+
+
+def _parse_hydro_datetime(value):
+    if not value:
+        return None
+    try:
+        return datetime.datetime.strptime(value, HYDRO_TIME_FORMAT)
+    except ValueError:
+        return None
+
+
+def _format_hydro_datetime(value: datetime.datetime) -> str:
+    return value.strftime(HYDRO_TIME_FORMAT)
+
+
+def _embedded_hydro_inspect(hydro_path: str) -> dict:
+    script = r'''
+import json
+import h5py
+import sys
+
+path = json.loads(sys.argv[1])["hydro_path"]
+with h5py.File(path, "r") as handle:
+    datasets = {}
+    for key in handle.keys():
+        obj = handle[key]
+        datasets[key] = {
+            "shape": list(getattr(obj, "shape", ())),
+            "dtype": str(getattr(obj, "dtype", "")),
+        }
+    result = {
+        "datasets": datasets,
+        "keys": list(handle.keys()),
+        "time_from": handle["time_from"][0].decode("ascii") if "time_from" in handle else None,
+        "time_to": handle["time_to"][0].decode("ascii") if "time_to" in handle else None,
+        "reach_count": int(handle["reaches"].shape[0]) if "reaches" in handle else 0,
+    }
+print(json.dumps(result))
+'''
+    return _embedded_json_call(script, {"hydro_path": hydro_path})
+
+
+def _read_hydro_metadata(hydro_path: str) -> dict:
+    if not os.path.isfile(hydro_path):
+        return {}
+    if h5py is None:
+        return _embedded_hydro_inspect(hydro_path)
+    with h5py.File(hydro_path, "r") as handle:
+        datasets = {}
+        for key in handle.keys():
+            obj = handle[key]
+            datasets[key] = {
+                "shape": list(getattr(obj, "shape", ())),
+                "dtype": str(getattr(obj, "dtype", "")),
+            }
+        return {
+            "datasets": datasets,
+            "keys": list(handle.keys()),
+            "time_from": handle["time_from"][0].decode("ascii") if "time_from" in handle else None,
+            "time_to": handle["time_to"][0].decode("ascii") if "time_to" in handle else None,
+            "reach_count": int(handle["reaches"].shape[0]) if "reaches" in handle else 0,
+        }
+
+
+def _compute_effective_hydro_extent(time_from, time_to):
+    start_dt = _parse_hydro_datetime(time_from)
+    end_dt = _parse_hydro_datetime(time_to)
+    if start_dt is None or end_dt is None:
+        return {}
+    min_from = start_dt.date()
+    if start_dt.time() > datetime.time(1, 0):
+        min_from += datetime.timedelta(days=1)
+    max_to = (end_dt - datetime.timedelta(days=1)).date()
+    return {
+        "from_date": min_from.isoformat(),
+        "to_date": max_to.isoformat(),
+        "valid": min_from <= max_to,
+    }
+
+
+def inspect_scenario(scenario_path: str) -> dict:
+    try:
+        scenario_rel, scenario_abs = _resolve_scenario_path(scenario_path)
     except Exception as exc:
         return {"error": str(exc)}
+
+    if not os.path.isdir(scenario_abs):
+        return {"error": f"Scenario folder not found: {scenario_rel}"}
+
+    project_path = _scenario_project_path(scenario_abs)
+    readme_path = _scenario_readme_path(scenario_abs)
+    hydro_path = _scenario_hydro_path(scenario_abs)
+    inflow_dir = _scenario_timeseries_dir(scenario_abs)
+    warnings = []
+
+    project_extent = _parse_scenario_project_extent(project_path)
+    readme_extent = _parse_readme_extent(readme_path)
+    hydro_meta = _read_hydro_metadata(hydro_path) if os.path.isfile(hydro_path) else {}
+    effective_extent = _compute_effective_hydro_extent(
+        hydro_meta.get("time_from"),
+        hydro_meta.get("time_to"),
+    ) if hydro_meta else {}
+
+    if hydro_meta and not effective_extent.get("valid", True):
+        warnings.append("Hydrology HDF5 does not contain a full valid day window for simulation dates.")
+    if project_extent.get("from_date") and effective_extent.get("from_date") and project_extent.get("from_date") != effective_extent.get("from_date"):
+        warnings.append(
+            f"scenario.xproject start date {project_extent['from_date']} differs from hydrology-derived start date {effective_extent['from_date']}."
+        )
+    if project_extent.get("to_date") and effective_extent.get("to_date") and project_extent.get("to_date") != effective_extent.get("to_date"):
+        warnings.append(
+            f"scenario.xproject end date {project_extent['to_date']} differs from hydrology-derived end date {effective_extent['to_date']}."
+        )
+    if readme_extent.get("from_datetime") and hydro_meta.get("time_from") and readme_extent.get("from_datetime") != hydro_meta.get("time_from"):
+        warnings.append(
+            f"readme.txt start datetime {readme_extent['from_datetime']} differs from hydrology HDF5 start datetime {hydro_meta['time_from']}."
+        )
+    if readme_extent.get("to_datetime") and hydro_meta.get("time_to") and readme_extent.get("to_datetime") != hydro_meta.get("time_to"):
+        warnings.append(
+            f"readme.txt end datetime {readme_extent['to_datetime']} differs from hydrology HDF5 end datetime {hydro_meta['time_to']}."
+        )
+
+    inflow_count = 0
+    if os.path.isdir(inflow_dir):
+        inflow_count = len([name for name in os.listdir(inflow_dir) if name.lower().endswith(".csv")])
+
+    primary_extent = effective_extent or project_extent
+    return {
+        "scenario_path": scenario_rel,
+        "scenario_name": os.path.basename(scenario_abs),
+        "project_extent": {
+            "from_date": project_extent.get("from_date"),
+            "to_date": project_extent.get("to_date"),
+        },
+        "readme_extent": readme_extent,
+        "hdf_extent": {
+            "from_datetime": hydro_meta.get("time_from"),
+            "to_datetime": hydro_meta.get("time_to"),
+            "reach_count": hydro_meta.get("reach_count", 0),
+            "datasets": hydro_meta.get("datasets", {}),
+        },
+        "effective_extent": {
+            "from_date": primary_extent.get("from_date"),
+            "to_date": primary_extent.get("to_date"),
+            "valid": primary_extent.get("valid", True),
+        },
+        "from_date": primary_extent.get("from_date"),
+        "to_date": primary_extent.get("to_date"),
+        "warnings": warnings,
+        "files": {
+            "project": os.path.isfile(project_path),
+            "hydro_hdf": os.path.isfile(hydro_path),
+            "timeseries_dir": os.path.isdir(inflow_dir),
+            "timeseries_csv_count": inflow_count,
+            "readme": os.path.isfile(readme_path),
+        },
+    }
+
+
+def get_scenario_extent(scenario_path: str) -> dict:
+    """Return the best available scenario extent, preferring hydrology-derived bounds."""
+    inspected = inspect_scenario(scenario_path)
+    if inspected.get("error"):
+        return inspected
+    return {
+        "from_date": inspected.get("from_date"),
+        "to_date": inspected.get("to_date"),
+        "project_extent": inspected.get("project_extent", {}),
+        "hdf_extent": inspected.get("hdf_extent", {}),
+        "effective_extent": inspected.get("effective_extent", {}),
+        "warnings": inspected.get("warnings", []),
+    }
+
+
+def _parse_iso_date(value: str, field_name: str):
+    try:
+        return datetime.date.fromisoformat((value or "").strip())
+    except ValueError as exc:
+        raise ValueError(f"{field_name} must use format YYYY-MM-DD") from exc
+
+
+def _validate_subset_window(inspected: dict, start_date: datetime.date, end_date: datetime.date):
+    if end_date < start_date:
+        raise ValueError("Subset end date must be greater than or equal to subset start date")
+    effective = inspected.get("effective_extent", {})
+    allowed_from = effective.get("from_date")
+    allowed_to = effective.get("to_date")
+    if not allowed_from or not allowed_to:
+        raise ValueError("Scenario does not expose a valid hydrology time window")
+    min_date = datetime.date.fromisoformat(allowed_from)
+    max_date = datetime.date.fromisoformat(allowed_to)
+    if start_date < min_date or end_date > max_date:
+        raise ValueError(
+            f"Selected subset window {start_date.isoformat()} to {end_date.isoformat()} is outside the valid range {allowed_from} to {allowed_to}"
+        )
+
+
+def _copy_scenario_template(source_abs: str, target_abs: str, progress_cb=None, pct_from: int = 0, pct_to: int = 100, cancel_cb=None):
+    manifest = []
+    for root_dir, dirs, files in os.walk(source_abs):
+        if cancel_cb and cancel_cb():
+            raise SubsetJobCancelled("Subset creation was cancelled during template scan")
+        rel_dir = os.path.relpath(root_dir, source_abs).replace("\\", "/")
+        if rel_dir == ".":
+            rel_dir = ""
+        if rel_dir == "hydro":
+            dirs[:] = [d for d in dirs if d != "TimeSeries"]
+            files = [f for f in files if f != "hydro_reaches.h5"]
+        for fname in files:
+            src_file = os.path.join(root_dir, fname)
+            rel_file = os.path.relpath(src_file, source_abs)
+            try:
+                size = os.path.getsize(src_file)
+            except OSError:
+                size = 0
+            manifest.append((src_file, rel_file, size))
+
+    os.makedirs(target_abs, exist_ok=True)
+    if not manifest:
+        if progress_cb:
+            progress_cb(pct_to, "Scenario template copy complete")
+        return
+
+    total_bytes = sum(max(item[2], 1) for item in manifest)
+    copied_bytes = 0
+    total_files = len(manifest)
+    for idx, (src_file, rel_file, size) in enumerate(manifest, start=1):
+        if cancel_cb and cancel_cb():
+            raise SubsetJobCancelled("Subset creation was cancelled during scenario copy")
+        dst_file = os.path.join(target_abs, rel_file)
+        os.makedirs(os.path.dirname(dst_file), exist_ok=True)
+        shutil.copy2(src_file, dst_file)
+        copied_bytes += max(size, 1)
+        if progress_cb and (idx == 1 or idx == total_files or idx % 10 == 0):
+            frac = copied_bytes / total_bytes if total_bytes else 1.0
+            pct = int(pct_from + (pct_to - pct_from) * frac)
+            progress_cb(pct, f"Copying scenario files ({idx}/{total_files})")
+
+
+def _slice_hydrology_hdf_embedded(source_hdf: str, target_hdf: str, start_iso: str, end_iso: str):
+    script = r'''
+import datetime
+import json
+import os
+import h5py
+import sys
+
+FMT = "%Y-%m-%dT%H:%M"
+payload = json.loads(sys.argv[1])
+source_hdf = payload["source_hdf"]
+target_hdf = payload["target_hdf"]
+start_dt = datetime.datetime.strptime(payload["start_iso"], FMT)
+end_dt = datetime.datetime.strptime(payload["end_iso"], FMT)
+
+os.makedirs(os.path.dirname(target_hdf), exist_ok=True)
+with h5py.File(source_hdf, "r") as src, h5py.File(target_hdf, "w") as dst:
+    src_start = datetime.datetime.strptime(src["time_from"][0].decode("ascii"), FMT)
+    src_end = datetime.datetime.strptime(src["time_to"][0].decode("ascii"), FMT)
+    if start_dt < src_start or end_dt > src_end:
+        raise ValueError(f"Subset range {start_dt} to {end_dt} is outside source hydrology bounds {src_start} to {src_end}")
+    start_idx = int((start_dt - src_start).total_seconds() // 3600)
+    end_idx = int((end_dt - src_start).total_seconds() // 3600)
+    for name in ("flow", "depth", "volume", "area"):
+        ds = src[name]
+        dst.create_dataset(name, data=ds[start_idx:end_idx + 1, :], dtype=ds.dtype)
+    dst.create_dataset("reaches", data=src["reaches"][:], dtype=src["reaches"].dtype)
+    dst.create_dataset("time_from", data=[payload["start_iso"].encode("ascii")])
+    dst.create_dataset("time_to", data=[payload["end_iso"].encode("ascii")])
+
+print(json.dumps({"status": "success", "time_steps": end_idx - start_idx + 1}))
+'''
+    return _embedded_json_call(
+        script,
+        {
+            "source_hdf": source_hdf,
+            "target_hdf": target_hdf,
+            "start_iso": start_iso,
+            "end_iso": end_iso,
+        },
+    )
+
+
+def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.datetime, end_dt: datetime.datetime, progress_cb=None, pct_from: int = 0, pct_to: int = 100, cancel_cb=None):
+    start_iso = _format_hydro_datetime(start_dt)
+    end_iso = _format_hydro_datetime(end_dt)
+    if h5py is None:
+        if progress_cb:
+            progress_cb(pct_from, "Slicing hydrology HDF5 (embedded runtime)")
+        if cancel_cb and cancel_cb():
+            raise SubsetJobCancelled("Subset creation was cancelled before HDF5 slicing")
+        result = _slice_hydrology_hdf_embedded(source_hdf, target_hdf, start_iso, end_iso)
+        if progress_cb:
+            progress_cb(pct_to, "Hydrology HDF5 slicing complete")
+        return result
+
+    os.makedirs(os.path.dirname(target_hdf), exist_ok=True)
+    with h5py.File(source_hdf, "r") as src, h5py.File(target_hdf, "w") as dst:
+        if cancel_cb and cancel_cb():
+            raise SubsetJobCancelled("Subset creation was cancelled before HDF5 slicing")
+        src_start = _parse_hydro_datetime(src["time_from"][0].decode("ascii"))
+        src_end = _parse_hydro_datetime(src["time_to"][0].decode("ascii"))
+        if src_start is None or src_end is None:
+            raise ValueError("Source hydrology file has invalid time_from/time_to metadata")
+        if start_dt < src_start or end_dt > src_end:
+            raise ValueError(
+                f"Subset range {start_iso} to {end_iso} is outside source hydrology bounds {_format_hydro_datetime(src_start)} to {_format_hydro_datetime(src_end)}"
+            )
+        start_idx = int((start_dt - src_start).total_seconds() // 3600)
+        end_idx = int((end_dt - src_start).total_seconds() // 3600)
+        slice_rows = end_idx - start_idx + 1
+        total_units = max(slice_rows * len(HYDRO_ARRAY_DATASETS), 1)
+        done_units = 0
+        for name in HYDRO_ARRAY_DATASETS:
+            ds = src[name]
+            out = dst.create_dataset(name, shape=(slice_rows, ds.shape[1]), dtype=ds.dtype)
+            chunk_rows = min(2048, max(64, slice_rows // 25 or 64))
+            for row0 in range(0, slice_rows, chunk_rows):
+                if cancel_cb and cancel_cb():
+                    raise SubsetJobCancelled("Subset creation was cancelled during HDF5 slicing")
+                row1 = min(slice_rows, row0 + chunk_rows)
+                out[row0:row1, :] = ds[start_idx + row0:start_idx + row1, :]
+                done_units += (row1 - row0)
+                if progress_cb:
+                    frac = done_units / total_units
+                    pct = int(pct_from + (pct_to - pct_from) * frac)
+                    progress_cb(pct, f"Slicing hydrology dataset {name} ({row1}/{slice_rows} rows)")
+        dst.create_dataset("reaches", data=src["reaches"][:], dtype=src["reaches"].dtype)
+        dst.create_dataset("time_from", data=[start_iso.encode("ascii")])
+        dst.create_dataset("time_to", data=[end_iso.encode("ascii")])
+    if progress_cb:
+        progress_cb(pct_to, "Hydrology HDF5 slicing complete")
+    return {"status": "success", "time_steps": end_idx - start_idx + 1}
+
+
+def _slice_timeseries_csv(source_csv: str, target_csv: str, start_dt: datetime.datetime, end_dt: datetime.datetime, cancel_cb=None):
+    os.makedirs(os.path.dirname(target_csv), exist_ok=True)
+    kept_rows = 0
+    with open(source_csv, "r", encoding="utf-8", newline="") as src_handle, open(target_csv, "w", encoding="utf-8", newline="") as dst_handle:
+        reader = csv.reader(src_handle)
+        writer = csv.writer(dst_handle)
+        header = next(reader, None)
+        if header:
+            writer.writerow(header)
+        for row in reader:
+            if cancel_cb and kept_rows % 5000 == 0 and cancel_cb():
+                raise SubsetJobCancelled("Subset creation was cancelled during inflow CSV trimming")
+            if len(row) < 3:
+                continue
+            try:
+                row_dt = datetime.datetime.strptime(row[1].strip(), HYDRO_TIME_FORMAT)
+            except ValueError:
+                continue
+            if start_dt <= row_dt <= end_dt:
+                writer.writerow(row)
+                kept_rows += 1
+    return kept_rows
+
+
+def _update_scenario_project_for_subset(project_path: str, target_name: str, start_date: datetime.date, end_date: datetime.date):
+    if not os.path.isfile(project_path):
+        return
+    ET.register_namespace("", "urn:xLandscapeModelScenarioInfo")
+    ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    tree = ET.parse(project_path)
+    root = tree.getroot()
+    display_name = _scenario_project_display_name(target_name)
+    for element in root.iter():
+        tag = _strip_xml_ns(element.tag)
+        if tag == "Name":
+            element.text = display_name
+        elif tag == "FromDate":
+            element.text = start_date.isoformat()
+        elif tag == "ToDate":
+            element.text = end_date.isoformat()
+    tree.write(project_path, encoding="utf-8", xml_declaration=True)
+
+
+def _rewrite_subset_readme(readme_path, source_rel, start_date, end_date, subset_hdf_from, subset_hdf_to, source_hdf_from, source_hdf_to):
+    existing_lines = []
+    if os.path.isfile(readme_path):
+        try:
+            with open(readme_path, "r", encoding="utf-8", errors="replace") as handle:
+                existing_lines = handle.read().splitlines()
+        except OSError:
+            existing_lines = []
+    if existing_lines:
+        existing_lines[0] = f"Timeseries: {subset_hdf_from} to {subset_hdf_to}"
+    else:
+        existing_lines = [f"Timeseries: {subset_hdf_from} to {subset_hdf_to}"]
+
+    note_lines = [
+        "",
+        "Subset scenario note:",
+        f"Source scenario: {source_rel}",
+        f"Subset simulation period: {start_date.isoformat()} to {end_date.isoformat()}",
+    ]
+    if source_hdf_from and source_hdf_to:
+        note_lines.append(f"Source hydrology HDF5 coverage: {source_hdf_from} to {source_hdf_to}")
+    note_lines.append("Derived hydro/doc statistics were copied from the source scenario and may not reflect the subset period.")
+    with open(readme_path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write("\n".join(existing_lines + note_lines) + "\n")
+
+
+def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None) -> dict:
+    def _emit(pct: int, message: str):
+        if cancel_cb and cancel_cb():
+            raise SubsetJobCancelled("Subset creation was cancelled")
+        if progress_cb:
+            progress_cb(max(0, min(100, int(pct))), message)
+
+    _emit(2, "Inspecting source scenario")
+    inspected = inspect_scenario(source_scenario)
+    if inspected.get("error"):
+        raise ValueError(inspected["error"])
+
+    _emit(6, "Validating subset window")
+    clean_name = _validate_subset_scenario_name(target_name)
+    start_date = _parse_iso_date(subset_start, "subset_start")
+    end_date = _parse_iso_date(subset_end, "subset_end")
+    _validate_subset_window(inspected, start_date, end_date)
+
+    source_rel, source_abs = _resolve_scenario_path(source_scenario)
+    target_abs = os.path.join(SCENARIO_DIR, clean_name)
+    target_rel = f"scenario/{clean_name}"
+    if os.path.exists(target_abs):
+        raise ValueError(f"Target scenario already exists: {target_rel}")
+
+    subset_hdf_start = datetime.datetime.combine(start_date, datetime.time(1, 0))
+    subset_hdf_end = datetime.datetime.combine(end_date + datetime.timedelta(days=1), datetime.time(0, 0))
+    csv_start = datetime.datetime.combine(start_date, datetime.time(0, 0))
+    csv_end = subset_hdf_end
+
+    source_hdf = _scenario_hydro_path(source_abs)
+    source_timeseries_dir = _scenario_timeseries_dir(source_abs)
+
+    try:
+        _emit(8, "Copying scenario template")
+        _copy_scenario_template(source_abs, target_abs, progress_cb=_emit, pct_from=8, pct_to=30, cancel_cb=cancel_cb)
+
+        target_hdf = _scenario_hydro_path(target_abs)
+        _emit(31, "Slicing hydrology HDF5")
+        _slice_hydrology_hdf(
+            source_hdf,
+            target_hdf,
+            subset_hdf_start,
+            subset_hdf_end,
+            progress_cb=_emit,
+            pct_from=31,
+            pct_to=80,
+            cancel_cb=cancel_cb,
+        )
+
+        sliced_csvs = 0
+        if os.path.isdir(source_timeseries_dir):
+            target_timeseries_dir = _scenario_timeseries_dir(target_abs)
+            os.makedirs(target_timeseries_dir, exist_ok=True)
+            csv_files = [entry for entry in sorted(os.listdir(source_timeseries_dir)) if entry.lower().endswith(".csv")]
+            csv_total = len(csv_files)
+            for idx, entry in enumerate(csv_files, start=1):
+                _slice_timeseries_csv(
+                    os.path.join(source_timeseries_dir, entry),
+                    os.path.join(target_timeseries_dir, entry),
+                    csv_start,
+                    csv_end,
+                    cancel_cb=cancel_cb,
+                )
+                sliced_csvs += 1
+                if csv_total:
+                    pct = int(80 + 15 * (idx / csv_total))
+                    _emit(pct, f"Trimming inflow time series ({idx}/{csv_total})")
+
+        _emit(96, "Updating scenario metadata")
+        _update_scenario_project_for_subset(_scenario_project_path(target_abs), clean_name, start_date, end_date)
+        _rewrite_subset_readme(
+            _scenario_readme_path(target_abs),
+            source_rel,
+            start_date,
+            end_date,
+            _format_hydro_datetime(subset_hdf_start),
+            _format_hydro_datetime(subset_hdf_end),
+            inspected.get("hdf_extent", {}).get("from_datetime"),
+            inspected.get("hdf_extent", {}).get("to_datetime"),
+        )
+        _emit(100, "Subset scenario created")
+    except Exception:
+        if os.path.isdir(target_abs):
+            shutil.rmtree(target_abs, ignore_errors=True)
+        raise
+
+    return {
+        "scenario_path": target_rel,
+        "scenario_name": clean_name,
+        "simulation_start": start_date.isoformat(),
+        "simulation_end": end_date.isoformat(),
+        "hdf_time_from": _format_hydro_datetime(subset_hdf_start),
+        "hdf_time_to": _format_hydro_datetime(subset_hdf_end),
+        "timeseries_csv_count": sliced_csvs,
+        "warnings": [
+            "hydro/doc statistics were copied from the source scenario and were not recalculated for the subset period."
+        ],
+    }
+
+
+def _subset_job_update(job_id: str, **updates):
+    with _subset_lock:
+        job = _subset_jobs.get(job_id)
+        if not job:
+            return
+        job.update(updates)
+
+
+def start_subset_job(source_scenario: str, target_name: str, subset_start: str, subset_end: str) -> str:
+    job_id = f"subset-{uuid.uuid4().hex[:12]}"
+    cancel_event = threading.Event()
+    with _subset_lock:
+        _subset_jobs[job_id] = {
+            "job_id": job_id,
+            "running": True,
+            "completed": False,
+            "cancel_requested": False,
+            "cancelled": False,
+            "progress_pct": 0,
+            "message": "Queued",
+            "error": None,
+            "result": None,
+            "started_at": time.time(),
+            "finished_at": None,
+            "_cancel_event": cancel_event,
+        }
+
+    def _progress(pct, message):
+        _subset_job_update(job_id, progress_pct=int(pct), message=str(message or "Working"))
+
+    def _worker():
+        try:
+            payload = create_scenario_subset(
+                source_scenario,
+                target_name,
+                subset_start,
+                subset_end,
+                progress_cb=_progress,
+                cancel_cb=cancel_event.is_set,
+            )
+            _subset_job_update(
+                job_id,
+                running=False,
+                completed=True,
+                progress_pct=100,
+                message="Subset scenario created",
+                result=payload,
+                finished_at=time.time(),
+            )
+        except SubsetJobCancelled as exc:
+            _subset_job_update(
+                job_id,
+                running=False,
+                completed=True,
+                cancelled=True,
+                message=str(exc),
+                error=None,
+                finished_at=time.time(),
+            )
+        except Exception as exc:
+            _subset_job_update(
+                job_id,
+                running=False,
+                completed=True,
+                message="Subset creation failed",
+                error=str(exc),
+                finished_at=time.time(),
+            )
+
+    threading.Thread(target=_worker, daemon=True).start()
+    return job_id
+
+
+def subset_job_status(job_id: str) -> dict:
+    with _subset_lock:
+        job = _subset_jobs.get(job_id)
+        if not job:
+            return {"error": "Job not found"}
+        return {k: v for k, v in job.items() if not k.startswith("_")}
+
+
+def cancel_subset_job(job_id: str) -> dict:
+    with _subset_lock:
+        job = _subset_jobs.get(job_id)
+        if not job:
+            return {"error": "Job not found"}
+        if not job.get("running"):
+            return {
+                "job_id": job_id,
+                "running": False,
+                "completed": True,
+                "cancel_requested": bool(job.get("cancel_requested")),
+                "cancelled": bool(job.get("cancelled")),
+                "message": "Job is not running",
+            }
+        job["cancel_requested"] = True
+        cancel_event = job.get("_cancel_event")
+        if cancel_event is not None:
+            cancel_event.set()
+        job["message"] = "Cancellation requested"
+    return {
+        "job_id": job_id,
+        "running": True,
+        "cancel_requested": True,
+        "message": "Cancellation requested",
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1663,6 +2363,16 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         elif path == "/api/scenario-extent":
             scenario_path = self._query_params().get("path", "")
             self._json_response(get_scenario_extent(scenario_path))
+        elif path == "/api/scenario-inspect":
+            scenario_path = self._query_params().get("path", "")
+            payload = inspect_scenario(scenario_path)
+            status = 400 if payload.get("error") else 200
+            self._json_response(payload, status)
+        elif path.startswith("/api/scenario-subset/status/"):
+            job_id = path.rstrip("/").split("/")[4]
+            payload = subset_job_status(job_id)
+            status = 404 if payload.get("error") else 200
+            self._json_response(payload, status)
         elif path == "/api/log-warning-downgrades":
             self._json_response({"rules": get_warning_downgrade_rules()})
 
@@ -1738,6 +2448,12 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 self._handle_save_as()
             elif path == "/api/open-xrun":
                 self._handle_open_xrun()
+            elif path == "/api/scenario-subset/start":
+                self._handle_scenario_subset_start()
+            elif path.startswith("/api/scenario-subset/cancel/"):
+                self._handle_scenario_subset_cancel(path)
+            elif path == "/api/scenario-subset":
+                self._handle_scenario_subset()
             elif path == "/api/map-explorer/geometry":
                 self._handle_map_geometry()
             elif path == "/api/map-explorer/timeseries":
@@ -1780,6 +2496,57 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             self._json_response({"status": "error", "message": str(exc)}, 400)
 
+    def _handle_scenario_subset(self):
+        data = self._read_json_body() or {}
+        source_scenario = (data.get("source_scenario") or "").strip()
+        target_name = (data.get("target_name") or "").strip()
+        subset_start = (data.get("subset_start") or "").strip()
+        subset_end = (data.get("subset_end") or "").strip()
+        if not source_scenario or not target_name or not subset_start or not subset_end:
+            return self._json_response(
+                {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
+                400,
+            )
+        try:
+            payload = create_scenario_subset(source_scenario, target_name, subset_start, subset_end)
+            self._json_response({
+                "status": "success",
+                "message": f"Created subset scenario {payload['scenario_path']}",
+                **payload,
+            })
+        except Exception as exc:
+            self._json_response({"status": "error", "message": str(exc)}, 400)
+
+    def _handle_scenario_subset_start(self):
+        data = self._read_json_body() or {}
+        source_scenario = (data.get("source_scenario") or "").strip()
+        target_name = (data.get("target_name") or "").strip()
+        subset_start = (data.get("subset_start") or "").strip()
+        subset_end = (data.get("subset_end") or "").strip()
+        if not source_scenario or not target_name or not subset_start or not subset_end:
+            return self._json_response(
+                {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
+                400,
+            )
+        try:
+            job_id = start_subset_job(source_scenario, target_name, subset_start, subset_end)
+            self._json_response({
+                "status": "success",
+                "job_id": job_id,
+                "message": "Subset creation started",
+            })
+        except Exception as exc:
+            self._json_response({"status": "error", "message": str(exc)}, 400)
+
+    def _handle_scenario_subset_cancel(self, path: str):
+        job_id = path.rstrip("/").split("/")[4] if path else ""
+        if not job_id:
+            return self._json_response({"status": "error", "message": "job_id is required"}, 400)
+        payload = cancel_subset_job(job_id)
+        if payload.get("error"):
+            return self._json_response({"status": "error", "message": payload["error"]}, 404)
+        self._json_response({"status": "success", **payload})
+
     def _handle_map_timeseries(self):
         data = self._read_json_body() or {}
         experiment = (data.get("experiment") or "").strip()
@@ -1819,7 +2586,8 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         base_sim_id = params.get(
             "Control/ExperimentID", params.get("ExperimentID", "Simulation")
         )
-        ts = datetime.datetime.now().strftime("%H%M%S%d%m%y")
+        base_sim_id = re.sub(r"_(?:\d{6}\d{6}|\d{6}-\d{6}|\d{8}-\d{6}|\d{14})$", "", str(base_sim_id).strip())
+        ts = datetime.datetime.now().strftime("%d%m%Y-%H%M%S")
         sim_id = f"{base_sim_id}_{ts}"
 
         # Use timestamped experiment ID for execution folder names under run/.
