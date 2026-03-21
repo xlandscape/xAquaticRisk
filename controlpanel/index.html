@@ -116,6 +116,10 @@ a{color:var(--accent);text-decoration:none}
 .subset-warnings{margin-top:.7rem;padding-left:1rem;color:var(--warn);font-size:.75rem}
 .subset-warnings:empty{display:none}
 .subset-summary{font-size:.75rem;color:var(--text2);margin-top:.55rem}
+.subset-map{height:300px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)}
+.subset-selection{margin-top:.55rem;font-size:.75rem;color:var(--text2)}
+.subset-chip-list{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.45rem;max-height:84px;overflow:auto}
+.subset-chip{display:inline-block;padding:.18rem .5rem;border-radius:999px;background:var(--bg3);border:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--text)}
 
 /* Loading */
 .loading{display:none;text-align:center;padding:1rem}
@@ -677,6 +681,20 @@ a{color:var(--accent);text-decoration:none}
           <div class="help-text">Inspects <em>hydro/hydro_reaches.h5</em> and derives the real valid day range from the hydrology runtime contract.</div>
         </div>
 
+        <div class="section-heading">Spatial Reach Subset</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.55rem">
+          <button type="button" class="btn btn-outline btn-sm" onclick="loadSubsetScenarioGeometry()">Load Scenario Map</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="selectAllSubsetReaches()">Select All</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="clearSubsetSelection()">Clear Selection</button>
+        </div>
+        <div id="subsetMap" class="subset-map"></div>
+        <div class="subset-selection">
+          Selected reaches: <strong id="subsetSelectedCount">0</strong>
+          <span id="subsetMapMeta" style="margin-left:.7rem"></span>
+          <div class="subset-chip-list" id="subsetSelectedChips"></div>
+          <div class="help-text" style="margin-top:.35rem">Click stream segments to toggle selection. Hold Ctrl or Shift for additive selection. Hold Alt and drag for box-select. If none are selected, all reaches are used.</div>
+        </div>
+
         <div class="subset-meta-grid">
           <div class="subset-stat">
             <div class="label">Project Extent</div>
@@ -1036,6 +1054,13 @@ const scenarioExtentCache = new Map();
 const scenarioInspectCache = new Map();
 let subsetJobPollTimer = null;
 let activeSubsetJobId = null;
+let subsetMap = null;
+let subsetMapReady = false;
+let subsetReachGeoJSON = null;
+let subsetSelectedReachIds = new Set();
+let subsetIsBoxSelecting = false;
+let subsetBoxDiv = null;
+let subsetBoxStart = null;
 
 // Known param keys (for distinguishing "additional" ones)
 const knownParams = [
@@ -1190,7 +1215,7 @@ function showSubsetStatus(msg, type) {
   if (!el) return;
   el.textContent = msg;
   el.className = 'status-message show ' + type;
-  if (type === 'success' || type === 'note') {
+  if (type === 'success') {
     setTimeout(() => { el.className = 'status-message'; }, 5000);
   }
 }
@@ -1258,6 +1283,7 @@ async function onSubsetSourceChange() {
   const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
   if (!scenarioPath) return;
   await inspectSubsetScenario();
+  await loadSubsetScenarioGeometry();
 }
 
 function useCurrentScenarioForSubset() {
@@ -1268,7 +1294,179 @@ function useCurrentScenarioForSubset() {
     return;
   }
   subsetSel.value = current;
-  inspectSubsetScenario();
+  onSubsetSourceChange();
+}
+
+function ensureSubsetMap() {
+  if (subsetMap || typeof maplibregl === 'undefined') {
+    if (!subsetMap && typeof maplibregl === 'undefined') {
+      showSubsetStatus('Map library failed to load (MapLibre).', 'error');
+    }
+    return;
+  }
+  subsetMap = new maplibregl.Map({
+    container: 'subsetMap',
+    style: {
+      version: 8,
+      sources: {
+        'subset-esri-world-imagery': {
+          type: 'raster',
+          tiles: ['https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+          tileSize: 256,
+          attribution: 'Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+        }
+      },
+      layers: [{ id: 'subset-esri-world-imagery', type: 'raster', source: 'subset-esri-world-imagery' }]
+    },
+    center: [8, 51],
+    zoom: 5,
+    attributionControl: false,
+  });
+  subsetMap.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+  subsetMap.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+  subsetMap.on('load', () => {
+    subsetMapReady = true;
+    if (!subsetMap.getSource('subset-reaches')) {
+      subsetMap.addSource('subset-reaches', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      subsetMap.addSource('subset-selected', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      subsetMap.addLayer({ id: 'subset-reach-line', type: 'line', source: 'subset-reaches', paint: { 'line-color': '#2f7de1', 'line-width': 1.6, 'line-opacity': 0.92 } });
+      subsetMap.addLayer({ id: 'subset-reach-selected', type: 'line', source: 'subset-selected', paint: { 'line-color': '#8fd3ff', 'line-width': 3.2, 'line-opacity': 1.0 } });
+      subsetMap.on('click', 'subset-reach-line', onSubsetMapClick);
+      setupSubsetBoxSelection();
+    }
+  });
+}
+
+function updateSubsetSelectionUi() {
+  const ids = Array.from(subsetSelectedReachIds);
+  const countEl = document.getElementById('subsetSelectedCount');
+  const chips = document.getElementById('subsetSelectedChips');
+  if (countEl) countEl.textContent = String(ids.length);
+  if (chips) {
+    chips.innerHTML = ids.slice(0, 80).map(id => `<span class="subset-chip">${escHtml(id)}</span>`).join('');
+  }
+}
+
+function setSubsetSelectionSource() {
+  if (!subsetMapReady || !subsetMap) return;
+  const src = subsetMap.getSource('subset-reaches');
+  const selSrc = subsetMap.getSource('subset-selected');
+  if (!src || !selSrc) return;
+  const data = subsetReachGeoJSON || { type: 'FeatureCollection', features: [] };
+  const selectedFeatures = (data.features || []).filter(f => {
+    const rid = f?.properties?.reach_id;
+    return rid && subsetSelectedReachIds.has(String(rid));
+  });
+  selSrc.setData({ type: 'FeatureCollection', features: selectedFeatures });
+}
+
+function onSubsetMapClick(event) {
+  const feature = event?.features?.[0];
+  const rid = feature?.properties?.reach_id;
+  if (!rid) return;
+  const id = String(rid);
+  const additive = !!(event.originalEvent?.ctrlKey || event.originalEvent?.shiftKey);
+  if (!additive) subsetSelectedReachIds.clear();
+  if (subsetSelectedReachIds.has(id)) subsetSelectedReachIds.delete(id);
+  else subsetSelectedReachIds.add(id);
+  setSubsetSelectionSource();
+  updateSubsetSelectionUi();
+}
+
+function setupSubsetBoxSelection() {
+  const canvas = subsetMap?.getCanvasContainer?.();
+  if (!canvas) return;
+
+  canvas.addEventListener('mousedown', (e) => {
+    if (!e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    subsetIsBoxSelecting = true;
+    subsetBoxStart = [e.clientX, e.clientY];
+    subsetMap.dragPan.disable();
+    subsetBoxDiv = document.createElement('div');
+    subsetBoxDiv.className = 'expl-box';
+    canvas.appendChild(subsetBoxDiv);
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (!subsetIsBoxSelecting || !subsetBoxDiv || !subsetBoxStart) return;
+    const minX = Math.min(subsetBoxStart[0], e.clientX);
+    const minY = Math.min(subsetBoxStart[1], e.clientY);
+    const maxX = Math.max(subsetBoxStart[0], e.clientX);
+    const maxY = Math.max(subsetBoxStart[1], e.clientY);
+    const rect = canvas.getBoundingClientRect();
+    subsetBoxDiv.style.left = (minX - rect.left) + 'px';
+    subsetBoxDiv.style.top = (minY - rect.top) + 'px';
+    subsetBoxDiv.style.width = (maxX - minX) + 'px';
+    subsetBoxDiv.style.height = (maxY - minY) + 'px';
+  });
+
+  const finish = (e) => {
+    if (!subsetIsBoxSelecting) return;
+    const additive = !!(e.ctrlKey || e.shiftKey);
+    const rect = canvas.getBoundingClientRect();
+    const start = [subsetBoxStart[0] - rect.left, subsetBoxStart[1] - rect.top];
+    const end = [e.clientX - rect.left, e.clientY - rect.top];
+    const min = [Math.min(start[0], end[0]), Math.min(start[1], end[1])];
+    const max = [Math.max(start[0], end[0]), Math.max(start[1], end[1])];
+    if ((max[0] - min[0]) > 6 && (max[1] - min[1]) > 6) {
+      const feats = subsetMap.queryRenderedFeatures([min, max], { layers: ['subset-reach-line'] });
+      if (!additive) subsetSelectedReachIds.clear();
+      for (const f of feats) {
+        const rid = f?.properties?.reach_id;
+        if (rid) subsetSelectedReachIds.add(String(rid));
+      }
+      setSubsetSelectionSource();
+      updateSubsetSelectionUi();
+    }
+    if (subsetBoxDiv?.parentNode) subsetBoxDiv.parentNode.removeChild(subsetBoxDiv);
+    subsetBoxDiv = null;
+    subsetBoxStart = null;
+    subsetIsBoxSelecting = false;
+    subsetMap.dragPan.enable();
+  };
+
+  canvas.addEventListener('mouseup', finish);
+  canvas.addEventListener('mouseleave', finish);
+}
+
+function clearSubsetSelection() {
+  subsetSelectedReachIds.clear();
+  setSubsetSelectionSource();
+  updateSubsetSelectionUi();
+}
+
+function selectAllSubsetReaches() {
+  const data = subsetReachGeoJSON || { features: [] };
+  subsetSelectedReachIds = new Set((data.features || []).map(f => String(f?.properties?.reach_id || '')).filter(Boolean));
+  setSubsetSelectionSource();
+  updateSubsetSelectionUi();
+}
+
+async function loadSubsetScenarioGeometry() {
+  ensureSubsetMap();
+  const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
+  if (!scenarioPath) return;
+  try {
+    const res = await api('/api/scenario-geometry?path=' + encodeURIComponent(scenarioPath));
+    subsetReachGeoJSON = res.geojson || { type: 'FeatureCollection', features: [] };
+    subsetSelectedReachIds = new Set((subsetReachGeoJSON.features || []).map(f => String(f?.properties?.reach_id || '')).filter(Boolean));
+    if (subsetMapReady && subsetMap?.getSource('subset-reaches')) {
+      subsetMap.getSource('subset-reaches').setData(subsetReachGeoJSON);
+      setSubsetSelectionSource();
+      const b = res.meta?.bounds || [];
+      if (b.length === 4 && Number.isFinite(b[0]) && Number.isFinite(b[1])) {
+        subsetMap.fitBounds([[b[0], b[1]], [b[2], b[3]]], { padding: 30, duration: 500 });
+      }
+    }
+    const meta = document.getElementById('subsetMapMeta');
+    if (meta) {
+      meta.textContent = `Features: ${res.meta?.feature_count || 0} | ID field: ${res.meta?.reach_id_field || 'unknown'}`;
+    }
+    updateSubsetSelectionUi();
+  } catch (e) {
+    showSubsetStatus('Failed to load scenario map: ' + e.message, 'error');
+  }
 }
 
 function setSubsetCreateBusy(isBusy) {
@@ -1403,7 +1601,8 @@ async function createScenarioSubset() {
   }
   try {
     showSubsetStatus('Starting subset creation job...', 'note');
-    const payload = { source_scenario, target_name, subset_start, subset_end };
+    const selected_reaches = Array.from(subsetSelectedReachIds);
+    const payload = { source_scenario, target_name, subset_start, subset_end, selected_reaches };
     let res;
     try {
       res = await api('/api/scenario-subset/start', {
@@ -2562,6 +2761,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadWarningDowngradeRules();
   await loadScenarios();
   await loadTemplate();
+  ensureSubsetMap();
   useCurrentScenarioForSubset();
   loadXrunFiles();
   loadAnlRuns();

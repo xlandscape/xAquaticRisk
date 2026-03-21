@@ -1,23 +1,23 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Parameters xmlns="urn:xAquaticRisk">
   <Control>
-    <ExperimentID>Template_Muenster</ExperimentID>
+    <ExperimentID>Test_Run_aqRisk</ExperimentID>
     <ParentRun />
     <NumberMC>1</NumberMC>
     <NumberParallelProcesses>1</NumberParallelProcesses>
-    <CascadeToxswaWorkers>4</CascadeToxswaWorkers>
+    <CascadeToxswaWorkers>2</CascadeToxswaWorkers>
     <DeleteComponentProcessingFolders>true</DeleteComponentProcessingFolders>
     <VerboseLogging>false</VerboseLogging>
     <EnableProfiling>false</EnableProfiling>
     <ProfilingWaitingTime>5</ProfilingWaitingTime>
   </Control>
   <Scenario>
-    <LandscapeScenario>scenario/muenster-T-Di-02.5-20220429-postproceccing-toxwa</LandscapeScenario>
+    <LandscapeScenario>scenario/oudebeek-beek7-tdi</LandscapeScenario>
     <SimulationStart>2015-05-01</SimulationStart>
     <SimulationEnd>2015-05-07</SimulationEnd>
   </Scenario>
   <PppUse>
-    <ApplicationRate>7.5</ApplicationRate>
+    <ApplicationRate>12.5</ApplicationRate>
     <ApplicationTimeWindow>05-02 to 05-02</ApplicationTimeWindow>
   </PppUse>
   <Mitigation>
@@ -25,11 +25,11 @@
     <TechnologyDriftReduction>0</TechnologyDriftReduction>
   </Mitigation>
   <Exposure>
-    <RautmannClass>arable</RautmannClass>
+    <RautmannClass>orchards.early</RautmannClass>
     <DepositionInputFile />
   </Exposure>
   <EnvironmentalFate>
-    <RunStepsRiverNetwork>false</RunStepsRiverNetwork>
+    <RunStepsRiverNetwork>true</RunStepsRiverNetwork>
     <RunCascadeToxswa>true</RunCascadeToxswa>
     <ThresholdSW>0.001</ThresholdSW>
     <ThresholdSediment>0.1</ThresholdSediment>

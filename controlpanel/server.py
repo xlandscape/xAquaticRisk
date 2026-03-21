@@ -847,7 +847,7 @@ def _copy_scenario_template(source_abs: str, target_abs: str, progress_cb=None, 
             progress_cb(pct, f"Copying scenario files ({idx}/{total_files})")
 
 
-def _slice_hydrology_hdf_embedded(source_hdf: str, target_hdf: str, start_iso: str, end_iso: str):
+def _slice_hydrology_hdf_embedded(source_hdf: str, target_hdf: str, start_iso: str, end_iso: str, selected_reach_ids=None):
     script = r'''
 import datetime
 import json
@@ -861,6 +861,7 @@ source_hdf = payload["source_hdf"]
 target_hdf = payload["target_hdf"]
 start_dt = datetime.datetime.strptime(payload["start_iso"], FMT)
 end_dt = datetime.datetime.strptime(payload["end_iso"], FMT)
+selected = set(str(v) for v in payload.get("selected_reach_ids", []) if str(v).strip())
 
 os.makedirs(os.path.dirname(target_hdf), exist_ok=True)
 with h5py.File(source_hdf, "r") as src, h5py.File(target_hdf, "w") as dst:
@@ -870,10 +871,23 @@ with h5py.File(source_hdf, "r") as src, h5py.File(target_hdf, "w") as dst:
         raise ValueError(f"Subset range {start_dt} to {end_dt} is outside source hydrology bounds {src_start} to {src_end}")
     start_idx = int((start_dt - src_start).total_seconds() // 3600)
     end_idx = int((end_dt - src_start).total_seconds() // 3600)
+    reach_vals = src["reaches"][:]
+    if selected:
+        selected_idx = [i for i, v in enumerate(reach_vals) if str(int(v)) in selected]
+        if not selected_idx:
+            raise ValueError("None of the selected reaches exist in scenario hydrology")
+        reaches_out = reach_vals[selected_idx]
+    else:
+        selected_idx = None
+        reaches_out = reach_vals
     for name in ("flow", "depth", "volume", "area"):
         ds = src[name]
-        dst.create_dataset(name, data=ds[start_idx:end_idx + 1, :], dtype=ds.dtype)
-    dst.create_dataset("reaches", data=src["reaches"][:], dtype=src["reaches"].dtype)
+        if selected_idx is None:
+            sliced = ds[start_idx:end_idx + 1, :]
+        else:
+            sliced = ds[start_idx:end_idx + 1, selected_idx]
+        dst.create_dataset(name, data=sliced, dtype=ds.dtype)
+    dst.create_dataset("reaches", data=reaches_out, dtype=src["reaches"].dtype)
     dst.create_dataset("time_from", data=[payload["start_iso"].encode("ascii")])
     dst.create_dataset("time_to", data=[payload["end_iso"].encode("ascii")])
 
@@ -886,11 +900,12 @@ print(json.dumps({"status": "success", "time_steps": end_idx - start_idx + 1}))
             "target_hdf": target_hdf,
             "start_iso": start_iso,
             "end_iso": end_iso,
+            "selected_reach_ids": _coerce_list_of_reach_ids(selected_reach_ids or []),
         },
     )
 
 
-def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.datetime, end_dt: datetime.datetime, progress_cb=None, pct_from: int = 0, pct_to: int = 100, cancel_cb=None):
+def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.datetime, end_dt: datetime.datetime, progress_cb=None, pct_from: int = 0, pct_to: int = 100, cancel_cb=None, selected_reach_ids=None):
     start_iso = _format_hydro_datetime(start_dt)
     end_iso = _format_hydro_datetime(end_dt)
     if h5py is None:
@@ -898,7 +913,7 @@ def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.da
             progress_cb(pct_from, "Slicing hydrology HDF5 (embedded runtime)")
         if cancel_cb and cancel_cb():
             raise SubsetJobCancelled("Subset creation was cancelled before HDF5 slicing")
-        result = _slice_hydrology_hdf_embedded(source_hdf, target_hdf, start_iso, end_iso)
+        result = _slice_hydrology_hdf_embedded(source_hdf, target_hdf, start_iso, end_iso, selected_reach_ids=selected_reach_ids)
         if progress_cb:
             progress_cb(pct_to, "Hydrology HDF5 slicing complete")
         return result
@@ -918,23 +933,38 @@ def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.da
         start_idx = int((start_dt - src_start).total_seconds() // 3600)
         end_idx = int((end_dt - src_start).total_seconds() // 3600)
         slice_rows = end_idx - start_idx + 1
+        src_reaches = src["reaches"][:]
+        selected_indices = None
+        if selected_reach_ids:
+            selected_set = set(_coerce_list_of_reach_ids(selected_reach_ids))
+            src_reach_ids = [_normalize_reach_id(v) for v in src_reaches]
+            selected_indices = [idx for idx, rid in enumerate(src_reach_ids) if rid in selected_set]
+            if not selected_indices:
+                raise ValueError("None of the selected reaches exist in scenario hydrology")
+            selected_reaches_raw = src_reaches[selected_indices]
+        else:
+            selected_reaches_raw = src_reaches
         total_units = max(slice_rows * len(HYDRO_ARRAY_DATASETS), 1)
         done_units = 0
         for name in HYDRO_ARRAY_DATASETS:
             ds = src[name]
-            out = dst.create_dataset(name, shape=(slice_rows, ds.shape[1]), dtype=ds.dtype)
+            out_cols = len(selected_reaches_raw)
+            out = dst.create_dataset(name, shape=(slice_rows, out_cols), dtype=ds.dtype)
             chunk_rows = min(2048, max(64, slice_rows // 25 or 64))
             for row0 in range(0, slice_rows, chunk_rows):
                 if cancel_cb and cancel_cb():
                     raise SubsetJobCancelled("Subset creation was cancelled during HDF5 slicing")
                 row1 = min(slice_rows, row0 + chunk_rows)
-                out[row0:row1, :] = ds[start_idx + row0:start_idx + row1, :]
+                if selected_indices is None:
+                    out[row0:row1, :] = ds[start_idx + row0:start_idx + row1, :]
+                else:
+                    out[row0:row1, :] = ds[start_idx + row0:start_idx + row1, selected_indices]
                 done_units += (row1 - row0)
                 if progress_cb:
                     frac = done_units / total_units
                     pct = int(pct_from + (pct_to - pct_from) * frac)
                     progress_cb(pct, f"Slicing hydrology dataset {name} ({row1}/{slice_rows} rows)")
-        dst.create_dataset("reaches", data=src["reaches"][:], dtype=src["reaches"].dtype)
+        dst.create_dataset("reaches", data=selected_reaches_raw, dtype=src["reaches"].dtype)
         dst.create_dataset("time_from", data=[start_iso.encode("ascii")])
         dst.create_dataset("time_to", data=[end_iso.encode("ascii")])
     if progress_cb:
@@ -942,9 +972,10 @@ def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.da
     return {"status": "success", "time_steps": end_idx - start_idx + 1}
 
 
-def _slice_timeseries_csv(source_csv: str, target_csv: str, start_dt: datetime.datetime, end_dt: datetime.datetime, cancel_cb=None):
+def _slice_timeseries_csv(source_csv: str, target_csv: str, start_dt: datetime.datetime, end_dt: datetime.datetime, cancel_cb=None, selected_reach_ids=None):
     os.makedirs(os.path.dirname(target_csv), exist_ok=True)
     kept_rows = 0
+    selected_set = set(_coerce_list_of_reach_ids(selected_reach_ids)) if selected_reach_ids else None
     with open(source_csv, "r", encoding="utf-8", newline="") as src_handle, open(target_csv, "w", encoding="utf-8", newline="") as dst_handle:
         reader = csv.reader(src_handle)
         writer = csv.writer(dst_handle)
@@ -960,7 +991,9 @@ def _slice_timeseries_csv(source_csv: str, target_csv: str, start_dt: datetime.d
                 row_dt = datetime.datetime.strptime(row[1].strip(), HYDRO_TIME_FORMAT)
             except ValueError:
                 continue
-            if start_dt <= row_dt <= end_dt:
+            row_reach = _normalize_reach_id(row[0]) if row else None
+            reach_ok = (selected_set is None) or (row_reach in selected_set)
+            if reach_ok and start_dt <= row_dt <= end_dt:
                 writer.writerow(row)
                 kept_rows += 1
     return kept_rows
@@ -1011,7 +1044,7 @@ def _rewrite_subset_readme(readme_path, source_rel, start_date, end_date, subset
         handle.write("\n".join(existing_lines + note_lines) + "\n")
 
 
-def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None) -> dict:
+def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None, selected_reaches=None) -> dict:
     def _emit(pct: int, message: str):
         if cancel_cb and cancel_cb():
             raise SubsetJobCancelled("Subset creation was cancelled")
@@ -1025,6 +1058,7 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
 
     _emit(6, "Validating subset window")
     clean_name = _validate_subset_scenario_name(target_name)
+    selected_reaches = _coerce_list_of_reach_ids(selected_reaches or [])
     start_date = _parse_iso_date(subset_start, "subset_start")
     end_date = _parse_iso_date(subset_end, "subset_end")
     _validate_subset_window(inspected, start_date, end_date)
@@ -1058,6 +1092,7 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
             pct_from=31,
             pct_to=80,
             cancel_cb=cancel_cb,
+            selected_reach_ids=selected_reaches,
         )
 
         sliced_csvs = 0
@@ -1073,6 +1108,7 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
                     csv_start,
                     csv_end,
                     cancel_cb=cancel_cb,
+                    selected_reach_ids=selected_reaches,
                 )
                 sliced_csvs += 1
                 if csv_total:
@@ -1105,6 +1141,8 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
         "hdf_time_from": _format_hydro_datetime(subset_hdf_start),
         "hdf_time_to": _format_hydro_datetime(subset_hdf_end),
         "timeseries_csv_count": sliced_csvs,
+        "selected_reach_count": len(selected_reaches),
+        "selected_reaches": selected_reaches,
         "warnings": [
             "hydro/doc statistics were copied from the source scenario and were not recalculated for the subset period."
         ],
@@ -1119,7 +1157,7 @@ def _subset_job_update(job_id: str, **updates):
         job.update(updates)
 
 
-def start_subset_job(source_scenario: str, target_name: str, subset_start: str, subset_end: str) -> str:
+def start_subset_job(source_scenario: str, target_name: str, subset_start: str, subset_end: str, selected_reaches=None) -> str:
     job_id = f"subset-{uuid.uuid4().hex[:12]}"
     cancel_event = threading.Event()
     with _subset_lock:
@@ -1150,6 +1188,7 @@ def start_subset_job(source_scenario: str, target_name: str, subset_start: str, 
                 subset_end,
                 progress_cb=_progress,
                 cancel_cb=cancel_event.is_set,
+                selected_reaches=selected_reaches,
             )
             _subset_job_update(
                 job_id,
@@ -1517,6 +1556,155 @@ def _build_lulc_geojson(shp_path):
             "source_crs": source_crs,
             "map_crs": "EPSG:4326",
         },
+    }
+
+
+def _load_reach_ids_from_scenario_hydro(hydro_path):
+    if not os.path.isfile(hydro_path):
+        raise FileNotFoundError(f"Hydrology file not found: {hydro_path}")
+    if h5py is None:
+        script = r'''
+import json
+import h5py
+import sys
+
+payload = json.loads(sys.argv[1])
+with h5py.File(payload["hydro_path"], "r") as hf:
+    if "reaches" not in hf:
+        raise RuntimeError("Dataset 'reaches' not found in hydrology file")
+    reaches = [str(int(v)) for v in hf["reaches"][:]]
+print(json.dumps({"reach_ids": reaches}))
+'''
+        return _coerce_list_of_reach_ids(_embedded_json_call(script, {"hydro_path": hydro_path}).get("reach_ids", []))
+
+    with h5py.File(hydro_path, "r") as hf:
+        if "reaches" not in hf:
+            raise KeyError("Dataset 'reaches' not found in hydrology file")
+        reaches = [str(int(v)) for v in hf["reaches"][:]]
+    return _coerce_list_of_reach_ids(reaches)
+
+
+def build_scenario_geometry(scenario_path):
+    scenario_rel, scenario_abs = _resolve_scenario_path(scenario_path)
+    if not os.path.isdir(scenario_abs):
+        raise FileNotFoundError(f"Scenario folder not found: {scenario_rel}")
+
+    shp_path = _find_reach_shapefile(scenario_abs)
+    if not shp_path:
+        raise FileNotFoundError("No shapefile found for selected scenario")
+
+    reach_ids = _load_reach_ids_from_scenario_hydro(_scenario_hydro_path(scenario_abs))
+    reach_set = set(reach_ids)
+
+    if gpd is None:
+        script = r'''
+import glob
+import json
+import os
+import re
+import sys
+import geopandas as gpd
+
+def norm(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if re.fullmatch(r"[-+]?\d+(?:\.0+)?", text):
+        return str(int(float(text)))
+    return text
+
+payload = json.loads(sys.argv[1])
+shp_path = payload["shp_path"]
+reach_ids = set(payload["reach_ids"])
+gdf = gpd.read_file(shp_path)
+if gdf.empty:
+    raise RuntimeError("Shapefile has no features")
+source_crs = str(gdf.crs) if gdf.crs else ""
+if gdf.crs is not None:
+    try:
+        if not gdf.crs.is_geographic:
+            gdf = gdf.to_crs(epsg=4326)
+    except Exception:
+        pass
+non_geom = [c for c in gdf.columns if c != "geometry"]
+if not non_geom:
+    raise RuntimeError("No attribute columns available in shapefile")
+preferred = ["reach_id", "reachid", "id", "key", "reach", "name", "segment_id"]
+best_col = non_geom[0]
+best_score = -1
+for col in non_geom:
+    vals = gdf[col].dropna().head(1000)
+    score = sum(1 for v in vals if norm(v) in reach_ids)
+    col_l = col.lower()
+    if col_l in preferred:
+        score += 10
+    elif any(p in col_l for p in preferred):
+        score += 4
+    if score > best_score:
+        best_score = score
+        best_col = col
+gdf = gdf.dropna(subset=["geometry"])
+gdf["__reach_id__"] = gdf[best_col].map(norm)
+gdf = gdf.dropna(subset=["__reach_id__"])
+gdf = gdf[gdf["__reach_id__"].isin(reach_ids)]
+if gdf.empty:
+    raise RuntimeError("No stream features could be mapped to selected scenario reaches")
+minx, miny, maxx, maxy = gdf.total_bounds
+geojson = json.loads(gdf[["__reach_id__", "geometry"]].to_json())
+for f in geojson.get("features", []):
+    rid = f.get("properties", {}).get("__reach_id__")
+    f["properties"] = {"reach_id": rid}
+print(json.dumps({
+    "geojson": geojson,
+    "meta": {
+        "reach_id_field": best_col,
+        "feature_count": len(geojson.get("features", [])),
+        "bounds": [float(minx), float(miny), float(maxx), float(maxy)],
+        "shapefile": shp_path,
+        "source_crs": source_crs,
+        "map_crs": "EPSG:4326",
+    }
+}))
+'''
+        embedded = _embedded_json_call(script, {"shp_path": shp_path, "reach_ids": list(reach_set)})
+        return {
+            "scenario_path": scenario_rel,
+            "geojson": embedded["geojson"],
+            "meta": embedded["meta"],
+            "reach_count": len(reach_ids),
+        }
+
+    gdf = gpd.read_file(shp_path)
+    if gdf.empty:
+        raise ValueError("Shapefile has no features")
+    gdf, source_crs = _normalize_map_gdf(gdf)
+    reach_col = _select_reach_id_column(gdf, reach_set)
+    if reach_col is None:
+        raise ValueError("Could not determine reach identifier column")
+    gdf["__reach_id__"] = gdf[reach_col].map(_normalize_reach_id)
+    gdf = gdf.dropna(subset=["__reach_id__"])
+    gdf = gdf[gdf["__reach_id__"].isin(reach_set)]
+    if gdf.empty:
+        raise ValueError("No stream features could be mapped to selected scenario reaches")
+    minx, miny, maxx, maxy = gdf.total_bounds
+    geom_json = json.loads(gdf[["__reach_id__", "geometry"]].to_json())
+    for feature in geom_json.get("features", []):
+        rid = feature.get("properties", {}).get("__reach_id__")
+        feature["properties"] = {"reach_id": rid}
+    return {
+        "scenario_path": scenario_rel,
+        "geojson": geom_json,
+        "meta": {
+            "reach_id_field": reach_col,
+            "feature_count": len(geom_json.get("features", [])),
+            "bounds": [float(minx), float(miny), float(maxx), float(maxy)],
+            "shapefile": shp_path,
+            "source_crs": source_crs,
+            "map_crs": "EPSG:4326",
+        },
+        "reach_count": len(reach_ids),
     }
 
 
@@ -2368,6 +2556,12 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             payload = inspect_scenario(scenario_path)
             status = 400 if payload.get("error") else 200
             self._json_response(payload, status)
+        elif path == "/api/scenario-geometry":
+            scenario_path = self._query_params().get("path", "")
+            try:
+                self._json_response({"status": "success", **build_scenario_geometry(scenario_path)})
+            except Exception as exc:
+                self._json_response({"status": "error", "message": str(exc)}, 400)
         elif path.startswith("/api/scenario-subset/status/"):
             job_id = path.rstrip("/").split("/")[4]
             payload = subset_job_status(job_id)
@@ -2502,13 +2696,14 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         target_name = (data.get("target_name") or "").strip()
         subset_start = (data.get("subset_start") or "").strip()
         subset_end = (data.get("subset_end") or "").strip()
+        selected_reaches = data.get("selected_reaches") or []
         if not source_scenario or not target_name or not subset_start or not subset_end:
             return self._json_response(
                 {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
                 400,
             )
         try:
-            payload = create_scenario_subset(source_scenario, target_name, subset_start, subset_end)
+            payload = create_scenario_subset(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches)
             self._json_response({
                 "status": "success",
                 "message": f"Created subset scenario {payload['scenario_path']}",
@@ -2523,13 +2718,14 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         target_name = (data.get("target_name") or "").strip()
         subset_start = (data.get("subset_start") or "").strip()
         subset_end = (data.get("subset_end") or "").strip()
+        selected_reaches = data.get("selected_reaches") or []
         if not source_scenario or not target_name or not subset_start or not subset_end:
             return self._json_response(
                 {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
                 400,
             )
         try:
-            job_id = start_subset_job(source_scenario, target_name, subset_start, subset_end)
+            job_id = start_subset_job(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches)
             self._json_response({
                 "status": "success",
                 "job_id": job_id,
