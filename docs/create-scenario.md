@@ -87,6 +87,8 @@ xsi:schemaLocation="urn:xLandscapeModelScenarioInfo ../../model/core/base/scenar
     </landscape_package>
     ```
     `base_landscape_geometries` defines the name of the shapefile contained in the geo folder. `feature_id_attribute` defines the column of the shape file which is used to distinguish individual fields/features. It is not recommended to use OBJECTID for this xxx. `feature_type_attribute` defines the column of the shape file to specifies a field/feature's LULC type. The TargetCrops value in *PPMCalendar.xml* refers to the field defined in `feature_type_attribute`. 
+
+    Note: Keep `feature_id_attribute` stable across scenario updates if you plan to use Copilot field-ranking workflows. The ranking data contract expects a stable field ID from LULC geodata. See [Field Spray-Drift Ranking Data Contract](reference/field-drift-ranking-data-contract.md).
 4. In *CropProtection\\*, create a file named *xCropProtection-test-scenario.xml*. It can be left blank for the moment.  
 5. In *CropProtection\PPMCalendars\\*, create a folder with the same name as the new scenario. In that folder, place all *PPMCalendar.xml* files that should be included with the new scenario. Note that not every file in this folder will be used during a run of xCropProtection, files must first be added to *xCropProtection-test-scenario.xml*. Examples of *PPMCalendar.xml* files can be found in [Templates](xCropProtection-templates/simple-scenario.md).  
 6. Modify *CropProtection\xCropProtection-test-scenario.xml* to include PPMCalendars. Sample:
