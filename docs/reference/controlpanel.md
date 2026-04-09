@@ -62,7 +62,7 @@ Each section can be collapsed / expanded by clicking its header. Advanced sectio
 
 ### Monitor tab
 
-A real-time dashboard for tracking simulation runs. Identical in functionality to the standalone [Run Dashboard](dashboard.md):
+A real-time dashboard for tracking simulation runs. It provides the same monitoring workflow that used to be available through the standalone dashboard launcher:
 
 - **Sidebar** — lists all runs in `run/`, sorted by most recent, with colour-coded status dots.
 - **Overview cards** — status, elapsed time, MC count, error/warning counts.

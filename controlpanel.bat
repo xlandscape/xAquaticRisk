@@ -2,7 +2,7 @@
 setlocal
 
 echo ============================================================
-echo Starting xAquaticRisk Control Panel...
+echo Starting xAquatic Risk Control Panel...
 echo ============================================================
 echo.
 
@@ -25,5 +25,4 @@ if not exist "%CONTROLPANEL_PY%" (
 )
 
 "%CONTROLPANEL_PY%" "%~dp0controlpanel\server.py" %*
-
 pause

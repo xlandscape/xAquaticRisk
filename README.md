@@ -83,6 +83,14 @@ xAquaticRisk requires a 64-bit Windows to run.
 For detailed documentation — including getting started guides, scenario descriptions, a glossary and technical
 reference — visit the **[xAquaticRisk Documentation](https://xlandscape.github.io/xAquaticRisk/)**.
 
+For Copilot-based field ranking of spray-drift contributions, see:
+
+1. `.github/agents/aquatic-drift-field-ranking.agent.md`
+2. `.github/instructions/aquatic-drift-data-contract.instructions.md`
+3. `.github/prompts/field-drift-ranking.prompt.md`
+4. `docs/reference/field-drift-ranking-data-contract.md`
+5. `docs/reference/field-drift-agent-development-and-usage.md`
+
 You can also build and serve the documentation locally:
 ```bash
 mkdocs serve

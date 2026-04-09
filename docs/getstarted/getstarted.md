@@ -55,6 +55,7 @@ To avoid the technical steps of cloning a GitHub repository, the most recent ver
 ### Prerequisites
 
 xAquaticRisk requires a **64-bit Windows** operating system. No additional software installation is required — the model is fully portable.
+For release-grade portability checks (including submodule commit-pointer validation), use the [XCopy Readiness](../reference/xcopy-readiness.md) reference.
 
 ## xAR Parameterisation and Configuration
 
@@ -149,7 +150,7 @@ We are fully aware that XML is not the ideal **user interface**. The **[Control 
 
 ### HDFView  
 
-[xLandscape](xLandscape/xLandscape-intro.md) makes use of multidimensional data stores. At present, [HDF](xLandscape/xLandscape-intro.md#multidimensional-data-store) is being used.  
+[xLandscape](../xLandscape/xLandscape-intro.md) makes use of multidimensional data stores. At present, [HDF](../xLandscape/xLandscape-v1x.md#multidimensional-data-store) is being used.  
 
 To view the raw output of xAquaticRisk, open `\run\<ExperimentID>\mcs\[mc run ID]\store\arr.dat` with a HDF5 file viewer such as [HDFView](https://portal.hdfgroup.org/downloads/index.html). Expand the folder tree to inspect individual data stores (e.g., PEC values, spray-drift depositions, effect results).
 
