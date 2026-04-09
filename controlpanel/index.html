@@ -1225,12 +1225,14 @@ function renderSubsetInspection(data) {
   const hdf = data?.hdf_extent || {};
   const effective = data?.effective_extent || {};
   const warnings = data?.warnings || [];
+  const files = data?.files || {};
+  
   document.getElementById('subsetProjectExtent').textContent = (project.from_date && project.to_date)
     ? `${project.from_date} → ${project.to_date}`
-    : 'Unavailable';
+    : (files.project ? 'Unavailable' : '⚠ Missing');
   document.getElementById('subsetHdfExtent').textContent = (hdf.from_datetime && hdf.to_datetime)
     ? `${hdf.from_datetime} → ${hdf.to_datetime}`
-    : 'Unavailable';
+    : (files.hydro_hdf ? 'Unavailable' : '⚠ HDF5 Missing');
   document.getElementById('subsetEffectiveExtent').textContent = (effective.from_date && effective.to_date)
     ? `${effective.from_date} → ${effective.to_date}`
     : 'Unavailable';
@@ -1239,6 +1241,7 @@ function renderSubsetInspection(data) {
   const summaryBits = [];
   if (data?.scenario_path) summaryBits.push(`Source: ${data.scenario_path}`);
   if (effective.from_date && effective.to_date) summaryBits.push(`Valid slice window: ${effective.from_date} to ${effective.to_date}`);
+  if (!effective.from_date || !effective.to_date) summaryBits.push('(Missing critical files: inspection incomplete)');
   document.getElementById('subsetSummary').textContent = summaryBits.join(' | ') || 'No scenario inspection data available.';
 
   const warningsEl = document.getElementById('subsetWarnings');

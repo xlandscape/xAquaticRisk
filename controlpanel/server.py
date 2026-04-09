@@ -715,8 +715,16 @@ def inspect_scenario(scenario_path: str) -> dict:
     inflow_dir = _scenario_timeseries_dir(scenario_abs)
     warnings = []
 
-    project_extent = _parse_scenario_project_extent(project_path)
-    readme_extent = _parse_readme_extent(readme_path)
+    # Check for required files and provide diagnostic warnings
+    if not os.path.isfile(hydro_path):
+        warnings.append(f"Hydrology HDF5 file not found: {os.path.relpath(hydro_path, scenario_abs)}")
+    if not os.path.isfile(project_path):
+        warnings.append(f"Scenario project file not found: {os.path.relpath(project_path, scenario_abs)}")
+    if not os.path.isfile(readme_path):
+        warnings.append(f"Scenario readme file not found: {os.path.relpath(readme_path, scenario_abs)}")
+
+    project_extent = _parse_scenario_project_extent(project_path) if os.path.isfile(project_path) else {}
+    readme_extent = _parse_readme_extent(readme_path) if os.path.isfile(readme_path) else {}
     hydro_meta = _read_hydro_metadata(hydro_path) if os.path.isfile(hydro_path) else {}
     effective_extent = _compute_effective_hydro_extent(
         hydro_meta.get("time_from"),
