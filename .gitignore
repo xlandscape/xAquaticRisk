@@ -1,4 +1,5 @@
 .idea/
+.venv/
 analysis/.ipynb_checkpoints/
 analysis/.venv/
 analysis/python/
