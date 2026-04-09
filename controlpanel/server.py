@@ -354,6 +354,18 @@ def create_xrun_file(parameters: dict, output_path: str, template_path: str) -> 
     return output_path
 
 
+def _normalize_run_parameters(parameters: dict, output_path: str) -> dict:
+    """Return a copy of runtime parameters with file references adjusted for the xrun location."""
+    normalized = dict(parameters)
+    scenario_key = "Scenario/LandscapeScenario"
+    scenario_value = (normalized.get(scenario_key) or "").strip()
+    if scenario_value and not os.path.isabs(scenario_value):
+        scenario_abs = os.path.normpath(os.path.join(BASE_DIR, scenario_value))
+        scenario_rel = os.path.relpath(scenario_abs, os.path.dirname(output_path))
+        normalized[scenario_key] = scenario_rel.replace("\\", "/")
+    return normalized
+
+
 def parse_xrun_file(xrun_path: str) -> dict:
     """Parse an xrun file into flat Control/Param keys."""
     tree = ET.parse(xrun_path)
@@ -2981,7 +2993,8 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
 
         output_filename = f"{sim_id}.xrun"
         output_path = os.path.join(OUTPUT_DIR, output_filename)
-        create_xrun_file(params, output_path, TEMPLATE_PATH)
+        run_params = _normalize_run_parameters(params, output_path)
+        create_xrun_file(run_params, output_path, TEMPLATE_PATH)
 
         def _launch():
             try:
