@@ -13,9 +13,9 @@ Note: This section provides an introduction to xCP scenarios on a technical leve
 ## Example Scenarios
 The [xCropProtectionDemo](https://github.com/xlandscape/xCropProtectionDemo/tree/main) model is packaged with example scenarios located in the *scenario* folder. Example scenarios are of static land use types.  
 
-- A scenario in Rummen, Belgium ([*Rummen-full*](scenarios/rummen-scenario.md))
+- A scenario in Rummen, Belgium (see [Example Scenarios](scenarios/Example-scenarios.md))
 
-- A subset of the Rummen-full scenario in Rummen, Belgium ([*Rummen-xCP-TestingScenario*](scenarios/rummen-subset.md))
+- A subset of the Rummen-full scenario in Rummen, Belgium (see [Example Scenarios](scenarios/Example-scenarios.md))
 
 ## Custom Scenarios
 To create a new scenario for use with xCropProtection, users should follow these steps.
@@ -90,7 +90,7 @@ xsi:schemaLocation="urn:xLandscapeModelScenarioInfo ../../model/core/base/scenar
 
     Note: Keep `feature_id_attribute` stable across scenario updates if you plan to use Copilot field-ranking workflows. The ranking data contract expects a stable field ID from LULC geodata. See [Field Spray-Drift Ranking Data Contract](reference/field-drift-ranking-data-contract.md).
 4. In *CropProtection\\*, create a file named *xCropProtection-test-scenario.xml*. It can be left blank for the moment.  
-5. In *CropProtection\PPMCalendars\\*, create a folder with the same name as the new scenario. In that folder, place all *PPMCalendar.xml* files that should be included with the new scenario. Note that not every file in this folder will be used during a run of xCropProtection, files must first be added to *xCropProtection-test-scenario.xml*. Examples of *PPMCalendar.xml* files can be found in [Templates](xCropProtection-templates/simple-scenario.md).  
+5. In *CropProtection\PPMCalendars\\*, create a folder with the same name as the new scenario. In that folder, place all *PPMCalendar.xml* files that should be included with the new scenario. Note that not every file in this folder will be used during a run of xCropProtection, files must first be added to *xCropProtection-test-scenario.xml*. For a worked example of PPM calendar authoring, see [Get started with xCropProtection](CropProtection%20tutorials/training-intro.md).  
 6. Modify *CropProtection\xCropProtection-test-scenario.xml* to include PPMCalendars. Sample:
 ```xml
 <xCropProtection xmlns="urn:xCropProtectionLandscapeScenarioParametrization"

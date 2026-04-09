@@ -49,12 +49,17 @@ nav:
   - Home: 'index.md'
   - Get Started:
     - Introduction: 'getstarted/getstarted.md'
+    - Create Scenario: 'create-scenario.md'
+    - xrun Converter: 'xrun-converter.md'
+    - CropProtection Tutorial: 'CropProtection tutorials/training-intro.md'
+    - CropProtection Examples: 'CropProtection tutorials/intro-example.md'
   - Scenarios:
     - Introduction: 'scenarios/scenario-intro.md'
     - Example Scenarios: 'scenarios/Example-scenarios.md'
   - Technical Reference:
     - Parameterisation: 'reference/parameterisation.md'
-    - Custom Agent: Field Ranking: 'reference/field-drift-agent-development-and-usage.md'
+    - XCopy Readiness: 'reference/xcopy-readiness.md'
+    - 'Custom Agent: Field Ranking': 'reference/field-drift-agent-development-and-usage.md'
     - Field Drift Ranking Data Contract: 'reference/field-drift-ranking-data-contract.md'
     - Control Panel: 'reference/controlpanel.md'
     - Regulatory Framework: 'reference/regulatory-framework.md'
@@ -63,6 +68,7 @@ nav:
   - xLandscape: 
     - Intro: 'xLandscape/xLandscape-intro.md'
     - Version 1.x: 'xLandscape/xLandscape-v1x.md'
+    - Parameterisation: 'xLandscape/xLandscape-parameterisation.md'
     - Components: 'xLandscape/xLandscape-components.md'
     - Landscape Models: 'xLandscape/xLandscape-models.md'
     - Outlook: 'xLandscape/xLandscape-outlook.md'
