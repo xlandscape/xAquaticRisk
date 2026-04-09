@@ -51,8 +51,6 @@ nav:
     - Introduction: 'getstarted/getstarted.md'
     - Create Scenario: 'create-scenario.md'
     - xrun Converter: 'xrun-converter.md'
-    - CropProtection Tutorial: 'CropProtection tutorials/training-intro.md'
-    - CropProtection Examples: 'CropProtection tutorials/intro-example.md'
   - Scenarios:
     - Introduction: 'scenarios/scenario-intro.md'
     - Example Scenarios: 'scenarios/Example-scenarios.md'
