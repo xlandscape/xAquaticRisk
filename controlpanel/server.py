@@ -30,10 +30,10 @@ Usage::
 """
 
 import argparse
+import atexit
 import csv
 import datetime
 import glob
-import importlib.util
 import multiprocessing
 import hashlib
 import json
@@ -96,12 +96,7 @@ HYDRO_ARRAY_DATASETS = ("flow", "depth", "volume", "area")
 # Load Step 2 pandas backend for CSV trimming (optional)
 step2_backend = None
 try:
-    _step2_path = os.path.join(CPANEL_DIR, "step2_pandas_backend.py")
-    if os.path.exists(_step2_path):
-        spec = importlib.util.spec_from_file_location("step2_pandas_backend", _step2_path)
-        if spec and spec.loader:
-            step2_backend = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(step2_backend)
+    import step2_pandas_backend as step2_backend  # type: ignore
 except Exception:
     pass  # Step 2 backend is optional
 
@@ -124,10 +119,90 @@ _map_cache_lock = threading.Lock()
 _MAP_GEOMETRY_CACHE_LIMIT = 8
 _MAP_TIMESERIES_CACHE_LIMIT = 32
 _MAP_HOURLY_MAX_POINTS = 500000
+_INSTANCE_LOCK_PATH = os.path.join(CPANEL_DIR, "server.instance.lock")
+_INSTANCE_LOCK_HELD = False
 
 
 class SubsetJobCancelled(Exception):
     """Raised when a running subset creation job is cancelled by the user."""
+
+
+def _pid_is_running(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    except OSError:
+        return False
+    return True
+
+
+def _read_instance_lock(path: str) -> dict:
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+            if isinstance(payload, dict):
+                return payload
+    except Exception:
+        return {}
+    return {}
+
+
+def _release_single_instance_lock():
+    global _INSTANCE_LOCK_HELD
+    if not _INSTANCE_LOCK_HELD:
+        return
+    try:
+        payload = _read_instance_lock(_INSTANCE_LOCK_PATH)
+        # Only remove lock file if we still own it.
+        if int(payload.get("pid", -1)) == os.getpid():
+            os.remove(_INSTANCE_LOCK_PATH)
+    except FileNotFoundError:
+        pass
+    except Exception:
+        pass
+    _INSTANCE_LOCK_HELD = False
+
+
+def _acquire_single_instance_lock(port: int):
+    global _INSTANCE_LOCK_HELD
+    payload = {
+        "pid": os.getpid(),
+        "port": int(port),
+        "started_at": int(time.time()),
+        "python": sys.executable,
+        "script": os.path.abspath(__file__),
+    }
+
+    for _ in range(2):
+        try:
+            fd = os.open(_INSTANCE_LOCK_PATH, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                json.dump(payload, handle)
+            _INSTANCE_LOCK_HELD = True
+            atexit.register(_release_single_instance_lock)
+            return
+        except FileExistsError:
+            existing = _read_instance_lock(_INSTANCE_LOCK_PATH)
+            existing_pid = int(existing.get("pid", -1))
+            existing_port = existing.get("port", "?")
+            if existing_pid > 0 and _pid_is_running(existing_pid):
+                raise RuntimeError(
+                    "Another controlpanel server is already running "
+                    f"(pid={existing_pid}, port={existing_port}). "
+                    "Stop that process first or use a different port."
+                )
+            # Stale lock file from a dead process; remove and retry once.
+            try:
+                os.remove(_INSTANCE_LOCK_PATH)
+            except FileNotFoundError:
+                pass
+
+    raise RuntimeError("Could not acquire single-instance lock for controlpanel server")
 
 
 def _cache_get(cache: OrderedDict, key):
@@ -3687,22 +3762,32 @@ def main():
     ControlPanelHandler.run_root = os.path.abspath(args.run_dir)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    server = HTTPServer(("0.0.0.0", args.port), ControlPanelHandler)
-    print("=" * 60)
-    print("  xAquaticRisk Control Panel")
-    print("=" * 60)
-    print(f"  URL              : http://localhost:{args.port}")
-    print(f"  Template         : {TEMPLATE_PATH}")
-    print(f"  Parameterisation : {OUTPUT_DIR}")
-    print(f"  Run folder       : {ControlPanelHandler.run_root}")
-    print(f"  Scenarios        : {os.path.join(BASE_DIR, 'scenario')}")
-    print("=" * 60)
-    print("  Press Ctrl+C to stop.\n")
     try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\nShutting down.")
-        server.server_close()
+        _acquire_single_instance_lock(args.port)
+    except RuntimeError as exc:
+        print(f"[controlpanel] {exc}")
+        sys.exit(1)
+
+    try:
+        server = HTTPServer(("0.0.0.0", args.port), ControlPanelHandler)
+        print("=" * 60)
+        print("  xAquaticRisk Control Panel")
+        print("=" * 60)
+        print(f"  URL              : http://localhost:{args.port}")
+        print(f"  Template         : {TEMPLATE_PATH}")
+        print(f"  Parameterisation : {OUTPUT_DIR}")
+        print(f"  Run folder       : {ControlPanelHandler.run_root}")
+        print(f"  Scenarios        : {os.path.join(BASE_DIR, 'scenario')}")
+        print("=" * 60)
+        print("  Press Ctrl+C to stop.\n")
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\nShutting down.")
+        finally:
+            server.server_close()
+    finally:
+        _release_single_instance_lock()
 
 
 if __name__ == "__main__":
