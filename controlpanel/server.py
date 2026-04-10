@@ -1244,6 +1244,138 @@ print(json.dumps({"topo": topo}))
     return expanded, list(added)
 
 
+def _slice_lulc_shapefile_for_subset(scenario_abs: str, selected_reach_ids: list, max_distance: int = 100):
+    """Filter LULC shapefile to features within specified distance of selected reaches."""
+    if not selected_reach_ids or max_distance < 0:
+        return
+    
+    # Find both shapefiles
+    reach_shp_path = _find_reach_shapefile(scenario_abs)
+    if not reach_shp_path or not os.path.isfile(reach_shp_path):
+        return
+    
+    lulc_dir = os.path.join(scenario_abs, "geo")
+    lulc_path = os.path.join(lulc_dir, "LULC.shp")
+    if not os.path.isfile(lulc_path):
+        return
+    
+    selected = set(_coerce_list_of_reach_ids(selected_reach_ids))
+    
+    if gpd is not None:
+        # Read reach geometries
+        reach_gdf = gpd.read_file(reach_shp_path)
+        if reach_gdf.empty:
+            return
+        
+        reach_col = _select_reach_id_column(reach_gdf, selected)
+        if reach_col is None:
+            return
+        
+        reach_gdf["__reach_id__"] = reach_gdf[reach_col].map(_normalize_reach_id)
+        selected_reaches_gdf = reach_gdf[reach_gdf["__reach_id__"].isin(selected)].copy()
+        if selected_reaches_gdf.empty:
+            return
+        
+        # Create buffered geometry union of selected reaches
+        buffered_geom = selected_reaches_gdf.unary_union.buffer(max_distance)
+        
+        # Read LULC features
+        lulc_gdf = gpd.read_file(lulc_path)
+        if lulc_gdf.empty:
+            return
+        
+        # Filter LULC features that intersect or are within distance of buffered reach geometry
+        lulc_filtered = lulc_gdf[lulc_gdf.geometry.intersects(buffered_geom)].copy()
+        if lulc_filtered.empty:
+            # If no features found, keep empty to signal filtering occurred
+            pass
+        
+        # Write filtered LULC shapefile
+        base, _ = os.path.splitext(lulc_path)
+        for ext in (".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix", ".fix"):
+            try:
+                os.remove(base + ext)
+            except FileNotFoundError:
+                pass
+        
+        lulc_filtered.to_file(lulc_path)
+        return
+    
+    # Fallback to embedded script when geopandas not available
+    script = r'''
+import json
+import os
+import sys
+import geopandas as gpd
+
+payload = json.loads(sys.argv[1])
+reach_shp_path = payload["reach_shp_path"]
+lulc_path = payload["lulc_path"]
+selected = set(payload["selected"])
+max_distance = payload["max_distance"]
+
+reach_gdf = gpd.read_file(reach_shp_path)
+if reach_gdf.empty:
+    raise RuntimeError("Reach shapefile is empty")
+
+non_geom_reach = [c for c in reach_gdf.columns if c != "geometry"]
+preferred = ["key", "reach_id", "reachid", "segment_id", "reach", "name", "id"]
+best_col = non_geom_reach[0] if non_geom_reach else None
+best_score = -1.0
+
+for col in non_geom_reach:
+    vals = [str(v).strip() if v is not None else None for v in reach_gdf[col].head(100) if v is not None]
+    if not vals:
+        continue
+    unique_vals = set(vals)
+    matched_unique = len(set(v for v in unique_vals if v in selected))
+    if matched_unique == 0:
+        continue
+    unique_ratio = len(unique_vals) / max(len(vals), 1)
+    score = float(matched_unique) + 0.5 * unique_ratio
+    lower_col = col.lower()
+    if lower_col in preferred:
+        score += 5.0
+    if score > best_score:
+        best_score = score
+        best_col = col
+
+if best_col is None:
+    raise RuntimeError("Could not identify reach ID column")
+
+reach_gdf["__reach_id__"] = reach_gdf[best_col].astype(str).str.strip()
+selected_reaches_gdf = reach_gdf[reach_gdf["__reach_id__"].isin(selected)].copy()
+if selected_reaches_gdf.empty:
+    raise RuntimeError("No selected reaches found")
+
+buffered_geom = selected_reaches_gdf.unary_union.buffer(max_distance)
+
+lulc_gdf = gpd.read_file(lulc_path)
+if lulc_gdf.empty:
+    raise RuntimeError("LULC shapefile is empty")
+
+lulc_filtered = lulc_gdf[lulc_gdf.geometry.intersects(buffered_geom)].copy()
+
+base, _ = os.path.splitext(lulc_path)
+for ext in (".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix", ".fix"):
+    path = base + ext
+    if os.path.exists(path):
+        os.remove(path)
+
+lulc_filtered.to_file(lulc_path)
+print(json.dumps({"status": "ok", "lulc_feature_count": int(len(lulc_filtered))}))
+'''
+    _embedded_json_call(
+        script,
+        {
+            "reach_shp_path": reach_shp_path,
+            "lulc_path": lulc_path,
+            "selected": list(selected),
+            "max_distance": max_distance,
+        }
+    )
+
+
 def _slice_reach_shapefile_for_subset(scenario_abs: str, selected_reach_ids: list):
     """Filter copied reach shapefile so geometry-derived inputs match sliced hydrology reaches."""
     if not selected_reach_ids:
@@ -1339,7 +1471,7 @@ print(json.dumps({"status": "ok", "feature_count": int(len(filtered))}))
     _embedded_json_call(script, {"shp_path": shp_path, "selected": list(selected)})
 
 
-def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None, selected_reaches=None) -> dict:
+def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None, selected_reaches=None, max_lulc_distance: int = 100) -> dict:
     def _emit(pct: int, message: str):
         if cancel_cb and cancel_cb():
             raise SubsetJobCancelled("Subset creation was cancelled")
@@ -1389,6 +1521,8 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
         if selected_reaches:
             _emit(30, "Slicing reach geometry")
             _slice_reach_shapefile_for_subset(target_abs, selected_reaches)
+            _emit(30.2, "Slicing LULC geometries")
+            _slice_lulc_shapefile_for_subset(target_abs, selected_reaches, max_lulc_distance)
 
         target_hdf = _scenario_hydro_path(target_abs)
         _emit(31, "Slicing hydrology HDF5")
@@ -1471,7 +1605,7 @@ def _subset_job_update(job_id: str, **updates):
         job.update(updates)
 
 
-def start_subset_job(source_scenario: str, target_name: str, subset_start: str, subset_end: str, selected_reaches=None) -> str:
+def start_subset_job(source_scenario: str, target_name: str, subset_start: str, subset_end: str, selected_reaches=None, max_lulc_distance: int = 100) -> str:
     job_id = f"subset-{uuid.uuid4().hex[:12]}"
     cancel_event = threading.Event()
     with _subset_lock:
@@ -1503,6 +1637,7 @@ def start_subset_job(source_scenario: str, target_name: str, subset_start: str, 
                 progress_cb=_progress,
                 cancel_cb=cancel_event.is_set,
                 selected_reaches=selected_reaches,
+                max_lulc_distance=max_lulc_distance,
             )
             _subset_job_update(
                 job_id,
@@ -3076,13 +3211,14 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         subset_start = (data.get("subset_start") or "").strip()
         subset_end = (data.get("subset_end") or "").strip()
         selected_reaches = data.get("selected_reaches") or []
+        max_lulc_distance = int(data.get("max_lulc_distance") or 100)
         if not source_scenario or not target_name or not subset_start or not subset_end:
             return self._json_response(
                 {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
                 400,
             )
         try:
-            payload = create_scenario_subset(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches)
+            payload = create_scenario_subset(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches, max_lulc_distance=max_lulc_distance)
             self._json_response({
                 "status": "success",
                 "message": f"Created subset scenario {payload['scenario_path']}",
@@ -3098,13 +3234,14 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         subset_start = (data.get("subset_start") or "").strip()
         subset_end = (data.get("subset_end") or "").strip()
         selected_reaches = data.get("selected_reaches") or []
+        max_lulc_distance = int(data.get("max_lulc_distance") or 100)
         if not source_scenario or not target_name or not subset_start or not subset_end:
             return self._json_response(
                 {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
                 400,
             )
         try:
-            job_id = start_subset_job(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches)
+            job_id = start_subset_job(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches, max_lulc_distance=max_lulc_distance)
             self._json_response({
                 "status": "success",
                 "job_id": job_id,

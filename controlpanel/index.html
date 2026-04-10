@@ -738,7 +738,14 @@ a{color:var(--accent);text-decoration:none}
             <input type="text" id="subsetEndDate" placeholder="YYYY-MM-DD">
           </div>
         </div>
-        <div class="help-text">The generated scenario will copy the source scenario, trim <em>hydro_reaches.h5</em> and <em>hydro/TimeSeries/*.csv</em>, and update the subset scenario metadata.</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="maxLulcDistance">Max LULC Distance (m)</label>
+            <input type="number" id="maxLulcDistance" value="100" min="0" max="10000" step="10">
+            <div class="help-text">Distance in meters for selecting LULC field geometries near selected reaches. Fields within this distance will be included in the subset.</div>
+          </div>
+        </div>
+        <div class="help-text">The generated scenario will copy the source scenario, trim <em>hydro_reaches.h5</em> and <em>hydro/TimeSeries/*.csv</em>, filter LULC geometries by distance, and update the subset scenario metadata.</div>
         <div style="margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap">
           <button type="button" class="btn btn-secondary" id="subsetCreateBtn" onclick="createScenarioSubset()">Create Subset Scenario</button>
           <button type="button" class="btn btn-outline btn-sm" id="subsetCancelBtn" onclick="cancelScenarioSubsetJob()" style="display:none">Cancel</button>
@@ -1629,7 +1636,8 @@ async function createScenarioSubset() {
   try {
     showSubsetStatus('Starting subset creation job...', 'note');
     const selected_reaches = Array.from(subsetSelectedReachIds);
-    const payload = { source_scenario, target_name, subset_start, subset_end, selected_reaches };
+    const max_lulc_distance = parseInt(document.getElementById('maxLulcDistance')?.value || '100', 10);
+    const payload = { source_scenario, target_name, subset_start, subset_end, selected_reaches, max_lulc_distance };
     let res;
     try {
       res = await api('/api/scenario-subset/start', {
