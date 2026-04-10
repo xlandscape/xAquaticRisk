@@ -166,10 +166,43 @@ def _analysis_subprocess_env() -> dict:
     return env
 
 
+def _python_supports_modules(python_exe: str, modules: list[str]) -> bool:
+    if not python_exe or not os.path.isfile(python_exe):
+        return False
+    probe = [
+        python_exe,
+        "-c",
+        (
+            "import importlib.util, sys; "
+            f"mods={tuple(modules)!r}; "
+            "missing=[m for m in mods if importlib.util.find_spec(m) is None]; "
+            "sys.exit(1 if missing else 0)"
+        ),
+    ]
+    try:
+        result = subprocess.run(
+            probe,
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=BASE_DIR,
+            env=_analysis_subprocess_env(),
+        )
+    except OSError:
+        return False
+    return result.returncode == 0
+
+
 def _pick_analysis_python() -> Optional[str]:
     """Resolve the preferred Python executable for analysis jobs."""
-    if os.path.isfile(_embedded_analysis_py):
-        return _embedded_analysis_py
+    candidates = [
+        _embedded_analysis_py,
+        os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe"),
+        sys.executable,
+    ]
+    for candidate in candidates:
+        if _python_supports_modules(candidate, ["h5py", "pandas", "geopandas"]):
+            return candidate
     return None
 
 
@@ -635,11 +668,38 @@ def _format_hydro_datetime(value: datetime.datetime) -> str:
     return value.strftime(HYDRO_TIME_FORMAT)
 
 
+def _hdf_text_value(dataset) -> Optional[str]:
+    if dataset is None:
+        return None
+    try:
+        raw = dataset[0]
+    except Exception:
+        return None
+    if raw is None:
+        return None
+    if isinstance(raw, bytes):
+        return raw.decode("ascii", errors="replace")
+    return str(raw)
+
+
 def _embedded_hydro_inspect(hydro_path: str) -> dict:
     script = r'''
 import json
 import h5py
 import sys
+
+def text_value(dataset):
+    if dataset is None:
+        return None
+    try:
+        raw = dataset[0]
+    except Exception:
+        return None
+    if raw is None:
+        return None
+    if isinstance(raw, bytes):
+        return raw.decode("ascii", errors="replace")
+    return str(raw)
 
 path = json.loads(sys.argv[1])["hydro_path"]
 with h5py.File(path, "r") as handle:
@@ -653,8 +713,8 @@ with h5py.File(path, "r") as handle:
     result = {
         "datasets": datasets,
         "keys": list(handle.keys()),
-        "time_from": handle["time_from"][0].decode("ascii") if "time_from" in handle else None,
-        "time_to": handle["time_to"][0].decode("ascii") if "time_to" in handle else None,
+        "time_from": text_value(handle.get("time_from")),
+        "time_to": text_value(handle.get("time_to")),
         "reach_count": int(handle["reaches"].shape[0]) if "reaches" in handle else 0,
     }
 print(json.dumps(result))
@@ -678,8 +738,8 @@ def _read_hydro_metadata(hydro_path: str) -> dict:
         return {
             "datasets": datasets,
             "keys": list(handle.keys()),
-            "time_from": handle["time_from"][0].decode("ascii") if "time_from" in handle else None,
-            "time_to": handle["time_to"][0].decode("ascii") if "time_to" in handle else None,
+            "time_from": _hdf_text_value(handle.get("time_from")),
+            "time_to": _hdf_text_value(handle.get("time_to")),
             "reach_count": int(handle["reaches"].shape[0]) if "reaches" in handle else 0,
         }
 
@@ -705,86 +765,87 @@ def inspect_scenario(scenario_path: str) -> dict:
         scenario_rel, scenario_abs = _resolve_scenario_path(scenario_path)
     except Exception as exc:
         return {"error": str(exc)}
+    try:
+        if not os.path.isdir(scenario_abs):
+            return {"error": f"Scenario folder not found: {scenario_rel}"}
 
-    if not os.path.isdir(scenario_abs):
-        return {"error": f"Scenario folder not found: {scenario_rel}"}
+        project_path = _scenario_project_path(scenario_abs)
+        readme_path = _scenario_readme_path(scenario_abs)
+        hydro_path = _scenario_hydro_path(scenario_abs)
+        inflow_dir = _scenario_timeseries_dir(scenario_abs)
+        warnings = []
 
-    project_path = _scenario_project_path(scenario_abs)
-    readme_path = _scenario_readme_path(scenario_abs)
-    hydro_path = _scenario_hydro_path(scenario_abs)
-    inflow_dir = _scenario_timeseries_dir(scenario_abs)
-    warnings = []
+        if not os.path.isfile(hydro_path):
+            warnings.append(f"Hydrology HDF5 file not found: {os.path.relpath(hydro_path, scenario_abs)}")
+        if not os.path.isfile(project_path):
+            warnings.append(f"Scenario project file not found: {os.path.relpath(project_path, scenario_abs)}")
+        if not os.path.isfile(readme_path):
+            warnings.append(f"Scenario readme file not found: {os.path.relpath(readme_path, scenario_abs)}")
 
-    # Check for required files and provide diagnostic warnings
-    if not os.path.isfile(hydro_path):
-        warnings.append(f"Hydrology HDF5 file not found: {os.path.relpath(hydro_path, scenario_abs)}")
-    if not os.path.isfile(project_path):
-        warnings.append(f"Scenario project file not found: {os.path.relpath(project_path, scenario_abs)}")
-    if not os.path.isfile(readme_path):
-        warnings.append(f"Scenario readme file not found: {os.path.relpath(readme_path, scenario_abs)}")
+        project_extent = _parse_scenario_project_extent(project_path) if os.path.isfile(project_path) else {}
+        readme_extent = _parse_readme_extent(readme_path) if os.path.isfile(readme_path) else {}
+        hydro_meta = _read_hydro_metadata(hydro_path) if os.path.isfile(hydro_path) else {}
+        effective_extent = _compute_effective_hydro_extent(
+            hydro_meta.get("time_from"),
+            hydro_meta.get("time_to"),
+        ) if hydro_meta else {}
 
-    project_extent = _parse_scenario_project_extent(project_path) if os.path.isfile(project_path) else {}
-    readme_extent = _parse_readme_extent(readme_path) if os.path.isfile(readme_path) else {}
-    hydro_meta = _read_hydro_metadata(hydro_path) if os.path.isfile(hydro_path) else {}
-    effective_extent = _compute_effective_hydro_extent(
-        hydro_meta.get("time_from"),
-        hydro_meta.get("time_to"),
-    ) if hydro_meta else {}
+        if hydro_meta and not effective_extent.get("valid", True):
+            warnings.append("Hydrology HDF5 does not contain a full valid day window for simulation dates.")
+        if project_extent.get("from_date") and effective_extent.get("from_date") and project_extent.get("from_date") != effective_extent.get("from_date"):
+            warnings.append(
+                f"scenario.xproject start date {project_extent['from_date']} differs from hydrology-derived start date {effective_extent['from_date']}."
+            )
+        if project_extent.get("to_date") and effective_extent.get("to_date") and project_extent.get("to_date") != effective_extent.get("to_date"):
+            warnings.append(
+                f"scenario.xproject end date {project_extent['to_date']} differs from hydrology-derived end date {effective_extent['to_date']}."
+            )
+        if readme_extent.get("from_datetime") and hydro_meta.get("time_from") and readme_extent.get("from_datetime") != hydro_meta.get("time_from"):
+            warnings.append(
+                f"readme.txt start datetime {readme_extent['from_datetime']} differs from hydrology HDF5 start datetime {hydro_meta['time_from']}."
+            )
+        if readme_extent.get("to_datetime") and hydro_meta.get("time_to") and readme_extent.get("to_datetime") != hydro_meta.get("time_to"):
+            warnings.append(
+                f"readme.txt end datetime {readme_extent['to_datetime']} differs from hydrology HDF5 end datetime {hydro_meta['time_to']}."
+            )
 
-    if hydro_meta and not effective_extent.get("valid", True):
-        warnings.append("Hydrology HDF5 does not contain a full valid day window for simulation dates.")
-    if project_extent.get("from_date") and effective_extent.get("from_date") and project_extent.get("from_date") != effective_extent.get("from_date"):
-        warnings.append(
-            f"scenario.xproject start date {project_extent['from_date']} differs from hydrology-derived start date {effective_extent['from_date']}."
-        )
-    if project_extent.get("to_date") and effective_extent.get("to_date") and project_extent.get("to_date") != effective_extent.get("to_date"):
-        warnings.append(
-            f"scenario.xproject end date {project_extent['to_date']} differs from hydrology-derived end date {effective_extent['to_date']}."
-        )
-    if readme_extent.get("from_datetime") and hydro_meta.get("time_from") and readme_extent.get("from_datetime") != hydro_meta.get("time_from"):
-        warnings.append(
-            f"readme.txt start datetime {readme_extent['from_datetime']} differs from hydrology HDF5 start datetime {hydro_meta['time_from']}."
-        )
-    if readme_extent.get("to_datetime") and hydro_meta.get("time_to") and readme_extent.get("to_datetime") != hydro_meta.get("time_to"):
-        warnings.append(
-            f"readme.txt end datetime {readme_extent['to_datetime']} differs from hydrology HDF5 end datetime {hydro_meta['time_to']}."
-        )
+        inflow_count = 0
+        if os.path.isdir(inflow_dir):
+            inflow_count = len([name for name in os.listdir(inflow_dir) if name.lower().endswith(".csv")])
 
-    inflow_count = 0
-    if os.path.isdir(inflow_dir):
-        inflow_count = len([name for name in os.listdir(inflow_dir) if name.lower().endswith(".csv")])
-
-    primary_extent = effective_extent or project_extent
-    return {
-        "scenario_path": scenario_rel,
-        "scenario_name": os.path.basename(scenario_abs),
-        "project_extent": {
-            "from_date": project_extent.get("from_date"),
-            "to_date": project_extent.get("to_date"),
-        },
-        "readme_extent": readme_extent,
-        "hdf_extent": {
-            "from_datetime": hydro_meta.get("time_from"),
-            "to_datetime": hydro_meta.get("time_to"),
-            "reach_count": hydro_meta.get("reach_count", 0),
-            "datasets": hydro_meta.get("datasets", {}),
-        },
-        "effective_extent": {
+        primary_extent = effective_extent or project_extent
+        return {
+            "scenario_path": scenario_rel,
+            "scenario_name": os.path.basename(scenario_abs),
+            "project_extent": {
+                "from_date": project_extent.get("from_date"),
+                "to_date": project_extent.get("to_date"),
+            },
+            "readme_extent": readme_extent,
+            "hdf_extent": {
+                "from_datetime": hydro_meta.get("time_from"),
+                "to_datetime": hydro_meta.get("time_to"),
+                "reach_count": hydro_meta.get("reach_count", 0),
+                "datasets": hydro_meta.get("datasets", {}),
+            },
+            "effective_extent": {
+                "from_date": primary_extent.get("from_date"),
+                "to_date": primary_extent.get("to_date"),
+                "valid": primary_extent.get("valid", True),
+            },
             "from_date": primary_extent.get("from_date"),
             "to_date": primary_extent.get("to_date"),
-            "valid": primary_extent.get("valid", True),
-        },
-        "from_date": primary_extent.get("from_date"),
-        "to_date": primary_extent.get("to_date"),
-        "warnings": warnings,
-        "files": {
-            "project": os.path.isfile(project_path),
-            "hydro_hdf": os.path.isfile(hydro_path),
-            "timeseries_dir": os.path.isdir(inflow_dir),
-            "timeseries_csv_count": inflow_count,
-            "readme": os.path.isfile(readme_path),
-        },
-    }
+            "warnings": warnings,
+            "files": {
+                "project": os.path.isfile(project_path),
+                "hydro_hdf": os.path.isfile(hydro_path),
+                "timeseries_dir": os.path.isdir(inflow_dir),
+                "timeseries_csv_count": inflow_count,
+                "readme": os.path.isfile(readme_path),
+            },
+        }
+    except Exception as exc:
+        return {"error": f"Scenario inspection failed: {exc}"}
 
 
 def get_scenario_extent(scenario_path: str) -> dict:
@@ -2725,6 +2786,10 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(data)))
+            # Always serve fresh SPA assets; stale browser cache caused UI regressions to linger.
+            self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
             self.end_headers()
             self.wfile.write(data)
         except FileNotFoundError:
@@ -2759,12 +2824,20 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             self._json_response(get_scenarios())
         elif path == "/api/scenario-extent":
             scenario_path = self._query_params().get("path", "")
-            self._json_response(get_scenario_extent(scenario_path))
+            try:
+                payload = get_scenario_extent(scenario_path)
+                status = 400 if payload.get("error") else 200
+                self._json_response(payload, status)
+            except Exception as exc:
+                self._json_response({"error": f"Scenario extent failed: {exc}"}, 500)
         elif path == "/api/scenario-inspect":
             scenario_path = self._query_params().get("path", "")
-            payload = inspect_scenario(scenario_path)
-            status = 400 if payload.get("error") else 200
-            self._json_response(payload, status)
+            try:
+                payload = inspect_scenario(scenario_path)
+                status = 400 if payload.get("error") else 200
+                self._json_response(payload, status)
+            except Exception as exc:
+                self._json_response({"error": f"Scenario inspect failed: {exc}"}, 500)
         elif path == "/api/scenario-geometry":
             scenario_path = self._query_params().get("path", "")
             try:

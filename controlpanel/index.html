@@ -676,7 +676,7 @@ a{color:var(--accent);text-decoration:none}
               <option value="">Select a scenario…</option>
             </select>
             <button type="button" class="btn btn-outline btn-sm" onclick="useCurrentScenarioForSubset()">Sync from Parameterisation</button>
-            <button type="button" class="btn btn-outline btn-sm" onclick="inspectSubsetScenario()">Inspect</button>
+            <button type="button" class="btn btn-outline btn-sm" id="subsetInspectBtn" onclick="inspectAndZoomSubsetScenario(true)">Inspect</button>
           </div>
           <div class="help-text">Inspects <em>hydro/hydro_reaches.h5</em> and derives the real valid day range from the hydrology runtime contract.</div>
         </div>
@@ -1057,6 +1057,7 @@ let activeSubsetJobId = null;
 let subsetMap = null;
 let subsetMapReady = false;
 let subsetReachGeoJSON = null;
+let subsetLastBounds = null;
 let subsetSelectedReachIds = new Set();
 let subsetIsBoxSelecting = false;
 let subsetBoxDiv = null;
@@ -1137,6 +1138,18 @@ function switchTab(name) {
   if (name === 'explorer') {
     ensureExplorerMap();
     loadExplorerRuns();
+  }
+  if (name === 'landscape') {
+    ensureSubsetMap();
+    if (subsetMap) {
+      requestAnimationFrame(() => {
+        subsetMap.resize();
+        const b = subsetLastBounds;
+        if (Array.isArray(b) && b.length === 4 && b.every(Number.isFinite)) {
+          subsetMap.fitBounds([[b[0], b[1]], [b[2], b[3]]], { padding: 30, duration: 0 });
+        }
+      });
+    }
   }
 }
 
@@ -1254,6 +1267,7 @@ async function inspectSubsetScenario(force = false) {
     showSubsetStatus('Select a source scenario first.', 'error');
     return null;
   }
+  showSubsetStatus('Inspecting scenario…', 'note');
   if (!force && scenarioInspectCache.has(scenarioPath)) {
     const cached = scenarioInspectCache.get(scenarioPath);
     renderSubsetInspection(cached);
@@ -1271,6 +1285,12 @@ async function inspectSubsetScenario(force = false) {
   }
 }
 
+async function inspectAndZoomSubsetScenario(forceInspect = false) {
+  const data = await inspectSubsetScenario(forceInspect);
+  if (!data) return;
+  await loadSubsetScenarioGeometry();
+}
+
 function fillSubsetDatesFromEffective() {
   const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
   const data = scenarioInspectCache.get(scenarioPath);
@@ -1285,8 +1305,7 @@ function fillSubsetDatesFromEffective() {
 async function onSubsetSourceChange() {
   const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
   if (!scenarioPath) return;
-  await inspectSubsetScenario();
-  await loadSubsetScenarioGeometry();
+  await inspectAndZoomSubsetScenario(false);
 }
 
 function useCurrentScenarioForSubset() {
@@ -1451,6 +1470,9 @@ async function loadSubsetScenarioGeometry() {
   const scenarioPath = document.getElementById('subsetSourceScenario')?.value || '';
   if (!scenarioPath) return;
   try {
+    if (subsetMap && !subsetMapReady) {
+      await new Promise((resolve) => subsetMap.once('load', resolve));
+    }
     const res = await api('/api/scenario-geometry?path=' + encodeURIComponent(scenarioPath));
     subsetReachGeoJSON = res.geojson || { type: 'FeatureCollection', features: [] };
     subsetSelectedReachIds = new Set((subsetReachGeoJSON.features || []).map(f => String(f?.properties?.reach_id || '')).filter(Boolean));
@@ -1458,7 +1480,9 @@ async function loadSubsetScenarioGeometry() {
       subsetMap.getSource('subset-reaches').setData(subsetReachGeoJSON);
       setSubsetSelectionSource();
       const b = res.meta?.bounds || [];
-      if (b.length === 4 && Number.isFinite(b[0]) && Number.isFinite(b[1])) {
+      if (b.length === 4 && b.every(Number.isFinite)) {
+        subsetLastBounds = b;
+        subsetMap.resize();
         subsetMap.fitBounds([[b[0], b[1]], [b[2], b[3]]], { padding: 30, duration: 500 });
       }
     }
@@ -1876,7 +1900,10 @@ function renderWarningDowngradeRules() {
 function statusLabel(s) {
   return {running:'Running',finished:'Finished',warning:'Warnings',error:'Errors',initializing:'Starting',unknown:'Unknown'}[s]||s;
 }
-function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escHtml(s) {
+  const text = (s === null || s === undefined) ? '' : String(s);
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 // ═══════════════════════════════════════════════════════════════════
 // Monitor – sidebar
@@ -2760,6 +2787,20 @@ function setupExplorerBoxSelection() {
 // Init
 // ═══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
+  const subsetInspectBtn = document.getElementById('subsetInspectBtn');
+  if (subsetInspectBtn) {
+    subsetInspectBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      inspectAndZoomSubsetScenario(true);
+    });
+  }
+  const subsetSourceScenario = document.getElementById('subsetSourceScenario');
+  if (subsetSourceScenario) {
+    subsetSourceScenario.addEventListener('change', () => {
+      onSubsetSourceChange();
+    });
+  }
+
   initializeScenarioDateAutofill();
   await loadWarningDowngradeRules();
   await loadScenarios();
