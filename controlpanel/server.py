@@ -1301,17 +1301,24 @@ if gdf.empty:
 non_geom = [c for c in gdf.columns if c != "geometry"]
 if not non_geom:
     raise RuntimeError("Reach shapefile has no attribute columns")
-preferred = ["reach_id", "reachid", "id", "key", "reach", "name", "segment_id"]
+preferred = ["key", "reach_id", "reachid", "segment_id", "reach", "name", "id"]
 best_col = non_geom[0]
-best_score = -1
+best_score = -1.0
 for col in non_geom:
-    vals = gdf[col].dropna().head(1000)
-    score = sum(1 for v in vals if norm(v) in selected)
+    vals = [norm(v) for v in gdf[col].dropna().head(2000)]
+    if not vals:
+        continue
+    unique_vals = set(v for v in vals if v is not None)
+    matched_unique = len(set(v for v in unique_vals if v in selected))
+    if matched_unique == 0:
+        continue
+    unique_ratio = len(unique_vals) / max(len(vals), 1)
+    score = float(matched_unique) + 0.5 * unique_ratio
     lower_col = col.lower()
     if lower_col in preferred:
-        score += 10
+        score += 5.0
     elif any(p in lower_col for p in preferred):
-        score += 4
+        score += 2.0
     if score > best_score:
         best_score = score
         best_col = col
@@ -1938,17 +1945,24 @@ if gdf.crs is not None:
 non_geom = [c for c in gdf.columns if c != "geometry"]
 if not non_geom:
     raise RuntimeError("No attribute columns available in shapefile")
-preferred = ["reach_id", "reachid", "id", "key", "reach", "name", "segment_id"]
+preferred = ["key", "reach_id", "reachid", "segment_id", "reach", "name", "id"]
 best_col = non_geom[0]
-best_score = -1
+best_score = -1.0
 for col in non_geom:
-    vals = gdf[col].dropna().head(1000)
-    score = sum(1 for v in vals if norm(v) in reach_ids)
+    vals = [norm(v) for v in gdf[col].dropna().head(2000)]
+    if not vals:
+        continue
+    unique_vals = set(v for v in vals if v is not None)
+    matched_unique = len(set(v for v in unique_vals if v in reach_ids))
+    if matched_unique == 0:
+        continue
+    unique_ratio = len(unique_vals) / max(len(vals), 1)
+    score = float(matched_unique) + 0.5 * unique_ratio
     col_l = col.lower()
     if col_l in preferred:
-        score += 10
+        score += 5.0
     elif any(p in col_l for p in preferred):
-        score += 4
+        score += 2.0
     if score > best_score:
         best_score = score
         best_col = col
@@ -2040,29 +2054,68 @@ def _select_reach_id_column(gdf, reach_ids_hint):
     if not non_geom:
         return None
 
-    preferred_names = [
-        "reach_id", "reachid", "id", "key", "reach", "name", "segment_id",
-    ]
+    # Prefer canonical reach identifier columns first.
+    exact_priority = ["key", "reach_id", "reachid", "segment_id", "reach", "name", "id"]
+    lower_to_col = {c.lower(): c for c in non_geom}
 
-    hints = set(reach_ids_hint or [])
-    best_col = None
-    best_score = -1
-    for col in non_geom:
-        values = gdf[col].dropna().head(1000)
-        if values.empty:
-            continue
-        score = 0
-        if hints:
-            score = sum(1 for v in values if _normalize_reach_id(v) in hints)
-        col_name = col.lower()
-        if any(p == col_name for p in preferred_names):
-            score += 10
-        elif any(p in col_name for p in preferred_names):
-            score += 4
-        if score > best_score:
-            best_score = score
-            best_col = col
-    return best_col or non_geom[0]
+    hints = set(_coerce_list_of_reach_ids(reach_ids_hint or []))
+
+    def _normalized_sample(col_name: str):
+        vals = gdf[col_name].dropna().head(2000)
+        if vals.empty:
+            return []
+        return [_normalize_reach_id(v) for v in vals]
+
+    if hints:
+        # Try exact-priority columns first if they overlap with hinted reach IDs.
+        priority_best = None
+        priority_matches = -1
+        for low_name in exact_priority:
+            col = lower_to_col.get(low_name)
+            if not col:
+                continue
+            norm_vals = _normalized_sample(col)
+            if not norm_vals:
+                continue
+            matched_unique = len({v for v in norm_vals if v in hints})
+            if matched_unique > priority_matches:
+                priority_matches = matched_unique
+                priority_best = col
+        if priority_best and priority_matches > 0:
+            return priority_best
+
+        # Fallback: score by unique-id overlap and penalize low-cardinality columns.
+        best_col = None
+        best_score = -1.0
+        preferred_tokens = ["reach_id", "reachid", "key", "segment_id", "reach", "name", "id"]
+        for col in non_geom:
+            norm_vals = _normalized_sample(col)
+            if not norm_vals:
+                continue
+            unique_vals = {v for v in norm_vals if v is not None}
+            matched_unique = len({v for v in unique_vals if v in hints})
+            if matched_unique == 0:
+                continue
+            unique_ratio = (len(unique_vals) / max(len(norm_vals), 1))
+            score = float(matched_unique) + 0.5 * unique_ratio
+            col_name = col.lower()
+            if col_name in preferred_tokens:
+                score += 5.0
+            elif any(tok in col_name for tok in preferred_tokens):
+                score += 2.0
+            if score > best_score:
+                best_score = score
+                best_col = col
+        if best_col:
+            return best_col
+
+    # Without hints, pick best-known column name if available.
+    for low_name in exact_priority:
+        col = lower_to_col.get(low_name)
+        if col:
+            return col
+
+    return non_geom[0]
 
 
 def _build_map_geometry_embedded(arr_path, scenario_path):
@@ -2138,17 +2191,24 @@ non_geom = [c for c in gdf.columns if c != "geometry"]
 if not non_geom:
     raise RuntimeError("No attribute columns available in shapefile")
 
-preferred = ["reach_id", "reachid", "id", "key", "reach", "name", "segment_id"]
+preferred = ["key", "reach_id", "reachid", "segment_id", "reach", "name", "id"]
 best_col = non_geom[0]
-best_score = -1
+best_score = -1.0
 for col in non_geom:
-    vals = gdf[col].dropna().head(1000)
-    score = sum(1 for v in vals if norm(v) in reach_ids)
+    vals = [norm(v) for v in gdf[col].dropna().head(2000)]
+    if not vals:
+        continue
+    unique_vals = set(v for v in vals if v is not None)
+    matched_unique = len(set(v for v in unique_vals if v in reach_ids))
+    if matched_unique == 0:
+        continue
+    unique_ratio = len(unique_vals) / max(len(vals), 1)
+    score = float(matched_unique) + 0.5 * unique_ratio
     col_l = col.lower()
     if col_l in preferred:
-        score += 10
+        score += 5.0
     elif any(p in col_l for p in preferred):
-        score += 4
+        score += 2.0
     if score > best_score:
         best_score = score
         best_col = col
