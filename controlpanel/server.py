@@ -1056,25 +1056,62 @@ def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.da
 def _slice_timeseries_csv(source_csv: str, target_csv: str, start_dt: datetime.datetime, end_dt: datetime.datetime, cancel_cb=None, selected_reach_ids=None):
     os.makedirs(os.path.dirname(target_csv), exist_ok=True)
     kept_rows = 0
+    processed_rows = 0
     selected_set = set(_coerce_list_of_reach_ids(selected_reach_ids)) if selected_reach_ids else None
-    with open(source_csv, "r", encoding="utf-8", newline="") as src_handle, open(target_csv, "w", encoding="utf-8", newline="") as dst_handle:
+    start_key = _format_hydro_datetime(start_dt)
+    end_key = _format_hydro_datetime(end_dt)
+    ts_cache = {}
+    reach_cache = {}
+
+    def _is_plausible_hydro_timestamp(value: str) -> bool:
+        return (
+            len(value) == 16
+            and value[4] == "-"
+            and value[7] == "-"
+            and value[10] == "T"
+            and value[13] == ":"
+            and value[0:4].isdigit()
+            and value[5:7].isdigit()
+            and value[8:10].isdigit()
+            and value[11:13].isdigit()
+            and value[14:16].isdigit()
+        )
+
+    with open(source_csv, "r", encoding="utf-8", newline="", buffering=1024 * 1024) as src_handle, open(target_csv, "w", encoding="utf-8", newline="", buffering=1024 * 1024) as dst_handle:
         reader = csv.reader(src_handle)
         writer = csv.writer(dst_handle)
         header = next(reader, None)
         if header:
             writer.writerow(header)
         for row in reader:
-            if cancel_cb and kept_rows % 5000 == 0 and cancel_cb():
+            processed_rows += 1
+            if cancel_cb and processed_rows % 5000 == 0 and cancel_cb():
                 raise SubsetJobCancelled("Subset creation was cancelled during inflow CSV trimming")
             if len(row) < 3:
                 continue
-            try:
-                row_dt = datetime.datetime.strptime(row[1].strip(), HYDRO_TIME_FORMAT)
-            except ValueError:
+            row_ts = row[1].strip()
+            ts_ok = ts_cache.get(row_ts)
+            if ts_ok is None:
+                # Fast lexical pre-filter, then strict parse once per unique timestamp.
+                if not _is_plausible_hydro_timestamp(row_ts) or row_ts < start_key or row_ts > end_key:
+                    ts_ok = False
+                else:
+                    try:
+                        datetime.datetime.strptime(row_ts, HYDRO_TIME_FORMAT)
+                        ts_ok = True
+                    except ValueError:
+                        ts_ok = False
+                ts_cache[row_ts] = ts_ok
+            if not ts_ok:
                 continue
-            row_reach = _normalize_reach_id(row[0]) if row else None
+
+            raw_reach = row[0]
+            row_reach = reach_cache.get(raw_reach)
+            if raw_reach not in reach_cache:
+                row_reach = _normalize_reach_id(raw_reach)
+                reach_cache[raw_reach] = row_reach
             reach_ok = (selected_set is None) or (row_reach in selected_set)
-            if reach_ok and start_dt <= row_dt <= end_dt:
+            if reach_ok:
                 writer.writerow(row)
                 kept_rows += 1
     return kept_rows
