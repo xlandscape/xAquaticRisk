@@ -33,6 +33,8 @@ import argparse
 import csv
 import datetime
 import glob
+import importlib.util
+import multiprocessing
 import hashlib
 import json
 import os
@@ -90,6 +92,18 @@ PORT = 8090
 PARAM_FILE_EXTENSIONS = (".xrun", ".yaml", ".yml")
 HYDRO_TIME_FORMAT = "%Y-%m-%dT%H:%M"
 HYDRO_ARRAY_DATASETS = ("flow", "depth", "volume", "area")
+
+# Load Step 2 pandas backend for CSV trimming (optional)
+step2_backend = None
+try:
+    _step2_path = os.path.join(CPANEL_DIR, "step2_pandas_backend.py")
+    if os.path.exists(_step2_path):
+        spec = importlib.util.spec_from_file_location("step2_pandas_backend", _step2_path)
+        if spec and spec.loader:
+            step2_backend = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(step2_backend)
+except Exception:
+    pass  # Step 2 backend is optional
 
 # Track running simulation processes: {experiment_id: subprocess.Popen}
 _running_processes = {}
@@ -1054,6 +1068,16 @@ def _slice_hydrology_hdf(source_hdf: str, target_hdf: str, start_dt: datetime.da
 
 
 def _slice_timeseries_csv(source_csv: str, target_csv: str, start_dt: datetime.datetime, end_dt: datetime.datetime, cancel_cb=None, selected_reach_ids=None):
+    # Try pandas backend (step 2) first if available
+    if step2_backend and hasattr(step2_backend, "_slice_timeseries_csv_pandas") and step2_backend.pd:
+        try:
+            kept = step2_backend._slice_timeseries_csv_pandas(source_csv, target_csv, start_dt, end_dt, cancel_cb, selected_reach_ids)
+            if kept is not None:
+                return kept
+        except Exception:
+            pass  # Fallback to CSV backend
+    
+    # CSV backend (original - stable fallback)
     os.makedirs(os.path.dirname(target_csv), exist_ok=True)
     kept_rows = 0
     processed_rows = 0
@@ -1544,19 +1568,55 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
             os.makedirs(target_timeseries_dir, exist_ok=True)
             csv_files = [entry for entry in sorted(os.listdir(source_timeseries_dir)) if entry.lower().endswith(".csv")]
             csv_total = len(csv_files)
-            for idx, entry in enumerate(csv_files, start=1):
-                _slice_timeseries_csv(
-                    os.path.join(source_timeseries_dir, entry),
-                    os.path.join(target_timeseries_dir, entry),
-                    csv_start,
-                    csv_end,
-                    cancel_cb=cancel_cb,
-                    selected_reach_ids=selected_reaches,
-                )
-                sliced_csvs += 1
-                if csv_total:
-                    pct = int(80 + 15 * (idx / csv_total))
-                    _emit(pct, f"Trimming inflow time series ({idx}/{csv_total})")
+            
+            # Use parallel processing for multiple CSV files (if step2 backend available)
+            use_parallel = (
+                step2_backend
+                and hasattr(step2_backend, "process_csv_files_parallel")
+                and step2_backend.pd
+                and csv_total >= 3  # Only parallelize if 3+ files
+            )
+            
+            if use_parallel:
+                _emit(80.5, f"Processing {csv_total} inflow CSV files in parallel...")
+                full_csv_paths = [os.path.join(source_timeseries_dir, entry) for entry in csv_files]
+                def parallel_progress(pct, msg):
+                    _emit(max(80, min(95, pct)), msg)
+                
+                try:
+                    par_result = step2_backend.process_csv_files_parallel(
+                        full_csv_paths,
+                        csv_start,
+                        csv_end,
+                        target_timeseries_dir,
+                        selected_reach_ids=selected_reaches,
+                        num_workers=max(1, multiprocessing.cpu_count() - 1),
+                        progress_cb=parallel_progress,
+                        cancel_cb=cancel_cb,
+                    )
+                    sliced_csvs = par_result.get("processed", 0)
+                    if par_result.get("error"):
+                        _emit(81, f"Parallel processing fell back to sequential: {par_result['error']}")
+                        use_parallel = False
+                except Exception as e:
+                    _emit(81, f"Parallel processing error, using sequential: {str(e)}")
+                    use_parallel = False
+            
+            # Fallback to sequential processing
+            if not use_parallel:
+                for idx, entry in enumerate(csv_files, start=1):
+                    _slice_timeseries_csv(
+                        os.path.join(source_timeseries_dir, entry),
+                        os.path.join(target_timeseries_dir, entry),
+                        csv_start,
+                        csv_end,
+                        cancel_cb=cancel_cb,
+                        selected_reach_ids=selected_reaches,
+                    )
+                    sliced_csvs += 1
+                    if csv_total:
+                        pct = int(80 + 15 * (idx / csv_total))
+                        _emit(pct, f"Trimming inflow time series ({idx}/{csv_total})")
 
         _emit(96, "Updating scenario metadata")
         _update_scenario_project_for_subset(_scenario_project_path(target_abs), clean_name, start_date, end_date)

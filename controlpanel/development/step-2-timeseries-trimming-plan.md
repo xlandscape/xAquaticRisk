@@ -102,3 +102,28 @@ Mitigations:
 - Step 2 merged with fallback intact
 - Benchmarks documented in this folder
 - No behavioral differences from baseline outputs
+
+## Implementation Status (2026-04-10)
+
+Completed:
+- Added `controlpanel/step2_pandas_backend.py` with:
+  - `_slice_timeseries_csv_pandas(...)` chunked vectorized backend
+  - `process_csv_files_parallel(...)` multiprocessing backend for parallel CSV file trimming
+  - robust fallback signaling (`None` return) for parser/runtime issues
+- Updated `controlpanel/server.py`:
+  - `_slice_timeseries_csv(...)` now dispatches to pandas backend first and falls back to csv backend
+  - `create_scenario_subset(...)` now attempts parallel processing for TimeSeries CSV when multiple files are present
+
+## Initial Benchmark Snapshot
+
+Test file:
+- `r1.csv` (7.32 MB)
+
+Results:
+- Baseline csv backend: 530 ms
+- Step 2 pandas backend: 535 ms
+- Relative speed: 0.99x
+
+Interpretation:
+- For small files, pandas chunk setup overhead can offset vectorization gains.
+- Expected gains remain most likely for larger files and/or many-file subsets when parallel backend is active.
