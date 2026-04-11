@@ -99,6 +99,108 @@ If the folder is missing or incomplete, the Control Panel now stops before launc
 
 ---
 
+## Server Management and Monitoring
+
+### HTTP Status Endpoint
+
+The Control Panel exposes a status endpoint that reports the server's current state, useful for monitoring or automation:
+
+**Endpoint:** `GET http://localhost:PORT/api/controlpanel/status` (PORT defaults to 8090)
+
+**Response when server is running:**
+```json
+{
+  "status": "running",
+  "pid": 12345,
+  "port": 8090,
+  "started_at": 1712846553,
+  "uptime_seconds": 300,
+  "alive": true,
+  "lock_file": "c:\\...\\server.instance.lock"
+}
+```
+
+**Response when no server is running:** 404 error
+
+**Quick check from PowerShell:**
+```powershell
+# Check if server is running
+$response = Invoke-WebRequest -Uri "http://localhost:8090/api/controlpanel/status" -UseBasicParsing -ErrorAction SilentlyContinue
+if ($response) {
+    $info = $response.Content | ConvertFrom-Json
+    Write-Host "Server is $($info.status) | PID: $($info.pid) | Uptime: $($info.uptime_seconds)s"
+}
+```
+
+### PowerShell Helper Script
+
+A convenience script at `controlpanel/controlpanel-status.ps1` can check server status and manage instances:
+
+**Check status on a specific port:**
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Port 8091
+```
+
+**Output:**
+```
+Status: RUNNING
+PID: 35864 | Port: 8091
+Uptime: 0h 1m 28s
+```
+
+**Clean up stale lock files** (e.g., after a crash):
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Clean
+```
+
+**Stop a server on a specific port:**
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Kill 8090
+```
+
+**Combine status check and cleanup:**
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Port 8090 -All
+```
+
+### Troubleshooting
+
+**Port already in use but no process found:**
+
+If the Control Panel fails to start due to a port conflict, the process may have crashed and left a lock file:
+
+```powershell
+# Remove the stale lock file
+Remove-Item controlpanel\server.instance.lock -Force
+
+# Or use the helper script
+.\controlpanel\controlpanel-status.ps1 -Clean
+```
+
+**Multiple instances accidentally running:**
+
+Multiple Control Panel processes can block each other. The single-instance lock guard prevents this, but if you start them on different ports:
+
+```powershell
+# Check all instances
+Invoke-WebRequest http://localhost:8090/api/controlpanel/status -UseBasicParsing | 
+  Select-Object -Expand Content | ConvertFrom-Json | Select pid, port, status
+
+# Kill a specific instance
+.\controlpanel\controlpanel-status.ps1 -Kill 8090
+```
+
+**Stale zombie process in Task Manager:**
+
+If you kill the process via Task Manager instead of the `Abort` button:
+
+```powershell
+# Clean up the orphaned lock file
+.\controlpanel\controlpanel-status.ps1 -Clean
+```
+
+---
+
 ## Architecture
 
 The Control Panel is a single Python HTTP server (`controlpanel/server.py`) that exposes both the parameterisation API and the monitoring API:
