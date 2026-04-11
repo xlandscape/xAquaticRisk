@@ -1,19 +1,16 @@
-"""
-Step 2 implementation: pandas-based chunked CSV backend + multiprocessing support.
+"""Step 2 inflow CSV trimming backend.
 
-This module provides optimized CSV trimming for scenario subsetting with:
-1. Vectorized filtering using pandas chunks
-2. Optional multiprocessing for parallel file processing
-3. Robust fallback to CSV backend
+Provides chunked pandas filtering and multi-process execution for scenario
+subset creation while keeping behavior compatible with the legacy CSV path.
 """
 
-import csv
 import datetime
 import multiprocessing
 import os
-from multiprocessing import Manager, Pool
-from typing import Optional, Dict, Any
+import threading
 import time
+from multiprocessing import Pool
+from typing import Any, Dict, Optional
 
 try:
     import pandas as pd
@@ -56,6 +53,29 @@ def _is_plausible_hydro_timestamp(value: str) -> bool:
     )
 
 
+def _timestamp_mask(series, start_key: str, end_key: str):
+    """Return a strict-validity timestamp mask for a pandas string series."""
+    ts = series.astype("string").str.strip()
+    plausible = ts.str.len() == 16
+    plausible &= ts.str[4] == "-"
+    plausible &= ts.str[7] == "-"
+    plausible &= ts.str[10] == "T"
+    plausible &= ts.str[13] == ":"
+    plausible &= ts.str[0:4].str.isdigit()
+    plausible &= ts.str[5:7].str.isdigit()
+    plausible &= ts.str[8:10].str.isdigit()
+    plausible &= ts.str[11:13].str.isdigit()
+    plausible &= ts.str[14:16].str.isdigit()
+    in_range = plausible & (ts >= start_key) & (ts <= end_key)
+    if not bool(in_range.any()):
+        return in_range
+    parsed = pd.to_datetime(ts[in_range], format="%Y-%m-%dT%H:%M", errors="coerce")
+    strict_ok = parsed.notna()
+    out = in_range.copy()
+    out.loc[in_range] = strict_ok.values
+    return out
+
+
 def _slice_timeseries_csv_pandas(
     source_csv: str,
     target_csv: str,
@@ -78,12 +98,12 @@ def _slice_timeseries_csv_pandas(
     kept_rows = 0
     start_key = _format_hydro_datetime(start_dt)
     end_key = _format_hydro_datetime(end_dt)
-    selected_set = set(_normalize_reach_id(v) for v in (selected_reach_ids or []))
+    selected_set = set(_normalize_reach_id(v) for v in (selected_reach_ids or [])) if selected_reach_ids else None
     
     try:
         first_chunk = True
         with open(target_csv, "w", encoding="utf-8", newline="") as out_f:
-            for chunk_idx, chunk in enumerate(
+            for chunk in (
                 pd.read_csv(
                     source_csv,
                     dtype=str,
@@ -93,40 +113,34 @@ def _slice_timeseries_csv_pandas(
                 )
             ):
                 if cancel_cb and cancel_cb():
-                    raise Exception("Cancelled")
+                    raise RuntimeError("Cancelled")
                 
                 if chunk.empty or len(chunk.columns) < 3:
                     continue
-                
-                # Vectorized timestamp filtering
-                ts_col = chunk.iloc[:, 1].astype(str).str.strip()
-                ts_plausible = ts_col.str.len() == 16
-                ts_plausible &= ts_col.str[4] == "-"
-                ts_plausible &= ts_col.str[7] == "-"
-                ts_plausible &= ts_col.str[10] == "T"
-                ts_plausible &= ts_col.str[13] == ":"
-                ts_mask = ts_plausible & (ts_col >= start_key) & (ts_col <= end_key)
-                
-                chunk_filtered = chunk[ts_mask].copy()
+
+                # Mirror legacy behavior for malformed rows: require at least 3 columns.
+                wellformed = chunk.iloc[:, 2].notna()
+                ts_mask = _timestamp_mask(chunk.iloc[:, 1], start_key, end_key)
+                chunk_filtered = chunk[wellformed & ts_mask]
                 if chunk_filtered.empty:
                     continue
-                
+
                 # Vectorized reach filtering if selected
-                if selected_reach_ids:
-                    reach_col = chunk_filtered.iloc[:, 0].astype(str).str.strip()
+                if selected_set is not None:
+                    reach_col = chunk_filtered.iloc[:, 0].astype("string").str.strip()
                     reach_norm = reach_col.apply(_normalize_reach_id)
                     chunk_filtered = chunk_filtered[reach_norm.isin(selected_set)].copy()
-                
+
                 if chunk_filtered.empty:
                     continue
-                
+
                 # Write chunk
                 chunk_filtered.to_csv(out_f, header=first_chunk, index=False, encoding="utf-8")
                 kept_rows += len(chunk_filtered)
                 first_chunk = False
-        
+
         return kept_rows
-    except Exception as e:
+    except Exception:
         # On any error, fallback to CSV backend
         return None
 
@@ -141,7 +155,6 @@ def _slice_timeseries_csv_worker(args: Dict[str, Any]) -> tuple:
         - start_dt: start datetime
         - end_dt: end datetime
         - selected_reach_ids: list of reach IDs or None
-        - cancel_event: multiprocessing.Event for cancellation
         - method: "pandas" or "csv"
     
     Returns:
@@ -154,26 +167,21 @@ def _slice_timeseries_csv_worker(args: Dict[str, Any]) -> tuple:
         start_dt = args["start_dt"]
         end_dt = args["end_dt"]
         selected_reach_ids = args.get("selected_reach_ids")
-        cancel_event = args.get("cancel_event")
         method = args.get("method", "pandas")
-        
-        if cancel_event and cancel_event.is_set():
-            return (os.path.basename(source_csv), 0, 0, "Cancelled")
-        
+
         def check_cancel():
-            return cancel_event and cancel_event.is_set()
-        
+            return False
+
         if method == "pandas":
             kept = _slice_timeseries_csv_pandas(source_csv, target_csv, start_dt, end_dt, check_cancel, selected_reach_ids)
             if kept is not None:
                 elapsed_ms = int((time.time() - start_time) * 1000)
-                return (os.path.basename(source_csv), kept, elapsed_ms, None)
-        
-        # Fallback to CSV (not implemented here, would need full copy)
-        return (os.path.basename(source_csv), 0, 0, f"Method '{method}' not available")
+                return (source_csv, kept, elapsed_ms, None, "pandas")
+
+        return (source_csv, 0, 0, f"Method '{method}' not available", method)
     except Exception as e:
         elapsed_ms = int((time.time() - start_time) * 1000)
-        return (os.path.basename(args.get("source_csv", "?")), 0, elapsed_ms, str(e))
+        return (args.get("source_csv", "?"), 0, elapsed_ms, str(e), "error")
 
 
 def process_csv_files_parallel(
@@ -209,64 +217,112 @@ def process_csv_files_parallel(
         }
     """
     if not csv_files:
-        return {"processed": 0, "kept_total": 0, "elapsed_ms": 0, "results": {}, "backend": "parallel"}
+        return {
+            "processed": 0,
+            "kept_total": 0,
+            "elapsed_ms": 0,
+            "results": {},
+            "failed_files": [],
+            "backend": "parallel",
+        }
     
     if pd is None:
         return {"processed": 0, "kept_total": 0, "elapsed_ms": 0, "results": {}, "error": "pandas not available"}
     
     num_workers = num_workers or max(1, multiprocessing.cpu_count() - 1)
+    num_workers = max(1, min(num_workers, len(csv_files)))
     kept_total = 0
     start_time = time.time()
-    
-    try:
-        # Prepare worker arguments
-        os.makedirs(target_dir, exist_ok=True)
-        with Manager() as manager:
-            cancel_event = manager.Event()
-            
-            worker_args = []
-            for csv_file in csv_files:
-                target_csv = os.path.join(target_dir, os.path.basename(csv_file))
-                worker_args.append({
-                    "source_csv": csv_file,
-                    "target_csv": target_csv,
-                    "start_dt": start_dt,
-                    "end_dt": end_dt,
-                    "selected_reach_ids": selected_reach_ids,
-                    "cancel_event": cancel_event,
-                    "method": "pandas",
-                })
-            
-            results_dict = {}
-            processed = 0
-            
-            # Process with Pool
-            with Pool(processes=num_workers) as pool:
-                for idx, (filename, kept, elapsed, error) in enumerate(pool.imap_unordered(_slice_timeseries_csv_worker, worker_args)):
-                    processed += 1
-                    if error:
-                        results_dict[filename] = (0, elapsed, error)
-                    else:
-                        results_dict[filename] = (kept, elapsed, None)
-                        kept_total += kept
-                    
-                    if progress_cb:
-                        pct = int(80 + 15 * (processed / len(csv_files)))
-                        progress_cb(pct, f"Processing inflow CSV ({processed}/{len(csv_files)}): {filename}")
-            
-            elapsed_ms = int((time.time() - start_time) * 1000)
-            return {
-                "processed": processed,
-                "kept_total": kept_total,
-                "elapsed_ms": elapsed_ms,
-                "results": results_dict,
-                "backend": "parallel",
-            }
-    except Exception as e:
+
+    if cancel_cb and cancel_cb():
         return {
             "processed": 0,
             "kept_total": 0,
             "elapsed_ms": int((time.time() - start_time) * 1000),
             "results": {},
-            "error": str(e),
+            "failed_files": list(csv_files),
+            "error": "Cancelled",
+        }
+    
+    try:
+        os.makedirs(target_dir, exist_ok=True)
+        worker_args = []
+        for csv_file in csv_files:
+            target_csv = os.path.join(target_dir, os.path.basename(csv_file))
+            worker_args.append(
+                {
+                    "source_csv": csv_file,
+                    "target_csv": target_csv,
+                    "start_dt": start_dt,
+                    "end_dt": end_dt,
+                    "selected_reach_ids": selected_reach_ids,
+                    "method": "pandas",
+                }
+            )
+
+        results_dict = {}
+        failed_files = []
+        processed = 0
+
+        with Pool(processes=num_workers, maxtasksperchild=8) as pool:
+            cancel_stop = threading.Event()
+            cancelled_flag = {"value": False}
+
+            def _cancel_watcher():
+                while not cancel_stop.wait(0.2):
+                    if cancel_cb and cancel_cb():
+                        cancelled_flag["value"] = True
+                        try:
+                            pool.terminate()
+                        except Exception:
+                            pass
+                        return
+
+            watcher = threading.Thread(target=_cancel_watcher, daemon=True)
+            watcher.start()
+            try:
+                for source_file, kept, elapsed, error, backend in pool.imap_unordered(_slice_timeseries_csv_worker, worker_args, chunksize=1):
+                    processed += 1
+                    filename = os.path.basename(source_file)
+                    if error:
+                        failed_files.append(source_file)
+                        results_dict[filename] = (0, elapsed, error)
+                    else:
+                        results_dict[filename] = (kept, elapsed, None)
+                        kept_total += kept
+
+                    if progress_cb:
+                        pct = int(80 + 15 * (processed / len(csv_files)))
+                        progress_cb(pct, f"Processing inflow CSV ({processed}/{len(csv_files)}): {filename} [{backend}]")
+
+                    if cancel_cb and cancel_cb():
+                        cancelled_flag["value"] = True
+                        pool.terminate()
+                        raise RuntimeError("Cancelled")
+            finally:
+                cancel_stop.set()
+
+            if cancelled_flag["value"]:
+                raise RuntimeError("Cancelled")
+
+        elapsed_ms = int((time.time() - start_time) * 1000)
+        return {
+            "processed": processed,
+            "kept_total": kept_total,
+            "elapsed_ms": elapsed_ms,
+            "results": results_dict,
+            "failed_files": failed_files,
+            "backend": "parallel",
+        }
+    except Exception as e:
+        err_text = str(e)
+        if cancel_cb and cancel_cb() and "cancel" not in err_text.lower():
+            err_text = "Cancelled"
+        return {
+            "processed": 0,
+            "kept_total": 0,
+            "elapsed_ms": int((time.time() - start_time) * 1000),
+            "results": {},
+            "failed_files": list(csv_files),
+            "error": err_text,
         }

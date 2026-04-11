@@ -127,3 +127,21 @@ Results:
 Interpretation:
 - For small files, pandas chunk setup overhead can offset vectorization gains.
 - Expected gains remain most likely for larger files and/or many-file subsets when parallel backend is active.
+
+## Implementation Update (2026-04-11)
+
+Additional completed work:
+- Improved `controlpanel/step2_pandas_backend.py`:
+  - added strict timestamp validation in the pandas path via vectorized `to_datetime(..., errors="coerce")` on in-range candidates
+  - kept malformed-row guard compatibility (`>=3` columns semantics)
+  - reduced multiprocessing overhead (removed Manager/Event IPC in hot path)
+  - bounded workers to `min(cpu_count-1, file_count)` and enabled `maxtasksperchild` for more stable memory behavior
+  - added granular `failed_files` reporting so callers can retry only failed files sequentially
+- Improved `controlpanel/server.py` subset flow:
+  - enabled parallel CSV trimming only for heavier workloads (`>=4` CSV files and `>=32 MB` total)
+  - added partial sequential retry for only those files that failed in parallel mode
+  - preserved full sequential fallback when parallel backend reports a global error
+
+Expected impact:
+- Better end-to-end performance on medium/large multi-file subsets through lower process orchestration overhead.
+- Reduced regression risk on small subsets by avoiding unnecessary parallel startup costs.

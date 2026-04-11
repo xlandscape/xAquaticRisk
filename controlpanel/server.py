@@ -1610,7 +1610,7 @@ print(json.dumps({"status": "ok", "feature_count": int(len(filtered))}))
     _embedded_json_call(script, {"shp_path": shp_path, "selected": list(selected)})
 
 
-def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None, selected_reaches=None, max_lulc_distance: int = 100) -> dict:
+def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None, selected_reaches=None, max_lulc_distance: int = 100, max_number_cores: Optional[int] = None) -> dict:
     def _emit(pct: int, message: str):
         if cancel_cb and cancel_cb():
             raise SubsetJobCancelled("Subset creation was cancelled")
@@ -1683,37 +1683,93 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
             os.makedirs(target_timeseries_dir, exist_ok=True)
             csv_files = [entry for entry in sorted(os.listdir(source_timeseries_dir)) if entry.lower().endswith(".csv")]
             csv_total = len(csv_files)
-            
-            # Use parallel processing for multiple CSV files (if step2 backend available)
-            use_parallel = (
+            csv_paths = [os.path.join(source_timeseries_dir, entry) for entry in csv_files]
+            csv_total_bytes = 0
+            for csv_path in csv_paths:
+                try:
+                    csv_total_bytes += os.path.getsize(csv_path)
+                except OSError:
+                    pass
+
+            has_parallel_backend = bool(
                 step2_backend
                 and hasattr(step2_backend, "process_csv_files_parallel")
                 and step2_backend.pd
-                and csv_total >= 3  # Only parallelize if 3+ files
             )
+            requested_workers = max_number_cores or max(1, multiprocessing.cpu_count() - 1)
+            requested_workers = max(1, int(requested_workers))
+            parallel_workers = max(1, min(requested_workers, csv_total))
+
+            # Auto mode keeps conservative thresholds to avoid regressions on
+            # tiny workloads, but an explicit user core cap forces parallel
+            # mode whenever there are at least 2 CSV files to distribute.
+            auto_parallel_eligible = csv_total >= 4 and csv_total_bytes >= (32 * 1024 * 1024)
+            force_parallel = bool(max_number_cores and max_number_cores > 1)
+            use_parallel = has_parallel_backend and parallel_workers >= 2 and (force_parallel or auto_parallel_eligible)
+
+            if not use_parallel:
+                if not has_parallel_backend:
+                    _emit(80.2, "Parallel CSV backend unavailable; using sequential inflow trimming")
+                elif csv_total < 2:
+                    _emit(80.2, "Only one inflow CSV file found; multicore CSV parallelization is not possible")
+                elif parallel_workers < 2:
+                    _emit(80.2, "Parallel worker count resolved to 1; using sequential inflow trimming")
+                elif not force_parallel:
+                    _emit(
+                        80.2,
+                        (
+                            "Parallel CSV threshold not met in auto mode "
+                            f"(files={csv_total}, size={csv_total_bytes // (1024 * 1024)} MB); using sequential trimming"
+                        ),
+                    )
             
             if use_parallel:
-                _emit(80.5, f"Processing {csv_total} inflow CSV files in parallel...")
-                full_csv_paths = [os.path.join(source_timeseries_dir, entry) for entry in csv_files]
+                _emit(
+                    80.5,
+                    (
+                        f"Processing {csv_total} inflow CSV files in parallel "
+                        f"({csv_total_bytes // (1024 * 1024)} MB total, workers={parallel_workers}, requested={requested_workers})"
+                    ),
+                )
                 def parallel_progress(pct, msg):
                     _emit(max(80, min(95, pct)), msg)
                 
                 try:
                     par_result = step2_backend.process_csv_files_parallel(
-                        full_csv_paths,
+                        csv_paths,
                         csv_start,
                         csv_end,
                         target_timeseries_dir,
                         selected_reach_ids=selected_reaches,
-                        num_workers=max(1, multiprocessing.cpu_count() - 1),
+                        num_workers=parallel_workers,
                         progress_cb=parallel_progress,
                         cancel_cb=cancel_cb,
                     )
                     sliced_csvs = par_result.get("processed", 0)
+                    failed_parallel_files = par_result.get("failed_files", [])
                     if par_result.get("error"):
+                        if "cancel" in str(par_result.get("error", "")).lower():
+                            raise SubsetJobCancelled("Subset creation was cancelled and worker processes were terminated")
                         _emit(81, f"Parallel processing fell back to sequential: {par_result['error']}")
                         use_parallel = False
+                        failed_parallel_files = csv_paths
+                    elif failed_parallel_files:
+                        _emit(
+                            81,
+                            f"Parallel processing completed with {len(failed_parallel_files)} failed file(s), retrying sequentially",
+                        )
+                        for source_csv in failed_parallel_files:
+                            _slice_timeseries_csv(
+                                source_csv,
+                                os.path.join(target_timeseries_dir, os.path.basename(source_csv)),
+                                csv_start,
+                                csv_end,
+                                cancel_cb=cancel_cb,
+                                selected_reach_ids=selected_reaches,
+                            )
                 except Exception as e:
+                    if "cancel" in str(e).lower():
+                        raise SubsetJobCancelled("Subset creation was cancelled and worker processes were terminated")
                     _emit(81, f"Parallel processing error, using sequential: {str(e)}")
                     use_parallel = False
             
@@ -1780,7 +1836,7 @@ def _subset_job_update(job_id: str, **updates):
         job.update(updates)
 
 
-def start_subset_job(source_scenario: str, target_name: str, subset_start: str, subset_end: str, selected_reaches=None, max_lulc_distance: int = 100) -> str:
+def start_subset_job(source_scenario: str, target_name: str, subset_start: str, subset_end: str, selected_reaches=None, max_lulc_distance: int = 100, max_number_cores: Optional[int] = None) -> str:
     job_id = f"subset-{uuid.uuid4().hex[:12]}"
     cancel_event = threading.Event()
     with _subset_lock:
@@ -1813,6 +1869,7 @@ def start_subset_job(source_scenario: str, target_name: str, subset_start: str, 
                 cancel_cb=cancel_event.is_set,
                 selected_reaches=selected_reaches,
                 max_lulc_distance=max_lulc_distance,
+                max_number_cores=max_number_cores,
             )
             _subset_job_update(
                 job_id,
@@ -2051,6 +2108,19 @@ def _coerce_list_of_reach_ids(values):
         seen.add(rid)
         result.append(rid)
     return result
+
+
+def _coerce_max_number_cores(raw_value):
+    """Parse optional user core cap; return None for auto mode."""
+    if raw_value in (None, "", 0, "0"):
+        return None
+    try:
+        max_cores = int(raw_value)
+    except (TypeError, ValueError):
+        raise ValueError("max_number_cores must be an integer")
+    if max_cores < 1:
+        raise ValueError("max_number_cores must be >= 1")
+    return min(max_cores, multiprocessing.cpu_count())
 
 
 def _decode_text(raw):
@@ -3392,13 +3462,22 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         subset_end = (data.get("subset_end") or "").strip()
         selected_reaches = data.get("selected_reaches") or []
         max_lulc_distance = int(data.get("max_lulc_distance") or 100)
+        max_number_cores = _coerce_max_number_cores(data.get("max_number_cores"))
         if not source_scenario or not target_name or not subset_start or not subset_end:
             return self._json_response(
                 {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
                 400,
             )
         try:
-            payload = create_scenario_subset(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches, max_lulc_distance=max_lulc_distance)
+            payload = create_scenario_subset(
+                source_scenario,
+                target_name,
+                subset_start,
+                subset_end,
+                selected_reaches=selected_reaches,
+                max_lulc_distance=max_lulc_distance,
+                max_number_cores=max_number_cores,
+            )
             self._json_response({
                 "status": "success",
                 "message": f"Created subset scenario {payload['scenario_path']}",
@@ -3415,13 +3494,22 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         subset_end = (data.get("subset_end") or "").strip()
         selected_reaches = data.get("selected_reaches") or []
         max_lulc_distance = int(data.get("max_lulc_distance") or 100)
+        max_number_cores = _coerce_max_number_cores(data.get("max_number_cores"))
         if not source_scenario or not target_name or not subset_start or not subset_end:
             return self._json_response(
                 {"status": "error", "message": "source_scenario, target_name, subset_start, and subset_end are required"},
                 400,
             )
         try:
-            job_id = start_subset_job(source_scenario, target_name, subset_start, subset_end, selected_reaches=selected_reaches, max_lulc_distance=max_lulc_distance)
+            job_id = start_subset_job(
+                source_scenario,
+                target_name,
+                subset_start,
+                subset_end,
+                selected_reaches=selected_reaches,
+                max_lulc_distance=max_lulc_distance,
+                max_number_cores=max_number_cores,
+            )
             self._json_response({
                 "status": "success",
                 "job_id": job_id,

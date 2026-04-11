@@ -744,11 +744,16 @@ a{color:var(--accent);text-decoration:none}
             <input type="number" id="maxLulcDistance" value="100" min="0" max="10000" step="10">
             <div class="help-text">Distance in meters for selecting LULC field geometries near selected reaches. Fields within this distance will be included in the subset.</div>
           </div>
+          <div class="form-group">
+            <label for="maxNumberCores">Max Number Cores</label>
+            <input type="number" id="maxNumberCores" value="0" min="0" max="256" step="1">
+            <div class="help-text">CPU cores for TimeSeries CSV parallel trimming. Set 0 for automatic selection.</div>
+          </div>
         </div>
         <div class="help-text">The generated scenario will copy the source scenario, trim <em>hydro_reaches.h5</em> and <em>hydro/TimeSeries/*.csv</em>, filter LULC geometries by distance, and update the subset scenario metadata.</div>
         <div style="margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap">
           <button type="button" class="btn btn-secondary" id="subsetCreateBtn" onclick="createScenarioSubset()">Create Subset Scenario</button>
-          <button type="button" class="btn btn-outline btn-sm" id="subsetCancelBtn" onclick="cancelScenarioSubsetJob()" style="display:none">Cancel</button>
+          <button type="button" class="btn btn-outline btn-sm" id="subsetCancelBtn" onclick="cancelScenarioSubsetJob()" style="display:none">Stop &amp; Kill</button>
         </div>
         <div class="mc-row" id="subsetProgressRow" style="margin-top:.7rem;display:none">
           <div class="progress-bar" title="Subset creation progress">
@@ -1546,7 +1551,7 @@ async function cancelScenarioSubsetJob() {
       headers: {'Content-Type': 'application/json'},
       body: '{}',
     });
-    showSubsetStatus('Cancellation requested. Waiting for safe stop and cleanup…', 'warning');
+    showSubsetStatus('Stop requested. Terminating worker processes and cleaning up…', 'warning');
   } catch (e) {
     showSubsetStatus('Failed to request cancellation: ' + e.message, 'error');
     const btn = document.getElementById('subsetCancelBtn');
@@ -1637,7 +1642,9 @@ async function createScenarioSubset() {
     showSubsetStatus('Starting subset creation job...', 'note');
     const selected_reaches = Array.from(subsetSelectedReachIds);
     const max_lulc_distance = parseInt(document.getElementById('maxLulcDistance')?.value || '100', 10);
-    const payload = { source_scenario, target_name, subset_start, subset_end, selected_reaches, max_lulc_distance };
+    const max_number_cores_raw = parseInt(document.getElementById('maxNumberCores')?.value || '0', 10);
+    const max_number_cores = Number.isFinite(max_number_cores_raw) && max_number_cores_raw > 0 ? max_number_cores_raw : null;
+    const payload = { source_scenario, target_name, subset_start, subset_end, selected_reaches, max_lulc_distance, max_number_cores };
     let res;
     try {
       res = await api('/api/scenario-subset/start', {
