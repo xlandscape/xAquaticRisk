@@ -35,33 +35,41 @@ if not exist "%REQUIREMENTS%" (
     exit /b 1
 )
 
+set NEED_DOWNLOAD=1
 if exist "%PYTHON_DIR%\python.exe" (
-    echo Analysis Python already installed at:
+    set NEED_DOWNLOAD=0
+    echo Existing analysis runtime detected at:
     echo   %PYTHON_DIR%\python.exe
-    echo Delete analysis\python\ and re-run this script to reinstall.
+    echo Runtime will be validated and required packages will be repaired or upgraded.
     echo.
-    pause
-    exit /b 0
 )
 
 REM ── Step 1: Download embeddable Python ───────────────────────────────────────
-echo [1/4] Downloading Python %PYTHON_VERSION% embeddable package...
-powershell -NoProfile -Command ^
-    "Invoke-WebRequest -Uri '%PYTHON_URL%' -OutFile '%TEMP%\xaq-analysis-python.zip' -UseBasicParsing"
-if errorlevel 1 (
-    echo.
-    echo ERROR: Download failed. Check your internet connection.
-    pause
-    exit /b 1
+if "%NEED_DOWNLOAD%"=="1" (
+    echo [1/4] Downloading Python %PYTHON_VERSION% embeddable package...
+    powershell -NoProfile -Command ^
+        "Invoke-WebRequest -Uri '%PYTHON_URL%' -OutFile '%TEMP%\xaq-analysis-python.zip' -UseBasicParsing"
+    if errorlevel 1 (
+        echo.
+        echo ERROR: Download failed. Check your internet connection.
+        pause
+        exit /b 1
+    )
+) else (
+    echo [1/4] Reusing existing embedded Python runtime...
 )
 
 REM ── Step 2: Extract runtime ──────────────────────────────────────────────────
-echo [2/4] Extracting to %PYTHON_DIR% ...
-if exist "%PYTHON_DIR%" rmdir /s /q "%PYTHON_DIR%"
-mkdir "%PYTHON_DIR%" 2>nul
-powershell -NoProfile -Command ^
-    "Expand-Archive -Path '%TEMP%\xaq-analysis-python.zip' -DestinationPath '%PYTHON_DIR%' -Force"
-del "%TEMP%\xaq-analysis-python.zip"
+if "%NEED_DOWNLOAD%"=="1" (
+    echo [2/4] Extracting to %PYTHON_DIR% ...
+    if exist "%PYTHON_DIR%" rmdir /s /q "%PYTHON_DIR%"
+    mkdir "%PYTHON_DIR%" 2>nul
+    powershell -NoProfile -Command ^
+        "Expand-Archive -Path '%TEMP%\xaq-analysis-python.zip' -DestinationPath '%PYTHON_DIR%' -Force"
+    del "%TEMP%\xaq-analysis-python.zip"
+) else (
+    echo [2/4] Keeping existing runtime files...
+)
 
 REM ── Step 3: Enable site-packages and install pip ─────────────────────────────
 echo [3/4] Enabling site-packages and installing pip...
@@ -74,22 +82,32 @@ for %%f in ("%PYTHON_DIR%\python3*._pth") do (
         "$content = $content -replace '#import site', 'import site';" ^
         "Set-Content '%%f' $content"
 )
-powershell -NoProfile -Command ^
-    "Invoke-WebRequest -Uri '%GET_PIP_URL%' -OutFile '%PYTHON_DIR%\get-pip.py' -UseBasicParsing"
+"%PYTHON_DIR%\python.exe" -m pip --version >nul 2>nul
+if errorlevel 1 (
+    powershell -NoProfile -Command ^
+        "Invoke-WebRequest -Uri '%GET_PIP_URL%' -OutFile '%PYTHON_DIR%\get-pip.py' -UseBasicParsing"
+    if errorlevel 1 (
+        echo.
+        echo ERROR: Failed to download get-pip.py.
+        pause
+        exit /b 1
+    )
+    "%PYTHON_DIR%\python.exe" "%PYTHON_DIR%\get-pip.py" --no-warn-script-location --quiet
+    if errorlevel 1 (
+        echo.
+        echo ERROR: Failed to install pip into the embedded analysis runtime.
+        pause
+        exit /b 1
+    )
+    del "%PYTHON_DIR%\get-pip.py"
+)
+"%PYTHON_DIR%\python.exe" -m pip install --upgrade pip setuptools wheel --no-warn-script-location
 if errorlevel 1 (
     echo.
-    echo ERROR: Failed to download get-pip.py.
+    echo ERROR: Failed to upgrade pip tooling in the embedded analysis runtime.
     pause
     exit /b 1
 )
-"%PYTHON_DIR%\python.exe" "%PYTHON_DIR%\get-pip.py" --no-warn-script-location --quiet
-if errorlevel 1 (
-    echo.
-    echo ERROR: Failed to install pip into the embedded analysis runtime.
-    pause
-    exit /b 1
-)
-del "%PYTHON_DIR%\get-pip.py"
 
 REM ── Step 4: Install analysis packages ────────────────────────────────────────
 echo [4/4] Installing analysis packages (this may take a few minutes)...

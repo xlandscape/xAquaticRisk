@@ -63,10 +63,9 @@ xAquaticRisk requires a 64-bit Windows to run.
 1. Download the most recent xAquaticRisk zip-archive.
 2. Extract the archive into a folder on your hard drive. Simulation data and temporary files will be written to a 
    sub-folder of this folder, so a fast hard-drive with lots of available space is preferable.  
-3. Before creating a portable distribution, initialize component-local runtimes once:
-  `setup_controlpanel_python.bat`, `setup_webui_python.bat`, and `setup_analysis_python.bat`.
-  This creates dedicated runtimes in `controlpanel\python\`, `webui\python\`, and `analysis\python\`.
-4. Keep these runtime folders inside the copied xAquaticRisk directory so the model remains xcopy-ready without system Python dependencies.
+3. For a cloned working copy, initialize the component-local runtimes once by running `setup_all_runtimes.bat`.
+  This provisions dedicated runtimes in `controlpanel\python\`, `webui\python\`, and `analysis\python\` and repairs them in place when re-run.
+4. For a portable zip/copy distribution, include these runtime folders inside the copied xAquaticRisk directory so the model remains xcopy-ready without system Python dependencies.
 
 
 ## Usage

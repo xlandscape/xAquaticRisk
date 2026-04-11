@@ -324,11 +324,14 @@ def _python_supports_modules(python_exe: str, modules: list[str]) -> bool:
 
 def _pick_analysis_python() -> Optional[str]:
     """Resolve the preferred Python executable for analysis jobs."""
-    candidates = [
-        _embedded_analysis_py,
-        os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe"),
-        sys.executable,
-    ]
+    candidates = [_embedded_analysis_py]
+    if os.environ.get("XAQ_ALLOW_DEV_PYTHON", "").strip().lower() in {"1", "true", "yes"}:
+        candidates.extend(
+            [
+                os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe"),
+                sys.executable,
+            ]
+        )
     for candidate in candidates:
         if _python_supports_modules(candidate, ["h5py", "pandas", "geopandas"]):
             return candidate
