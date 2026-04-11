@@ -144,7 +144,7 @@ A typical simulation workflow:
 4. Monitor progress in the console window or the Control Panel. Log files are written to `\run\<ExperimentID>\log`.  
 5. When the run completes, find results in `\run\<ExperimentID>\reporting` and analysis outputs.  
 
-We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor, real-time run monitor, and analysis tools in a single browser tab — start it via `controlpanel.bat`. The standalone WebUI (`webui.bat`) remains available as well.  
+We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor, real-time run monitor, and analysis tools in a single browser tab — start it via `controlpanel.bat`.  
 
 ## Viewing and Analysing the Output
 

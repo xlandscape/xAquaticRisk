@@ -53,13 +53,11 @@ $requiredFiles = @(
     "__start__.bat",
     "controlpanel.bat",
     "setup_controlpanel_python.bat",
-    "setup_webui_python.bat",
     "setup_analysis_python.bat",
     ".gitmodules"
 )
 
 $optionalFiles = @(
-    "webui.bat",
     "dashboard.bat"
 )
 
@@ -106,7 +104,6 @@ $runtimeCandidates = [ordered]@{
         (Join-Path $repoRoot "model/core/bin/python.exe")
     )
     "runtime.controlpanel" = @((Join-Path $repoRoot "controlpanel/python/python.exe"))
-    "runtime.webui" = @((Join-Path $repoRoot "webui/python/python.exe"))
     "runtime.analysis" = @((Join-Path $repoRoot "analysis/python/python.exe"))
 }
 

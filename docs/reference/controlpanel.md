@@ -1,6 +1,6 @@
 # Control Panel
 
-The **Control Panel** is an integrated web application that merges the parameterisation editor and the run-monitoring dashboard into a single browser tab. It replaces the need to run two separate tools (`webui.bat` and `dashboard.bat`) and adds a seamless *Configure → Run → Monitor* workflow.
+The **Control Panel** is an integrated web application that merges the parameterisation editor and the run-monitoring dashboard into a single browser tab. It provides a seamless *Configure → Run → Monitor* workflow from one launcher.
 
 !!! tip "Quick start"
     Double-click **`controlpanel.bat`** at the model root. Your browser opens at **<http://localhost:8090>**.
@@ -232,10 +232,8 @@ All data is served as JSON. The front-end is a single `index.html` file with no 
 
 ## Standalone tools
 
-The standalone WebUI and Dashboard remain available for users who prefer separate tools:
+The Control Panel is the supported browser UI entrypoint for configuration and monitoring in this repository.
 
 | Tool | Launcher | Port | Description |
 |------|----------|------|-------------|
-| WebUI | `webui.bat` | 8080 | Parameterisation editor only |
-| Dashboard | `dashboard.bat` | 8050 | Run monitor only |
-| **Control Panel** | `controlpanel.bat` | 8090 | Both, integrated |
+| **Control Panel** | `controlpanel.bat` | 8090 | Parameterisation + monitoring, integrated |

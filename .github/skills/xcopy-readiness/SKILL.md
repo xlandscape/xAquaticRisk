@@ -45,7 +45,6 @@ The checker must validate all of the following:
 3. Component-local runtimes are present:
    - `model/core/bin/python-*-amd64/python.exe`
    - `controlpanel/python/python.exe`
-   - `webui/python/python.exe`
    - `analysis/python/python.exe`
 4. Git submodule definitions exist and are parseable from `.gitmodules`.
 5. For each declared submodule, the currently checked-out commit equals the commit pinned by `TargetRef`.
@@ -69,7 +68,7 @@ Always return:
 Use these remediations when checks fail:
 
 1. Missing runtimes:
-   - Run `setup_controlpanel_python.bat`, `setup_webui_python.bat`, `setup_analysis_python.bat`.
+   - Run `setup_controlpanel_python.bat`, `setup_analysis_python.bat`.
    - Ensure runtime folders are included before packaging/copying.
 2. Global Python usage in launchers:
    - Replace with repo-local executable paths using `%~dp0` rooted paths.

@@ -6,23 +6,19 @@ echo  xAquaticRisk - Bootstrap All Component Runtimes
 echo ============================================================
 echo  This runs:
 echo    1) setup_controlpanel_python.bat
-echo    2) setup_webui_python.bat
-echo    3) setup_analysis_python.bat
+echo    2) setup_analysis_python.bat
 echo.
 
 call :run_setup "setup_controlpanel_python.bat" "1/3"
 if errorlevel 1 goto :failed
 
-call :run_setup "setup_webui_python.bat" "2/3"
-if errorlevel 1 goto :failed
-
-call :run_setup "setup_analysis_python.bat" "3/3"
+call :run_setup "setup_analysis_python.bat" "2/2"
 if errorlevel 1 goto :failed
 
 echo.
 echo ============================================================
 echo  All component runtimes are ready.
-echo  Keep controlpanel\python\, webui\python\, and analysis\python\
+echo  Keep controlpanel\python\ and analysis\python\
 echo  inside the copied model folder for xcopy deployment.
 echo ============================================================
 pause
