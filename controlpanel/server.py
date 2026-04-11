@@ -205,6 +205,46 @@ def _acquire_single_instance_lock(port: int):
     raise RuntimeError("Could not acquire single-instance lock for controlpanel server")
 
 
+def _get_server_status_info() -> dict:
+    """Return current server instance info for status endpoint."""
+    info = {
+        "status": "unknown",
+        "pid": None,
+        "port": None,
+        "started_at": None,
+        "uptime_seconds": None,
+        "alive": False,
+        "lock_file": _INSTANCE_LOCK_PATH,
+    }
+    
+    if not os.path.exists(_INSTANCE_LOCK_PATH):
+        info["status"] = "not_running"
+        return info
+    
+    try:
+        payload = _read_instance_lock(_INSTANCE_LOCK_PATH)
+        pid = int(payload.get("pid", -1))
+        started_at = int(payload.get("started_at", -1))
+        
+        info.update({
+            "pid": pid,
+            "port": payload.get("port"),
+            "started_at": started_at,
+        })
+        
+        if pid > 0 and started_at > 0:
+            info["alive"] = _pid_is_running(pid)
+            info["uptime_seconds"] = int(time.time()) - started_at
+            info["status"] = "running" if info["alive"] else "zombie"
+        else:
+            info["status"] = "invalid_lock"
+    except Exception as exc:
+        info["status"] = "error"
+        info["error"] = str(exc)
+    
+    return info
+
+
 def _cache_get(cache: OrderedDict, key):
     with _map_cache_lock:
         value = cache.get(key)
@@ -3180,6 +3220,11 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         # Keep this endpoint robust against encoded/trailing-slash variations.
         if path.rstrip("/") == "/api/analysis-portable-check":
             return self._json_response(check_analysis_portable())
+
+        # Server status endpoint (no auth required, useful for monitoring and debugging)
+        if path == "/api/controlpanel/status":
+            return self._json_response(_get_server_status_info())
+
 
         if path in ("/", "/index.html"):
             self._serve_file("index.html", "text/html")
