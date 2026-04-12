@@ -9,7 +9,7 @@ echo    1) setup_controlpanel_python.bat
 echo    2) setup_analysis_python.bat
 echo.
 
-call :run_setup "setup_controlpanel_python.bat" "1/3"
+call :run_setup "setup_controlpanel_python.bat" "1/2"
 if errorlevel 1 goto :failed
 
 call :run_setup "setup_analysis_python.bat" "2/2"
