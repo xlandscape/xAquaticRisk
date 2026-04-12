@@ -69,11 +69,42 @@ def _timestamp_mask(series, start_key: str, end_key: str):
     in_range = plausible & (ts >= start_key) & (ts <= end_key)
     if not bool(in_range.any()):
         return in_range
-    parsed = pd.to_datetime(ts[in_range], format="%Y-%m-%dT%H:%M", errors="coerce")
-    strict_ok = parsed.notna()
+    # Parse only distinct in-range timestamps. Real inflow CSVs typically repeat
+    # the same timestamps across many reaches, so this avoids redundant parsing.
+    candidate_ts = ts[in_range]
+    unique_ts = pd.Index(candidate_ts.dropna().unique())
+    parsed_unique = pd.to_datetime(unique_ts, format="%Y-%m-%dT%H:%M", errors="coerce")
+    strict_map = pd.Series(parsed_unique.notna(), index=unique_ts)
+    strict_ok = candidate_ts.map(strict_map).fillna(False)
     out = in_range.copy()
     out.loc[in_range] = strict_ok.values
     return out
+
+
+def _adaptive_chunksize(source_csv: str, default: int = 200000, maximum: int = 1000000) -> int:
+    """Choose a larger chunksize for bigger files to reduce per-chunk overhead."""
+    try:
+        file_size_mb = os.path.getsize(source_csv) / (1024 * 1024)
+    except OSError:
+        return default
+
+    if file_size_mb < 10:
+        return default
+    if file_size_mb < 50:
+        return min(maximum, default * 2)
+    if file_size_mb < 200:
+        return min(maximum, default * 4)
+    return maximum
+
+
+def _normalize_reach_series(series):
+    """Normalize reach IDs by mapping only distinct values through Python."""
+    stripped = series.astype("string").str.strip()
+    unique_values = pd.Index(stripped.dropna().unique())
+    if unique_values.empty:
+        return stripped
+    normalized = pd.Series((_normalize_reach_id(value) for value in unique_values), index=unique_values)
+    return stripped.map(normalized)
 
 
 def _slice_timeseries_csv_pandas(
@@ -99,10 +130,11 @@ def _slice_timeseries_csv_pandas(
     start_key = _format_hydro_datetime(start_dt)
     end_key = _format_hydro_datetime(end_dt)
     selected_set = set(_normalize_reach_id(v) for v in (selected_reach_ids or [])) if selected_reach_ids else None
+    chunksize = _adaptive_chunksize(source_csv, default=max(1, chunksize))
     
     try:
         first_chunk = True
-        with open(target_csv, "w", encoding="utf-8", newline="") as out_f:
+        with open(target_csv, "w", encoding="utf-8", newline="", buffering=1024 * 1024) as out_f:
             for chunk in (
                 pd.read_csv(
                     source_csv,
@@ -127,9 +159,8 @@ def _slice_timeseries_csv_pandas(
 
                 # Vectorized reach filtering if selected
                 if selected_set is not None:
-                    reach_col = chunk_filtered.iloc[:, 0].astype("string").str.strip()
-                    reach_norm = reach_col.apply(_normalize_reach_id)
-                    chunk_filtered = chunk_filtered[reach_norm.isin(selected_set)].copy()
+                    reach_norm = _normalize_reach_series(chunk_filtered.iloc[:, 0])
+                    chunk_filtered = chunk_filtered[reach_norm.isin(selected_set)]
 
                 if chunk_filtered.empty:
                     continue
@@ -231,6 +262,7 @@ def process_csv_files_parallel(
     
     num_workers = num_workers or max(1, multiprocessing.cpu_count() - 1)
     num_workers = max(1, min(num_workers, len(csv_files)))
+    worker_chunksize = max(1, len(csv_files) // max(1, num_workers * 4))
     kept_total = 0
     start_time = time.time()
 
@@ -264,7 +296,7 @@ def process_csv_files_parallel(
         failed_files = []
         processed = 0
 
-        with Pool(processes=num_workers, maxtasksperchild=8) as pool:
+        with Pool(processes=num_workers, maxtasksperchild=32) as pool:
             cancel_stop = threading.Event()
             cancelled_flag = {"value": False}
 
@@ -281,7 +313,11 @@ def process_csv_files_parallel(
             watcher = threading.Thread(target=_cancel_watcher, daemon=True)
             watcher.start()
             try:
-                for source_file, kept, elapsed, error, backend in pool.imap_unordered(_slice_timeseries_csv_worker, worker_args, chunksize=1):
+                for source_file, kept, elapsed, error, backend in pool.imap_unordered(
+                    _slice_timeseries_csv_worker,
+                    worker_args,
+                    chunksize=worker_chunksize,
+                ):
                     processed += 1
                     filename = os.path.basename(source_file)
                     if error:

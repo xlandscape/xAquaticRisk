@@ -1560,15 +1560,20 @@ async function cancelScenarioSubsetJob() {
 }
 
 async function applyCreatedSubset(res) {
+  const previousSubsetSource = document.getElementById('subsetSourceScenario')?.value || '';
   document.getElementById('Scenario/LandscapeScenario').value = res.scenario_path;
   document.getElementById('Scenario/SimulationStart').value = res.simulation_start;
   document.getElementById('Scenario/SimulationEnd').value = res.simulation_end;
-  document.getElementById('subsetSourceScenario').value = res.scenario_path;
   scenarioInspectCache.delete(res.scenario_path);
   await loadScenarios();
   document.getElementById('Scenario/LandscapeScenario').value = res.scenario_path;
-  document.getElementById('subsetSourceScenario').value = res.scenario_path;
-  await inspectSubsetScenario(true);
+  const subsetSourceEl = document.getElementById('subsetSourceScenario');
+  if (subsetSourceEl) {
+    // Keep the user's chosen source scenario stable across runs instead of
+    // silently switching to the newly created subset scenario.
+    subsetSourceEl.value = previousSubsetSource || res.scenario_path;
+  }
+  await inspectAndZoomSubsetScenario(true);
   const warnText = (res.warnings || []).join(' ');
   showSubsetStatus(
     warnText
@@ -1639,8 +1644,11 @@ async function createScenarioSubset() {
     return;
   }
   try {
-    showSubsetStatus('Starting subset creation job...', 'note');
     const selected_reaches = Array.from(subsetSelectedReachIds);
+    showSubsetStatus(
+      `Starting subset creation job... Source: ${source_scenario} | Selected reaches: ${selected_reaches.length}`,
+      'note'
+    );
     const max_lulc_distance = parseInt(document.getElementById('maxLulcDistance')?.value || '100', 10);
     const max_number_cores_raw = parseInt(document.getElementById('maxNumberCores')?.value || '0', 10);
     const max_number_cores = Number.isFinite(max_number_cores_raw) && max_number_cores_raw > 0 ? max_number_cores_raw : null;

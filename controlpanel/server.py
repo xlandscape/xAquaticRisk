@@ -261,6 +261,12 @@ def _cache_set(cache: OrderedDict, key, value, limit: int):
             cache.popitem(last=False)
 
 
+def _union_geometries(geometries):
+    if hasattr(geometries, "union_all"):
+        return geometries.union_all()
+    return geometries.unary_union
+
+
 def _embedded_json_call(script: str, payload: dict):
     analysis_python = _pick_analysis_python()
     if not analysis_python:
@@ -1419,7 +1425,7 @@ def _slice_lulc_shapefile_for_subset(scenario_abs: str, selected_reach_ids: list
             return
         
         # Create buffered geometry union of selected reaches
-        buffered_geom = selected_reaches_gdf.unary_union.buffer(max_distance)
+        buffered_geom = _union_geometries(selected_reaches_gdf.geometry).buffer(max_distance)
         
         # Read LULC features
         lulc_gdf = gpd.read_file(lulc_path)
@@ -1490,7 +1496,7 @@ selected_reaches_gdf = reach_gdf[reach_gdf["__reach_id__"].isin(selected)].copy(
 if selected_reaches_gdf.empty:
     raise RuntimeError("No selected reaches found")
 
-buffered_geom = selected_reaches_gdf.unary_union.buffer(max_distance)
+buffered_geom = _union_geometries(selected_reaches_gdf.geometry).buffer(max_distance)
 
 lulc_gdf = gpd.read_file(lulc_path)
 if lulc_gdf.empty:
