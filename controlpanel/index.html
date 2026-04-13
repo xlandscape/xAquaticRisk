@@ -845,13 +845,14 @@ a{color:var(--accent);text-decoration:none}
       <div class="card-body">
         <div class="form-row">
           <div class="form-group">
-            <label for="anlScenario">Scenario Folder</label>
+            <label for="anlScenario">Landscape Scenario</label>
             <select id="anlScenario" onchange="onAnlScenarioSelect()">
               <option value="">Loading…</option>
             </select>
+            <div class="help-text">The scenario folder to analyze. Reaches and geometries are taken from this scenario.</div>
           </div>
           <div class="form-group">
-            <label for="anlScenarioName">Scenario Name</label>
+            <label for="anlScenarioName">Default Settings Source</label>
             <input type="text" id="anlScenarioName" list="anlScenarioNameList"
                    placeholder="e.g. Muenster" oninput="onAnlScenarioNameInput()">
             <datalist id="anlScenarioNameList">
@@ -859,7 +860,7 @@ a{color:var(--accent);text-decoration:none}
               <option value="Oudebeek-Beek7"><option value="Wetter_2"><option value="Muschenheim">
               <option value="Bruchenbruecken"><option value="Funne"><option value="GKB">
             </datalist>
-            <div class="help-text">Used for built-in reach-list defaults; leave empty if using custom IDs below</div>
+            <div class="help-text">Optional: match a known scenario (or parent scenario for slices) to auto-populate reach IDs and zoom dates below. Leave empty to use custom values.</div>
           </div>
         </div>
       </div>
