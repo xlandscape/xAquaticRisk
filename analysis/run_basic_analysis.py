@@ -18,10 +18,12 @@ python run_basic_analysis.py \\
 
 import argparse
 import os
+import re
 import sys
 import warnings
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import matplotlib
 matplotlib.use("Agg")  # non-interactive backend – must come before pyplot import
@@ -53,6 +55,117 @@ def row_percentiles(row, percentiles):
     )
 
 
+def normalize_reach_id(value):
+    if value is None:
+        return None
+    if isinstance(value, (bytes, bytearray)):
+        text = value.decode("utf-8", errors="replace").strip()
+    else:
+        text = str(value).strip()
+    if not text:
+        return None
+    if re.fullmatch(r"[-+]?\d+(?:\.0+)?", text):
+        return str(int(float(text)))
+    return text
+
+
+def coerce_reach_ids(values):
+    result = []
+    seen = set()
+    for raw in values or []:
+        rid = normalize_reach_id(raw)
+        if rid is None or rid in seen:
+            continue
+        seen.add(rid)
+        result.append(rid)
+    return result
+
+
+def normalize_reach_ids(values):
+    return [normalize_reach_id(v) for v in values]
+
+
+def find_reach_shapefile(scenario_path: Path) -> Optional[Path]:
+    preferred_names = ["Reachlist_shp.shp", "ReachList_shp.shp"]
+    for name in preferred_names:
+        shp = scenario_path / "geo" / name
+        if shp.exists():
+            return shp
+
+    geo_dir = scenario_path / "geo"
+    if geo_dir.exists():
+        shp_files = sorted(geo_dir.glob("*.shp"))
+        if shp_files:
+            return shp_files[0]
+
+    shp_files = sorted(scenario_path.glob("**/*.shp"))
+    return shp_files[0] if shp_files else None
+
+
+def select_reach_id_column(gdf, reach_ids_hint):
+    non_geom = [c for c in gdf.columns if c != "geometry"]
+    if not non_geom:
+        return None
+
+    exact_priority = ["key", "reach_id", "reachid", "segment_id", "reach", "name", "id"]
+    lower_to_col = {c.lower(): c for c in non_geom}
+    hints = set(coerce_reach_ids(reach_ids_hint or []))
+
+    def _normalized_sample(col_name):
+        vals = gdf[col_name].dropna().head(2000)
+        if vals.empty:
+            return []
+        return [normalize_reach_id(v) for v in vals]
+
+    if hints:
+        priority_best = None
+        priority_matches = -1
+        for low_name in exact_priority:
+            col = lower_to_col.get(low_name)
+            if not col:
+                continue
+            norm_vals = _normalized_sample(col)
+            if not norm_vals:
+                continue
+            matched_unique = len({v for v in norm_vals if v in hints})
+            if matched_unique > priority_matches:
+                priority_matches = matched_unique
+                priority_best = col
+        if priority_best and priority_matches > 0:
+            return priority_best
+
+        best_col = None
+        best_score = -1.0
+        preferred_tokens = ["reach_id", "reachid", "key", "segment_id", "reach", "name", "id"]
+        for col in non_geom:
+            norm_vals = _normalized_sample(col)
+            if not norm_vals:
+                continue
+            unique_vals = {v for v in norm_vals if v is not None}
+            matched_unique = len({v for v in unique_vals if v in hints})
+            if matched_unique == 0:
+                continue
+            unique_ratio = (len(unique_vals) / max(len(norm_vals), 1))
+            score = float(matched_unique) + 0.5 * unique_ratio
+            col_name = col.lower()
+            if col_name in preferred_tokens:
+                score += 5.0
+            elif any(tok in col_name for tok in preferred_tokens):
+                score += 2.0
+            if score > best_score:
+                best_score = score
+                best_col = col
+        if best_col:
+            return best_col
+
+    for low_name in exact_priority:
+        col = lower_to_col.get(low_name)
+        if col:
+            return col
+
+    return non_geom[0]
+
+
 # ── scenario-specific defaults ────────────────────────────────────────────────
 SCENARIO_DEFAULTS = {
     "Rummen": {
@@ -79,12 +192,12 @@ SCENARIO_DEFAULTS = {
         "plotzoom_from": "2000-05-01",
         "plotzoom_to": "2000-06-01",
     },
-        "Wetter_2": {
-            "reach_list_single": [154],
-            "reach_list_group": [131, 130, 437],
-            "plotzoom_from": "1991-05-01",
-            "plotzoom_to": "1991-05-10",
-        },
+    "Wetter_2": {
+        "reach_list_single": [154],
+        "reach_list_group": [131, 130, 437],
+        "plotzoom_from": "1991-05-01",
+        "plotzoom_to": "1991-05-10",
+    },
     "Muschenheim": {
         "reach_list_single": [315],
         "reach_list_group": [151, 149, 735],
@@ -110,6 +223,44 @@ SCENARIO_DEFAULTS = {
         "plotzoom_to": "2010-07-01",
     },
 }
+
+# ── parent scenario defaults fallback ─────────────────────────────────────────
+def _read_source_scenario_name(scenario_path: Path) -> Optional[str]:
+    """Read 'Source scenario: scenario/<name>' from a sliced scenario's readme.txt."""
+    readme = scenario_path / "readme.txt"
+    if not readme.exists():
+        return None
+    try:
+        for line in readme.read_text(encoding="utf-8", errors="replace").splitlines():
+            stripped = line.strip()
+            if stripped.lower().startswith("source scenario:"):
+                # e.g. "Source scenario: scenario/muenster-T-Di-02.5-..."
+                after_colon = stripped.split(":", 1)[1].strip()
+                folder = after_colon.rstrip("/").split("/")[-1]
+                return folder
+    except Exception:
+        pass
+    return None
+
+
+def _resolve_scenario_defaults(scenario_name: str, scenario_path: Path) -> dict:
+    """Return SCENARIO_DEFAULTS for scenario_name, falling back to the parent scenario."""
+    d = SCENARIO_DEFAULTS.get(scenario_name)
+    if d:
+        return d
+    parent_folder = _read_source_scenario_name(scenario_path)
+    if not parent_folder:
+        return {}
+    # Try exact match first, then substring match (case-insensitive)
+    lower_folder = parent_folder.lower()
+    for key, entry in SCENARIO_DEFAULTS.items():
+        if key.lower() == lower_folder:
+            return entry
+    for key, entry in SCENARIO_DEFAULTS.items():
+        if key.lower() in lower_folder or lower_folder.startswith(key.lower()):
+            return entry
+    return {}
+
 
 # ── exposure model configuration ─────────────────────────────────────────────
 EXPOSURE_MODEL_CONFIG = {
@@ -175,16 +326,21 @@ def main():
     exposure_model = args.exposure_model
     cfg = EXPOSURE_MODEL_CONFIG[exposure_model]
 
-    defaults = SCENARIO_DEFAULTS.get(scenario_name, {})
+    defaults = _resolve_scenario_defaults(scenario_name, scenario_path)
+    if defaults and not SCENARIO_DEFAULTS.get(scenario_name):
+        parent = _read_source_scenario_name(scenario_path)
+        log("info", f"Using scenario defaults inherited from parent scenario '{parent}'")
 
     def _parse_ids(raw, default):
         ids = [int(x.strip()) for x in raw.split(",") if x.strip()]
         return ids if ids else default
 
-    reach_list_single = _parse_ids(args.reach_ids_single,
-                                   defaults.get("reach_list_single", []))
-    reach_list_group  = _parse_ids(args.reach_ids_group,
-                                   defaults.get("reach_list_group", []))
+    reach_list_single = coerce_reach_ids(
+        _parse_ids(args.reach_ids_single, defaults.get("reach_list_single", []))
+    )
+    reach_list_group  = coerce_reach_ids(
+        _parse_ids(args.reach_ids_group, defaults.get("reach_list_group", []))
+    )
     plotzoom_from = args.plotzoom_from or defaults.get("plotzoom_from", "")
     plotzoom_to   = args.plotzoom_to   or defaults.get("plotzoom_to", "")
 
@@ -234,20 +390,47 @@ def main():
     # ── load geo / scenario shapefile (optional) ──────────────────────────────
     df_geo_reaches            = None
     df_scenario_geo_attributes = None
-    shp_path = scenario_path / "geo" / "Reachlist_shp.shp"
+    reach_id_col = None
+    shp_path = find_reach_shapefile(scenario_path)
     try:
         import geopandas as gpd
-        if shp_path.exists():
-            df_geo_reaches             = gpd.read_file(str(shp_path))
-            df_scenario_geo_attributes = (
-                df_geo_reaches.drop(columns="geometry")
-                              .set_index("key")
-            )
-            log("ok",   f"Shapefile loaded: {shp_path.name}")
+        if shp_path and shp_path.exists():
+            df_geo_reaches = gpd.read_file(str(shp_path))
+            if not df_geo_reaches.empty:
+                reach_id_col = select_reach_id_column(df_geo_reaches, reach_list_single + reach_list_group)
+                if reach_id_col is None:
+                    log("warn", "Reach shapefile has no usable reach-id column – geo plots skipped")
+                    df_geo_reaches = None
+                else:
+                    df_geo_reaches["__reach_id__"] = df_geo_reaches[reach_id_col].map(normalize_reach_id)
+                    df_geo_reaches = df_geo_reaches[df_geo_reaches["__reach_id__"].notna()].copy()
+                    if df_geo_reaches.empty:
+                        log("warn", "Reach shapefile has no mappable reach IDs – geo plots skipped")
+                        df_geo_reaches = None
+                    else:
+                        df_scenario_geo_attributes = (
+                            df_geo_reaches.drop(columns="geometry")
+                                          .set_index("__reach_id__")
+                        )
+                        log("ok", f"Shapefile loaded: {shp_path.name} (reach-id column: {reach_id_col})")
+                        log(
+                            "info",
+                            (
+                                f"Reach geometry features: {len(df_geo_reaches)}; "
+                                f"strahler column present: {'strahler' in df_scenario_geo_attributes.columns}"
+                            ),
+                        )
+            else:
+                log("warn", f"Reach shapefile is empty – geo plots skipped ({shp_path})")
+                df_geo_reaches = None
         else:
             log("info", f"Shapefile not found – geo plots skipped ({shp_path})")
     except ImportError:
         log("info", "geopandas not available – geo plots skipped")
+    except Exception as exc:
+        log("warn", f"Could not load reach shapefile – geo plots skipped ({exc})")
+        df_geo_reaches = None
+        df_scenario_geo_attributes = None
 
     # ─────────────────────────────────────────────────────────────────────────
     # EXPOSURE ANALYSIS
@@ -272,9 +455,18 @@ def main():
             for df in (df_pecsw, df_pecsed):
                 df.insert(0, "time", ti)
                 df.set_index("time", inplace=True)
-            df_pecsw.columns  = reach_ids_pecsw
-            df_pecsed.columns = reach_ids_pecsw
+            normalized_reach_cols = normalize_reach_ids(reach_ids_pecsw)
+            df_pecsw.columns = normalized_reach_cols
+            df_pecsed.columns = normalized_reach_cols
             log("ok", f"PECsw loaded: {df_pecsw.shape[0]} timesteps × {df_pecsw.shape[1]} reaches")
+            if df_geo_reaches is not None:
+                geo_ids = set(df_geo_reaches["__reach_id__"])
+                pec_ids = {rid for rid in normalized_reach_cols if rid is not None}
+                overlap = len(geo_ids & pec_ids)
+                if overlap == 0:
+                    log("warn", "No overlap between PEC reach IDs and reach shapefile IDs – geo plots may be empty/skipped")
+                else:
+                    log("info", f"PEC/geometry reach overlap: {overlap} reaches")
 
             # filter to exposed streams
             if args.exposed_only:
@@ -407,7 +599,7 @@ def main():
                     pecsw_T.index.name = "ReachID"
                     col_99 = 0.99 if 0.99 in pecsw_T.columns else pecsw_T.columns[-1]
                     gdf = df_geo_reaches.merge(
-                        pecsw_T[[col_99]], left_on="key", right_on="ReachID", how="left")
+                        pecsw_T[[col_99]], left_on="__reach_id__", right_on="ReachID", how="left")
                     fig, ax = plt.subplots(figsize=(10, 8))
                     gdf.plot(column=col_99, cmap="viridis", legend=True, ax=ax,
                              missing_kwds={"color": "lightgrey"})
@@ -486,7 +678,7 @@ def main():
                 n    = len(dfs[key])
                 dfs[key].insert(0, "time", ti[:n])
                 dfs[key].set_index("time", inplace=True)
-                dfs[key].columns = rids
+                dfs[key].columns = normalize_reach_ids(rids)
 
             # fix LP50 values
             for key in [k for k in dfs if k.startswith("lp50")]:
@@ -614,7 +806,7 @@ def main():
                     ]
                     last_yr = surv_T.columns[-1]
                     gdf = df_geo_reaches.merge(
-                        surv_T[[last_yr]], left_on="key", right_on="ReachID", how="left")
+                        surv_T[[last_yr]], left_on="__reach_id__", right_on="ReachID", how="left")
                     fig, ax = plt.subplots(figsize=(10, 8))
                     gdf.plot(column=last_yr, cmap="RdYlGn", legend=True, ax=ax,
                              missing_kwds={"color": "lightgrey"}, vmin=0, vmax=1)

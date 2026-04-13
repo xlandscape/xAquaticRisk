@@ -1619,6 +1619,165 @@ print(json.dumps({"status": "ok", "feature_count": int(len(filtered))}))
     _embedded_json_call(script, {"shp_path": shp_path, "selected": list(selected)})
 
 
+def _validate_subset_geometry_contract(scenario_abs: str) -> dict:
+    """Validate reach shapefile and hydrology reach-id consistency for a subset scenario."""
+    warnings = []
+    hdf_path = _scenario_hydro_path(scenario_abs)
+    shp_path = _find_reach_shapefile(scenario_abs)
+
+    if not os.path.isfile(hdf_path):
+        warnings.append(f"Subset hydrology HDF5 not found: {hdf_path}")
+        return {
+            "ok": False,
+            "warnings": warnings,
+            "hydro_path": hdf_path,
+            "reach_shapefile": shp_path,
+        }
+
+    if not shp_path or not os.path.isfile(shp_path):
+        warnings.append("Reach shapefile is missing in subset scenario; geometry-dependent analysis plots may be skipped.")
+        return {
+            "ok": False,
+            "warnings": warnings,
+            "hydro_path": hdf_path,
+            "reach_shapefile": shp_path,
+        }
+
+    script = r'''
+import json
+import re
+import sys
+import geopandas as gpd
+import h5py
+
+def norm(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if re.fullmatch(r"[-+]?\d+(?:\.0+)?", text):
+        return str(int(float(text)))
+    return text
+
+payload = json.loads(sys.argv[1])
+hdf_path = payload["hdf_path"]
+shp_path = payload["shp_path"]
+
+with h5py.File(hdf_path, "r") as hf:
+    if "reaches" in hf:
+        hydro_ids = [norm(v.decode("utf-8", errors="replace") if isinstance(v, bytes) else v) for v in hf["reaches"][:]]
+    else:
+        hydro_ids = []
+hydro_ids = [v for v in hydro_ids if v is not None]
+hydro_set = set(hydro_ids)
+
+gdf = gpd.read_file(shp_path)
+if gdf.empty:
+    print(json.dumps({
+        "ok": False,
+        "warnings": ["Reach shapefile has no features"],
+        "reach_id_column": None,
+        "hydro_reach_count": len(hydro_set),
+        "shape_feature_count": 0,
+        "shape_reach_id_count": 0,
+        "overlap_count": 0,
+        "missing_in_shapefile": hydro_ids[:20],
+        "missing_in_hydro": [],
+    }))
+    raise SystemExit(0)
+
+non_geom = [c for c in gdf.columns if c != "geometry"]
+preferred = ["key", "reach_id", "reachid", "segment_id", "reach", "name", "id"]
+lower_to_col = {c.lower(): c for c in non_geom}
+
+def sample(col_name):
+    vals = gdf[col_name].dropna().head(2000)
+    return [norm(v) for v in vals]
+
+best_col = None
+best_score = -1.0
+
+for low_name in preferred:
+    col = lower_to_col.get(low_name)
+    if not col:
+        continue
+    vals = sample(col)
+    if not vals:
+        continue
+    matched = len({v for v in vals if v in hydro_set})
+    if matched > best_score:
+        best_score = matched
+        best_col = col
+
+if best_col is None:
+    for col in non_geom:
+        vals = sample(col)
+        if not vals:
+            continue
+        unique_vals = {v for v in vals if v is not None}
+        matched = len({v for v in unique_vals if v in hydro_set})
+        if matched == 0:
+            continue
+        ratio = len(unique_vals) / max(len(vals), 1)
+        score = float(matched) + 0.5 * ratio
+        if score > best_score:
+            best_score = score
+            best_col = col
+
+if best_col is None and non_geom:
+    best_col = non_geom[0]
+
+shape_ids = []
+if best_col is not None:
+    shape_ids = [norm(v) for v in gdf[best_col].tolist()]
+shape_ids = [v for v in shape_ids if v is not None]
+shape_set = set(shape_ids)
+
+missing_in_shape = sorted(hydro_set - shape_set)
+missing_in_hydro = sorted(shape_set - hydro_set)
+overlap_count = len(hydro_set & shape_set)
+
+warnings = []
+if best_col is None:
+    warnings.append("Could not determine reach identifier column in reach shapefile")
+if missing_in_shape:
+    warnings.append(f"{len(missing_in_shape)} hydrology reaches are missing in reach shapefile")
+if missing_in_hydro:
+    warnings.append(f"{len(missing_in_hydro)} shapefile reaches are missing in hydrology HDF5")
+if overlap_count == 0:
+    warnings.append("No overlap between hydrology reaches and reach shapefile IDs")
+
+print(json.dumps({
+    "ok": len(warnings) == 0,
+    "warnings": warnings,
+    "reach_id_column": best_col,
+    "hydro_reach_count": len(hydro_set),
+    "shape_feature_count": int(len(gdf)),
+    "shape_reach_id_count": len(shape_set),
+    "overlap_count": overlap_count,
+    "missing_in_shapefile": missing_in_shape[:20],
+    "missing_in_hydro": missing_in_hydro[:20],
+}))
+'''
+
+    try:
+        result = _embedded_json_call(script, {"hdf_path": hdf_path, "shp_path": shp_path})
+    except Exception as exc:
+        warnings.append(f"Geometry contract validation failed: {exc}")
+        return {
+            "ok": False,
+            "warnings": warnings,
+            "hydro_path": hdf_path,
+            "reach_shapefile": shp_path,
+        }
+
+    result.setdefault("warnings", [])
+    result["hydro_path"] = hdf_path
+    result["reach_shapefile"] = shp_path
+    return result
+
+
 def create_scenario_subset(source_scenario: str, target_name: str, subset_start: str, subset_end: str, progress_cb=None, cancel_cb=None, selected_reaches=None, max_lulc_distance: int = 100, max_number_cores: Optional[int] = None) -> dict:
     def _emit(pct: int, message: str):
         if cancel_cb and cancel_cb():
@@ -1810,11 +1969,21 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
             inspected.get("hdf_extent", {}).get("from_datetime"),
             inspected.get("hdf_extent", {}).get("to_datetime"),
         )
+        geometry_validation = _validate_subset_geometry_contract(target_abs)
         _emit(100, "Subset scenario created")
     except Exception:
         if os.path.isdir(target_abs):
             shutil.rmtree(target_abs, ignore_errors=True)
         raise
+
+    warnings = [
+        "hydro/doc statistics were copied from the source scenario and were not recalculated for the subset period."
+    ]
+    if topology_added:
+        warnings.append(
+            f"Reach selection was automatically expanded from {len(user_selected_reaches)} to {len(selected_reaches)} reaches to preserve network topology."
+        )
+    warnings.extend(geometry_validation.get("warnings", []))
 
     return {
         "scenario_path": target_rel,
@@ -1828,12 +1997,8 @@ def create_scenario_subset(source_scenario: str, target_name: str, subset_start:
         "user_selected_reach_count": len(user_selected_reaches),
         "topology_added_reach_count": len(topology_added),
         "selected_reaches": selected_reaches,
-        "warnings": [
-            "hydro/doc statistics were copied from the source scenario and were not recalculated for the subset period."
-        ] + (
-            [f"Reach selection was automatically expanded from {len(user_selected_reaches)} to {len(selected_reaches)} reaches to preserve network topology."]
-            if topology_added else []
-        ),
+        "warnings": warnings,
+        "geometry_validation": geometry_validation,
     }
 
 
