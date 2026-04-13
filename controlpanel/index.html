@@ -856,7 +856,7 @@ a{color:var(--accent);text-decoration:none}
                    placeholder="e.g. Muenster" oninput="onAnlScenarioNameInput()">
             <datalist id="anlScenarioNameList">
               <option value="Rummen"><option value="Muenster"><option value="Oudebeek">
-              <option value="Oudebeek-Beek7"><option value="Muschenheim">
+              <option value="Oudebeek-Beek7"><option value="Wetter_2"><option value="Muschenheim">
               <option value="Bruchenbruecken"><option value="Funne"><option value="GKB">
             </datalist>
             <div class="help-text">Used for built-in reach-list defaults; leave empty if using custom IDs below</div>
@@ -910,6 +910,16 @@ a{color:var(--accent);text-decoration:none}
                    style="accent-color:var(--warn);width:14px;height:14px">
             Restrict to exposed stream segments only (PECsw&nbsp;&gt;&nbsp;0)
           </label>
+        </div>
+        <div class="form-group" style="margin-top:.6rem">
+          <label for="anlExposureModel">Exposure Model</label>
+          <select id="anlExposureModel">
+            <option value="CascadeToxswa" selected>CascadeToxswa</option>
+            <option value="StepsRiverNetwork">StepsRiverNetwork</option>
+          </select>
+          <div class="help-text">Select which component's concentration outputs are used for
+            PECsw/PECsed and effect analysis. Choose <em>StepsRiverNetwork</em> when
+            CascadeToxswa was not run.</div>
         </div>
         <div class="section-heading" style="margin-top:.8rem;font-size:.75rem;
              text-transform:uppercase;letter-spacing:.04em;color:var(--text2)">Time Series Plots</div>
@@ -2892,10 +2902,16 @@ const ANL_SCENARIO_DEFAULTS = {
   'Oudebeek':        { single: '42',                  group: '',               zoomFrom: '',           zoomTo: ''           },
   'Oudebeek-Beek7':  { single: '42',                  group: '',               zoomFrom: '',           zoomTo: ''           },
   'Muenster':        { single: '154',                  group: '772,575,149',   zoomFrom: '2000-05-01', zoomTo: '2000-06-01' },
+  'Wetter_2':        { single: '154',                  group: '131,130,437',   zoomFrom: '1991-05-01', zoomTo: '1991-05-10' },
   'Muschenheim':     { single: '315,230,151,149,735',  group: '151,149,735',   zoomFrom: '',           zoomTo: ''           },
   'Bruchenbruecken': { single: '660',                  group: '652,653,4443',  zoomFrom: '1991-05-01', zoomTo: '1991-06-01' },
   'Funne':           { single: '12,22,527',            group: '99,97,167',     zoomFrom: '2010-05-01', zoomTo: '2010-06-01' },
   'GKB':             { single: '166',                  group: '12,144,165',    zoomFrom: '2010-04-01', zoomTo: '2010-07-01' },
+};
+
+const ANL_EXPOSURE_MODEL_LABELS = {
+  CascadeToxswa: 'CascadeToxswa',
+  StepsRiverNetwork: 'StepsRiverNetwork',
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2940,6 +2956,7 @@ async function refreshAnlRuns() {
     // Reset MC dropdown
     document.getElementById('anlMcRun').innerHTML =
       '<option value="">Select experiment first\u2026</option>';
+    setAnlExposureModelOptions([], 'Select MC run first…');
   } catch(e) { console.error('refreshAnlRuns', e); }
 }
 
@@ -2972,6 +2989,7 @@ function onAnlExperimentChange() {
   const exp   = document.getElementById('anlExperiment').value;
   const mcSel = document.getElementById('anlMcRun');
   mcSel.innerHTML = '<option value="">Select MC run…</option>';
+  setAnlExposureModelOptions([], 'Select MC run first…');
   if (!exp) return;
   const entry = anlRunsData.find(r => r.experiment === exp);
   if (!entry) return;
@@ -2989,6 +3007,59 @@ function onAnlMcRunChange() {
   if (!exp) return;
   const entry = anlRunsData.find(r => r.experiment === exp);
   applyAnlScenarioFromExperiment(entry, { requireMc: true });
+  refreshAnlExposureModelOptions();
+}
+
+function setAnlExposureModelOptions(availableModels, emptyMessage = 'No exposure data available') {
+  const select = document.getElementById('anlExposureModel');
+  const previous = select.value;
+  select.innerHTML = '';
+
+  if (!availableModels.length) {
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = emptyMessage;
+    select.appendChild(option);
+    select.value = '';
+    select.disabled = true;
+    return;
+  }
+
+  availableModels.forEach(model => {
+    const option = document.createElement('option');
+    option.value = model;
+    option.textContent = ANL_EXPOSURE_MODEL_LABELS[model] || model;
+    select.appendChild(option);
+  });
+  select.disabled = false;
+  select.value = availableModels.includes(previous) ? previous : availableModels[0];
+}
+
+async function refreshAnlExposureModelOptions() {
+  const experiment = document.getElementById('anlExperiment').value;
+  const mcRun = document.getElementById('anlMcRun').value;
+  const runRoot = document.getElementById('anlRunRoot').value.trim();
+
+  if (!experiment || !mcRun) {
+    setAnlExposureModelOptions([], 'Select MC run first…');
+    return;
+  }
+
+  const qs = new URLSearchParams({
+    experiment,
+    mc_run: mcRun,
+    run_root: runRoot,
+  });
+  try {
+    const data = await api(`/api/analysis/exposure-models?${qs.toString()}`);
+    setAnlExposureModelOptions(
+      data.available_models || [],
+      data.message || 'No supported exposure datasets found in arr.dat'
+    );
+  } catch (e) {
+    console.error('refreshAnlExposureModelOptions', e);
+    setAnlExposureModelOptions([], 'Exposure model check failed');
+  }
 }
 
 function applyAnlScenarioFromExperiment(entry, { requireMc = false } = {}) {
@@ -3229,8 +3300,13 @@ async function loadAnlOutputs() {
 async function startAnalysis() {
   const experiment = document.getElementById('anlExperiment').value;
   const mc_run     = document.getElementById('anlMcRun').value;
+  const exposureModel = document.getElementById('anlExposureModel').value;
   if (!experiment || !mc_run) {
     showAnlStatus('Please select an experiment and MC run.', 'error');
+    return;
+  }
+  if (!exposureModel) {
+    showAnlStatus('No supported exposure model is available for the selected run.', 'error');
     return;
   }
 
@@ -3244,6 +3320,7 @@ async function startAnalysis() {
     run_pec:         document.getElementById('anlRunPec').checked,
     run_guts:        document.getElementById('anlRunGuts').checked,
     exposed_only:    document.getElementById('anlExposedOnly').checked,
+    exposure_model:  exposureModel,
     reach_ids_single: document.getElementById('anlReachSingle').value.trim(),
     reach_ids_group:  document.getElementById('anlReachGroup').value.trim(),
     plotzoom_from:   document.getElementById('anlZoomFrom').value.trim(),

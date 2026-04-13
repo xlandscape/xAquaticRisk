@@ -79,6 +79,12 @@ SCENARIO_DEFAULTS = {
         "plotzoom_from": "2000-05-01",
         "plotzoom_to": "2000-06-01",
     },
+        "Wetter_2": {
+            "reach_list_single": [154],
+            "reach_list_group": [131, 130, 437],
+            "plotzoom_from": "1991-05-01",
+            "plotzoom_to": "1991-05-10",
+        },
     "Muschenheim": {
         "reach_list_single": [315],
         "reach_list_group": [151, 149, 735],
@@ -104,6 +110,25 @@ SCENARIO_DEFAULTS = {
         "plotzoom_to": "2010-07-01",
     },
 }
+
+# ── exposure model configuration ─────────────────────────────────────────────
+EXPOSURE_MODEL_CONFIG = {
+    "CascadeToxswa": {
+        "pecsw_key":    "CascadeToxswa/ConLiqWatTgtAvg",
+        "pecsed_key":   "CascadeToxswa/CntSedTgt1",
+        "pecsw_scale":  1_000_000,   # mg/L → ng/L
+        "pecsed_scale": 1_000,       # mg/kg → µg/kg
+        "effect_prefix": "CascadeToxswa",
+    },
+    "StepsRiverNetwork": {
+        "pecsw_key":    "StepsRiverNetwork/PEC_SW",
+        "pecsed_key":   "StepsRiverNetwork/PEC_SED",
+        "pecsw_scale":  1_000,       # µg/L → ng/L
+        "pecsed_scale": 1_000,       # mg/kg → µg/kg
+        "effect_prefix": "StepsRiverNetwork",
+    },
+}
+VALID_EXPOSURE_MODELS = tuple(EXPOSURE_MODEL_CONFIG.keys())
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
@@ -134,6 +159,10 @@ def main():
                     help="Time-series zoom start date (YYYY-MM-DD)")
     ap.add_argument("--plotzoom-to", default="",
                     help="Time-series zoom end date (YYYY-MM-DD)")
+    ap.add_argument("--exposure-model", default="CascadeToxswa",
+                    choices=VALID_EXPOSURE_MODELS,
+                    help="Exposure model whose HDF5 outputs are analysed "
+                         f"({', '.join(VALID_EXPOSURE_MODELS)})")
     args = ap.parse_args()
 
     # ── path setup ────────────────────────────────────────────────────────────
@@ -141,6 +170,10 @@ def main():
     scenario_path = Path(args.scenario_path)
     output_dir    = Path(args.output_dir)
     scenario_name = args.scenario_name
+
+    # ── exposure model config ─────────────────────────────────────────────────
+    exposure_model = args.exposure_model
+    cfg = EXPOSURE_MODEL_CONFIG[exposure_model]
 
     defaults = SCENARIO_DEFAULTS.get(scenario_name, {})
 
@@ -192,6 +225,7 @@ def main():
     log("info",  f"Excel file  : {excel_filename}")
     log("info",  f"Run PEC     : {args.run_pec}")
     log("info",  f"Run GUTS    : {args.run_guts}")
+    log("info",  f"Exposure model: {exposure_model}")
 
     if not h5_data.exists():
         log("error", f"HDF5 store not found: {h5_data}")
@@ -225,14 +259,14 @@ def main():
         log("info", "=== Exposure Analysis ===")
         try:
             with h5py.File(h5_data, "r") as f:
-                if "CascadeToxswa/ConLiqWatTgtAvg" not in f:
-                    raise KeyError("CascadeToxswa/ConLiqWatTgtAvg not found in HDF5")
+                if cfg["pecsw_key"] not in f:
+                    raise KeyError(f"{cfg['pecsw_key']} not found in HDF5")
                 reach_ids_pecsw = f[
-                    f["CascadeToxswa/ConLiqWatTgtAvg"].attrs["dim1_element_names"]
+                    f[cfg["pecsw_key"]].attrs["dim1_element_names"]
                 ][:]
-                starttime_pecsw = f["CascadeToxswa/ConLiqWatTgtAvg"].attrs["dim0_offset"]
-                df_pecsw  = pd.DataFrame(f["CascadeToxswa/ConLiqWatTgtAvg"][:]) * 1_000_000
-                df_pecsed = pd.DataFrame(f["CascadeToxswa/CntSedTgt1"][:])      * 1_000
+                starttime_pecsw = f[cfg["pecsw_key"]].attrs["dim0_offset"]
+                df_pecsw  = pd.DataFrame(f[cfg["pecsw_key"]][:])  * cfg["pecsw_scale"]
+                df_pecsed = pd.DataFrame(f[cfg["pecsed_key"]][:]) * cfg["pecsed_scale"]
 
             ti = pd.date_range(starttime_pecsw, periods=len(df_pecsw), freq="h")
             for df in (df_pecsw, df_pecsed):
@@ -396,26 +430,27 @@ def main():
         log("info", "=== Effect Analysis ===")
         try:
             # Map of (internal_key, hdf5_path, is_survival_cube)
+            _ep = cfg["effect_prefix"]
             GUTS_KEYS = [
-                ("surv_sd_sp1", "IndEffect_CascadeToxswa_SD_Species1/GutsSurvivalReaches", True),
-                ("surv_sd_sp2", "IndEffect_CascadeToxswa_SD_Species2/GutsSurvivalReaches", True),
-                ("surv_sd_sp3", "IndEffect_CascadeToxswa_SD_Species3/GutsSurvivalReaches", True),
-                ("surv_it_sp1", "IndEffect_CascadeToxswa_IT_Species1/GutsSurvivalReaches", True),
-                ("surv_it_sp2", "IndEffect_CascadeToxswa_IT_Species2/GutsSurvivalReaches", True),
-                ("surv_it_sp3", "IndEffect_CascadeToxswa_IT_Species3/GutsSurvivalReaches", True),
-                ("lp50_sd_sp1", "IndEffect_LP50_CascadeToxswa_SD_Species1/LP50", False),
-                ("lp50_sd_sp2", "IndEffect_LP50_CascadeToxswa_SD_Species2/LP50", False),
-                ("lp50_sd_sp3", "IndEffect_LP50_CascadeToxswa_SD_Species3/LP50", False),
-                ("lp50_it_sp1", "IndEffect_LP50_CascadeToxswa_IT_Species1/LP50", False),
-                ("lp50_it_sp2", "IndEffect_LP50_CascadeToxswa_IT_Species2/LP50", False),
-                ("lp50_it_sp3", "IndEffect_LP50_CascadeToxswa_IT_Species3/LP50", False),
+                ("surv_sd_sp1", f"IndEffect_{_ep}_SD_Species1/GutsSurvivalReaches", True),
+                ("surv_sd_sp2", f"IndEffect_{_ep}_SD_Species2/GutsSurvivalReaches", True),
+                ("surv_sd_sp3", f"IndEffect_{_ep}_SD_Species3/GutsSurvivalReaches", True),
+                ("surv_it_sp1", f"IndEffect_{_ep}_IT_Species1/GutsSurvivalReaches", True),
+                ("surv_it_sp2", f"IndEffect_{_ep}_IT_Species2/GutsSurvivalReaches", True),
+                ("surv_it_sp3", f"IndEffect_{_ep}_IT_Species3/GutsSurvivalReaches", True),
+                ("lp50_sd_sp1", f"IndEffect_LP50_{_ep}_SD_Species1/LP50", False),
+                ("lp50_sd_sp2", f"IndEffect_LP50_{_ep}_SD_Species2/LP50", False),
+                ("lp50_sd_sp3", f"IndEffect_LP50_{_ep}_SD_Species3/LP50", False),
+                ("lp50_it_sp1", f"IndEffect_LP50_{_ep}_IT_Species1/LP50", False),
+                ("lp50_it_sp2", f"IndEffect_LP50_{_ep}_IT_Species2/LP50", False),
+                ("lp50_it_sp3", f"IndEffect_LP50_{_ep}_IT_Species3/LP50", False),
             ]
 
             dfs = {}
             with h5py.File(h5_data, "r") as f:
                 # get spatial reference from SD Species 1 survival
-                ref_surv_key = "IndEffect_CascadeToxswa_SD_Species1/GutsSurvivalReaches"
-                ref_lp50_key = "IndEffect_LP50_CascadeToxswa_SD_Species1/LP50"
+                ref_surv_key = f"IndEffect_{_ep}_SD_Species1/GutsSurvivalReaches"
+                ref_lp50_key = f"IndEffect_LP50_{_ep}_SD_Species1/LP50"
                 if ref_surv_key not in f:
                     raise KeyError(f"{ref_surv_key} not in HDF5 – GUTS data not present")
 

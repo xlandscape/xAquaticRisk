@@ -2981,6 +2981,70 @@ def list_map_explorer_runs(run_root):
 # Analysis helpers
 # ═══════════════════════════════════════════════════════════════════
 
+ANALYSIS_EXPOSURE_MODEL_DATASETS = {
+    "CascadeToxswa": {
+        "pecsw": "CascadeToxswa/ConLiqWatTgtAvg",
+        "pecsed": "CascadeToxswa/CntSedTgt1",
+    },
+    "StepsRiverNetwork": {
+        "pecsw": "StepsRiverNetwork/PEC_SW",
+        "pecsed": "StepsRiverNetwork/PEC_SED",
+    },
+}
+
+
+def get_analysis_exposure_models(run_root: str, experiment: str, mc_run: str) -> dict:
+    """Inspect arr.dat and report which exposure models have usable exposure datasets."""
+    if not experiment or not mc_run:
+        return {"available_models": [], "details": {}, "message": "experiment and mc_run are required"}
+    for val, name in ((experiment, "experiment"), (mc_run, "mc_run")):
+        if any(c in val for c in (os.sep, "/", "\\", "..")):
+            raise ValueError(f"Invalid {name}")
+
+    arr_path = os.path.abspath(os.path.join(run_root, experiment, "mcs", mc_run, "store", "arr.dat"))
+    if not os.path.isfile(arr_path):
+        return {
+            "available_models": [],
+            "details": {},
+            "arr_path": arr_path,
+            "message": f"arr.dat not found: {arr_path}",
+        }
+
+    script = r'''
+import json
+import sys
+import h5py
+
+payload = json.loads(sys.argv[1])
+arr_path = payload["arr_path"]
+datasets = payload["datasets"]
+details = {}
+available = []
+
+with h5py.File(arr_path, "r") as f:
+    for model, keys in datasets.items():
+        pecsw_key = keys["pecsw"]
+        pecsed_key = keys["pecsed"]
+        has_pecsw = pecsw_key in f
+        has_pecsed = pecsed_key in f
+        details[model] = {
+            "pecsw": has_pecsw,
+            "pecsed": has_pecsed,
+        }
+        if has_pecsw and has_pecsed:
+            available.append(model)
+
+print(json.dumps({
+    "available_models": available,
+    "details": details,
+    "arr_path": arr_path,
+}))
+'''
+    return _embedded_json_call(
+        script,
+        {"arr_path": arr_path, "datasets": ANALYSIS_EXPOSURE_MODEL_DATASETS},
+    )
+
 def list_runs_with_mcs(run_root):
     """Return analysis runs with MC and scenario metadata, sorted newest first."""
     result = []
@@ -3370,6 +3434,18 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             run_root_raw = qs.get("run_root", [""])[0].strip()
             run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
             self._json_response(list_runs_with_mcs(run_root))
+        elif path == "/api/analysis/exposure-models" or self.path.startswith("/api/analysis/exposure-models?"):
+            qs = parse_qs(urlparse(self.path).query)
+            experiment = qs.get("experiment", [""])[0].strip()
+            mc_run = qs.get("mc_run", [""])[0].strip()
+            run_root_raw = qs.get("run_root", [""])[0].strip()
+            run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
+            try:
+                self._json_response(get_analysis_exposure_models(run_root, experiment, mc_run))
+            except ValueError as exc:
+                self._json_response({"message": str(exc)}, 400)
+            except RuntimeError as exc:
+                self._json_response({"message": str(exc)}, 500)
         elif path.startswith("/api/analysis/status/"):
             job_id = path.rstrip("/").split("/")[4]
             self._json_response(analysis_job_status(job_id))
@@ -3786,6 +3862,15 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         scenario_path = (os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
                          if scenario_rel else BASE_DIR)
         scenario_name = (data.get("scenario_name") or "").strip()
+        exposure_model = (data.get("exposure_model") or "CascadeToxswa").strip()
+        _valid_exposure_models = {"CascadeToxswa", "StepsRiverNetwork"}
+        if exposure_model not in _valid_exposure_models:
+            return self._json_response(
+                {"status": "error",
+                 "message": f"Invalid exposure_model '{exposure_model}'. "
+                            f"Must be one of: {', '.join(sorted(_valid_exposure_models))}"},
+                400,
+            )
         ts        = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         subfolder = f"{experiment}_{mc_run}__{ts}"
         job_id    = subfolder
@@ -3803,6 +3888,7 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             "--run-pec",       str(data.get("run_pec",       True)).lower(),
             "--run-guts",      str(data.get("run_guts",      True)).lower(),
             "--exposed-only",  str(data.get("exposed_only",  False)).lower(),
+            "--exposure-model", exposure_model,
         ]
         for flag, key in [
             ("--reach-ids-single", "reach_ids_single"),
