@@ -3005,7 +3005,13 @@ async function refreshAnlRuns() {
     document.getElementById('anlMcRun').innerHTML =
       '<option value="">Select experiment first\u2026</option>';
     setAnlExposureModelOptions([], 'Select MC run first…');
-  } catch(e) { console.error('refreshAnlRuns', e); }
+    if (!anlRunsData.length) {
+      showAnlStatus('No analysis-ready experiments found in the selected run folder.', 'warning');
+    }
+  } catch(e) {
+    console.error('refreshAnlRuns', e);
+    showAnlStatus(`Failed to load experiments: ${e.message}`, 'error');
+  }
 }
 
 function onAnlRunRootInput() {
@@ -3104,9 +3110,14 @@ async function refreshAnlExposureModelOptions() {
       data.available_models || [],
       data.message || 'No supported exposure datasets found in arr.dat'
     );
+    if (!(data.available_models || []).length) {
+      showAnlStatus(data.message || 'No supported exposure datasets found in arr.dat.', 'warning');
+    }
   } catch (e) {
     console.error('refreshAnlExposureModelOptions', e);
-    setAnlExposureModelOptions([], 'Exposure model check failed');
+    const msg = e && e.message ? e.message : 'Exposure model check failed';
+    setAnlExposureModelOptions([], msg);
+    showAnlStatus(`Exposure model detection failed: ${msg}`, 'error');
   }
 }
 
@@ -3259,7 +3270,7 @@ function renderAnlPecswTable(d) {
   });
   html += '</tbody>';
   tbl.innerHTML = html;
-  panel.style.display = '';
+  panel.style.display = 'block';
 }
 
 function toggleAnlTable() {
@@ -3304,17 +3315,26 @@ async function loadAnlOutputs() {
   if (!anlCurrentJobId) return;
   try {
     const data = await api(`/api/analysis/outputs/${anlCurrentJobId}`);
-    if (data.error || !data.files || !data.files.length) return;
+    if (data.error) return;
+    const outputFiles = Array.isArray(data.files) ? data.files : [];
+
+    // Load PECsw percentile table independently from downloadable file chips.
+    await loadAnlPecswTable();
+
     const panel  = document.getElementById('anlOutputPanel');
     const files  = document.getElementById('anlOutputFiles');
     const gallery = document.getElementById('anlGallery');
-    panel.style.display = '';
+    if (!panel || !files || !gallery) return;
+    panel.style.display = 'block';
 
-    // Load PECsw percentile table (independent of file chips)
-    await loadAnlPecswTable();
+    if (!outputFiles.length) {
+      files.innerHTML = '<span class="u-note-xs">No downloadable files were generated for this analysis.</span>';
+      gallery.innerHTML = '';
+      return;
+    }
 
     // File chip buttons
-    files.innerHTML = data.files.map(f => {
+    files.innerHTML = outputFiles.map(f => {
       const icon  = f.type === 'image' ? '\uD83D\uDDBC' : f.type === 'excel' ? '\uD83D\uDCC8' : '\uD83D\uDCCE';
       const url   = `/api/analysis/file/${anlCurrentJobId}/${encodeURIComponent(f.name)}`;
       const kb    = (f.size / 1024).toFixed(1);
@@ -3323,7 +3343,7 @@ async function loadAnlOutputs() {
     }).join('');
 
     // Image gallery
-    const images = data.files.filter(f => f.type === 'image');
+    const images = outputFiles.filter(f => f.type === 'image');
     if (images.length) {
       gallery.innerHTML = images.map(f => {
         const url = `/api/analysis/file/${anlCurrentJobId}/${encodeURIComponent(f.name)}`;
@@ -3335,6 +3355,8 @@ async function loadAnlOutputs() {
                  onclick="window.open(this.src,'_blank')">
           </div></div>`;
       }).join('');
+    } else {
+      gallery.innerHTML = '';
     }
   } catch(e) { console.error('loadAnlOutputs', e); }
 }
@@ -3397,7 +3419,7 @@ async function startAnalysis() {
     document.getElementById('anlLoading').classList.remove('show');
     if (r.status === 'success') {
       anlCurrentJobId = r.job_id;
-      document.getElementById('anlResults').style.display = '';
+      document.getElementById('anlResults').style.display = 'block';
       document.getElementById('anlProgressHead').textContent = 'Analysis Running…';
       showAnlStatus(r.message, 'success');
       btn.textContent = '\u23F3 Running…';

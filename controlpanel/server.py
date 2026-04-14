@@ -138,6 +138,11 @@ def _pid_is_running(pid: int) -> bool:
         return True
     except OSError:
         return False
+    except SystemError:
+        # On Windows, os.kill(pid, 0) can raise SystemError wrapping
+        # WinError 87 (ERROR_INVALID_PARAMETER) for stale / system PIDs.
+        # Treat as "process not running" so stale lock files are cleaned up.
+        return False
     return True
 
 
@@ -922,7 +927,12 @@ def inspect_scenario(scenario_path: str) -> dict:
 
         project_extent = _parse_scenario_project_extent(project_path) if os.path.isfile(project_path) else {}
         readme_extent = _parse_readme_extent(readme_path) if os.path.isfile(readme_path) else {}
-        hydro_meta = _read_hydro_metadata(hydro_path) if os.path.isfile(hydro_path) else {}
+        hydro_meta = {}
+        if os.path.isfile(hydro_path):
+            try:
+                hydro_meta = _read_hydro_metadata(hydro_path)
+            except Exception as hydro_exc:
+                warnings.append(f"Hydrology HDF5 inspection failed: {hydro_exc}")
         effective_extent = _compute_effective_hydro_extent(
             hydro_meta.get("time_from"),
             hydro_meta.get("time_to"),
