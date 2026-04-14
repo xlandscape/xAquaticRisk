@@ -56,12 +56,16 @@ nav:
     - Example Scenarios: 'scenarios/Example-scenarios.md'
   - Technical Reference:
     - Parameterisation: 'reference/parameterisation.md'
-    - XCopy Readiness: 'reference/xcopy-readiness.md'
+    - Setup Scripts: 'reference/setup-scripts.md'
+    - Control Panel: 'reference/controlpanel.md'
+    - convert_xrun.py: 'reference/user/convert-xrun.md'
     - 'Custom Agent: Field Ranking': 'reference/field-drift-agent-development-and-usage.md'
     - Field Drift Ranking Data Contract: 'reference/field-drift-ranking-data-contract.md'
-    - Control Panel: 'reference/controlpanel.md'
     - Regulatory Framework: 'reference/regulatory-framework.md'
     - Troubleshooting: 'reference/troubleshooting.md'
+    - Developers:
+      - XCopy Readiness: 'reference/xcopy-readiness.md'
+      - document.py: 'reference/dev/document-py.md'
   - Glossary: 'reference/glossary.md'
   - xLandscape: 
     - Intro: 'xLandscape/xLandscape-intro.md'
