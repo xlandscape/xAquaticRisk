@@ -57,7 +57,7 @@ a{color:var(--accent);text-decoration:none}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden}
 .card-header{
   display:flex;justify-content:space-between;align-items:center;
-  padding:.65rem 1rem;cursor:pointer;user-select:none;
+  padding:.65rem 1rem;cursor:pointer;-webkit-user-select:none;user-select:none;
   font-weight:600;font-size:.85rem;color:var(--text);
   border-bottom:1px solid var(--border);transition:background .15s;
 }
@@ -241,6 +241,52 @@ a{color:var(--accent);text-decoration:none}
 .expl-map-hint{position:absolute;top:.5rem;left:.5rem;z-index:5;background:rgba(15,17,23,.92);border:1px solid var(--border);padding:.3rem .45rem;border-radius:4px;font-size:.72rem;color:var(--text2)}
 .expl-box{position:absolute;border:1px dashed var(--accent);background:rgba(88,166,255,.16);pointer-events:none;z-index:7}
 
+/* Inline-style replacements */
+#analysisPill{margin-left:.7rem;background:var(--bg3);color:var(--text2)}
+#refreshInfo{font-size:.65rem;color:var(--text2)}
+.u-flex-gap-6{display:flex;gap:.6rem}
+.u-flex-gap-6-start{display:flex;gap:.6rem;align-items:start}
+.u-flex-gap-6-end{display:flex;gap:.6rem;align-items:flex-end}
+.u-flex-gap-5-wrap-mb55{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.55rem}
+.u-flex-gap-6-wrap-mt8{margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap}
+.u-flex-gap-4{display:flex;gap:.4rem}
+.u-flex-gap-45-end{display:flex;gap:.45rem;align-items:end;padding-bottom:.05rem}
+.u-fill{flex:1}
+.u-hidden{display:none}
+.u-loading-text{font-size:.8rem;color:var(--text2)}
+.u-mt-35{margin-top:.35rem}
+.u-mt-3{margin-top:.3rem}
+.u-mt-6{margin-top:.6rem}
+.u-mt-7{margin-top:.7rem}
+.u-ml-7{margin-left:.7rem}
+.u-ml-8{margin-left:.8rem}
+.u-status-top{margin:.75rem 0 0}
+.u-w-0{width:0%}
+.u-checkbox-label{display:flex;align-items:center;gap:.5rem;cursor:pointer}
+.u-checkbox-ok{accent-color:var(--ok);width:14px;height:14px}
+.u-checkbox-warn{accent-color:var(--warn);width:14px;height:14px}
+.u-heading-muted{margin-top:.8rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text2)}
+.u-card-body-compact{padding:.8rem 1rem .6rem}
+.u-log-max-320{max-height:320px}
+.u-panel-head-between{display:flex;justify-content:space-between;align-items:center}
+.u-note-xs{font-size:.7rem;font-weight:400;color:var(--text2)}
+.u-table-wrap{overflow-x:auto;padding:.5rem 1rem 1rem}
+.u-output-files{display:flex;flex-wrap:wrap;gap:.7rem;padding:.6rem 1rem}
+.u-form-group-mb0{margin-bottom:0}
+.u-panel-body-tight{padding:.55rem}
+.u-action-bar{display:flex;gap:.6rem;padding:0 0 .6rem;flex-wrap:wrap}
+.u-details-right{margin-left:auto;min-width:280px}
+.u-details-summary{cursor:pointer;font-size:.72rem;color:var(--text2)}
+.u-details-body{padding:.35rem .2rem .2rem}
+.u-warn-rule-empty{font-size:.72rem;color:var(--text2)}
+.u-warn-rule-row{font-size:.72rem;color:var(--text2);margin:.2rem 0}
+.u-warn-rule-id{color:var(--note);font-weight:600}
+.u-log-warn{color:var(--warn)}
+.u-output-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .7rem;background:var(--bg3);border:1px solid var(--border);border-radius:4px;font-size:.75rem;color:var(--text);text-decoration:none}
+.u-panel-mb-8{margin-bottom:.8rem}
+.u-panel-body-gallery{padding:.5rem;text-align:center}
+.u-gallery-img{max-width:100%;border-radius:4px;cursor:zoom-in}
+
 @media (max-width: 1150px){
   .expl-grid{grid-template-columns:1fr}
   .expl-toolbar{grid-template-columns:1fr 1fr}
@@ -287,7 +333,7 @@ a{color:var(--accent);text-decoration:none}
 
   <div class="spacer"></div>
   <span class="status-pill" id="serverPill">Connected</span>
-  <span class="status-pill" id="analysisPill" title="Checking analysis Python runtime…" style="background:var(--bg3);color:var(--text2);margin-left:.7rem">Checking…</span>
+  <span class="status-pill" id="analysisPill" title="Checking analysis Python runtime…">Checking…</span>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -305,16 +351,16 @@ a{color:var(--accent);text-decoration:none}
       <div class="card-body">
         <div class="form-group">
           <label for="xrunPath">Path to Parameterisation Files (.xrun / .yaml)</label>
-          <div style="display:flex;gap:.6rem">
-            <input type="text" id="xrunPath" placeholder="e.g., parameterisation or C:\LocalWork\xAquaticRisk" value="parameterisation" style="flex:1">
+          <div class="u-flex-gap-6">
+            <input type="text" id="xrunPath" placeholder="e.g., parameterisation or C:\LocalWork\xAquaticRisk" value="parameterisation" class="u-fill">
             <button type="button" class="btn btn-outline btn-sm" onclick="loadXrunFiles()">Load</button>
           </div>
           <div class="help-text">Defaults to the <em>parameterisation</em> subfolder. Enter another folder path and click <em>Load</em> to refresh the file list.</div>
         </div>
         <div class="form-group">
           <label for="xrunSelect">Open Parameterisation File</label>
-          <div style="display:flex;gap:.6rem;align-items:start">
-            <select id="xrunSelect" style="flex:1">
+          <div class="u-flex-gap-6-start">
+            <select id="xrunSelect" class="u-fill">
               <option value="">Select a parameterisation file to open…</option>
             </select>
             <button type="button" class="btn btn-outline btn-sm" onclick="openXrunFile()">Open</button>
@@ -322,8 +368,8 @@ a{color:var(--accent);text-decoration:none}
         </div>
         <div class="form-group">
           <label for="saveAsName">Save Parameterisation As</label>
-          <div style="display:flex;gap:.6rem">
-            <input type="text" id="saveAsName" placeholder="e.g., MyParameterisation" style="flex:1">
+          <div class="u-flex-gap-6">
+            <input type="text" id="saveAsName" placeholder="e.g., MyParameterisation" class="u-fill">
             <button type="button" class="btn btn-outline btn-sm" onclick="saveAsXrun()">Save As</button>
           </div>
         </div>
@@ -634,7 +680,7 @@ a{color:var(--accent);text-decoration:none}
       </div>
 
       <!-- Additional Parameters (dynamic) -->
-      <div class="card" id="additionalParamsCard" style="display:none">
+      <div class="card u-hidden" id="additionalParamsCard">
         <div class="card-header collapsed" onclick="toggleSection(this)">
           <span>Additional Parameters</span>
           <span class="toggle">&#9660;</span>
@@ -649,7 +695,7 @@ a{color:var(--accent);text-decoration:none}
           <button type="button" class="btn btn-secondary" onclick="saveConfiguration()">Save</button>
           <button type="submit" class="btn btn-primary">&#9654; Run Simulation</button>
         </div>
-        <div class="loading" id="loading"><div class="spinner"></div><p style="font-size:.8rem;color:var(--text2)">Starting simulation…</p></div>
+        <div class="loading" id="loading"><div class="spinner"></div><p class="u-loading-text">Starting simulation…</p></div>
         <div class="status-message" id="cfgStatus"></div>
       </div>
     </form>
@@ -671,8 +717,8 @@ a{color:var(--accent);text-decoration:none}
       <div class="card-body">
         <div class="form-group">
           <label for="subsetSourceScenario">Source Landscape Scenario</label>
-          <div style="display:flex;gap:.6rem;align-items:flex-end">
-            <select id="subsetSourceScenario" style="flex:1" onchange="onSubsetSourceChange()">
+          <div class="u-flex-gap-6-end">
+            <select id="subsetSourceScenario" class="u-fill" onchange="onSubsetSourceChange()">
               <option value="">Select a scenario…</option>
             </select>
             <button type="button" class="btn btn-outline btn-sm" onclick="useCurrentScenarioForSubset()">Sync from Parameterisation</button>
@@ -682,7 +728,7 @@ a{color:var(--accent);text-decoration:none}
         </div>
 
         <div class="section-heading">Spatial Reach Subset</div>
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.55rem">
+        <div class="u-flex-gap-5-wrap-mb55">
           <button type="button" class="btn btn-outline btn-sm" onclick="loadSubsetScenarioGeometry()">Load Scenario Map</button>
           <button type="button" class="btn btn-outline btn-sm" onclick="selectAllSubsetReaches()">Select All</button>
           <button type="button" class="btn btn-outline btn-sm" onclick="clearSubsetSelection()">Clear Selection</button>
@@ -690,9 +736,9 @@ a{color:var(--accent);text-decoration:none}
         <div id="subsetMap" class="subset-map"></div>
         <div class="subset-selection">
           Selected reaches: <strong id="subsetSelectedCount">0</strong>
-          <span id="subsetMapMeta" style="margin-left:.7rem"></span>
+          <span id="subsetMapMeta" class="u-ml-7"></span>
           <div class="subset-chip-list" id="subsetSelectedChips"></div>
-          <div class="help-text" style="margin-top:.35rem">Click stream segments to toggle selection. Hold Ctrl or Shift for additive selection. Hold Alt and drag for box-select. If none are selected, all reaches are used.</div>
+          <div class="help-text u-mt-35">Click stream segments to toggle selection. Hold Ctrl or Shift for additive selection. Hold Alt and drag for box-select. If none are selected, all reaches are used.</div>
         </div>
 
         <div class="subset-meta-grid">
@@ -751,17 +797,17 @@ a{color:var(--accent);text-decoration:none}
           </div>
         </div>
         <div class="help-text">The generated scenario will copy the source scenario, trim <em>hydro_reaches.h5</em> and <em>hydro/TimeSeries/*.csv</em>, filter LULC geometries by distance, and update the subset scenario metadata.</div>
-        <div style="margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap">
+        <div class="u-flex-gap-6-wrap-mt8">
           <button type="button" class="btn btn-secondary" id="subsetCreateBtn" onclick="createScenarioSubset()">Create Subset Scenario</button>
-          <button type="button" class="btn btn-outline btn-sm" id="subsetCancelBtn" onclick="cancelScenarioSubsetJob()" style="display:none">Stop &amp; Kill</button>
+          <button type="button" class="btn btn-outline btn-sm u-hidden" id="subsetCancelBtn" onclick="cancelScenarioSubsetJob()">Stop &amp; Kill</button>
         </div>
-        <div class="mc-row" id="subsetProgressRow" style="margin-top:.7rem;display:none">
+        <div class="mc-row u-hidden u-mt-7" id="subsetProgressRow">
           <div class="progress-bar" title="Subset creation progress">
-            <div class="progress-fill running" id="subsetProgressFill" style="width:0%"></div>
+            <div class="progress-fill running u-w-0" id="subsetProgressFill"></div>
           </div>
           <div class="progress-pct" id="subsetProgressPct">0%</div>
         </div>
-        <div class="status-message" id="subsetStatus" style="margin:.75rem 0 0"></div>
+        <div class="status-message u-status-top" id="subsetStatus"></div>
       </div>
     </div>
 
@@ -776,7 +822,7 @@ a{color:var(--accent);text-decoration:none}
     <div class="sidebar">
       <div class="sidebar-header">
         Simulation Runs
-        <span style="font-size:.65rem;color:var(--text2)" id="refreshInfo">auto-refresh 3 s</span>
+        <span id="refreshInfo">auto-refresh 3 s</span>
       </div>
       <div id="runList"></div>
     </div>
@@ -804,9 +850,9 @@ a{color:var(--accent);text-decoration:none}
       <div class="card-body">
         <div class="form-group">
           <label for="anlRunRoot">Simulation Run Folder</label>
-          <div style="display:flex;gap:.4rem">
+          <div class="u-flex-gap-4">
             <input type="text" id="anlRunRoot" placeholder="run/"
-                   style="flex:1" oninput="onAnlRunRootInput()">
+                class="u-fill" oninput="onAnlRunRootInput()">
             <button type="button" class="btn btn-outline btn-sm"
                     onclick="refreshAnlRuns()" title="Reload experiment list from this folder">
               &#8635; Refresh
@@ -891,28 +937,28 @@ a{color:var(--accent);text-decoration:none}
       <div class="card-body collapsed">
         <div class="form-row">
           <div class="form-group">
-            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+            <label class="u-checkbox-label">
               <input type="checkbox" id="anlRunPec" checked
-                     style="accent-color:var(--ok);width:14px;height:14px">
+                     class="u-checkbox-ok">
               Run Exposure Analysis (PECsw / PECsed)
             </label>
           </div>
           <div class="form-group">
-            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+            <label class="u-checkbox-label">
               <input type="checkbox" id="anlRunGuts" checked
-                     style="accent-color:var(--ok);width:14px;height:14px">
+                     class="u-checkbox-ok">
               Run Effect Analysis (GUTS survival / LP50)
             </label>
           </div>
         </div>
-        <div class="form-group" style="margin-top:.3rem">
-          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+        <div class="form-group u-mt-3">
+          <label class="u-checkbox-label">
             <input type="checkbox" id="anlExposedOnly"
-                   style="accent-color:var(--warn);width:14px;height:14px">
+                   class="u-checkbox-warn">
             Restrict to exposed stream segments only (PECsw&nbsp;&gt;&nbsp;0)
           </label>
         </div>
-        <div class="form-group" style="margin-top:.6rem">
+        <div class="form-group u-mt-6">
           <label for="anlExposureModel">Exposure Model</label>
           <select id="anlExposureModel">
             <option value="CascadeToxswa" selected>CascadeToxswa</option>
@@ -922,8 +968,7 @@ a{color:var(--accent);text-decoration:none}
             PECsw/PECsed and effect analysis. Choose <em>StepsRiverNetwork</em> when
             CascadeToxswa was not run.</div>
         </div>
-        <div class="section-heading" style="margin-top:.8rem;font-size:.75rem;
-             text-transform:uppercase;letter-spacing:.04em;color:var(--text2)">Time Series Plots</div>
+        <div class="section-heading u-heading-muted">Time Series Plots</div>
         <div class="form-row">
           <div class="form-group">
             <label for="anlReachSingle">Single-reach Reach IDs</label>
@@ -951,42 +996,41 @@ a{color:var(--accent);text-decoration:none}
 
     <!-- ─ Action bar ────────────────────────────────────────────────── -->
     <div class="card">
-      <div class="card-body" style="padding:.8rem 1rem .6rem">
+      <div class="card-body u-card-body-compact">
         <button type="button" class="btn btn-primary" id="btnRunAnalysis"
                 onclick="startAnalysis()">&#9654; Run Analysis</button>
         <div class="loading" id="anlLoading">
           <div class="spinner"></div>
-          <p style="font-size:.8rem;color:var(--text2)">Starting analysis…</p>
+          <p class="u-loading-text">Starting analysis…</p>
         </div>
         <div class="status-message" id="anlStatus"></div>
       </div>
     </div>
 
     <!-- ─ Results panel (shown after job started) ───────────────────── -->
-    <div id="anlResults" style="display:none">
+    <div id="anlResults" class="u-hidden">
 
       <!-- Progress log -->
       <div class="panel">
         <div class="panel-head" id="anlProgressHead">Analysis Progress</div>
-        <div class="log-output" id="anlLog" style="max-height:320px">Waiting…</div>
+        <div class="log-output u-log-max-320" id="anlLog">Waiting…</div>
       </div>
 
       <!-- PECsw percentile table -->
-      <div class="panel" id="anlPecswTablePanel" style="display:none">
-        <div class="panel-head" style="display:flex;justify-content:space-between;align-items:center">
-          <span>PECsw Percentile Table&nbsp;<span style="font-size:.7rem;font-weight:400;color:var(--text2)">[ng/L] &mdash; rows: temporal percentiles, columns: spatial percentiles</span></span>
+      <div class="panel u-hidden" id="anlPecswTablePanel">
+        <div class="panel-head u-panel-head-between">
+          <span>PECsw Percentile Table&nbsp;<span class="u-note-xs">[ng/L] &mdash; rows: temporal percentiles, columns: spatial percentiles</span></span>
           <button type="button" class="btn btn-outline btn-sm" onclick="toggleAnlTable()" id="btnTogglePecswTable">&#9660; hide</button>
         </div>
-        <div id="anlPecswTableWrap" style="overflow-x:auto;padding:.5rem 1rem 1rem">
+        <div id="anlPecswTableWrap" class="u-table-wrap">
           <table id="anlPecswTable" class="anl-tbl"></table>
         </div>
       </div>
 
       <!-- Output files -->
-      <div class="panel" id="anlOutputPanel" style="display:none">
+      <div class="panel u-hidden" id="anlOutputPanel">
         <div class="panel-head">Generated Files</div>
-        <div class="panel-body" id="anlOutputFiles"
-             style="display:flex;flex-wrap:wrap;gap:.7rem;padding:.6rem 1rem"></div>
+        <div class="panel-body u-output-files" id="anlOutputFiles"></div>
       </div>
 
       <!-- Image gallery -->
@@ -1008,11 +1052,11 @@ a{color:var(--accent);text-decoration:none}
       </div>
       <div class="card-body">
         <div class="expl-toolbar">
-          <div class="form-group" style="margin-bottom:0">
+          <div class="form-group u-form-group-mb0">
             <label for="explRunSelect">Run / MC Selection</label>
             <select id="explRunSelect"></select>
           </div>
-          <div class="form-group" style="margin-bottom:0">
+          <div class="form-group u-form-group-mb0">
             <label for="explResolution">Resolution</label>
             <select id="explResolution">
               <option value="auto" selected>Auto</option>
@@ -1020,33 +1064,33 @@ a{color:var(--accent);text-decoration:none}
               <option value="hourly">Hourly</option>
             </select>
           </div>
-          <div class="form-group" style="margin-bottom:0">
+          <div class="form-group u-form-group-mb0">
             <label for="explTimeFrom">Time Start</label>
             <input type="text" id="explTimeFrom" placeholder="YYYY-MM-DD">
           </div>
-          <div class="form-group" style="margin-bottom:0">
+          <div class="form-group u-form-group-mb0">
             <label for="explTimeTo">Time End</label>
             <input type="text" id="explTimeTo" placeholder="YYYY-MM-DD">
           </div>
-          <div style="display:flex;gap:.45rem;align-items:end;padding-bottom:.05rem">
+          <div class="u-flex-gap-45-end">
             <button class="btn btn-outline btn-sm" onclick="reloadExplorerData()">Reload</button>
             <button class="btn btn-outline btn-sm" onclick="clearExplorerSelection()">Clear Selection</button>
           </div>
         </div>
         <div class="expl-selection">
           Selected reaches: <strong id="explSelectedCount">0</strong>
-          <span id="explMetaText" style="margin-left:.8rem"></span>
+          <span id="explMetaText" class="u-ml-8"></span>
           <div class="expl-chip-list" id="explSelectedChips"></div>
           <div class="expl-note">Click a segment to toggle selection. Hold Ctrl or Shift for additive selection. Hold Alt and drag for box-select.</div>
         </div>
-        <div class="status-message" id="explStatus" style="margin: .75rem 0 0"></div>
+        <div class="status-message u-status-top" id="explStatus"></div>
       </div>
     </div>
 
     <div class="expl-grid">
       <div class="panel expl-map-card">
         <div class="panel-head">Stream Network</div>
-        <div class="panel-body" style="padding:.55rem">
+        <div class="panel-body u-panel-body-tight">
           <div id="explMap" class="expl-map">
             <div class="expl-map-hint">Alt + drag to select multiple segments</div>
             <canvas id="explLabelCanvas"></canvas>
@@ -1055,7 +1099,7 @@ a{color:var(--accent);text-decoration:none}
       </div>
       <div class="panel">
         <div class="panel-head">PECsw Time Series [ng/L]</div>
-        <div class="panel-body" style="padding:.55rem">
+        <div class="panel-body u-panel-body-tight">
           <div id="explChart" class="expl-chart"></div>
         </div>
       </div>
@@ -1922,12 +1966,12 @@ function renderWarningDowngradeRules() {
   const box = document.getElementById('warnDowngradeList');
   if (!box) return;
   if (!warningDowngradeRules.length) {
-    box.innerHTML = '<div style="font-size:.72rem;color:var(--text2)">No warning downgrades configured.</div>';
+    box.innerHTML = '<div class="u-warn-rule-empty">No warning downgrades configured.</div>';
     return;
   }
   box.innerHTML = warningDowngradeRules.map(r =>
-    `<div style="font-size:.72rem;color:var(--text2);margin:.2rem 0">` +
-    `<span style="color:var(--note);font-weight:600">${escHtml(r.id)}</span> — ${escHtml(r.description)}</div>`
+    `<div class="u-warn-rule-row">` +
+    `<span class="u-warn-rule-id">${escHtml(r.id)}</span> — ${escHtml(r.description)}</div>`
   ).join('');
 }
 
@@ -2004,8 +2048,8 @@ function buildDetailFull(d) {
   </div>`;
 
   // Action buttons bar
-  h += `<div id="action-bar" style="display:flex;gap:.6rem;padding:0 0 .6rem;flex-wrap:wrap">
-    <button class="btn btn-danger btn-sm" id="btn-stop" onclick="stopRun()" style="display:none">&#9632; Stop</button>
+  h += `<div id="action-bar" class="u-action-bar">
+    <button class="btn btn-danger btn-sm u-hidden" id="btn-stop" onclick="stopRun()">&#9632; Stop</button>
     <button class="btn btn-danger btn-sm" id="btn-delete" onclick="deleteRun()">&#128465; Delete Run</button>
   </div>`;
 
@@ -2031,9 +2075,9 @@ function buildDetailFull(d) {
           <option value="INFO" ${filterSev==='INFO'?'selected':''}>Info</option>
         </select>
       </label>
-      <details style="margin-left:auto;min-width:280px">
-        <summary style="cursor:pointer;font-size:.72rem;color:var(--text2)">WARN downgraded to NOTE</summary>
-        <div id="warnDowngradeList" style="padding:.35rem .2rem .2rem"></div>
+      <details class="u-details-right">
+        <summary class="u-details-summary">WARN downgraded to NOTE</summary>
+        <div id="warnDowngradeList" class="u-details-body"></div>
       </details>
     </div>
     <div class="log-output" id="logOutput">Loading…</div>
@@ -2080,12 +2124,15 @@ function updateDetailInPlace(d) {
       const cls = mc.status==='error'?'error':mc.status==='warning'?'warning':mc.status==='finished'?'finished':'running';
       mh += `<div class="mc-row">
         <div class="mc-label" title="${escHtml(mc.name)}">${escHtml(mc.name)}</div>
-        <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
+        <div class="progress-bar"><div class="progress-fill ${cls}" data-pct="${pct}"></div></div>
         <div class="progress-pct">${pct}%</div>
       </div>`;
       if (mc.current_component) mh += `<div class="mc-comp">&#9654; ${escHtml(mc.current_component)}</div>`;
     }
     mcBox.innerHTML = mh;
+    for (const fill of mcBox.querySelectorAll('.progress-fill[data-pct]')) {
+      fill.style.width = `${fill.dataset.pct}%`;
+    }
   }
 
   // Component pipeline (aggregated over all MC runs)
@@ -2177,7 +2224,7 @@ async function loadLog() {
   const el = document.getElementById('logOutput');
   if (!el) return;
   const data = await api(`/api/runs/${selectedRun}/log/${activeLogTab}?tail=500`);
-  if (data.error) { el.innerHTML = `<span style="color:var(--warn)">${escHtml(data.error)}</span>`; lastLogHtml = ''; return; }
+  if (data.error) { el.innerHTML = `<span class="u-log-warn">${escHtml(data.error)}</span>`; lastLogHtml = ''; return; }
 
   let entries = data.entries || [];
   if (filterSev !== 'ALL') entries = entries.filter(e => e.sev === filterSev);
@@ -3271,10 +3318,7 @@ async function loadAnlOutputs() {
       const icon  = f.type === 'image' ? '\uD83D\uDDBC' : f.type === 'excel' ? '\uD83D\uDCC8' : '\uD83D\uDCCE';
       const url   = `/api/analysis/file/${anlCurrentJobId}/${encodeURIComponent(f.name)}`;
       const kb    = (f.size / 1024).toFixed(1);
-      return `<a href="${url}" download="${escHtml(f.name)}"
-        style="display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .7rem;
-               background:var(--bg3);border:1px solid var(--border);border-radius:4px;
-               font-size:.75rem;color:var(--text);text-decoration:none"
+      return `<a href="${url}" download="${escHtml(f.name)}" class="u-output-chip"
         title="${escHtml(f.name)} (${kb} KB)">${icon} ${escHtml(f.name)}</a>`;
     }).join('');
 
@@ -3283,11 +3327,11 @@ async function loadAnlOutputs() {
     if (images.length) {
       gallery.innerHTML = images.map(f => {
         const url = `/api/analysis/file/${anlCurrentJobId}/${encodeURIComponent(f.name)}`;
-        return `<div class="panel" style="margin-bottom:.8rem">
+        return `<div class="panel u-panel-mb-8">
           <div class="panel-head">${escHtml(f.name)}</div>
-          <div class="panel-body" style="padding:.5rem;text-align:center">
+          <div class="panel-body u-panel-body-gallery">
             <img src="${url}" alt="${escHtml(f.name)}"
-                 style="max-width:100%;border-radius:4px;cursor:zoom-in"
+                 class="u-gallery-img"
                  onclick="window.open(this.src,'_blank')">
           </div></div>`;
       }).join('');
