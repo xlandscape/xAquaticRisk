@@ -44,6 +44,12 @@ SCENARIO_DEFAULTS = {
         "plotzoom_from": "1991-05-01",
         "plotzoom_to": "1991-05-10",
     },
+    "WetterfeldSlice": {
+        "reach_list_single": [154],
+        "reach_list_group": [131, 130, 437],
+        "plotzoom_from": "1991-05-01",
+        "plotzoom_to": "1991-05-10",
+    },
     "Muschenheim": {
         "reach_list_single": [315],
         "reach_list_group": [151, 149, 735],

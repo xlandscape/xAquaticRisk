@@ -42,7 +42,7 @@ Notes on authentication and HTTPS vs SSH:
 - Public repositories like xAquaticRisk can be cloned via HTTPS without a GitHub account.
 - If you prefer SSH and have an SSH key set up, you can clone with the SSH URL instead (`git@github.com:xlandscape/xAquaticRisk.git`).
 
-After cloning: the repository contains documentation, model components, example scenarios and parameterisation files. The default scenario (oudebeek-beek7-tdi) is included and ready to run.
+After cloning: the repository contains documentation, model components, example scenarios and parameterisation files. The default scenario (oudebeek-beek7-tdi) is included and ready to run, and WetterfeldSlice is bundled as an additional shipped scenario.
 
 Cloning steps vary based on the application being used, eg. [Sourcetree](https://support.atlassian.com/bitbucket-cloud/docs/clone-a-git-repository/) or [Visual Studio Code](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository?tabs=activity-bar). Contact Sascha Bub or Thorsten Schad in case of problems.  
 

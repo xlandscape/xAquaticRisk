@@ -2,6 +2,32 @@
 
 xAquaticRisk ships with several landscape scenarios representing different catchments and agricultural contexts. These scenarios are located in the `xAquaticRisk\scenario\` folder and can be selected via the `<LandscapeScenario>` parameter in the `.xrun` parameterisation file.
 
+# WetterfeldSlice (Germany)
+
+## Overview
+
+This landscape scenario is a subset of the Muenster landscape scenario prepared for focused xAquaticRisk analyses over a shorter hydrological period. It is shipped with xAquaticRisk as an additional bundled scenario.
+
+[GitHub repository for scenario](https://github.com/xlandscape/Scenario-WetterfeldSlice)
+
+**Compatibility**: xAquaticRisk version **2.86** and higher.
+
+## Hydrological Data
+
+The scenario contains hydrological time series for the period from 1991-01-01 to 2000-12-30. It reuses the core scenario structure expected by xAquaticRisk, including hydro, weather, geo and StreamCom input data.
+
+## Usage
+
+To use this scenario, set the following in your `.xrun` file:
+
+```xml
+<LandscapeScenario>scenario/WetterfeldSlice</LandscapeScenario>
+```
+
+Canonical example parameterisations are provided in `parameterisation/template_WetterfeldSlice_10d.xrun` and `parameterisation/template_WetterfeldSlice_10d.yaml`.
+
+---
+
 # Oudebeek-Beek7 (Belgium)
 
 ## Overview
@@ -120,6 +146,7 @@ Example parameterisation files for the Münster scenario are provided at the xAq
 
 | Scenario | Location | Stream Length | Time Series Range | Compatibility |
 |---|---|---|---|---|
+| WetterfeldSlice | Germany | Scenario subset | 1991-01-01 to 2000-12-30 | v2.86+ |
 | Oudebeek-Beek7 | Belgium (Rummen) | ~2 km branch | See scenario README | v2.86+ |
 | Oudebeek | Belgium (Rummen) | Full catchment | See scenario README | v2.85+ |
 | Grote Kemmelbeek | Belgium | V-shaped catchment | See scenario README | v2.67+ |

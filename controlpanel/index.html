@@ -903,7 +903,7 @@ a{color:var(--accent);text-decoration:none}
                    placeholder="e.g. Muenster" oninput="onAnlScenarioNameInput()">
             <datalist id="anlScenarioNameList">
               <option value="Rummen"><option value="Muenster"><option value="Oudebeek">
-              <option value="Oudebeek-Beek7"><option value="Wetter_2"><option value="Muschenheim">
+              <option value="Oudebeek-Beek7"><option value="Wetter_2"><option value="WetterfeldSlice"><option value="Muschenheim">
               <option value="Bruchenbruecken"><option value="Funne"><option value="GKB">
             </datalist>
             <div class="help-text">Optional: match a known scenario (or parent scenario for slices) to auto-populate reach IDs and zoom dates below. Leave empty to use custom values.</div>
@@ -2951,6 +2951,7 @@ const ANL_SCENARIO_DEFAULTS = {
   'Oudebeek-Beek7':  { single: '42',                  group: '',               zoomFrom: '',           zoomTo: ''           },
   'Muenster':        { single: '154',                  group: '772,575,149',   zoomFrom: '2000-05-01', zoomTo: '2000-06-01' },
   'Wetter_2':        { single: '154',                  group: '131,130,437',   zoomFrom: '1991-05-01', zoomTo: '1991-05-10' },
+  'WetterfeldSlice': { single: '154',                  group: '131,130,437',   zoomFrom: '1991-05-01', zoomTo: '1991-05-10' },
   'Muschenheim':     { single: '315,230,151,149,735',  group: '151,149,735',   zoomFrom: '',           zoomTo: ''           },
   'Bruchenbruecken': { single: '660',                  group: '652,653,4443',  zoomFrom: '1991-05-01', zoomTo: '1991-06-01' },
   'Funne':           { single: '12,22,527',            group: '99,97,167',     zoomFrom: '2010-05-01', zoomTo: '2010-06-01' },
