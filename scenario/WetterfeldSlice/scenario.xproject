@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project xmlns="urn:xLandscapeModelScenarioInfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:xLandscapeModelScenarioInfo ../../model/core/base/scenario.xsd">
+    <Name>WetterfeldSlice</Name>
+    <Version>1.00</Version>
+    <SupportedRuntimeVersions>
+        <Version variant="xAquaticRisk" number="2.86" />
+    </SupportedRuntimeVersions>
+    <Description>Subset scenario derived from the Muenster landscape scenario for focused xAquaticRisk analyses.</Description>
+    <TemporalExtent>
+        <FromDate>1991-01-01</FromDate>
+        <ToDate>2000-12-30</ToDate>
+    </TemporalExtent>
+    <Changelog>
+        <Version number="1.00" date="2026-04-16">
+            <Addition author="GitHub Copilot">Established WetterfeldSlice as a canonical shipped scenario package.</Addition>
+            <Change author="GitHub Copilot">Aligned scenario metadata with xAquaticRisk 2.86.</Change>
+            <Change author="GitHub Copilot">Standardized naming from WetterSlice13apr to WetterfeldSlice.</Change>
+        </Version>
+    </Changelog>
+    <Content>
+        <Item name="LandscapeScenario" target="geo/package.xinfo" version="1.0" />
+        <Item name="Temperature" target="weather/mars_weather.csv" version="1.0" />
+        <Item name="Hydrology" target="hydro/hydro_reaches.h5" version="1.0" doc="hydro/doc" />
+        <Item name="Catchment" target="hydro/CatchmentList.csv" version="1.0" />
+        <Item name="TimeSeries" target="hydro/TimeSeries" version="1.0" />
+        <Item name="Map" target="stream_com/map.xml" version="2.0.1" />
+        <Item name="SiteInformation" target="stream_com/site_niers_peutenweg.txt" version="2.0.10" />
+        <Item name="SpeciesParameters" target="stream_com/spec.xml" version="2.0.19" />
+        <Item name="WaterTemperature" target="stream_com/temp_Kornelimuenster.txt" version="2.0.10" />
+        <Item name="Biomass" target="stream_com/biomass.txt" version="0.1.20201127" />
+        <Item name="FocusMacroData" target="FocusMacroData" version="1.0.0" />
+    </Content>
+    <Contacts>
+        <Contact>Thorsten Schad - thorsten.schad@bayer.com</Contact>
+        <Contact>Sascha Bub - sascha.bub@gmx.de</Contact>
+    </Contacts>
+    <Acknowledgements>
+        <Acknowledgement>
+            Sebastian Multsch for hydrological, hydrographic and geospatial parts of the scenario
+        </Acknowledgement>
+        <Acknowledgement>Tido Strauß for the StreamCom parameterization</Acknowledgement>
+    </Acknowledgements>
+</Project>
