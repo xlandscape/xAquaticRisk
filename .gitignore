@@ -1,9 +1,11 @@
 .idea/
 .venv/
 analysis/.ipynb_checkpoints/
+analysis/.jupyter/
 analysis/.venv/
 analysis/python/
 controlpanel/python/
+controlpanel/server.instance.lock
 __pycache__/
 *.pyc
 scenario/
