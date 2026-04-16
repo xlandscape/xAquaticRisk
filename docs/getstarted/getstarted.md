@@ -134,7 +134,7 @@ The table below gives a brief overview. See the **[Parameterisation Reference](.
 To start xAquaticRisk using the sample scenario, **drag `template.xrun` onto `__start__.bat`**. This will start an xAquaticRisk run using the default scenario. Output of the model run can be found in the newly created `\run\<ExperimentID>\` folder.
 
 > [!IMPORTANT]  
-> **ExperimentIDs need to be unique**. xAquaticRisk will create a folder for each run using the ExperimentID defined in the `.xrun` file. The ExperimentID cannot be the same as a folder already contained in the run folder. If you want to run a simulation with the same ExperimentID you need to delete the existing folder first.
+> xAquaticRisk creates a run folder name from the `ExperimentID` and appends a date-time stamp to keep each run folder unique. You can run simulations multiple times with the same `ExperimentID` without deleting an existing run folder first.
 
 A typical simulation workflow:  
 
@@ -170,6 +170,7 @@ The **ReportingObserver** automatically generates a set of plots and tables in t
 
 The **`analysis` folder** contains Jupyter notebooks which can analyse and visualise the output of xAquaticRisk. Start `notebook.bat` to access the notebooks. Available notebooks include:
 
+- **PEC_GUTS_InteractiveAnalysis.ipynb**: generated interactive notebook aligned with the controlpanel analysis backend; regenerate it with `update_interactive_analysis_notebook.bat`  
 - **PECsw_toExcel.ipynb**: exports predicted environmental concentrations (PECs) in surface water to Excel format  
 - **LP50 Distribution.ipynb**: analyses and visualises LP50 value distributions  
 - **LP50 by Strahler Order.ipynb**: analyses LP50 values grouped by Strahler stream order  
@@ -177,3 +178,12 @@ The **`analysis` folder** contains Jupyter notebooks which can analyse and visua
 - **Example Figure StreamCom.ipynb**: generates figures from StreamCom population model output  
 - **Hydrographic Maps.ipynb**: generates maps of the hydrographic network with results  
 - **Default Reporting Elements.ipynb**: produces standard reporting elements for the simulation
+
+For users new to xAquaticRisk, the easiest way to use the new interactive analysis notebook is:
+
+1. Start `notebook.bat` from the repository root.
+2. Wait until the local Jupyter page opens in your browser.
+3. In the Jupyter file browser, open `analysis/PEC_GUTS_InteractiveAnalysis.ipynb`.
+4. Run notebook cells from top to bottom and edit only the User Input cell first.
+
+To refresh the generated notebook after analysis logic changes, run `update_interactive_analysis_notebook.bat` from the repository root. This uses the bundled model-core Python and overwrites `analysis\PEC_GUTS_InteractiveAnalysis.ipynb` in place.
