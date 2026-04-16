@@ -8,6 +8,8 @@ xAquaticRisk ships with several landscape scenarios representing different catch
 
 This landscape scenario is a subset of the Muenster landscape scenario prepared for focused xAquaticRisk analyses over a shorter hydrological period. It is shipped with xAquaticRisk as an additional bundled scenario.
 
+See the dedicated scenario page for full package details: [WetterfeldSlice](wetterfeldslice.md).
+
 [GitHub repository for scenario](https://github.com/xlandscape/Scenario-WetterfeldSlice)
 
 **Compatibility**: xAquaticRisk version **2.86** and higher.

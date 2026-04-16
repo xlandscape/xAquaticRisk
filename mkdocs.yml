@@ -53,6 +53,7 @@ nav:
     - xrun Converter: 'xrun-converter.md'
   - Scenarios:
     - Introduction: 'scenarios/scenario-intro.md'
+    - WetterfeldSlice: 'scenarios/wetterfeldslice.md'
     - Example Scenarios: 'scenarios/Example-scenarios.md'
   - Technical Reference:
     - Parameterisation: 'reference/parameterisation.md'
