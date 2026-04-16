@@ -1,0 +1,429 @@
+<xml xmlns:s='uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882'
+	xmlns:dt='uuid:C2F41010-65B3-11d1-A29F-00AA00C14882'
+	xmlns:rs='urn:schemas-microsoft-com:rowset'
+	xmlns:z='#RowsetSchema'>
+<s:Schema id='RowsetSchema'>
+	<s:ElementType name='row' content='eltOnly' rs:updatable='true'>
+		<s:AttributeType name='species' rs:number='1' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='DEB_add_my_pet' rs:basecolumn='species'>
+			<s:datatype dt:type='string' dt:maxLength='255'/>
+		</s:AttributeType>
+		<s:AttributeType name='model' rs:number='2' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='model'>
+			<s:datatype dt:type='string' dt:maxLength='255'/>
+		</s:AttributeType>
+		<s:AttributeType name='S_model' rs:number='3' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='DEB_add_my_pet' rs:basecolumn='S_model'>
+			<s:datatype dt:type='string' dt:maxLength='255'/>
+		</s:AttributeType>
+		<s:AttributeType name='z_f' rs:number='4' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='z_f'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='z_m' rs:number='5' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='z_m'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='p_Am' rs:number='6' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='p_Am'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='F_m' rs:number='7' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='F_m'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='kap_X' rs:number='8' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='kap_X'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='kap_P' rs:number='9' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='kap_P'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='v' rs:number='10' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='v'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='kap' rs:number='11' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='kap'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='kap_R' rs:number='12' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='kap_R'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='p_M' rs:number='13' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='p_M'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='k_J' rs:number='14' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='k_J'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='E_G' rs:number='15' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='E_G'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='E_Hb' rs:number='16' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='E_Hb'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='E_Hj' rs:number='17' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='E_Hj'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='E_Hp' rs:number='18' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='E_Hp'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='h_a' rs:number='19' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='h_a'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='s_G' rs:number='20' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='s_G'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='del_M' rs:number='21' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='del_M'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='T_A' rs:number='22' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='T_A'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='s_M' rs:number='23' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='s_M'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='E_0' rs:number='24' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='E_0'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='E_m' rs:number='25' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='E_m'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='w' rs:number='26' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='w'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='xi_WE' rs:number='27' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='xi_WE'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='L_b' rs:number='28' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='L_b'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='L_p' rs:number='29' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='L_p'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='L_i' rs:number='30' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='L_i'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='E_Rj' rs:number='31' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='E_Rj'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='hpe' rs:number='32' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='hpe'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='har' rs:number='33' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='har'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='hps' rs:number='34' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='hps'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='hak' rs:number='35' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='hak'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='hli' rs:number='36' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='hli'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='hph' rs:number='37' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='hph'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='hpo' rs:number='38' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='hpo'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='cup' rs:number='39' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='cup'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zeu' rs:number='40' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zeu'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zhy' rs:number='41' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zhy'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zer' rs:number='42' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zer'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zmr' rs:number='43' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zmr'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zhr' rs:number='44' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zhr'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zep' rs:number='45' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zep'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zmp' rs:number='46' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zmp'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zhp' rs:number='47' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zhp'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zli' rs:number='48' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zli'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='zpr' rs:number='49' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='zpr'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='size_m' rs:number='50' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='supplementaries' rs:basecolumn='size_m'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='size_sd' rs:number='51' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='supplementaries' rs:basecolumn='size_sd'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='adult' rs:number='52' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Tachet_autecology'
+			 rs:basecolumn='adult'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='ovoviviparity' rs:number='53' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='Tachet_autecology' rs:basecolumn='ovoviviparity'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='iteroparity' rs:number='54' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='supplementaries' rs:basecolumn='iteroparity'>
+			<s:datatype dt:type='i2' dt:maxLength='2' rs:precision='5' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='spawning_photoperiod' rs:number='55' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='supplementaries' rs:basecolumn='spawning_photoperiod'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='spawing_induction' rs:number='56' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='supplementaries' rs:basecolumn='spawing_induction'>
+			<s:datatype dt:type='i2' dt:maxLength='2' rs:precision='5' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='fgr' rs:number='57' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='fgr'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='fsh' rs:number='58' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='fsh'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='fga' rs:number='59' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='fga'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='faf' rs:number='60' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='faf'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='fpf' rs:number='61' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='fpf'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='fpr' rs:number='62' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='Perlodes_autecology'
+			 rs:basecolumn='fpr'>
+			<s:datatype dt:type='int' dt:maxLength='4' rs:precision='10' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='T_AL' rs:number='63' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='T_AL'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='T_L' rs:number='64' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_add_my_pet'
+			 rs:basecolumn='T_L'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='Include' rs:number='65' rs:maydefer='true' rs:writeunknown='true' rs:basetable='DEB_species_list'
+			 rs:basecolumn='Include'>
+			<s:datatype dt:type='boolean' dt:maxLength='2' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='hs' rs:number='66' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='supplementaries'
+			 rs:basecolumn='hs'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='sr' rs:number='67' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true' rs:basetable='supplementaries'
+			 rs:basecolumn='sr'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:AttributeType name='depth_factor' rs:number='68' rs:nullable='true' rs:maydefer='true' rs:writeunknown='true'
+			 rs:basetable='supplementaries' rs:basecolumn='depth_factor'>
+			<s:datatype dt:type='r4' dt:maxLength='4' rs:precision='7' rs:fixedlength='true'/>
+		</s:AttributeType>
+		<s:extends type='rs:rowbase'/>
+	</s:ElementType>
+</s:Schema>
+<rs:data>
+	<z:row species='Asellus aquaticus' model='std' S_model='lgp' z_f='0.28856999' z_m='0.35499999' p_Am='73.848801'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.021591' kap='0.82103997' kap_R='0.94999999' p_M='210.11501' k_J='2.0000001E-3'
+		 E_G='4442.3101' E_Hb='0.25049999' E_Hj='0.25049999' E_Hp='2.0120001' h_a='9.0450001E-8' s_G='9.9999997E-5' del_M='0.31799999'
+		 T_A='8000' s_M='1' E_0='2.16803' E_m='3420.3501' w='0.3186298' xi_WE='21.8964' L_b='6.0523398E-2' L_p='0.108988'
+		 L_i='0.28856999' E_Rj='-1' hpe='1' har='0' hps='0' hak='0' hli='2' hph='4' hpo='3' cup='7' zeu='0' zhy='0' zer='1'
+		 zmr='1' zhr='1' zep='2' zmp='2' zhp='1' zli='2' zpr='0' size_m='0.80000001' size_sd='0.18000001' adult='3' ovoviviparity='3'
+		 iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='3' fsh='3' fga='4' faf='0' fpf='0' fpr='0'
+		 T_AL='8000' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Baetis rhodani' model='hep' S_model='lgp' z_f='0.97599' z_m='0.97599' p_Am='26.9006' F_m='6.5'
+		 kap_X='0.80000001' kap_P='0.1' v='0.010914' kap='0.64640999' kap_R='0.94999999' p_M='17.816601' k_J='2.0000001E-3'
+		 E_G='4440.0698' E_Hb='4.4669998E-3' E_Hj='5.0339999' E_Hp='5.0339999' h_a='8.8499999E-3' s_G='9.9999997E-5' del_M='0.21574999'
+		 T_A='14650' s_M='10.3836' E_0='1.7193301E-2' E_m='2464.78' w='0.27710769' xi_WE='21.729099' L_b='0.0122386' L_p='0.12707999'
+		 L_i='0.23480301' E_Rj='3409.6101' hpe='0' har='0' hps='0' hak='0' hli='5' hph='5' hpo='0' cup='5' zeu='0' zhy='1'
+		 zer='2' zmr='3' zhr='2' zep='1' zmp='1' zhp='0' zli='0' zpr='0' size_m='0.2' size_sd='0.07' adult='0' ovoviviparity='0'
+		 iteroparity='0' spawning_photoperiod='0' spawing_induction='0' fgr='5' fsh='0' fga='5' faf='0' fpf='0' fpr='0'
+		 T_AL='98690' T_L='275.60001' Include='True' hs='0.001' sr='4.0000002E-3' depth_factor='2'/>
+	<z:row species='Dikerogammarus villosus' model='abj' S_model='lgp' z_f='9.5559999E-2' z_m='9.5559999E-2' p_Am='113.077'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.01339' kap='0.80299997' kap_R='0.94999999' p_M='950.20001' k_J='2.0000001E-3'
+		 E_G='4444' E_Hb='9.0549998E-2' E_Hj='6.0359998' E_Hp='6.0370002' h_a='0.0000131' s_G='9.9999997E-5' del_M='0.1913'
+		 T_A='7700' s_M='3.5341201' E_0='0.881872' E_m='8444.9102' w='0.53696936' xi_WE='22.350201' L_b='3.6761701E-2'
+		 L_p='0.12992699' L_i='0.33772001' E_Rj='-1' hpe='1' har='0' hps='0' hak='0' hli='2' hph='4' hpo='3' cup='3' zeu='0'
+		 zhy='0' zer='0' zmr='0' zhr='0' zep='4' zmp='3' zhp='3' zli='0' zpr='0' size_m='1.2' size_sd='0.2' adult='3'
+		 ovoviviparity='3' iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='1' fsh='2' fga='2' faf='0'
+		 fpf='0' fpr='3' T_AL='60520' T_L='275.39999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Ecdyonurus dispar' model='hep' S_model='sgp' z_f='1.2077' z_m='1.2077' p_Am='59.062099' F_m='6.5'
+		 kap_X='0.80000001' kap_P='0.1' v='2.1345001E-3' kap='0.40177' kap_R='0.94999999' p_M='19.648399' k_J='2.0000001E-3'
+		 E_G='4400' E_Hb='2.4115001E-3' E_Hj='6.1765999E-2' E_Hp='6.1765999E-2' h_a='2264.3999' s_G='1' del_M='0.15924001'
+		 T_A='11668' s_M='2.94363' E_0='0.0141651' E_m='27670.199' w='1.3724011' xi_WE='22.753401' L_b='7.1489401E-3'
+		 L_p='0.0210438' L_i='0.119999' E_Rj='17341.4' hpe='0' har='0' hps='0' hak='0' hli='10' hph='0' hpo='0' cup='5'
+		 zeu='0' zhy='0' zer='1' zmr='3' zhr='3' zep='2' zmp='1' zhp='0' zli='0' zpr='0' size_m='5.0000001E-2' size_sd='9.9999998E-3'
+		 adult='0' ovoviviparity='0' iteroparity='0' spawning_photoperiod='0' spawing_induction='0' fgr='5' fsh='0' fga='5'
+		 faf='0' fpf='0' fpr='0' T_AL='116680' T_L='276.14999' Include='True' hs='0.001' sr='4.0000002E-3' depth_factor='2'/>
+	<z:row species='Epeorus assimilis' model='hep' S_model='sgp' z_f='1.377' z_m='1.377' p_Am='31.18' F_m='6.5'
+		 kap_X='0.80000001' kap_P='0.1' v='7.5790002E-3' kap='0.7755' kap_R='0.94999999' p_M='17.559999' k_J='2.0000001E-3'
+		 E_G='4434' E_Hb='0.005998' E_Hj='0.1375' E_Hp='0.1375' h_a='4.9900002E-4' s_G='9.9999997E-5' del_M='0.25170001'
+		 T_A='8000' s_M='2.8359001' E_0='4.5983002E-2' E_m='4114' w='0.34877267' xi_WE='21.9928' L_b='0.0166898' L_p='4.7330499E-2'
+		 L_i='0.48884201' E_Rj='3923' hpe='0' har='0' hps='0' hak='3' hli='7' hph='0' hpo='0' cup='6' zeu='0' zhy='1'
+		 zer='4' zmr='3' zhr='2' zep='0' zmp='0' zhp='0' zli='0' zpr='0' size_m='0.76999998' size_sd='0.17' adult='0'
+		 ovoviviparity='0' iteroparity='0' spawning_photoperiod='0' spawing_induction='0' fgr='10' fsh='0' fga='0' faf='0'
+		 fpf='0' fpr='0' T_AL='59380' T_L='275.76999' Include='True' hs='0.001' sr='4.0000002E-3' depth_factor='2'/>
+	<z:row species='Gammarus fossarum' model='abj' S_model='lgp' z_f='5.8189999E-2' z_m='7.0469998E-2' p_Am='30.6514'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.01051' kap='0.88050002' kap_R='0.94999999' p_M='463.79999' k_J='2.0000001E-3'
+		 E_G='4440' E_Hb='3.9549999E-2' E_Hj='10' E_Hp='10.01' h_a='1.477E-6' s_G='9.9999997E-5' del_M='0.2289' T_A='7769'
+		 s_M='4.9224701' E_0='0.45956001' E_m='2916.3999' w='0.29673025' xi_WE='21.813999' L_b='3.5047598E-2' L_p='0.17257801'
+		 L_i='0.286439' E_Rj='-1' hpe='0' har='0' hps='3' hak='4' hli='3' hph='0' hpo='0' cup='5' zeu='1' zhy='1' zer='2'
+		 zmr='2' zhr='2' zep='1' zmp='0' zhp='0' zli='1' zpr='0' size_m='1' size_sd='0.23999999' adult='3' ovoviviparity='3'
+		 iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='1' fsh='7' fga='2' faf='0' fpf='0' fpr='0'
+		 T_AL='7769' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Gammarus pulex' model='abj' S_model='lgp' z_f='9.1430098E-2' z_m='0.110254' p_Am='48.228901'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.0174111' kap='0.90993202' kap_R='0.94999999' p_M='479.98401' k_J='2.0000001E-3'
+		 E_G='4441.71' E_Hb='4.9244501E-2' E_Hj='3.1294799' E_Hp='3.28879' h_a='2.6380701E-6' s_G='9.9999997E-5' del_M='0.221725'
+		 T_A='10000' s_M='3.36216' E_0='0.77385098' E_m='2770.02' w='0.29037061' xi_WE='21.787701' L_b='0.043205' L_p='0.147643'
+		 L_i='0.30740201' E_Rj='-1' hpe='0' har='0' hps='1' hak='1' hli='4' hph='3' hpo='0' cup='5' zeu='0' zhy='0' zer='0'
+		 zmr='4' zhr='4' zep='2' zmp='0' zhp='0' zli='0' zpr='0' size_m='1' size_sd='0.11' adult='3' ovoviviparity='3'
+		 iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='1' fsh='6' fga='2' faf='0' fpf='0' fpr='1'
+		 T_AL='10000' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Gammarus roeselii' model='abj' S_model='lgp' z_f='9.0130001E-2' z_m='0.1041' p_Am='46.9939'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.01395' kap='0.83639997' kap_R='0.94999999' p_M='436.10001' k_J='2.0000001E-3'
+		 E_G='4354' E_Hb='7.7299997E-2' E_Hj='5.5700002' E_Hp='11.15' h_a='0.00001258' s_G='9.9999997E-5' del_M='0.2631'
+		 T_A='12540' s_M='3.5536599' E_0='0.69440901' E_m='3368.74' w='0.31638765' xi_WE='21.8885' L_b='0.0401696' L_p='0.175877'
+		 L_i='0.32029101' E_Rj='-1' hpe='0' har='0' hps='0' hak='0' hli='0' hph='10' hpo='0' cup='4' zeu='0' zhy='1' zer='1'
+		 zmr='1' zhr='2' zep='2' zmp='1' zhp='0' zli='2' zpr='0' size_m='1' size_sd='0.28999999' adult='3' ovoviviparity='3'
+		 iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='1' fsh='5' fga='3' faf='0' fpf='0' fpr='1'
+		 T_AL='12540' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Habrophlebia lauta' model='hep' S_model='lgp' z_f='3.2990001E-2' z_m='3.2990001E-2' p_Am='11.6695'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='2.9889999E-3' kap='0.88260001' kap_R='0.94999999' p_M='312.20001'
+		 k_J='2.0000001E-3' E_G='4452' E_Hb='7.9269998E-4' E_Hj='0.2377' E_Hp='0.2377' h_a='0.00001801' s_G='9.9999997E-5'
+		 del_M='0.1928' T_A='8000' s_M='6.0630002' E_0='0.0108374' E_m='3904.1399' w='0.33965296' xi_WE='21.9655' L_b='0.0101061'
+		 L_p='6.1273001E-2' L_i='0.142988' E_Rj='3111' hpe='0' har='0' hps='0' hak='2' hli='8' hph='0' hpo='0' cup='4'
+		 zeu='0' zhy='0' zer='2' zmr='3' zhr='3' zep='0' zmp='0' zhp='0' zli='2' zpr='0' size_m='0.22' size_sd='2.9999999E-2'
+		 adult='0' ovoviviparity='0' iteroparity='0' spawning_photoperiod='0' spawing_induction='0' fgr='2' fsh='0' fga='8'
+		 faf='0' fpf='0' fpr='0' T_AL='100000' T_L='282' Include='True' hs='0.001' sr='0.012' depth_factor='2'/>
+	<z:row species='Lymnaea stagnalis' model='abj' S_model='sgp' z_f='0.29589999' z_m='0.29589999' p_Am='25.204901'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.01394' kap='0.68760002' kap_R='0.47499999' p_M='58.57' k_J='2.0000001E-3'
+		 E_G='3900' E_Hb='0.285' E_Hj='50.099998' E_Hp='496.60001' h_a='0.00001287' s_G='9.9999997E-5' del_M='0.43430001'
+		 T_A='8000' s_M='5.34659' E_0='1.19274' E_m='1808.1' w='0.2285679' xi_WE='21.639601' L_b='5.3027801E-2' L_p='0.58055001'
+		 L_i='1.58206' E_Rj='-1' hpe='2' har='0' hps='0' hak='0' hli='0' hph='7' hpo='1' cup='3' zeu='0' zhy='0' zer='0'
+		 zmr='0' zhr='1' zep='1' zmp='0' zhp='0' zli='8' zpr='0' size_m='2.0999999' size_sd='0.69999999' adult='2' ovoviviparity='0'
+		 iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='4' fsh='4' fga='0' faf='0' fpf='0' fpr='0'
+		 T_AL='8000' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Planorbis planorbis' model='abj' S_model='sgp' z_f='0.1051' z_m='0.1051' p_Am='83.5802' F_m='6.5'
+		 kap_X='0.80000001' kap_P='0.1' v='0.0173' kap='0.96310002' kap_R='0.47499999' p_M='765.90002' k_J='2.0000001E-3'
+		 E_G='3919' E_Hb='5.0260001E-3' E_Hj='1.036' E_Hp='25.129999' h_a='2.8060001E-6' s_G='9.9999997E-5' del_M='0.4941'
+		 T_A='8000' s_M='5.38484' E_0='0.25426701' E_m='4831.23' w='0.35993955' xi_WE='22.140699' L_b='0.0289775' L_p='0.37000301'
+		 L_i='0.56594598' E_Rj='-1' hpe='3' har='0' hps='0' hak='0' hli='0' hph='5' hpo='2' cup='3' zeu='0' zhy='0' zer='0'
+		 zmr='0' zhr='0' zep='2' zmp='2' zhp='2' zli='4' zpr='0' size_m='0.62' size_sd='0.19' adult='3' ovoviviparity='0'
+		 iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='6' fsh='2' fga='0' faf='0' fpf='0' fpr='0'
+		 T_AL='8000' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Potamopyrgus antipodarum' model='abj' S_model='sgp' z_f='6.1919998E-2' z_m='6.1919998E-2' p_Am='2.3706801'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='3.9059999E-3' kap='0.98729998' kap_R='0.94999999' p_M='37.799999'
+		 k_J='2.0000001E-3' E_G='3913' E_Hb='0.0002022' E_Hj='3.2760002E-2' E_Hp='0.0447' h_a='2.873E-8' s_G='9.9999997E-5'
+		 del_M='0.44029999' T_A='8000' s_M='5.1171398' E_0='1.8471001E-2' E_m='606.93402' w='0.1763742' xi_WE='21.233299'
+		 L_b='0.0155814' L_p='8.8301003E-2' L_i='0.31685299' E_Rj='-1' hpe='3' har='0' hps='3' hak='0' hli='1' hph='2'
+		 hpo='1' cup='7' zeu='0' zhy='1' zer='1' zmr='1' zhr='2' zep='2' zmp='1' zhp='1' zli='1' zpr='0' size_m='2.0999999'
+		 size_sd='0.69999999' adult='3' ovoviviparity='3' iteroparity='1' spawning_photoperiod='0' spawing_induction='0'
+		 fgr='2' fsh='2' fga='3' faf='0' fpf='0' fpr='0' T_AL='8000' T_L='273.14999' Include='True' hs='0.001' sr='-1'
+		 depth_factor='2'/>
+	<z:row species='Rhithrogena semicolorata' model='hep' S_model='lgp' z_f='0.1278' z_m='0.1278' p_Am='129.744'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.001841' kap='0.51289999' kap_R='0.94999999' p_M='520.70001' k_J='2.0000001E-3'
+		 E_G='4443' E_Hb='0.001376' E_Hj='0.77899998' E_Hp='0.77899998' h_a='6.0139998E-4' s_G='1' del_M='0.1127' T_A='11720'
+		 s_M='7.99827' E_0='0.0202458' E_m='70474.5' w='3.2324381' xi_WE='22.9025' L_b='6.2741302E-3' L_p='5.0182201E-2'
+		 L_i='0.13518301' E_Rj='15230' hpe='0' har='0' hps='0' hak='0' hli='10' hph='0' hpo='0' cup='6' zeu='0' zhy='1'
+		 zer='2' zmr='3' zhr='3' zep='1' zmp='0' zhp='0' zli='0' zpr='0' size_m='0.38999999' size_sd='4.5000002E-2' adult='0'
+		 ovoviviparity='0' iteroparity='0' spawning_photoperiod='0' spawing_induction='0' fgr='10' fsh='0' fga='0' faf='0'
+		 fpf='0' fpr='0' T_AL='121200' T_L='278.10001' Include='True' hs='0.001' sr='0.003' depth_factor='2'/>
+	<z:row species='Sphaerium corneum' model='std' S_model='sgp' z_f='1.1098' z_m='1.1098' p_Am='35.765701' F_m='6.5'
+		 kap_X='0.80000001' kap_P='0.1' v='0.024751' kap='0.99999601' kap_R='0.94999999' p_M='32.227001' k_J='2.0000001E-3'
+		 E_G='2348.8201' E_Hb='6.184E-10' E_Hj='6.184E-10' E_Hp='5.3399999E-4' h_a='2.5590001E-7' s_G='9.9999997E-5' del_M='0.74673998'
+		 T_A='8000' s_M='1' E_0='0.00024346' E_m='1445.02' w='0.15279263' xi_WE='21.7803' L_b='4.0024002E-3' L_p='0.34077299'
+		 L_i='1.1098' E_Rj='-1' hpe='3' har='0' hps='0' hak='0' hli='2' hph='3' hpo='2' cup='3' zeu='0' zhy='0' zer='0'
+		 zmr='1' zhr='2' zep='2' zmp='3' zhp='0' zli='2' zpr='0' size_m='0.41999999' size_sd='0.17' adult='3' ovoviviparity='3'
+		 iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='0' fsh='0' fga='0' faf='10' fpf='0' fpr='0'
+		 T_AL='8000' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Stagnicola palustris' model='abj' S_model='sgp' z_f='7.4369997E-2' z_m='7.4369997E-2' p_Am='85.5849'
+		 F_m='6.5' kap_X='0.80000001' kap_P='0.1' v='0.01722' kap='0.89590001' kap_R='0.47499999' p_M='1031' k_J='2.0000001E-3'
+		 E_G='3914' E_Hb='1.6279999E-2' E_Hj='6.1939998' E_Hp='115.5' h_a='3.907E-7' s_G='9.9999997E-5' del_M='0.35960001'
+		 T_A='8000' s_M='6.3147702' E_0='0.27320501' E_m='4970.0801' w='0.36597294' xi_WE='22.1551' L_b='2.8596001E-2'
+		 L_p='0.373779' L_i='0.46962899' E_Rj='-1' hpe='2' har='0' hps='0' hak='0' hli='0' hph='6' hpo='2' cup='2' zeu='0'
+		 zhy='0' zer='0' zmr='0' zhr='0' zep='0' zmp='0' zhp='0' zli='8' zpr='2' size_m='0.89999998' size_sd='0.23' adult='2'
+		 ovoviviparity='0' iteroparity='1' spawning_photoperiod='0' spawing_induction='0' fgr='10' fsh='0' fga='0' faf='0'
+		 fpf='0' fpr='0' T_AL='8000' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Gasterosteus aculeatus' model='std' S_model='lgp' z_f='1.651' z_m='1.651' p_Am='194.71899' F_m='6.5'
+		 kap_X='0.80000001' kap_P='0.1' v='7.2619997E-2' kap='0.98439997' kap_R='0.94999999' p_M='116.1' k_J='2.0000001E-3'
+		 E_G='5224' E_Hb='0.1849' E_Hj='0.1849' E_Hp='78.790001' h_a='3.8870001E-9' s_G='9.9999997E-5' del_M='0.19859999'
+		 T_A='8000' s_M='1' E_0='17.621599' E_m='2681.3401' w='0.31651685' xi_WE='21.690599' L_b='0.12867799' L_p='0.80970198'
+		 L_i='1.651' E_Rj='-1' hpe='1' har='1' hps='2' hak='2' hli='1' hph='2' hpo='1' cup='7' zeu='0' zhy='0' zer='0'
+		 zmr='0' zhr='1' zep='2' zmp='3' zhp='3' zli='2' zpr='0' size_m='5.3000002' size_sd='0.25' adult='3' ovoviviparity='0'
+		 iteroparity='1' spawning_photoperiod='14.8' spawing_induction='1' fgr='0' fsh='0' fga='0' faf='0' fpf='0' fpr='10'
+		 T_AL='8000' T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Perca fluviatilis' model='abj' S_model='lgp' z_f='13.2675' z_m='13.2675' p_Am='248.547' F_m='6.5'
+		 kap_X='0.80000001' kap_P='0.1' v='0.0566235' kap='0.873276' kap_R='0.94999999' p_M='16.359501' k_J='2.1118999E-3'
+		 E_G='5230.73' E_Hb='0.424142' E_Hj='0.424142' E_Hp='30989.801' h_a='1.41676E-8' s_G='9.9999997E-5' del_M='0.21772701'
+		 T_A='8000' s_M='1' E_0='5.8076' E_m='4389.4702' w='0.3907418' xi_WE='21.9417' L_b='8.2317904E-2' L_p='3.32687'
+		 L_i='13.2675' E_Rj='-1' hpe='1' har='1' hps='1' hak='1' hli='2' hph='3' hpo='1' cup='7' zeu='0' zhy='0' zer='0'
+		 zmr='0' zhr='0' zep='2' zmp='3' zhp='3' zli='2' zpr='0' size_m='9' size_sd='2' adult='3' ovoviviparity='0' iteroparity='1'
+		 spawning_photoperiod='10' spawing_induction='1' fgr='0' fsh='0' fga='0' faf='0' fpf='0' fpr='10' T_AL='8000'
+		 T_L='273.14999' Include='True' hs='0.001' sr='-1' depth_factor='2'/>
+	<z:row species='Salmo trutta' model='abj' S_model='lgp' z_f='11.05' z_m='11.05' p_Am='1320.27' F_m='6.5' kap_X='0.80000001'
+		 kap_P='0.1' v='0.1648' kap='0.96499997' kap_R='0.94999999' p_M='115.3' k_J='2.0000001E-3' E_G='5229' E_Hb='5.6009998'
+		 E_Hj='22.15' E_Hp='54470' h_a='6.2349999E-21' s_G='8' del_M='0.15710001' T_A='15690' s_M='1.57151' E_0='388.72601'
+		 E_m='8011.3799' w='0.54813164' xi_WE='22.249201' L_b='0.30535799' L_p='5.5400701' L_i='17.3652' E_Rj='-1' hpe='0'
+		 har='0' hps='1' hak='3' hli='6' hph='0' hpo='0' cup='5' zeu='0' zhy='0' zer='3' zmr='3' zhr='1' zep='1' zmp='0'
+		 zhp='0' zli='1' zpr='1' size_m='12' size_sd='7' adult='3' ovoviviparity='0' iteroparity='1' spawning_photoperiod='9.6999998'
+		 spawing_induction='2' fgr='0' fsh='0' fga='0' faf='0' fpf='0' fpr='10' T_AL='15690' T_L='273.14999' Include='True'
+		 hs='0.001' sr='-1' depth_factor='2'/>
+</rs:data>
+</xml>

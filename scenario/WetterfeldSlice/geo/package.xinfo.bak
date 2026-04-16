@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<landscape_package>
+  <meta>
+    <version>1.0</version>
+    <target_type>222</target_type>
+    <habitat_types>411, 412, 422</habitat_types>
+  </meta>
+  <base>
+    <base_landscape_geometries>LULC.shp</base_landscape_geometries>
+    <feature_id_attribute>ALVID</feature_id_attribute>
+    <feature_type_attribute>LULCTypeId</feature_type_attribute>
+    <additional_attributes>
+      <reach_id>key</reach_id>
+      <PARFILE>PARF</PARFILE>
+      <METFILE>METF</METFILE>
+      <RAINFALLFILE>RAINF</RAINFALLFILE>
+      <DRAINCON>DRAINCON</DRAINCON>
+    </additional_attributes>
+  </base>
+  <supplementary>
+    <hydrography>Reachlist_shp.shp</hydrography>
+  </supplementary>
+  <supplementary_shapefiles>
+    <hydrography>
+      <file_name>Reachlist_shp.shp</file_name>
+      <attributes>
+        <id column="key"/>
+        <strahler_order column="strahler"/>
+        <downstream column="downstream"/>
+        <bottom_width column="btmwidth" unit="m"/>
+        <bank_slope column="bankslope" unit="1"/>
+        <organic_content column="oc" unit="g/g"/>
+        <bulk_density column="dens" unit="g/cm³"/>
+        <porosity column="porosity" unit="m³/m³"/>
+      </attributes>
+    </hydrography>
+  </supplementary_shapefiles>
+</landscape_package>
