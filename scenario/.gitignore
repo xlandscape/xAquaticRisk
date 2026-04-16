@@ -1,0 +1,7 @@
+# Ignore all scenarios except oudebeek-beek7-tdi
+*
+!.gitignore
+!oudebeek-beek7-tdi/
+!oudebeek-beek7-tdi/**
+!WetterfeldSlice/
+!WetterfeldSlice/**
