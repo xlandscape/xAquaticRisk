@@ -21,7 +21,8 @@ if not exist "%CONTROLPANEL_PY%" (
             echo Expected bundled runtime: %~dp0controlpanel\python\python.exe
             echo Dev fallback was enabled, but .venv\Scripts\python.exe was not found either.
             echo.
-            echo Run setup_controlpanel_python.bat to provision the bundled runtime.
+            echo This working tree is incomplete for xcopy use.
+            echo Maintainers can rebuild the bundled runtime with setup_controlpanel_python.bat.
             pause
             exit /b 1
         )
@@ -29,7 +30,8 @@ if not exist "%CONTROLPANEL_PY%" (
         echo ERROR: Control Panel runtime not found.
         echo Expected bundled runtime: %~dp0controlpanel\python\python.exe
         echo.
-        echo Run setup_controlpanel_python.bat to provision the bundled runtime.
+        echo This working tree is expected to ship with controlpanel\python already present.
+        echo If you are maintaining the repository, rebuild it with setup_controlpanel_python.bat.
         echo For development-only fallback to .venv, set XAQ_ALLOW_DEV_PYTHON=1 explicitly.
         pause
         exit /b 1

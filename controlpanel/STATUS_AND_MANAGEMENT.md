@@ -8,6 +8,21 @@ Available at: `GET http://localhost:PORT/api/controlpanel/status` where PORT is 
 
 **Advantages:** Works reliably, no dependencies, returns JSON.
 
+## Self-Contained Runtime Health
+
+Available at: `GET http://localhost:PORT/api/runtime/self-contained-status`
+
+Use this endpoint to verify that the copied working tree still contains all
+bundled runtimes required for full controlpanel functionality.
+
+Response highlights:
+
+- `status`: `ready` or `incomplete`
+- `warnings`: list of deployment/runtime issues
+- `controlpanel`: bundled controlpanel runtime checks
+- `analysis`: bundled analysis runtime checks and required package checks
+- `model_runtime_present`: whether model-core runtime is present for `__start__.bat`
+
 ### Quick checks via PowerShell
 
 ```powershell

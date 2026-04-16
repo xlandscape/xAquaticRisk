@@ -1,6 +1,6 @@
 param(
     [string]$TargetRef = "HEAD",
-    [switch]$StrictRuntime = $true
+    [bool]$StrictRuntime = $true
 )
 
 Set-StrictMode -Version Latest
@@ -95,6 +95,33 @@ if (Test-Path -LiteralPath $startBatPath) {
         Add-Result -Name "launcher.__start__.bat" -Status "PASS" -Details "Starter uses repo-local runtime path."
     } else {
         Add-Result -Name "launcher.__start__.bat" -Status "FAIL" -Details "Starter may depend on system Python or non-portable path." -Remediation "Use a %~dp0-rooted path to model/core/bin/python-*-amd64/python.exe."
+    }
+}
+
+$gitignorePath = Join-Path $repoRoot ".gitignore"
+if (Test-Path -LiteralPath $gitignorePath) {
+    $gitignoreLines = Get-Content -LiteralPath $gitignorePath | ForEach-Object { $_.Trim() }
+    $runtimeIgnoreHits = @()
+    foreach ($pattern in @("analysis/python/", "controlpanel/python/")) {
+        if ($gitignoreLines -contains $pattern) {
+            $runtimeIgnoreHits += $pattern
+        }
+    }
+    if ($runtimeIgnoreHits.Count -gt 0) {
+        Add-Result -Name "repo.gitignore-runtimes" -Status "FAIL" -Details ("Bundled runtimes are ignored by .gitignore: " + ($runtimeIgnoreHits -join ", ")) -Remediation "Track the vendored controlpanel and analysis runtimes in the working tree; only ignore cache artifacts inside them."
+    } else {
+        Add-Result -Name "repo.gitignore-runtimes" -Status "PASS" -Details "Bundled controlpanel and analysis runtimes are not excluded by .gitignore."
+    }
+}
+
+$readmePath = Join-Path $repoRoot "README.md"
+if (Test-Path -LiteralPath $readmePath) {
+    $readme = Get-Content -LiteralPath $readmePath -Raw
+    $requiresTargetSetup = $readme -match 'initialize the component-local runtimes once by running `setup_all_runtimes\.bat`'
+    if ($requiresTargetSetup) {
+        Add-Result -Name "docs.runtime-contract" -Status "FAIL" -Details "README still describes setup_all_runtimes.bat as part of normal target-machine setup." -Remediation "Document copied working trees as already self-contained; keep setup scripts as maintainer rebuild tools only."
+    } else {
+        Add-Result -Name "docs.runtime-contract" -Status "PASS" -Details "README describes bundled runtimes as part of the copied working tree."
     }
 }
 

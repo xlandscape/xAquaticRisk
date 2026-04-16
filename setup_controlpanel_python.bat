@@ -7,6 +7,10 @@ REM
 REM  Creates a dedicated embedded Python runtime for controlpanel\server.py in
 REM  controlpanel\python\ so the Control Panel has no dependency on model-core
 REM  or system Python.
+REM
+REM  Maintainer utility: rebuild or repair the vendored runtime that is checked
+REM  into the working tree for offline xcopy use. End users should receive the
+REM  controlpanel\python\ folder already populated.
 REM -----------------------------------------------------------------------------
 
 set PYTHON_VERSION=3.9.7
@@ -20,6 +24,7 @@ echo ============================================================
 echo  xAquaticRisk - Control Panel Python Setup
 echo  Python  : %PYTHON_VERSION% embeddable package
 echo  Target  : %PYTHON_DIR%
+echo  Purpose : maintainer rebuild of bundled runtime
 echo ============================================================
 echo.
 
@@ -121,7 +126,7 @@ echo  Setup complete!
 echo  Control Panel runtime is ready at:
 echo    %PYTHON_DIR%
 echo.
-echo  Important: include the entire controlpanel\python\ folder when
-echo  copying or packaging xAquaticRisk for xcopy deployment.
+echo  Commit or package the entire controlpanel\python\ folder together
+echo  with xAquaticRisk so copied working trees stay offline-ready.
 echo ============================================================
 pause

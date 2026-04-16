@@ -2,8 +2,11 @@
 setlocal
 
 echo ============================================================
-echo  xAquaticRisk - Bootstrap All Component Runtimes
+echo  xAquaticRisk - Rebuild Bundled Component Runtimes
 echo ============================================================
+echo  Maintainer utility. This refreshes the vendored runtimes that are
+echo  expected to already exist in a copied working tree.
+echo.
 echo  This runs:
 echo    1) setup_controlpanel_python.bat
 echo    2) setup_analysis_python.bat
@@ -18,8 +21,8 @@ if errorlevel 1 goto :failed
 echo.
 echo ============================================================
 echo  All component runtimes are ready.
-echo  Keep controlpanel\python\ and analysis\python\
-echo  inside the copied model folder for xcopy deployment.
+echo  Keep controlpanel\python\ and analysis\python\ inside the
+echo  committed or packaged xAquaticRisk working tree.
 echo ============================================================
 pause
 exit /b 0

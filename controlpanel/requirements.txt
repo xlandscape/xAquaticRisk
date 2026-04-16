@@ -1,9 +1,9 @@
 # controlpanel/requirements.txt
 # Packages installed into the embedded controlpanel runtime under
 # controlpanel\python for self-contained xcopy deployment.
+# Keep this list limited to dependencies needed by shipped controlpanel flows.
 
 geopandas
 h5py==3.11.0
 pandas==2.2.3
 pyogrio
-wxPython

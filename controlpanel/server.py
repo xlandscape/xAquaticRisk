@@ -357,7 +357,8 @@ def _analysis_runtime_error() -> Optional[str]:
     if not analysis_python:
         return (
             "Analysis runtime is missing. Expected embedded Python at "
-            f"{_embedded_analysis_py}. Run setup_analysis_python.bat before distributing or copying the model folder."
+            f"{_embedded_analysis_py}. This copied working tree is incomplete for full controlpanel functionality. "
+            "Maintainers can rebuild the bundled analysis runtime with setup_analysis_python.bat."
         )
 
     probe = [
@@ -389,7 +390,8 @@ def _analysis_runtime_error() -> Optional[str]:
     if missing:
         return (
             "Analysis runtime is incomplete: missing Python packages "
-            f"[{missing}]. Run setup_analysis_python.bat and include analysis/python in the copied folder."
+            f"[{missing}]. This copied working tree is incomplete for full controlpanel functionality. "
+            "Maintainers can rebuild the bundled analysis runtime with setup_analysis_python.bat."
         )
     return None
 
@@ -433,6 +435,58 @@ def check_analysis_portable():
     except Exception as e:
         result["details"] = f"Error checking analysis/python: {e}"
     return result
+
+
+def check_controlpanel_portable():
+    """Check if controlpanel runtime is bundled and currently in use."""
+    expected_python = os.path.abspath(os.path.join(BASE_DIR, "controlpanel", "python", "python.exe"))
+    current_python = os.path.abspath(sys.executable)
+    expected_exists = os.path.isfile(expected_python)
+    uses_bundled = expected_exists and os.path.normcase(current_python) == os.path.normcase(expected_python)
+
+    result = {
+        "ready": bool(expected_exists and uses_bundled),
+        "missing_python": not expected_exists,
+        "using_bundled_runtime": uses_bundled,
+        "expected_python": expected_python,
+        "current_python": current_python,
+        "details": "",
+    }
+
+    if not expected_exists:
+        result["details"] = "controlpanel/python/python.exe not found. Copied working tree is incomplete."
+    elif not uses_bundled:
+        result["details"] = (
+            "Controlpanel is not running from bundled runtime. "
+            "This is development mode and not xcopy deployment mode."
+        )
+    else:
+        result["details"] = "Controlpanel is running from bundled runtime."
+
+    return result
+
+
+def get_self_contained_runtime_status() -> dict:
+    """Return deployment status for bundled runtimes required by controlpanel."""
+    analysis = check_analysis_portable()
+    controlpanel = check_controlpanel_portable()
+    model_runtime = os.path.isfile(os.path.join(BASE_DIR, "model", "core", "bin", "python-3.9.7-amd64", "python.exe"))
+
+    warnings = []
+    if not controlpanel.get("ready"):
+        warnings.append(controlpanel.get("details") or "Controlpanel runtime is not ready.")
+    if not analysis.get("ready"):
+        warnings.append(analysis.get("details") or "Analysis runtime is not ready.")
+    if not model_runtime:
+        warnings.append("model/core/bin/python-3.9.7-amd64/python.exe not found. Simulation launch via __start__.bat may fail.")
+
+    return {
+        "status": "ready" if not warnings else "incomplete",
+        "warnings": warnings,
+        "controlpanel": controlpanel,
+        "analysis": analysis,
+        "model_runtime_present": model_runtime,
+    }
 
 
 def get_analysis_python():
@@ -3539,6 +3593,10 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         if path.rstrip("/") == "/api/analysis-portable-check":
             return self._json_response(check_analysis_portable())
 
+        if path.rstrip("/") == "/api/runtime/self-contained-status":
+            payload = get_self_contained_runtime_status()
+            return self._json_response(payload, 200 if payload.get("status") == "ready" else 503)
+
         # Server status endpoint (no auth required, useful for monitoring and debugging)
         if path == "/api/controlpanel/status":
             return self._json_response(_get_server_status_info())
@@ -4173,6 +4231,7 @@ def main():
 
     try:
         server = HTTPServer(("0.0.0.0", args.port), ControlPanelHandler)
+        runtime_status = get_self_contained_runtime_status()
         print("=" * 60)
         print("  xAquaticRisk Control Panel")
         print("=" * 60)
@@ -4181,6 +4240,10 @@ def main():
         print(f"  Parameterisation : {OUTPUT_DIR}")
         print(f"  Run folder       : {ControlPanelHandler.run_root}")
         print(f"  Scenarios        : {os.path.join(BASE_DIR, 'scenario')}")
+        print(f"  Runtime status   : {runtime_status.get('status')}")
+        if runtime_status.get("warnings"):
+            for warning in runtime_status["warnings"]:
+                print(f"  Runtime warning  : {warning}")
         print("=" * 60)
         print("  Press Ctrl+C to stop.\n")
         try:

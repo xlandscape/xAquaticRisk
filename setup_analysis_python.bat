@@ -8,8 +8,9 @@ REM  Creates a dedicated embedded Python runtime for analysis in
 REM  analysis\python\ and installs the packages required by
 REM  run_basic_analysis.py into that runtime.
 REM
-REM  After this script completes, the analysis step is fully self-contained:
-REM  no system Python or installed software is needed on the target machine.
+REM  Maintainer utility: rebuild or repair the vendored runtime that is checked
+REM  into the working tree for offline xcopy use. End users should receive the
+REM  analysis\python\ folder already populated.
 REM
 REM  To reinstall or upgrade, delete  analysis\python\  and re-run this script.
 REM ─────────────────────────────────────────────────────────────────────────────
@@ -25,6 +26,7 @@ echo ============================================================
 echo  xAquaticRisk – Analysis Python Setup
 echo  Python  : %PYTHON_VERSION% embeddable package
 echo  Target  : %PYTHON_DIR%
+echo  Purpose : maintainer rebuild of bundled runtime
 echo ============================================================
 echo.
 
@@ -130,7 +132,7 @@ echo  Setup complete!
 echo  Analysis Python runtime is ready at:
 echo    %PYTHON_DIR%
 echo.
-echo  Important: include the entire analysis\python\ folder when copying
-echo  or packaging xAquaticRisk for xcopy deployment.
+echo  Commit or package the entire analysis\python\ folder together with
+echo  xAquaticRisk so copied working trees stay offline-ready.
 echo ============================================================
 pause
