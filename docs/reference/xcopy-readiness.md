@@ -176,4 +176,5 @@ Run without creating a zip artifact:
 
 - [Getting Started](../getstarted/getstarted.md)
 - [Control Panel](controlpanel.md)
+- [Runtime Config Path Guard](dev/runtime-config-path-guard.md)
 - [Troubleshooting](troubleshooting.md)

@@ -66,6 +66,7 @@ nav:
     - Troubleshooting: 'reference/troubleshooting.md'
     - Developers:
       - XCopy Readiness: 'reference/xcopy-readiness.md'
+      - Runtime Config Path Guard: 'reference/dev/runtime-config-path-guard.md'
       - document.py: 'reference/dev/document-py.md'
   - Glossary: 'reference/glossary.md'
   - xLandscape: 

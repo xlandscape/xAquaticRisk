@@ -32,6 +32,10 @@ No `run` folder exists in the xAquaticRisk directory. This usually occurs the fi
 
 - Create a new folder named `run` in the root directory of xAquaticRisk. It should be at the same level as the `model` and `scenario` folders.
 
+## Portability / Absolute Path Errors
+
+If errors reference developer-specific paths (for example `C:\LocalWork\xAquaticRisk\...`), see [Runtime Config Path Guard](dev/runtime-config-path-guard.md).
+
 ## Scenario Not Found
 
 ``` { .yaml .no-copy }

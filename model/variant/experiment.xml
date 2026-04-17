@@ -132,7 +132,7 @@
         </Observer> -->
         <Observer module="AnalysisObserver" class="AnalysisObserver">
             <Data>$(_EXP_BASE_DIR_)\$(ExperimentID)\log\experiment.log</Data>
-            <Script>C:\LocalWork\xAquaticRisk\analysis\profiling.R</Script>
+            <Script>$(_X3DIR_)/../../analysis/profiling.R</Script>
             <Output_Folder>$(_EXP_BASE_DIR_)\$(ExperimentID)\log\profile</Output_Folder>
         </Observer>
     </Observers>
