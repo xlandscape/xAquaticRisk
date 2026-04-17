@@ -785,6 +785,45 @@ def _resolve_scenario_path(scenario_path: str) -> tuple[str, str]:
     return rel, abs_path
 
 
+def _resolve_run_metadata_scenario_path(scenario_path: str, run_dir: Optional[str] = None) -> tuple[str, str]:
+    raw = (scenario_path or "").strip()
+    if not raw:
+        raise FileNotFoundError("Scenario path is missing in run metadata")
+
+    candidates = []
+
+    def _add_candidate(path_value: str):
+        abs_value = os.path.abspath(path_value)
+        if abs_value not in candidates:
+            candidates.append(abs_value)
+
+    if os.path.isabs(raw):
+        _add_candidate(raw)
+    else:
+        if run_dir:
+            _add_candidate(os.path.join(run_dir, raw))
+        _add_candidate(os.path.join(BASE_DIR, raw))
+        normalized = raw.replace("\\", "/").lstrip("/")
+        if normalized.startswith("./"):
+            normalized = normalized[2:]
+        if normalized.startswith("scenario/"):
+            _add_candidate(os.path.join(BASE_DIR, normalized))
+        else:
+            _add_candidate(os.path.join(SCENARIO_DIR, normalized))
+
+    inside_scenario_dir = False
+    for candidate in candidates:
+        if candidate == SCENARIO_DIR or candidate.startswith(SCENARIO_DIR + os.sep):
+            inside_scenario_dir = True
+            if os.path.isdir(candidate):
+                rel = os.path.relpath(candidate, BASE_DIR).replace("\\", "/")
+                return rel, candidate
+
+    if inside_scenario_dir:
+        raise FileNotFoundError(f"Scenario folder not found: {raw}")
+    raise ValueError("Invalid scenario path")
+
+
 def _validate_subset_scenario_name(name: str) -> str:
     clean = (name or "").strip()
     if not clean:
@@ -2395,14 +2434,7 @@ def _resolve_mc_store_paths(run_root, experiment, mc_run):
         or params.get("Scenario/Project")
         or ""
     ).strip()
-    if not scenario_rel:
-        raise FileNotFoundError("Scenario path is missing in run metadata")
-
-    scenario_path = os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
-    if not scenario_path.startswith(BASE_DIR + os.sep):
-        raise ValueError("Invalid scenario path")
-    if not os.path.isdir(scenario_path):
-        raise FileNotFoundError(f"Scenario folder not found: {scenario_path}")
+    scenario_rel, scenario_path = _resolve_run_metadata_scenario_path(scenario_rel, run_path)
 
     return {
         "run_path": run_path,
@@ -3188,8 +3220,11 @@ def list_map_explorer_runs(run_root):
         experiment = entry["experiment"]
         run_path = os.path.join(run_root, experiment)
         params = _parse_user_xml(run_path)
-        scenario_rel = (entry.get("landscape_scenario") or "").strip()
-        scenario_path = os.path.abspath(os.path.join(BASE_DIR, scenario_rel)) if scenario_rel else ""
+        scenario_rel_raw = (entry.get("landscape_scenario") or "").strip()
+        try:
+            scenario_rel, scenario_path = _resolve_run_metadata_scenario_path(scenario_rel_raw, run_path)
+        except (FileNotFoundError, ValueError):
+            scenario_rel, scenario_path = scenario_rel_raw, ""
         shapefile = _find_reach_shapefile(scenario_path) if scenario_path and os.path.isdir(scenario_path) else None
         valid_mcs = [mc for mc in entry.get("mcs", []) if mc.get("has_store")]
         if not valid_mcs:
