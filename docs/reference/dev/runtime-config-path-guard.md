@@ -65,7 +65,7 @@ Replace machine-specific absolute paths with repository-relative placeholders al
 Example fix:
 
 1. Replace `C:\LocalWork\xAquaticRisk\analysis\profiling.R`
-2. With `$(_X3DIR_)/../../analysis/profiling.R`
+2. With `$(_X3DIR_)/../../../analysis/profiling.R`
 
 ## Related
 
