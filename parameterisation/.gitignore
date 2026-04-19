@@ -3,3 +3,7 @@
 !.gitignore
 !template.xrun
 !template.yaml
+!template_beek7.xrun
+!template_beek7.yaml
+!template_WetterfeldSlice_10d.xrun
+!template_WetterfeldSlice_10d.yaml
