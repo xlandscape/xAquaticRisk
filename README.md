@@ -74,7 +74,14 @@ xAquaticRisk requires a 64-bit Windows to run.
    `template.xrun` contains an in-line documentation to assist you in deciding for valid parameter values.
 2. Save the modified `template.xrun` under a different name in the same directory, using a `.xrun` extension.
 3. Drag and drop the saved parameterization file onto the `__start__.bat`.
-4. `__start__.bat` runs a bundled-runtime preflight (`check_bundled_runtime_blocks.ps1`) and aborts early if blocked binaries are detected, including `Unblock-File` remediation commands.
+4. `__start__.bat` uses bundled-runtime preflight auto mode:
+  - By default (`XAQR_PREFLIGHT_MODE=auto`), it runs `check_bundled_runtime_blocks.ps1` once and writes `.runtime_preflight.ok` in the repository root.
+  - On later starts, if `.runtime_preflight.ok` exists, preflight is skipped.
+  - If preflight fails, startup aborts early and prints `Unblock-File` remediation commands.
+  - Optional overrides:
+    - `set XAQR_PREFLIGHT_MODE=always` to force preflight on every start.
+    - `set XAQR_PREFLIGHT_MODE=never` to skip preflight.
+  - To trigger auto-preflight again, delete `.runtime_preflight.ok`.
 5. Start the control panel with `controlpanel.bat`. It uses the bundled `controlpanel\python\python.exe` runtime and the bundled analysis runtime for analysis-backed features.
 6. Check the console window occasionally for successful conclusion of the simulation or for errors. Logfiles can be
    found under `\run\<name-of-your-experiment>\log`.

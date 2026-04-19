@@ -144,6 +144,36 @@ A typical simulation workflow:
 4. Monitor progress in the console window or the Control Panel. Log files are written to `\run\<ExperimentID>\log`.  
 5. When the run completes, find results in `\run\<ExperimentID>\reporting` and analysis outputs.  
 
+### Runtime Preflight: Practical Usage
+
+`__start__.bat` supports bundled-runtime preflight modes via `XAQR_PREFLIGHT_MODE`.
+
+- Default (`auto`): run preflight once on a new machine/repository copy, then skip it on later starts.
+- `always`: run preflight before every simulation start.
+- `never`: skip preflight.
+
+After a successful auto preflight, `__start__.bat` writes `.runtime_preflight.ok` to the repository root.
+If that marker exists, auto mode skips preflight.
+
+Common practical commands in `cmd.exe`:
+
+```bat
+set XAQR_PREFLIGHT_MODE=auto
+__start__.bat template.xrun
+```
+
+```bat
+set XAQR_PREFLIGHT_MODE=always
+__start__.bat template.xrun
+```
+
+```bat
+set XAQR_PREFLIGHT_MODE=never
+__start__.bat template.xrun
+```
+
+To trigger the one-time auto preflight again, delete `.runtime_preflight.ok` in the repository root.
+
 We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor, real-time run monitor, and analysis tools in a single browser tab — start it via `controlpanel.bat`.  
 
 ## Viewing and Analysing the Output

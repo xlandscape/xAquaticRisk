@@ -36,6 +36,47 @@ No `run` folder exists in the xAquaticRisk directory. This usually occurs the fi
 
 If errors reference developer-specific paths (for example `C:\LocalWork\xAquaticRisk\...`), see [Runtime Config Path Guard](dev/runtime-config-path-guard.md).
 
+## Bundled Runtime Preflight Failed
+
+``` { .yaml .no-copy }
+Startup aborted due to bundled runtime preflight failure.
+```
+
+**Explanation**:
+
+`__start__.bat` ran `check_bundled_runtime_blocks.ps1` and it detected either:
+
+- Missing bundled runtime folders, or
+- Blocked runtime binaries (`Zone.Identifier` on files, common after download/extract).
+
+**Possible solutions**:
+
+- Run `setup_all_runtimes.bat` to rebuild missing runtime folders.
+- Unblock bundled runtime files in PowerShell:
+
+```powershell
+Get-ChildItem -Path '.\model\core\bin\python-3.9.7-amd64' -Recurse -File | Unblock-File
+Get-ChildItem -Path '.\controlpanel\python' -Recurse -File | Unblock-File
+Get-ChildItem -Path '.\analysis\python' -Recurse -File | Unblock-File
+```
+
+- Start with forced preflight during diagnostics:
+
+```bat
+set XAQR_PREFLIGHT_MODE=always
+```
+
+- If you intentionally want to bypass preflight:
+
+```bat
+set XAQR_PREFLIGHT_MODE=never
+```
+
+**Notes**:
+
+- Default mode is `auto`: preflight runs once and writes `.runtime_preflight.ok` in the repository root.
+- Delete `.runtime_preflight.ok` to make auto mode run preflight again.
+
 ## Scenario Not Found
 
 ``` { .yaml .no-copy }
