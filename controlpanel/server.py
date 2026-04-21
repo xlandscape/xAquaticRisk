@@ -3751,48 +3751,6 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
             detail = run_detail(self.run_root, run_id)
             self._json_response(detail if detail else {"error": "not found"})
 
-        # -- analysis --
-        elif path == "/api/analysis/runs" or self.path.startswith("/api/analysis/runs?"):
-            qs = parse_qs(urlparse(self.path).query)
-            run_root_raw = qs.get("run_root", [""])[0].strip()
-            run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
-            self._json_response(list_runs_with_mcs(run_root))
-        elif path == "/api/analysis/exposure-models" or self.path.startswith("/api/analysis/exposure-models?"):
-            qs = parse_qs(urlparse(self.path).query)
-            experiment = qs.get("experiment", [""])[0].strip()
-            mc_run = qs.get("mc_run", [""])[0].strip()
-            run_root_raw = qs.get("run_root", [""])[0].strip()
-            run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
-            try:
-                self._json_response(get_analysis_exposure_models(run_root, experiment, mc_run))
-            except ValueError as exc:
-                self._json_response({"message": str(exc)}, 400)
-            except RuntimeError as exc:
-                self._json_response({"message": str(exc)}, 500)
-        elif path.startswith("/api/analysis/status/"):
-            job_id = path.rstrip("/").split("/")[4]
-            self._json_response(analysis_job_status(job_id))
-        elif path.startswith("/api/analysis/outputs/"):
-            job_id = path.rstrip("/").split("/")[4]
-            self._json_response(analysis_job_outputs(job_id))
-        elif path.startswith("/api/analysis/table/"):
-            job_id = path.rstrip("/").split("/")[4]
-            with _analysis_lock:
-                job = _analysis_jobs.get(job_id)
-            if job is None:
-                return self._json_response({"error": "Job not found"}, 404)
-            tbl = os.path.join(job["output_dir"], "pecsw_table.json")
-            if not os.path.isfile(tbl):
-                return self._json_response({"error": "Table not yet available"}, 404)
-            with open(tbl, encoding="utf-8") as fh:
-                self._json_response(json.load(fh))
-        elif path.startswith("/api/analysis/file/"):
-            # /api/analysis/file/<job_id>/<filename>
-            p = path.split("/", 5)
-            job_id   = p[4] if len(p) > 4 else ""
-            filename = p[5] if len(p) > 5 else ""
-            self._serve_analysis_file(job_id, filename)
-
         else:
             super().do_GET()
 
@@ -3820,47 +3778,16 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 self._handle_scenario_subset_cancel(path)
             elif path == "/api/scenario-subset":
                 self._handle_scenario_subset()
-            elif path == "/api/map-explorer/geometry":
-                self._handle_map_geometry()
-            elif path == "/api/map-explorer/timeseries":
-                self._handle_map_timeseries()
             elif path.startswith("/api/runs/") and path.endswith("/abort"):
                 self._handle_abort(path)
             elif path.startswith("/api/runs/") and path.endswith("/delete"):
                 self._handle_delete(path)
-            elif path == "/api/analysis/start":
-                self._handle_analysis_start()
             else:
                 self._json_response({"status": "error", "message": f"Unknown endpoint: {path}"}, 404)
         except Exception as exc:
             self._json_response({"status": "error", "message": str(exc)}, 500)
 
     # ── POST handlers ─────────────────────────────────────────────
-
-    def _handle_map_geometry(self):
-        data = self._read_json_body() or {}
-        experiment = (data.get("experiment") or "").strip()
-        mc_run = (data.get("mc_run") or "").strip()
-        run_root_raw = (data.get("run_root") or "").strip()
-        run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
-        if not experiment or not mc_run:
-            return self._json_response(
-                {"status": "error", "message": "experiment and mc_run are required"},
-                400,
-            )
-        try:
-            paths = _resolve_mc_store_paths(run_root, experiment, mc_run)
-            geom_payload = _build_map_geometry(paths["arr_path"], paths["scenario_path"])
-            self._json_response({
-                "status": "success",
-                "scenario_path": paths["scenario_rel"],
-                "geojson": geom_payload["geojson"],
-                "lulc_geojson": geom_payload.get("lulc_geojson", {"type": "FeatureCollection", "features": []}),
-                "meta": geom_payload["meta"],
-                "lulc_meta": geom_payload.get("lulc_meta", {}),
-            })
-        except Exception as exc:
-            self._json_response({"status": "error", "message": str(exc)}, 400)
 
     def _handle_scenario_subset(self):
         data = self._read_json_body() or {}
@@ -3934,31 +3861,6 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         if payload.get("error"):
             return self._json_response({"status": "error", "message": payload["error"]}, 404)
         self._json_response({"status": "success", **payload})
-
-    def _handle_map_timeseries(self):
-        data = self._read_json_body() or {}
-        experiment = (data.get("experiment") or "").strip()
-        mc_run = (data.get("mc_run") or "").strip()
-        run_root_raw = (data.get("run_root") or "").strip()
-        run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
-        if not experiment or not mc_run:
-            return self._json_response(
-                {"status": "error", "message": "experiment and mc_run are required"},
-                400,
-            )
-        try:
-            reach_ids = _coerce_list_of_reach_ids(data.get("reach_ids") or [])
-            paths = _resolve_mc_store_paths(run_root, experiment, mc_run)
-            payload = _build_map_timeseries(
-                paths["arr_path"],
-                reach_ids,
-                time_from=(data.get("time_from") or "").strip() or None,
-                time_to=(data.get("time_to") or "").strip() or None,
-                resolution=(data.get("resolution") or "auto").strip() or "auto",
-            )
-            self._json_response({"status": "success", **payload})
-        except Exception as exc:
-            self._json_response({"status": "error", "message": str(exc)}, 400)
 
     def _handle_xrun_files(self):
         data = self._read_json_body()
@@ -4149,150 +4051,6 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
                 {"status": "error", "message": f"Failed to delete run: {exc}"},
                 500,
             )
-
-    def _handle_analysis_start(self):
-        """Launch run_basic_analysis.py as a subprocess for a selected MC run."""
-        data = self._read_json_body() or {}
-        runtime_config = get_analysis_runtime_config()
-        if runtime_config.get("mode") == "remote":
-            service_url = runtime_config.get("service_url") or ""
-            return self._json_response(
-                {
-                    "status": "error",
-                    "message": (
-                        "Remote analysis mode is enabled but control panel proxy forwarding "
-                        "is not implemented yet in this branch. "
-                        "Set XAQ_ANALYSIS_MODE=local to continue using embedded analysis."
-                    ),
-                    "analysis_mode": "remote",
-                    "analysis_service_url": service_url,
-                },
-                501,
-            )
-        experiment = (data.get("experiment") or "").strip()
-        mc_run     = (data.get("mc_run")     or "").strip()
-        if not experiment or not mc_run:
-            return self._json_response(
-                {"status": "error", "message": "experiment and mc_run are required"}, 400)
-        for val, name in [(experiment, "experiment"), (mc_run, "mc_run")]:
-            if any(c in val for c in (os.sep, "/", "\\", "..")):
-                return self._json_response(
-                    {"status": "error", "message": f"Invalid {name}"}, 400)
-        run_root_raw = (data.get("run_root") or "").strip()
-        run_root = os.path.abspath(run_root_raw) if run_root_raw else self.run_root
-        mc_path = os.path.abspath(
-            os.path.join(run_root, experiment, "mcs", mc_run))
-        if not os.path.isdir(mc_path):
-            return self._json_response(
-                {"status": "error",
-                 "message": f"MC run folder not found: {mc_path}"}, 404)
-
-        runtime_error = _analysis_runtime_error()
-        if runtime_error:
-            return self._json_response(
-                {"status": "error", "message": runtime_error}, 500)
-        analysis_python = _pick_analysis_python()
-        if not analysis_python:
-            return self._json_response(
-                {"status": "error", "message": "Analysis runtime disappeared during startup. Please retry."},
-                500,
-            )
-        scenario_rel  = (data.get("scenario_path") or "").strip()
-        scenario_path = (os.path.abspath(os.path.join(BASE_DIR, scenario_rel))
-                         if scenario_rel else BASE_DIR)
-        scenario_name = (data.get("scenario_name") or "").strip()
-        exposure_model = (data.get("exposure_model") or "CascadeToxswa").strip()
-        _valid_exposure_models = {"CascadeToxswa", "StepsRiverNetwork"}
-        if exposure_model not in _valid_exposure_models:
-            return self._json_response(
-                {"status": "error",
-                 "message": f"Invalid exposure_model '{exposure_model}'. "
-                            f"Must be one of: {', '.join(sorted(_valid_exposure_models))}"},
-                400,
-            )
-        ts        = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        subfolder = f"{experiment}_{mc_run}__{ts}"
-        job_id    = subfolder
-        out_raw   = (data.get("output_dir") or "").strip()
-        base_dir  = os.path.abspath(out_raw) if out_raw else ANALYSIS_OUTPUT_ROOT
-        out_dir   = os.path.join(base_dir, subfolder)
-        os.makedirs(out_dir, exist_ok=True)
-        log_path = os.path.join(out_dir, "analysis.log")
-        cmd = [
-            analysis_python, ANALYSIS_SCRIPT,
-            "--mc-path",       mc_path,
-            "--scenario-path", scenario_path,
-            "--scenario-name", scenario_name,
-            "--output-dir",    out_dir,
-            "--run-pec",       str(data.get("run_pec",       True)).lower(),
-            "--run-guts",      str(data.get("run_guts",      True)).lower(),
-            "--exposed-only",  str(data.get("exposed_only",  False)).lower(),
-            "--exposure-model", exposure_model,
-        ]
-        for flag, key in [
-            ("--reach-ids-single", "reach_ids_single"),
-            ("--reach-ids-group",  "reach_ids_group"),
-            ("--plotzoom-from",    "plotzoom_from"),
-            ("--plotzoom-to",      "plotzoom_to"),
-        ]:
-            val = (data.get(key) or "").strip()
-            if val:
-                cmd += [flag, val]
-        try:
-            with open(log_path, "w", encoding="utf-8") as lf:
-                proc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
-                                        cwd=BASE_DIR,
-                                        env=_analysis_subprocess_env())
-            with _analysis_lock:
-                _analysis_jobs[job_id] = {
-                    "proc":       proc,
-                    "output_dir": out_dir,
-                    "log_path":   log_path,
-                    "started_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                }
-            print(f"Analysis started: job={job_id} pid={proc.pid}")
-            return self._json_response({
-                "status":  "success",
-                "job_id":  job_id,
-                "message": f"Analysis started (job: {job_id})",
-            })
-        except Exception as exc:
-            return self._json_response(
-                {"status": "error",
-                 "message": f"Failed to start analysis: {exc}"}, 500)
-
-    def _serve_analysis_file(self, job_id, filename):
-        """Serve an output file (image / Excel) from an analysis job."""
-        with _analysis_lock:
-            job = _analysis_jobs.get(job_id)
-        if job is None:
-            return self._json_response({"error": "Job not found"}, 404)
-        filename  = os.path.basename(filename)
-        file_path = os.path.join(job["output_dir"], filename)
-        if not os.path.isfile(file_path):
-            return self.send_error(404)
-        ext = os.path.splitext(filename)[1].lower()
-        ct_map = {
-            ".png":  "image/png",
-            ".jpg":  "image/jpeg",
-            ".svg":  "image/svg+xml",
-            ".xlsx": ("application/vnd.openxmlformats-officedocument"
-                      ".spreadsheetml.sheet"),
-        }
-        ct = ct_map.get(ext, "application/octet-stream")
-        try:
-            with open(file_path, "rb") as fh:
-                raw = fh.read()
-            self.send_response(200)
-            self.send_header("Content-Type", ct)
-            self.send_header("Content-Length", str(len(raw)))
-            if ext not in (".png", ".jpg", ".svg"):
-                self.send_header("Content-Disposition",
-                                 f'attachment; filename="{filename}"')
-            self.end_headers()
-            self.wfile.write(raw)
-        except (OSError, ConnectionError):
-            pass
 
     def _handle_open_xrun(self):
         data = self._read_json_body()
