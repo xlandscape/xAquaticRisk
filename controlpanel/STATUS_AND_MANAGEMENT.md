@@ -21,7 +21,29 @@ Response highlights:
 - `warnings`: list of deployment/runtime issues
 - `controlpanel`: bundled controlpanel runtime checks
 - `analysis`: bundled analysis runtime checks and required package checks
+- `analysis_runtime_config`: active analysis mode and remote service configuration
 - `model_runtime_present`: whether model-core runtime is present for `__start__.bat`
+
+## Analysis Runtime Mode (Separation Scaffold)
+
+Available at: `GET http://localhost:PORT/api/analysis/runtime-config`
+
+Response highlights:
+
+- `mode`: `local` or `remote`
+- `service_url`: configured remote analysis service URL (if any)
+- `service_configured`: whether remote service URL is set
+- `supported_modes`: currently supported values for mode
+
+Environment variables:
+
+- `XAQ_ANALYSIS_MODE`: `local` (default) or `remote`
+- `XAQ_ANALYSIS_SERVICE_URL`: base URL for future remote analysis service
+
+Notes:
+
+- Current branch behavior is backward compatible in default `local` mode.
+- `remote` mode is a scaffold for the service split and currently returns a clear not-implemented response for analysis start.
 
 ### Quick checks via PowerShell
 
@@ -39,6 +61,7 @@ Invoke-WebRequest -Uri "http://localhost:8091/api/controlpanel/status" -UseBasic
 ### Response Format
 
 When server is running:
+
 ```json
 {
   "status": "running",
@@ -54,6 +77,7 @@ When server is running:
 When no server: 404 error (no response available)
 
 When stale lock exists (zombie):
+
 ```json
 {
   "status": "zombie",
@@ -92,7 +116,7 @@ Works when server is running OR via lock file fallback.
 
 ### Example Output
 
-```
+```text
 Status: RUNNING
 PID: 35864 | Port: 8091
 Uptime: 0h 0m 28s
@@ -138,10 +162,10 @@ Invoke-WebRequest http://localhost:8090/api/controlpanel/status -UseBasicParsing
 
 1. Open Task Manager
 2. Find `python.exe` running `server.py` (look in Details tab, Command Line column)
-3. Right-click → End Process
+3. Right-click â†’ End Process
 
 Then clean up:
+
 ```powershell
 .\controlpanel-status.ps1 -Clean  # Remove stale lock file
 ```
-

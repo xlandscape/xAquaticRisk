@@ -24,7 +24,7 @@ Endpoints
 
 Usage::
 
-    python controlpanel/server.py                       # default port 8090
+    python controlpanel/server.py                       # default port 8090 (or XAQ_PORT env)
     python controlpanel/server.py --port 9000            # custom port
     python controlpanel/server.py --run-dir C:/other     # custom run folder
 """
@@ -78,6 +78,9 @@ ANALYSIS_SCRIPT = os.path.join(BASE_DIR, "analysis", "run_basic_analysis.py")
 ANALYSIS_OUTPUT_ROOT = os.path.join(BASE_DIR, "analysis_output")
 ANALYSIS_RUNTIME_DIR = os.path.join(BASE_DIR, "analysis", "python")
 _embedded_analysis_py = os.path.join(ANALYSIS_RUNTIME_DIR, "python.exe")
+ANALYSIS_MODE_DEFAULT = "local"
+ANALYSIS_MODE_ENV = "XAQ_ANALYSIS_MODE"
+ANALYSIS_SERVICE_URL_ENV = "XAQ_ANALYSIS_SERVICE_URL"
 ANALYSIS_REQUIRED_MODULES = [
     "h5py",
     "numpy",
@@ -88,7 +91,11 @@ ANALYSIS_REQUIRED_MODULES = [
     "geopandas",
     "pyogrio",
 ]
-PORT = 8090
+PORT_ENV = "XAQ_PORT"
+PORT = int(os.environ.get(PORT_ENV, "8090"))
+DEFAULT_UI_PROFILE = "all"
+UI_PROFILE_ENV = "XAQ_UI_PROFILE"
+VALID_UI_PROFILES = {"all", "prep", "analysis"}
 PARAM_FILE_EXTENSIONS = (".xrun", ".yaml", ".yml")
 HYDRO_TIME_FORMAT = "%Y-%m-%dT%H:%M"
 HYDRO_ARRAY_DATASETS = ("flow", "depth", "volume", "area")
@@ -306,6 +313,46 @@ def _analysis_subprocess_env() -> dict:
     return env
 
 
+def _resolve_analysis_mode() -> str:
+    raw = os.environ.get(ANALYSIS_MODE_ENV, ANALYSIS_MODE_DEFAULT).strip().lower()
+    if raw not in {"local", "remote"}:
+        return ANALYSIS_MODE_DEFAULT
+    return raw
+
+
+def _analysis_service_url() -> str:
+    return os.environ.get(ANALYSIS_SERVICE_URL_ENV, "").strip()
+
+
+def _normalize_ui_profile(raw: str) -> str:
+    profile = (raw or "").strip().lower()
+    if profile not in VALID_UI_PROFILES:
+        return DEFAULT_UI_PROFILE
+    return profile
+
+
+def get_ui_profile_config() -> dict:
+    return {
+        "profile": _normalize_ui_profile(getattr(ControlPanelHandler, "ui_profile", DEFAULT_UI_PROFILE)),
+        "default_profile": DEFAULT_UI_PROFILE,
+        "supported_profiles": sorted(VALID_UI_PROFILES),
+        "profile_env": UI_PROFILE_ENV,
+    }
+
+
+def get_analysis_runtime_config() -> dict:
+    mode = _resolve_analysis_mode()
+    service_url = _analysis_service_url()
+    return {
+        "mode": mode,
+        "service_url": service_url,
+        "service_configured": bool(service_url),
+        "mode_env": ANALYSIS_MODE_ENV,
+        "service_url_env": ANALYSIS_SERVICE_URL_ENV,
+        "supported_modes": ["local", "remote"],
+    }
+
+
 def _python_supports_modules(python_exe: str, modules: list[str]) -> bool:
     if not python_exe or not os.path.isfile(python_exe):
         return False
@@ -485,6 +532,7 @@ def get_self_contained_runtime_status() -> dict:
         "warnings": warnings,
         "controlpanel": controlpanel,
         "analysis": analysis,
+        "analysis_runtime_config": get_analysis_runtime_config(),
         "model_runtime_present": model_runtime,
     }
 
@@ -3570,6 +3618,7 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
     """Serves the integrated control-panel SPA and all JSON APIs."""
 
     run_root = DEFAULT_RUN_DIR
+    ui_profile = DEFAULT_UI_PROFILE
 
     def __init__(self, *args, **kwargs):
         self._webdir = os.path.dirname(os.path.abspath(__file__))
@@ -3631,6 +3680,12 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
         if path.rstrip("/") == "/api/runtime/self-contained-status":
             payload = get_self_contained_runtime_status()
             return self._json_response(payload, 200 if payload.get("status") == "ready" else 503)
+
+        if path.rstrip("/") == "/api/analysis/runtime-config":
+            return self._json_response(get_analysis_runtime_config())
+
+        if path.rstrip("/") == "/api/ui/profile":
+            return self._json_response(get_ui_profile_config())
 
         # Server status endpoint (no auth required, useful for monitoring and debugging)
         if path == "/api/controlpanel/status":
@@ -4098,6 +4153,22 @@ class ControlPanelHandler(SimpleHTTPRequestHandler):
     def _handle_analysis_start(self):
         """Launch run_basic_analysis.py as a subprocess for a selected MC run."""
         data = self._read_json_body() or {}
+        runtime_config = get_analysis_runtime_config()
+        if runtime_config.get("mode") == "remote":
+            service_url = runtime_config.get("service_url") or ""
+            return self._json_response(
+                {
+                    "status": "error",
+                    "message": (
+                        "Remote analysis mode is enabled but control panel proxy forwarding "
+                        "is not implemented yet in this branch. "
+                        "Set XAQ_ANALYSIS_MODE=local to continue using embedded analysis."
+                    ),
+                    "analysis_mode": "remote",
+                    "analysis_service_url": service_url,
+                },
+                501,
+            )
         experiment = (data.get("experiment") or "").strip()
         mc_run     = (data.get("mc_run")     or "").strip()
         if not experiment or not mc_run:
@@ -4253,9 +4324,16 @@ def main():
     ap = argparse.ArgumentParser(description="xAquaticRisk Control Panel")
     ap.add_argument("--port", type=int, default=PORT)
     ap.add_argument("--run-dir", default=DEFAULT_RUN_DIR)
+    ap.add_argument(
+        "--ui-profile",
+        default=os.environ.get(UI_PROFILE_ENV, DEFAULT_UI_PROFILE),
+        choices=sorted(VALID_UI_PROFILES),
+        help="UI profile to expose: all, prep, or analysis",
+    )
     args = ap.parse_args()
 
     ControlPanelHandler.run_root = os.path.abspath(args.run_dir)
+    ControlPanelHandler.ui_profile = _normalize_ui_profile(args.ui_profile)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     try:
@@ -4275,6 +4353,7 @@ def main():
         print(f"  Parameterisation : {OUTPUT_DIR}")
         print(f"  Run folder       : {ControlPanelHandler.run_root}")
         print(f"  Scenarios        : {os.path.join(BASE_DIR, 'scenario')}")
+        print(f"  UI profile       : {ControlPanelHandler.ui_profile}")
         print(f"  Runtime status   : {runtime_status.get('status')}")
         if runtime_status.get("warnings"):
             for warning in runtime_status["warnings"]:

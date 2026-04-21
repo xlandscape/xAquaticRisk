@@ -306,7 +306,7 @@ a{color:var(--accent);text-decoration:none}
 <!-- ══════════ TOP BAR ══════════ -->
 <div class="topbar">
   <h1>xAquaticRisk</h1>
-  <span class="tag">Control Panel</span>
+  <span class="tag" id="uiTag">Control Panel</span>
 
   <div class="tab-strip">
     <button class="tab-btn active" onclick="switchTab('configure')" id="tabConfigure">
@@ -1183,14 +1183,88 @@ let explBoxDiv = null;
 let explBoxStart = null;
 let explReachGeoJSON = null;
 
+const UI_TABS = ['configure', 'monitor', 'landscape', 'analysis', 'explorer'];
+const UI_PROFILES = {
+  all: {
+    allowedTabs: UI_TABS,
+    defaultTab: 'configure',
+    titleTag: 'Control Panel',
+    pageTitle: 'xAquaticRisk — Control Panel',
+  },
+  prep: {
+    allowedTabs: ['configure', 'monitor', 'landscape'],
+    defaultTab: 'configure',
+    titleTag: 'Preparation & Execution',
+    pageTitle: 'xAquaticRisk — Preparation & Execution',
+  },
+  analysis: {
+    allowedTabs: ['analysis', 'explorer'],
+    defaultTab: 'analysis',
+    titleTag: 'Analysis & Exploration',
+    pageTitle: 'xAquaticRisk — Analysis & Exploration',
+  },
+};
+
+let uiProfileName = 'all';
+let uiAllowedTabs = new Set(UI_PROFILES.all.allowedTabs);
+
+function normalizeUiProfileName(raw) {
+  const name = String(raw || '').trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(UI_PROFILES, name) ? name : 'all';
+}
+
+function getUiProfileSpec(name) {
+  return UI_PROFILES[normalizeUiProfileName(name)] || UI_PROFILES.all;
+}
+
+function uiTabAllowed(name) {
+  return uiAllowedTabs.has(name);
+}
+
+function configureUiProfile(profilePayload) {
+  uiProfileName = normalizeUiProfileName(profilePayload?.profile);
+  const spec = getUiProfileSpec(uiProfileName);
+  uiAllowedTabs = new Set(spec.allowedTabs);
+
+  for (const tabName of UI_TABS) {
+    const suffix = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+    const tabEl = document.getElementById('tab' + suffix);
+    const pageEl = document.getElementById('page' + suffix);
+    const enabled = uiAllowedTabs.has(tabName);
+    if (tabEl) tabEl.classList.toggle('u-hidden', !enabled);
+    if (pageEl) pageEl.classList.toggle('u-hidden', !enabled);
+  }
+
+  const uiTag = document.getElementById('uiTag');
+  if (uiTag) uiTag.textContent = spec.titleTag;
+  document.title = spec.pageTitle;
+  return spec;
+}
+
+async function loadUiProfile() {
+  try {
+    const profile = await api('/api/ui/profile');
+    return configureUiProfile(profile || { profile: 'all' });
+  } catch (e) {
+    console.warn('Failed to load UI profile; falling back to all profile.', e);
+    return configureUiProfile({ profile: 'all' });
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // Tab switching
 // ═══════════════════════════════════════════════════════════════════
-function switchTab(name) {
+function switchTab(name, force = false) {
+  if (!force && !uiTabAllowed(name)) return;
+  const suffix = name.charAt(0).toUpperCase() + name.slice(1);
+  const tabEl = document.getElementById('tab' + suffix);
+  const pageEl = document.getElementById('page' + suffix);
+  if (!tabEl || !pageEl) return;
+
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
-  document.getElementById('page' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+  tabEl.classList.add('active');
+  pageEl.classList.add('active');
 
   // Start/stop monitor refresh
   if (name === 'monitor') {
@@ -2868,6 +2942,10 @@ function setupExplorerBoxSelection() {
 // Init
 // ═══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
+  const uiProfileSpec = await loadUiProfile();
+  const prepEnabled = uiTabAllowed('configure') || uiTabAllowed('monitor') || uiTabAllowed('landscape');
+  const analysisEnabled = uiTabAllowed('analysis') || uiTabAllowed('explorer');
+
   const subsetInspectBtn = document.getElementById('subsetInspectBtn');
   if (subsetInspectBtn) {
     subsetInspectBtn.addEventListener('click', (event) => {
@@ -2882,15 +2960,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  initializeScenarioDateAutofill();
-  await loadWarningDowngradeRules();
+  if (prepEnabled) {
+    initializeScenarioDateAutofill();
+    await loadWarningDowngradeRules();
+  }
   await loadScenarios();
-  await loadTemplate();
-  ensureSubsetMap();
-  useCurrentScenarioForSubset();
-  loadXrunFiles();
-  loadAnlRuns();
-  loadAnlScenarios();
+  if (prepEnabled) {
+    await loadTemplate();
+    ensureSubsetMap();
+    useCurrentScenarioForSubset();
+    loadXrunFiles();
+  }
+  if (analysisEnabled) {
+    loadAnlRuns();
+    loadAnlScenarios();
+  }
   checkAnalysisPortableStatus();
 
   const explRun = document.getElementById('explRunSelect');
@@ -2905,6 +2989,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (explFrom) explFrom.addEventListener('change', () => loadExplorerTimeseries());
   if (explTo) explTo.addEventListener('change', () => loadExplorerTimeseries());
   renderExplorerChart([], [], { resolution_used: 'none' });
+
+  switchTab(uiProfileSpec.defaultTab, true);
 });
 
 // ═══════════════════════════════════════════════════════════════════
