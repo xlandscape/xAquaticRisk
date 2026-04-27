@@ -230,4 +230,4 @@ Next, we will configure the landscape model parameterization for this PPP use sc
 4. Set `xcrop_arrdat_path` to *arr.dat*'s file path. Set `output_path` to the desired csv output location. Follow instructions in xCropProtection's `README` for installing Python and the notebook requirements.
 4. Open the result of *xCP_write_csv.ipynb* to see a csv of applications that occurred during the simulation. Viewing the csv results can be more easy to understand than directly viewing the output file.
 
-This tutorial has been a walkthrough of how to prepare a scenario for xCropProtection. To start creating more complex PPP use scenarios, see the [Templates](../xCropProtection-templates/templates-intro.md) section to learn more.
+This tutorial has been a walkthrough of how to prepare a scenario for xCropProtection. To start creating more complex PPP use scenarios, continue with the general [Create Scenario](../create-scenario.md) guidance.

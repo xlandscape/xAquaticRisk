@@ -126,15 +126,15 @@ This mechanism of scale-dependent definition and use of *PDFs* enables to build 
 
 ## Components, Modules and Models
 
-You will read the term ***component*** quite often in the context of *xLandscape*. xLandscape is a modular landscape modelling framework that architecture is derived from *Component-Based Software Engineering (CBSE)*. This is, why the elements of a modular xLandscape model are called [*components*](#modules-and-components) ([xDrift](../xLandscape/xLandscape-components.md#xdrift) is an example for a frequently used *component*).  
+You will read the term ***component*** quite often in the context of *xLandscape*. xLandscape is a modular landscape modelling framework that architecture is derived from *Component-Based Software Engineering (CBSE)*. This is, why the elements of a modular xLandscape model are called [*components*](#components-modules-and-models) ([xDrift](../xLandscape/xLandscape-components.md#xdrift) is an example for a frequently used *component*).  
 *Components* contain *moduls*. *Modules* represent the software that provides the actual functionality of a *component*, typically a *model* (eg, an exposure or environmental fate model).  
 
 ## Multidimensional Data Store
 
 Landscape models based on xLandscape is at minimum 3-dimensional (space, time, modelled value). Typically, landscape modelling is using and interested in multiple values in space and time (eg, exposure of different compartments, multiple PPP uses, effects of different species), which makes it a **multidimensional landscape model**.  
-Corresponding **multidimentsional data is stored using a multidimensional data store**. At present, [**HDF**](xLandscape/xLandscape-intro.md#multidimensional-data-store) is being used. All landscape model data as defined by the model designer is stored in an *HDF* store (basically, the in- and outputs of *components*). Data in the store can come in independent resolutions (eg, PPP use might be represented by the spatial scale *field*, whereas local exposure of off-field areas might be calculated and stored by m2 as spatial scale). The same applies to any other dimension and scale.  
+Corresponding **multidimentsional data is stored using a multidimensional data store**. At present, [**HDF**](#multidimensional-data-store) is being used. All landscape model data as defined by the model designer is stored in an *HDF* store (basically, the in- and outputs of *components*). Data in the store can come in independent resolutions (eg, PPP use might be represented by the spatial scale *field*, whereas local exposure of off-field areas might be calculated and stored by m2 as spatial scale). The same applies to any other dimension and scale.  
 As the multidimensional store contains the data relevant to the specific landscape model, it represents *'the landscape'* of the model. Thus, *'the landscape'* is built of such data/information that is defined by model design (and configuration). In particular, the *store* contains the actual model outcome, yet, also any other data is kept as defined by the model designer that might be of interest for the analysis.  
-At present, a single data store is being used. This, and the technology [*HDF*](xLandscape/xLandscape-intro.md#multidimensional-data-store) can be adapted according to future needs.  
+At present, a single data store is being used. This, and the technology [*HDF*](#multidimensional-data-store) can be adapted according to future needs.  
 
 <img src="../img/multidimensional data store HDF.png" alt="Multidimensional Data Store" width="880"/>  
 
@@ -192,7 +192,7 @@ Differentiation of developer levels are shown in the graphic below.
 
 *Development and User Levels*
 
-[Today-need for a model]: ../xLandscape/xLandscape-intro.md#today---applicable-landscape-models-needed
+[Today-need for a model]: ../xLandscape/xLandscape-intro.md#vision
 
 ## Technical Implementation
 

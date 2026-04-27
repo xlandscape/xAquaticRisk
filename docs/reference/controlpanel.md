@@ -1,6 +1,6 @@
 # Control Panel
 
-The **Control Panel** is an integrated web application that merges the parameterisation editor and the run-monitoring dashboard into a single browser tab. It replaces the need to run two separate tools (`webui.bat` and `dashboard.bat`) and adds a seamless *Configure → Run → Monitor* workflow.
+The **Control Panel** is an integrated web application that merges the parameterisation editor and the run-monitoring dashboard into a single browser tab. It provides a seamless *Configure → Run → Monitor* workflow from one launcher.
 
 !!! tip "Quick start"
     Double-click **`controlpanel.bat`** at the model root. Your browser opens at **<http://localhost:8090>**.
@@ -62,7 +62,7 @@ Each section can be collapsed / expanded by clicking its header. Advanced sectio
 
 ### Monitor tab
 
-A real-time dashboard for tracking simulation runs. Identical in functionality to the standalone [Run Dashboard](dashboard.md):
+A real-time dashboard for tracking simulation runs. It provides the same monitoring workflow that used to be available through the standalone dashboard launcher:
 
 - **Sidebar** — lists all runs in `run/`, sorted by most recent, with colour-coded status dots.
 - **Overview cards** — status, elapsed time, MC count, error/warning counts.
@@ -99,6 +99,108 @@ If the folder is missing or incomplete, the Control Panel now stops before launc
 
 ---
 
+## Server Management and Monitoring
+
+### HTTP Status Endpoint
+
+The Control Panel exposes a status endpoint that reports the server's current state, useful for monitoring or automation:
+
+**Endpoint:** `GET http://localhost:PORT/api/controlpanel/status` (PORT defaults to 8090)
+
+**Response when server is running:**
+```json
+{
+  "status": "running",
+  "pid": 12345,
+  "port": 8090,
+  "started_at": 1712846553,
+  "uptime_seconds": 300,
+  "alive": true,
+  "lock_file": "c:\\...\\server.instance.lock"
+}
+```
+
+**Response when no server is running:** 404 error
+
+**Quick check from PowerShell:**
+```powershell
+# Check if server is running
+$response = Invoke-WebRequest -Uri "http://localhost:8090/api/controlpanel/status" -UseBasicParsing -ErrorAction SilentlyContinue
+if ($response) {
+    $info = $response.Content | ConvertFrom-Json
+    Write-Host "Server is $($info.status) | PID: $($info.pid) | Uptime: $($info.uptime_seconds)s"
+}
+```
+
+### PowerShell Helper Script
+
+A convenience script at `controlpanel/controlpanel-status.ps1` can check server status and manage instances:
+
+**Check status on a specific port:**
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Port 8091
+```
+
+**Output:**
+```
+Status: RUNNING
+PID: 35864 | Port: 8091
+Uptime: 0h 1m 28s
+```
+
+**Clean up stale lock files** (e.g., after a crash):
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Clean
+```
+
+**Stop a server on a specific port:**
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Kill 8090
+```
+
+**Combine status check and cleanup:**
+```powershell
+.\controlpanel\controlpanel-status.ps1 -Port 8090 -All
+```
+
+### Troubleshooting
+
+**Port already in use but no process found:**
+
+If the Control Panel fails to start due to a port conflict, the process may have crashed and left a lock file:
+
+```powershell
+# Remove the stale lock file
+Remove-Item controlpanel\server.instance.lock -Force
+
+# Or use the helper script
+.\controlpanel\controlpanel-status.ps1 -Clean
+```
+
+**Multiple instances accidentally running:**
+
+Multiple Control Panel processes can block each other. The single-instance lock guard prevents this, but if you start them on different ports:
+
+```powershell
+# Check all instances
+Invoke-WebRequest http://localhost:8090/api/controlpanel/status -UseBasicParsing | 
+  Select-Object -Expand Content | ConvertFrom-Json | Select pid, port, status
+
+# Kill a specific instance
+.\controlpanel\controlpanel-status.ps1 -Kill 8090
+```
+
+**Stale zombie process in Task Manager:**
+
+If you kill the process via Task Manager instead of the `Abort` button:
+
+```powershell
+# Clean up the orphaned lock file
+.\controlpanel\controlpanel-status.ps1 -Clean
+```
+
+---
+
 ## Architecture
 
 The Control Panel is a single Python HTTP server (`controlpanel/server.py`) that exposes both the parameterisation API and the monitoring API:
@@ -130,10 +232,8 @@ All data is served as JSON. The front-end is a single `index.html` file with no 
 
 ## Standalone tools
 
-The standalone WebUI and Dashboard remain available for users who prefer separate tools:
+The Control Panel is the supported browser UI entrypoint for configuration and monitoring in this repository.
 
 | Tool | Launcher | Port | Description |
 |------|----------|------|-------------|
-| WebUI | `webui.bat` | 8080 | Parameterisation editor only |
-| Dashboard | `dashboard.bat` | 8050 | Run monitor only |
-| **Control Panel** | `controlpanel.bat` | 8090 | Both, integrated |
+| **Control Panel** | `controlpanel.bat` | 8090 | Parameterisation + monitoring, integrated |

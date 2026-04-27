@@ -1,0 +1,41 @@
+name: Runtime Config Path Guard
+
+on:
+  pull_request:
+    paths:
+      - 'model/**/*.xml'
+      - 'model/**/*.xrun'
+      - 'model/**/*.yaml'
+      - 'parameterisation/**/*.xrun'
+      - 'parameterisation/**/*.yaml'
+      - 'scripts/check_runtime_config_paths.py'
+      - '.github/workflows/runtime-config-path-guard.yml'
+  push:
+    branches:
+      - master
+      - feature/**
+    paths:
+      - 'model/**/*.xml'
+      - 'model/**/*.xrun'
+      - 'model/**/*.yaml'
+      - 'parameterisation/**/*.xrun'
+      - 'parameterisation/**/*.yaml'
+      - 'scripts/check_runtime_config_paths.py'
+      - '.github/workflows/runtime-config-path-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guard-runtime-config-paths:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check runtime config files for absolute local paths
+        run: python scripts/check_runtime_config_paths.py

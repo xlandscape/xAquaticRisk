@@ -49,6 +49,8 @@ xAquaticRisk is composed of the following building blocks:
   `\model\variant\XSprayDrift\README` for further details.
 * An exemplary landscape scenario consisting of approximately 1 km of stream with adjacent fields. See 
   `\scenario\oudebeek-beek7-tdi\README` for further details.
+* An additional shipped subset scenario for the Muenster region. See
+  `\scenario\WetterfeldSlice\README.md` for further details.
 * A set of Jupyter notebooks for various analysis and visualizations of the simulation data. Start `notebook.bat` for 
   access to the notebooks.  
 
@@ -63,10 +65,8 @@ xAquaticRisk requires a 64-bit Windows to run.
 1. Download the most recent xAquaticRisk zip-archive.
 2. Extract the archive into a folder on your hard drive. Simulation data and temporary files will be written to a 
    sub-folder of this folder, so a fast hard-drive with lots of available space is preferable.  
-3. Before creating a portable distribution, initialize component-local runtimes once:
-  `setup_controlpanel_python.bat`, `setup_webui_python.bat`, and `setup_analysis_python.bat`.
-  This creates dedicated runtimes in `controlpanel\python\`, `webui\python\`, and `analysis\python\`.
-4. Keep these runtime folders inside the copied xAquaticRisk directory so the model remains xcopy-ready without system Python dependencies.
+3. The working tree is intended to be self-contained. The bundled runtimes in `model\core\bin\python-3.9.7-amd64\`, `controlpanel\python\`, and `analysis\python\` are expected to already be present in the copied folder.
+4. `setup_all_runtimes.bat`, `setup_controlpanel_python.bat`, and `setup_analysis_python.bat` are maintainer utilities for rebuilding those bundled runtimes before commit or packaging. End users should not need to run setup on the target machine.
 
 
 ## Usage
@@ -74,9 +74,18 @@ xAquaticRisk requires a 64-bit Windows to run.
    `template.xrun` contains an in-line documentation to assist you in deciding for valid parameter values.
 2. Save the modified `template.xrun` under a different name in the same directory, using a `.xrun` extension.
 3. Drag and drop the saved parameterization file onto the `__start__.bat`.
-4. Check the console window occasionally for successful conclusion of the simulation or for errors. Logfiles can be
+4. `__start__.bat` uses bundled-runtime preflight auto mode:
+  - By default (`XAQR_PREFLIGHT_MODE=auto`), it runs `check_bundled_runtime_blocks.ps1` once and writes `.runtime_preflight.ok` in the repository root.
+  - On later starts, if `.runtime_preflight.ok` exists, preflight is skipped.
+  - If preflight fails, startup aborts early and prints `Unblock-File` remediation commands.
+  - Optional overrides:
+    - `set XAQR_PREFLIGHT_MODE=always` to force preflight on every start.
+    - `set XAQR_PREFLIGHT_MODE=never` to skip preflight.
+  - To trigger auto-preflight again, delete `.runtime_preflight.ok`.
+5. Start the control panel with `controlpanel.bat`. It uses the bundled `controlpanel\python\python.exe` runtime and the bundled analysis runtime for analysis-backed features.
+6. Check the console window occasionally for successful conclusion of the simulation or for errors. Logfiles can be
    found under `\run\<name-of-your-experiment>\log`.
-5. If the run was successful, you can find analysis results over the entire experiment under 
+7. If the run was successful, you can find analysis results over the entire experiment under 
    `\run\<name-of-your-experiment>\reporting`.
 
 ## Documentation

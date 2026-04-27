@@ -481,8 +481,3 @@ If you have parameterisation files from older versions of xAquaticRisk, use `con
 
 See the [xrun Converter](../xrun-converter.md) page for full usage instructions and batch conversion examples.
 
----
-
-## WebUI
-
-As an alternative to editing XML or YAML files manually, xAquaticRisk provides a **web-based user interface**. Start it via `webui.bat` at the model root. The WebUI exposes all parameters from this page in a form-based interface, generates `.xrun` files, and can launch simulation runs directly. See [Getting Started — WebUI](../getstarted/getstarted.md#running-xaquaticrisk) for details.

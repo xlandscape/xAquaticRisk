@@ -23,6 +23,10 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
 import matplotlib
 matplotlib.use("Agg")  # non-interactive backend – must come before pyplot import
 
@@ -33,7 +37,28 @@ import h5py
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from openpyxl import load_workbook
+
+from basic_analysis_common import (
+    DEFAULT_BOXPLOT_TEMPORAL_PERCENTILES,
+    DEFAULT_GUTS_SPATIAL_PERCENTILES,
+    DEFAULT_GUTS_TEMPORAL_PERCENTILES,
+    DEFAULT_LP50_THRESHOLD_RANGE,
+    DEFAULT_PEC_SPATIAL_PERCENTILES,
+    DEFAULT_PEC_TEMPORAL_PERCENTILES,
+    EXPOSURE_MODEL_CONFIG,
+    SCENARIO_DEFAULTS,
+    VALID_EXPOSURE_MODELS,
+    coerce_reach_ids,
+    extract_run_identifiers,
+    find_reach_shapefile,
+    normalize_reach_id,
+    normalize_reach_ids,
+    parse_reach_id_csv,
+    read_source_scenario_name,
+    resolve_scenario_defaults,
+    row_percentiles,
+    select_reach_id_column,
+)
 
 warnings.filterwarnings("ignore")
 
@@ -43,67 +68,6 @@ def log(severity, msg):
     """Print a structured log line (mirrors LandscapeModel log format)."""
     tag = {"ok": "OK   ", "info": "INFO ", "warn": "WARN ", "error": "ERROR"}
     print(f"{tag.get(severity, 'INFO ')} {msg}", flush=True)
-
-
-# ── percentile helpers ────────────────────────────────────────────────────────
-def row_percentiles(row, percentiles):
-    return pd.Series(
-        np.percentile(row.dropna(), [p * 100 for p in percentiles]),
-        index=[f"Px{int(p * 100)}" for p in percentiles],
-    )
-
-
-# ── scenario-specific defaults ────────────────────────────────────────────────
-SCENARIO_DEFAULTS = {
-    "Rummen": {
-        "reach_list_single": [1388],
-        "reach_list_group": [1610, 1738, 1505],
-        "plotzoom_from": "1995-05-01",
-        "plotzoom_to": "1995-06-01",
-    },
-    "Oudebeek": {
-        "reach_list_single": [42],
-        "reach_list_group": [],
-        "plotzoom_from": "",
-        "plotzoom_to": "",
-    },
-    "Oudebeek-Beek7": {
-        "reach_list_single": [42],
-        "reach_list_group": [],
-        "plotzoom_from": "",
-        "plotzoom_to": "",
-    },
-    "Muenster": {
-        "reach_list_single": [154],
-        "reach_list_group": [772, 575, 149],
-        "plotzoom_from": "2000-05-01",
-        "plotzoom_to": "2000-06-01",
-    },
-    "Muschenheim": {
-        "reach_list_single": [315],
-        "reach_list_group": [151, 149, 735],
-        "plotzoom_from": "",
-        "plotzoom_to": "",
-    },
-    "Bruchenbruecken": {
-        "reach_list_single": [660],
-        "reach_list_group": [652, 653, 4443],
-        "plotzoom_from": "1991-05-01",
-        "plotzoom_to": "1991-06-01",
-    },
-    "Funne": {
-        "reach_list_single": [12],
-        "reach_list_group": [99, 97, 167],
-        "plotzoom_from": "2010-05-01",
-        "plotzoom_to": "2010-06-01",
-    },
-    "GKB": {
-        "reach_list_single": [166],
-        "reach_list_group": [12, 144, 165],
-        "plotzoom_from": "2010-04-01",
-        "plotzoom_to": "2010-07-01",
-    },
-}
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
@@ -134,6 +98,10 @@ def main():
                     help="Time-series zoom start date (YYYY-MM-DD)")
     ap.add_argument("--plotzoom-to", default="",
                     help="Time-series zoom end date (YYYY-MM-DD)")
+    ap.add_argument("--exposure-model", default="CascadeToxswa",
+                    choices=VALID_EXPOSURE_MODELS,
+                    help="Exposure model whose HDF5 outputs are analysed "
+                         f"({', '.join(VALID_EXPOSURE_MODELS)})")
     args = ap.parse_args()
 
     # ── path setup ────────────────────────────────────────────────────────────
@@ -142,39 +110,36 @@ def main():
     output_dir    = Path(args.output_dir)
     scenario_name = args.scenario_name
 
-    defaults = SCENARIO_DEFAULTS.get(scenario_name, {})
+    # ── exposure model config ─────────────────────────────────────────────────
+    exposure_model = args.exposure_model
+    cfg = EXPOSURE_MODEL_CONFIG[exposure_model]
 
-    def _parse_ids(raw, default):
-        ids = [int(x.strip()) for x in raw.split(",") if x.strip()]
-        return ids if ids else default
+    defaults = resolve_scenario_defaults(scenario_name, scenario_path)
+    if defaults and not SCENARIO_DEFAULTS.get(scenario_name):
+        parent = read_source_scenario_name(scenario_path)
+        log("info", f"Using scenario defaults inherited from parent scenario '{parent}'")
 
-    reach_list_single = _parse_ids(args.reach_ids_single,
-                                   defaults.get("reach_list_single", []))
-    reach_list_group  = _parse_ids(args.reach_ids_group,
-                                   defaults.get("reach_list_group", []))
+    reach_list_single = coerce_reach_ids(
+        parse_reach_id_csv(args.reach_ids_single, defaults.get("reach_list_single", []))
+    )
+    reach_list_group  = coerce_reach_ids(
+        parse_reach_id_csv(args.reach_ids_group, defaults.get("reach_list_group", []))
+    )
     plotzoom_from = args.plotzoom_from or defaults.get("plotzoom_from", "")
     plotzoom_to   = args.plotzoom_to   or defaults.get("plotzoom_to", "")
 
     # ── extract experiment / MC IDs from path ─────────────────────────────────
-    parts   = list(mc_path.parts)
-    mc_run  = mc_path.name
-    exp_id  = "Experiment"
-    try:
-        mcs_idx = parts.index("mcs")
-        mc_run  = parts[mcs_idx + 1]
-        exp_id  = parts[mcs_idx - 1]
-    except (ValueError, IndexError):
-        pass
+    exp_id, mc_run = extract_run_identifiers(mc_path)
 
     h5_data = mc_path / "store" / "arr.dat"
 
     # ── analysis settings ─────────────────────────────────────────────────────
-    pec_temporal_percentiles  = [0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, 1.0]
-    pec_spatial_percentiles   = [0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, 1.0]
-    guts_temporal_percentiles = [0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, 1.0]
-    guts_spatial_percentiles  = [0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, 1.0]
-    boxplot_temporal_percentile = [0.9, 0.99, 1.0]
-    lower_LP50_threshold, upper_LP50_threshold = 0.01, 1000
+    pec_temporal_percentiles = DEFAULT_PEC_TEMPORAL_PERCENTILES
+    pec_spatial_percentiles = DEFAULT_PEC_SPATIAL_PERCENTILES
+    guts_temporal_percentiles = DEFAULT_GUTS_TEMPORAL_PERCENTILES
+    guts_spatial_percentiles = DEFAULT_GUTS_SPATIAL_PERCENTILES
+    boxplot_temporal_percentile = DEFAULT_BOXPLOT_TEMPORAL_PERCENTILES
+    lower_LP50_threshold, upper_LP50_threshold = DEFAULT_LP50_THRESHOLD_RANGE
 
     # ── prepare output folder ─────────────────────────────────────────────────
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -192,6 +157,7 @@ def main():
     log("info",  f"Excel file  : {excel_filename}")
     log("info",  f"Run PEC     : {args.run_pec}")
     log("info",  f"Run GUTS    : {args.run_guts}")
+    log("info",  f"Exposure model: {exposure_model}")
 
     if not h5_data.exists():
         log("error", f"HDF5 store not found: {h5_data}")
@@ -200,20 +166,47 @@ def main():
     # ── load geo / scenario shapefile (optional) ──────────────────────────────
     df_geo_reaches            = None
     df_scenario_geo_attributes = None
-    shp_path = scenario_path / "geo" / "Reachlist_shp.shp"
+    reach_id_col = None
+    shp_path = find_reach_shapefile(scenario_path)
     try:
         import geopandas as gpd
-        if shp_path.exists():
-            df_geo_reaches             = gpd.read_file(str(shp_path))
-            df_scenario_geo_attributes = (
-                df_geo_reaches.drop(columns="geometry")
-                              .set_index("key")
-            )
-            log("ok",   f"Shapefile loaded: {shp_path.name}")
+        if shp_path and shp_path.exists():
+            df_geo_reaches = gpd.read_file(str(shp_path))
+            if not df_geo_reaches.empty:
+                reach_id_col = select_reach_id_column(df_geo_reaches, reach_list_single + reach_list_group)
+                if reach_id_col is None:
+                    log("warn", "Reach shapefile has no usable reach-id column – geo plots skipped")
+                    df_geo_reaches = None
+                else:
+                    df_geo_reaches["__reach_id__"] = df_geo_reaches[reach_id_col].map(normalize_reach_id)
+                    df_geo_reaches = df_geo_reaches[df_geo_reaches["__reach_id__"].notna()].copy()
+                    if df_geo_reaches.empty:
+                        log("warn", "Reach shapefile has no mappable reach IDs – geo plots skipped")
+                        df_geo_reaches = None
+                    else:
+                        df_scenario_geo_attributes = (
+                            df_geo_reaches.drop(columns="geometry")
+                                          .set_index("__reach_id__")
+                        )
+                        log("ok", f"Shapefile loaded: {shp_path.name} (reach-id column: {reach_id_col})")
+                        log(
+                            "info",
+                            (
+                                f"Reach geometry features: {len(df_geo_reaches)}; "
+                                f"strahler column present: {'strahler' in df_scenario_geo_attributes.columns}"
+                            ),
+                        )
+            else:
+                log("warn", f"Reach shapefile is empty – geo plots skipped ({shp_path})")
+                df_geo_reaches = None
         else:
             log("info", f"Shapefile not found – geo plots skipped ({shp_path})")
     except ImportError:
         log("info", "geopandas not available – geo plots skipped")
+    except Exception as exc:
+        log("warn", f"Could not load reach shapefile – geo plots skipped ({exc})")
+        df_geo_reaches = None
+        df_scenario_geo_attributes = None
 
     # ─────────────────────────────────────────────────────────────────────────
     # EXPOSURE ANALYSIS
@@ -225,22 +218,31 @@ def main():
         log("info", "=== Exposure Analysis ===")
         try:
             with h5py.File(h5_data, "r") as f:
-                if "CascadeToxswa/ConLiqWatTgtAvg" not in f:
-                    raise KeyError("CascadeToxswa/ConLiqWatTgtAvg not found in HDF5")
+                if cfg["pecsw_key"] not in f:
+                    raise KeyError(f"{cfg['pecsw_key']} not found in HDF5")
                 reach_ids_pecsw = f[
-                    f["CascadeToxswa/ConLiqWatTgtAvg"].attrs["dim1_element_names"]
+                    f[cfg["pecsw_key"]].attrs["dim1_element_names"]
                 ][:]
-                starttime_pecsw = f["CascadeToxswa/ConLiqWatTgtAvg"].attrs["dim0_offset"]
-                df_pecsw  = pd.DataFrame(f["CascadeToxswa/ConLiqWatTgtAvg"][:]) * 1_000_000
-                df_pecsed = pd.DataFrame(f["CascadeToxswa/CntSedTgt1"][:])      * 1_000
+                starttime_pecsw = f[cfg["pecsw_key"]].attrs["dim0_offset"]
+                df_pecsw  = pd.DataFrame(f[cfg["pecsw_key"]][:])  * cfg["pecsw_scale"]
+                df_pecsed = pd.DataFrame(f[cfg["pecsed_key"]][:]) * cfg["pecsed_scale"]
 
             ti = pd.date_range(starttime_pecsw, periods=len(df_pecsw), freq="h")
             for df in (df_pecsw, df_pecsed):
                 df.insert(0, "time", ti)
                 df.set_index("time", inplace=True)
-            df_pecsw.columns  = reach_ids_pecsw
-            df_pecsed.columns = reach_ids_pecsw
+            normalized_reach_cols = normalize_reach_ids(reach_ids_pecsw)
+            df_pecsw.columns = normalized_reach_cols
+            df_pecsed.columns = normalized_reach_cols
             log("ok", f"PECsw loaded: {df_pecsw.shape[0]} timesteps × {df_pecsw.shape[1]} reaches")
+            if df_geo_reaches is not None:
+                geo_ids = set(df_geo_reaches["__reach_id__"])
+                pec_ids = {rid for rid in normalized_reach_cols if rid is not None}
+                overlap = len(geo_ids & pec_ids)
+                if overlap == 0:
+                    log("warn", "No overlap between PEC reach IDs and reach shapefile IDs – geo plots may be empty/skipped")
+                else:
+                    log("info", f"PEC/geometry reach overlap: {overlap} reaches")
 
             # filter to exposed streams
             if args.exposed_only:
@@ -373,7 +375,7 @@ def main():
                     pecsw_T.index.name = "ReachID"
                     col_99 = 0.99 if 0.99 in pecsw_T.columns else pecsw_T.columns[-1]
                     gdf = df_geo_reaches.merge(
-                        pecsw_T[[col_99]], left_on="key", right_on="ReachID", how="left")
+                        pecsw_T[[col_99]], left_on="__reach_id__", right_on="ReachID", how="left")
                     fig, ax = plt.subplots(figsize=(10, 8))
                     gdf.plot(column=col_99, cmap="viridis", legend=True, ax=ax,
                              missing_kwds={"color": "lightgrey"})
@@ -396,26 +398,27 @@ def main():
         log("info", "=== Effect Analysis ===")
         try:
             # Map of (internal_key, hdf5_path, is_survival_cube)
+            _ep = cfg["effect_prefix"]
             GUTS_KEYS = [
-                ("surv_sd_sp1", "IndEffect_CascadeToxswa_SD_Species1/GutsSurvivalReaches", True),
-                ("surv_sd_sp2", "IndEffect_CascadeToxswa_SD_Species2/GutsSurvivalReaches", True),
-                ("surv_sd_sp3", "IndEffect_CascadeToxswa_SD_Species3/GutsSurvivalReaches", True),
-                ("surv_it_sp1", "IndEffect_CascadeToxswa_IT_Species1/GutsSurvivalReaches", True),
-                ("surv_it_sp2", "IndEffect_CascadeToxswa_IT_Species2/GutsSurvivalReaches", True),
-                ("surv_it_sp3", "IndEffect_CascadeToxswa_IT_Species3/GutsSurvivalReaches", True),
-                ("lp50_sd_sp1", "IndEffect_LP50_CascadeToxswa_SD_Species1/LP50", False),
-                ("lp50_sd_sp2", "IndEffect_LP50_CascadeToxswa_SD_Species2/LP50", False),
-                ("lp50_sd_sp3", "IndEffect_LP50_CascadeToxswa_SD_Species3/LP50", False),
-                ("lp50_it_sp1", "IndEffect_LP50_CascadeToxswa_IT_Species1/LP50", False),
-                ("lp50_it_sp2", "IndEffect_LP50_CascadeToxswa_IT_Species2/LP50", False),
-                ("lp50_it_sp3", "IndEffect_LP50_CascadeToxswa_IT_Species3/LP50", False),
+                ("surv_sd_sp1", f"IndEffect_{_ep}_SD_Species1/GutsSurvivalReaches", True),
+                ("surv_sd_sp2", f"IndEffect_{_ep}_SD_Species2/GutsSurvivalReaches", True),
+                ("surv_sd_sp3", f"IndEffect_{_ep}_SD_Species3/GutsSurvivalReaches", True),
+                ("surv_it_sp1", f"IndEffect_{_ep}_IT_Species1/GutsSurvivalReaches", True),
+                ("surv_it_sp2", f"IndEffect_{_ep}_IT_Species2/GutsSurvivalReaches", True),
+                ("surv_it_sp3", f"IndEffect_{_ep}_IT_Species3/GutsSurvivalReaches", True),
+                ("lp50_sd_sp1", f"IndEffect_LP50_{_ep}_SD_Species1/LP50", False),
+                ("lp50_sd_sp2", f"IndEffect_LP50_{_ep}_SD_Species2/LP50", False),
+                ("lp50_sd_sp3", f"IndEffect_LP50_{_ep}_SD_Species3/LP50", False),
+                ("lp50_it_sp1", f"IndEffect_LP50_{_ep}_IT_Species1/LP50", False),
+                ("lp50_it_sp2", f"IndEffect_LP50_{_ep}_IT_Species2/LP50", False),
+                ("lp50_it_sp3", f"IndEffect_LP50_{_ep}_IT_Species3/LP50", False),
             ]
 
             dfs = {}
             with h5py.File(h5_data, "r") as f:
                 # get spatial reference from SD Species 1 survival
-                ref_surv_key = "IndEffect_CascadeToxswa_SD_Species1/GutsSurvivalReaches"
-                ref_lp50_key = "IndEffect_LP50_CascadeToxswa_SD_Species1/LP50"
+                ref_surv_key = f"IndEffect_{_ep}_SD_Species1/GutsSurvivalReaches"
+                ref_lp50_key = f"IndEffect_LP50_{_ep}_SD_Species1/LP50"
                 if ref_surv_key not in f:
                     raise KeyError(f"{ref_surv_key} not in HDF5 – GUTS data not present")
 
@@ -451,7 +454,7 @@ def main():
                 n    = len(dfs[key])
                 dfs[key].insert(0, "time", ti[:n])
                 dfs[key].set_index("time", inplace=True)
-                dfs[key].columns = rids
+                dfs[key].columns = normalize_reach_ids(rids)
 
             # fix LP50 values
             for key in [k for k in dfs if k.startswith("lp50")]:
@@ -579,7 +582,7 @@ def main():
                     ]
                     last_yr = surv_T.columns[-1]
                     gdf = df_geo_reaches.merge(
-                        surv_T[[last_yr]], left_on="key", right_on="ReachID", how="left")
+                        surv_T[[last_yr]], left_on="__reach_id__", right_on="ReachID", how="left")
                     fig, ax = plt.subplots(figsize=(10, 8))
                     gdf.plot(column=last_yr, cmap="RdYlGn", legend=True, ax=ax,
                              missing_kwds={"color": "lightgrey"}, vmin=0, vmax=1)

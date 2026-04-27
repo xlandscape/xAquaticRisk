@@ -42,7 +42,7 @@ Notes on authentication and HTTPS vs SSH:
 - Public repositories like xAquaticRisk can be cloned via HTTPS without a GitHub account.
 - If you prefer SSH and have an SSH key set up, you can clone with the SSH URL instead (`git@github.com:xlandscape/xAquaticRisk.git`).
 
-After cloning: the repository contains documentation, model components, example scenarios and parameterisation files. The default scenario (oudebeek-beek7-tdi) is included and ready to run.
+After cloning: the repository contains documentation, model components, example scenarios and parameterisation files. The default scenario (oudebeek-beek7-tdi) is included and ready to run, and WetterfeldSlice is bundled as an additional shipped scenario.
 
 Cloning steps vary based on the application being used, eg. [Sourcetree](https://support.atlassian.com/bitbucket-cloud/docs/clone-a-git-repository/) or [Visual Studio Code](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository?tabs=activity-bar). Contact Sascha Bub or Thorsten Schad in case of problems.  
 
@@ -55,6 +55,7 @@ To avoid the technical steps of cloning a GitHub repository, the most recent ver
 ### Prerequisites
 
 xAquaticRisk requires a **64-bit Windows** operating system. No additional software installation is required — the model is fully portable.
+For release-grade portability checks (including submodule commit-pointer validation), use the [XCopy Readiness](../reference/xcopy-readiness.md) reference.
 
 ## xAR Parameterisation and Configuration
 
@@ -133,7 +134,7 @@ The table below gives a brief overview. See the **[Parameterisation Reference](.
 To start xAquaticRisk using the sample scenario, **drag `template.xrun` onto `__start__.bat`**. This will start an xAquaticRisk run using the default scenario. Output of the model run can be found in the newly created `\run\<ExperimentID>\` folder.
 
 > [!IMPORTANT]  
-> **ExperimentIDs need to be unique**. xAquaticRisk will create a folder for each run using the ExperimentID defined in the `.xrun` file. The ExperimentID cannot be the same as a folder already contained in the run folder. If you want to run a simulation with the same ExperimentID you need to delete the existing folder first.
+> xAquaticRisk creates a run folder name from the `ExperimentID` and appends a date-time stamp to keep each run folder unique. You can run simulations multiple times with the same `ExperimentID` without deleting an existing run folder first.
 
 A typical simulation workflow:  
 
@@ -143,13 +144,43 @@ A typical simulation workflow:
 4. Monitor progress in the console window or the Control Panel. Log files are written to `\run\<ExperimentID>\log`.  
 5. When the run completes, find results in `\run\<ExperimentID>\reporting` and analysis outputs.  
 
-We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor, real-time run monitor, and analysis tools in a single browser tab — start it via `controlpanel.bat`. The standalone WebUI (`webui.bat`) remains available as well.  
+### Runtime Preflight: Practical Usage
+
+`__start__.bat` supports bundled-runtime preflight modes via `XAQR_PREFLIGHT_MODE`.
+
+- Default (`auto`): run preflight once on a new machine/repository copy, then skip it on later starts.
+- `always`: run preflight before every simulation start.
+- `never`: skip preflight.
+
+After a successful auto preflight, `__start__.bat` writes `.runtime_preflight.ok` to the repository root.
+If that marker exists, auto mode skips preflight.
+
+Common practical commands in `cmd.exe`:
+
+```bat
+set XAQR_PREFLIGHT_MODE=auto
+__start__.bat template.xrun
+```
+
+```bat
+set XAQR_PREFLIGHT_MODE=always
+__start__.bat template.xrun
+```
+
+```bat
+set XAQR_PREFLIGHT_MODE=never
+__start__.bat template.xrun
+```
+
+To trigger the one-time auto preflight again, delete `.runtime_preflight.ok` in the repository root.
+
+We are fully aware that XML is not the ideal **user interface**. The **[Control Panel](../reference/controlpanel.md)** combines a web-based parameterisation editor, real-time run monitor, and analysis tools in a single browser tab — start it via `controlpanel.bat`.  
 
 ## Viewing and Analysing the Output
 
 ### HDFView  
 
-[xLandscape](xLandscape/xLandscape-intro.md) makes use of multidimensional data stores. At present, [HDF](xLandscape/xLandscape-intro.md#multidimensional-data-store) is being used.  
+[xLandscape](../xLandscape/xLandscape-intro.md) makes use of multidimensional data stores. At present, [HDF](../xLandscape/xLandscape-v1x.md#multidimensional-data-store) is being used.  
 
 To view the raw output of xAquaticRisk, open `\run\<ExperimentID>\mcs\[mc run ID]\store\arr.dat` with a HDF5 file viewer such as [HDFView](https://portal.hdfgroup.org/downloads/index.html). Expand the folder tree to inspect individual data stores (e.g., PEC values, spray-drift depositions, effect results).
 
@@ -169,6 +200,7 @@ The **ReportingObserver** automatically generates a set of plots and tables in t
 
 The **`analysis` folder** contains Jupyter notebooks which can analyse and visualise the output of xAquaticRisk. Start `notebook.bat` to access the notebooks. Available notebooks include:
 
+- **PEC_GUTS_InteractiveAnalysis.ipynb**: generated interactive notebook aligned with the controlpanel analysis backend; regenerate it with `update_interactive_analysis_notebook.bat`  
 - **PECsw_toExcel.ipynb**: exports predicted environmental concentrations (PECs) in surface water to Excel format  
 - **LP50 Distribution.ipynb**: analyses and visualises LP50 value distributions  
 - **LP50 by Strahler Order.ipynb**: analyses LP50 values grouped by Strahler stream order  
@@ -176,3 +208,12 @@ The **`analysis` folder** contains Jupyter notebooks which can analyse and visua
 - **Example Figure StreamCom.ipynb**: generates figures from StreamCom population model output  
 - **Hydrographic Maps.ipynb**: generates maps of the hydrographic network with results  
 - **Default Reporting Elements.ipynb**: produces standard reporting elements for the simulation
+
+For users new to xAquaticRisk, the easiest way to use the new interactive analysis notebook is:
+
+1. Start `notebook.bat` from the repository root.
+2. Wait until the local Jupyter page opens in your browser.
+3. In the Jupyter file browser, open `analysis/PEC_GUTS_InteractiveAnalysis.ipynb`.
+4. Run notebook cells from top to bottom and edit only the User Input cell first.
+
+To refresh the generated notebook after analysis logic changes, run `update_interactive_analysis_notebook.bat` from the repository root. This uses the bundled model-core Python and overwrites `analysis\PEC_GUTS_InteractiveAnalysis.ipynb` in place.

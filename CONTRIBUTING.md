@@ -34,6 +34,72 @@ checklist when submitting an issue.
 10. In case another issue is blocking the work on an issue or if two issues are otherwise related, please actively link
     the issues using the according GitLab options.
 
+## Submodule Development Strategy
+
+xAquaticRisk is composed of multiple submodules (components, core, and scenarios) that are maintained in separate
+repositories. All these repositories maintain a *master* branch representing release-ready code. To prevent
+developmental changes in xAquaticRisk from affecting the release branches of these submodules (which other xLandscape
+models depend on), feature development follows a specific branching pattern:
+
+### When to Create Feature Branches in Submodules
+
+Create a feature branch in a submodule when your xAquaticRisk development affects it. This includes:
+
+- **Parameterization changes:** Updates to `template.xrun` or `template.yaml` in the `parameterisation/` folder
+- **Code changes:** Modifications to submodule logic triggered by xAquaticRisk requirements
+- **Configuration changes:** Updates affecting component initialization or behavior
+- **Scenario updates:** Data or configuration changes in scenario submodules
+
+### Feature Branch Naming Convention
+
+Use the naming pattern: **`feature/xAquaticRisk-{descriptive-name}`** or **`dev/xAquaticRisk-{issue-id}`**
+
+Examples:
+- `feature/xAquaticRisk-parameter-updates-2.87`
+- `dev/xAquaticRisk-issue-456`
+- `feature/xAquaticRisk-spray-drift-calibration`
+
+This naming makes it clear that the branch is for xAquaticRisk integration and facilitates cleanup after release.
+
+### Workflow
+
+1. **During development:** xAquaticRisk's `.gitmodules` points to feature branches in affected submodules
+2. **Creating branches:** Use the helper script (see Tools section below) to create feature branches efficiently:
+   ```powershell
+   .\scripts\submodule-workflow-helper.ps1 -Action NewFeature -SubmodulePath "model/variant/CmfContinuous" -FeatureName "parameter-updates-2.87"
+   ```
+3. **At release time:** Feature branches are merged to submodule master branches (manual, coordinated process)
+4. **After integration:** xAquaticRisk `.gitmodules` is updated to point to master branches (now release-ready)
+
+### Tools for Submodule Management
+
+A helper script (`scripts/submodule-workflow-helper.ps1`) is available to simplify submodule workflows:
+
+- **NewFeature:** Create and check out a feature branch in a submodule, auto-update xAquaticRisk `.gitmodules`
+- **Validate:** Scan all submodules to verify they're on development branches (not master during development)
+- **GetStatus:** Display current status of all submodules
+- **ResetToRelease:** Pin all submodules back to master (used during release preparation)
+
+**Usage examples:**
+```powershell
+# Create a feature branch in a component
+.\scripts\submodule-workflow-helper.ps1 -Action NewFeature -SubmodulePath "model/variant/CmfContinuous" -FeatureName "parameter-updates"
+
+# Create a feature branch in a scenario
+.\scripts\submodule-workflow-helper.ps1 -Action NewFeature -SubmodulePath "scenario/oudebeek-beek7-tdi" -FeatureName "data-update"
+
+# Validate all submodules are on correct branches
+.\scripts\submodule-workflow-helper.ps1 -Action Validate
+
+# View status of all submodules
+.\scripts\submodule-workflow-helper.ps1 -Action GetStatus
+
+# Prepare for release (pin all submodules to master)
+.\scripts\submodule-workflow-helper.ps1 -Action ResetToRelease
+```
+
+---
+
 ## Merge requests
 
 The Landscape Model repositories adapt the GitFlow approach for versioning (see
@@ -77,6 +143,28 @@ If you are requesting a merge relating to a model variant, please make sure that
 - [ ] The entire model, including all submodules, can be cloned from GitLab.
 - [ ] The model runs successfully without any errors using the most recent model version.
 - [ ] You haven't reverted any changes made by other contributors unless there is a good reason to do so.
+
+### Pre-Release Checklist for Model Variants
+
+When preparing a release, coordinate submodule updates carefully to prevent breaking downstream xLandscape models.
+Use this checklist **before** creating a release merge request:
+
+- [ ] **Validate submodule branches:** Run `.\scripts\submodule-workflow-helper.ps1 -Action Validate` to ensure all
+  submodules are on development branches (not master during dev)
+- [ ] **Parameterization review:** All parameterization changes in `parameterisation/` are tested and approved
+- [ ] **Version update:** Update version in `model.json` and add a corresponding entry to `CHANGELOG.md` 
+- [ ] **Submodule coordination:** For each submodule with a feature branch:
+  - Ensure the feature branch is approved and ready
+  - Plan the merge to submodule master *before* updating xAquaticRisk `.gitmodules`
+  - Coordinate with component maintainers if needed
+- [ ] **Reset to release:** Run `.\scripts\submodule-workflow-helper.ps1 -Action ResetToRelease` to pin all
+  submodules to master (release-ready commits)
+- [ ] **Verify `.gitmodules`:** Manually verify that `.gitmodules` points to master commits in all submodules
+  (or to release-pinned versions if specified)
+- [ ] **Create release PR:** Merge request should include version bump and `.gitmodules` updates
+- [ ] **CI validation passes:** Automated validation confirms branch correctness and version consistency
+- [ ] **Communicate:** After release merge, notify other xLandscape model maintainers that component dependencies
+  have been updated if submodules were affected
 
 ## Scenario
 

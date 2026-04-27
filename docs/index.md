@@ -83,6 +83,7 @@ Its realisation was only possible due to the contribution of colleagues listed b
 | Role / Activity | Person |
 |---|---|
 | Idea and Initiative | Thorsten Schad |
+| Consultation | Thomas Preuss, André Gergs, Bas Buddendorf, Lutz Breuer |
 | Goals & Requirements | Thorsten Schad, Sascha Bub |
 | Design | Thorsten Schad, Sascha Bub  |
 | Implementation | Sascha Bub, Thorsten Schad |
@@ -91,6 +92,9 @@ Its realisation was only possible due to the contribution of colleagues listed b
 | Publication | Sascha Bub, Thorsten Schad |
 | Analysis Modules | Thorsten Schad |
 | Scenarios & Hydrology | Sebastian Multsch, Thorsten Schad, Sascha Bub |
+| LGUTS | Hans Baveko, Bas Buddendorf |
+| LPOP | Hans Baveko, Bas Buddendorf |
+| Toxswa | Wim Beltman, Maarten Braakhekke |
 | StreamCom | Tido Strauß |
 
 ## References

@@ -1,6 +1,14 @@
 # Changelog
 This list contains all additions, changes and fixes for xAquaticRisk.
 
+## [Unreleased]
+### Added
+- Bundled WetterfeldSlice as an additional shipped scenario with canonical metadata and package documentation.
+- Added canonical WetterfeldSlice parameterisation examples and analysis preset entries.
+### Changed
+- Standardized the shipped scenario name to WetterfeldSlice across docs and analysis presets.
+### Fixed
+
 ## [2.86] - 2026-02-04
 ### Added
 ### Changed

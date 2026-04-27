@@ -1,0 +1,184 @@
+name: Submodule Branch and Version Validation
+
+on:
+  pull_request:
+    branches:
+      - feature/**
+      - master
+    paths:
+      - '.gitmodules'
+      - 'model.json'
+      - 'CHANGELOG.md'
+
+jobs:
+  validate-submodules:
+    name: Validate Submodule Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Validate branch policy
+        id: branch_validation
+        run: |
+          echo "## Submodule Branch Validation" >> $GITHUB_STEP_SUMMARY
+          
+          VIOLATIONS=0
+          DEVELOPMENT_BRANCHES=0
+          
+          # Parse .gitmodules and check each submodule
+          while IFS= read -r line; do
+            if [[ $line =~ ^\[submodule ]]; then
+              SUBMODULE_NAME=$(echo "$line" | sed 's/.*"\(.*\)".*/\1/')
+            fi
+            if [[ $line =~ ^[[:space:]]*path[[:space:]]*= ]]; then
+              SUBMODULE_PATH=$(echo "$line" | sed 's/.*=[[:space:]]*\(.*\)/\1/')
+            fi
+            if [[ $line =~ ^[[:space:]]*branch[[:space:]]*= ]]; then
+              BRANCH=$(echo "$line" | sed 's/.*=[[:space:]]*\(.*\)/\1/')
+            fi
+          done < .gitmodules
+          
+          # For each submodule, get the current commit and determine its branch
+          git config --file=.gitmodules --name-only --get-regexp path | while read path_key; do
+            SUBMODULE_PATH=$(git config --file=.gitmodules --get "$path_key")
+            
+            if [ -d "$SUBMODULE_PATH/.git" ]; then
+              COMMIT=$(git -C "$SUBMODULE_PATH" rev-parse HEAD)
+              BRANCH=$(git -C "$SUBMODULE_PATH" rev-parse --abbrev-ref HEAD)
+              REMOTE_BRANCH=$(git -C "$SUBMODULE_PATH" ls-remote --symref origin HEAD | awk '{print $2}' | sed 's|refs/heads/||')
+              
+              # Check if commit is on master or main
+              IS_ON_MASTER=false
+              if git -C "$SUBMODULE_PATH" rev-list master --not $BRANCH | grep -q $COMMIT 2>/dev/null || \
+                 [ "$BRANCH" = "master" ] || [ "$BRANCH" = "main" ]; then
+                IS_ON_MASTER=true
+              fi
+              
+              if [ "$IS_ON_MASTER" = "true" ]; then
+                echo "⚠️  **$SUBMODULE_PATH:** on master (commit $COMMIT)" >> $GITHUB_STEP_SUMMARY
+                VIOLATIONS=$((VIOLATIONS + 1))
+              else
+                echo "✅ **$SUBMODULE_PATH:** on $BRANCH (development branch)" >> $GITHUB_STEP_SUMMARY
+                DEVELOPMENT_BRANCHES=$((DEVELOPMENT_BRANCHES + 1))
+              fi
+            fi
+          done
+          
+          echo "VIOLATIONS=$VIOLATIONS" >> $GITHUB_OUTPUT
+          echo "DEVELOPMENT_BRANCHES=$DEVELOPMENT_BRANCHES" >> $GITHUB_OUTPUT
+
+      - name: Validate version consistency
+        id: version_validation
+        run: |
+          echo "## Version and CHANGELOG Validation" >> $GITHUB_STEP_SUMMARY
+          
+          # Get current and base version
+          CURRENT_VERSION=$(python -c "import json; print(json.load(open('model.json'))['version'])")
+          BASE_VERSION=$(git show origin/${{ github.base_ref }}:model.json 2>/dev/null | python -c "import sys, json; print(json.load(sys.stdin)['version'])" || echo "$CURRENT_VERSION")
+          
+          echo "Current version: $CURRENT_VERSION"
+          echo "Base version: $BASE_VERSION"
+          
+          VERSION_BUMPED=false
+          GITMODULES_CHANGED=false
+          VERSION_INCONSISTENCY=false
+          
+          # Check if version was incremented
+          if [ "$CURRENT_VERSION" != "$BASE_VERSION" ]; then
+            VERSION_BUMPED=true
+            echo "✅ Version incremented: $BASE_VERSION → $CURRENT_VERSION" >> $GITHUB_STEP_SUMMARY
+            
+            # Check for CHANGELOG entry
+            if grep -q "^## \[$CURRENT_VERSION\]" CHANGELOG.md; then
+              echo "✅ CHANGELOG entry found for version $CURRENT_VERSION" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ Missing CHANGELOG entry for version $CURRENT_VERSION" >> $GITHUB_STEP_SUMMARY
+              VERSION_INCONSISTENCY=true
+            fi
+            
+            # Check for version rollback
+            if [ $(printf '%s\n' "$BASE_VERSION" "$CURRENT_VERSION" | sort -V | head -n1) = "$CURRENT_VERSION" ] && \
+               [ "$CURRENT_VERSION" != "$BASE_VERSION" ]; then
+              echo "❌ Version rollback detected: $BASE_VERSION → $CURRENT_VERSION (should be higher)" >> $GITHUB_STEP_SUMMARY
+              VERSION_INCONSISTENCY=true
+            fi
+          else
+            echo "ℹ️  Version unchanged (development PR)" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check if .gitmodules changed
+          if git diff origin/${{ github.base_ref }}...HEAD --name-only | grep -q "\.gitmodules"; then
+            GITMODULES_CHANGED=true
+            echo "ℹ️  .gitmodules changed" >> $GITHUB_STEP_SUMMARY
+            
+            # If submodules changed, version must be bumped
+            if [ "$GITMODULES_CHANGED" = "true" ] && [ "$VERSION_BUMPED" = "false" ]; then
+              echo "❌ Submodule changes require version bump in model.json" >> $GITHUB_STEP_SUMMARY
+              VERSION_INCONSISTENCY=true
+            fi
+          else
+            echo "ℹ️  .gitmodules unchanged" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "VERSION_BUMPED=$VERSION_BUMPED" >> $GITHUB_OUTPUT
+          echo "GITMODULES_CHANGED=$GITMODULES_CHANGED" >> $GITHUB_OUTPUT
+          echo "VERSION_INCONSISTENCY=$VERSION_INCONSISTENCY" >> $GITHUB_OUTPUT
+
+      - name: Comment PR with validation results
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const branchViolations = ${{ steps.branch_validation.outputs.VIOLATIONS }};
+            const devBranches = ${{ steps.branch_validation.outputs.DEVELOPMENT_BRANCHES }};
+            const versionInconsistency = ${{ steps.version_validation.outputs.VERSION_INCONSISTENCY }} === 'true';
+            
+            let comment = `## 🔍 Submodule Validation Report\n\n`;
+            
+            comment += `### Branch Policy\n`;
+            if (branchViolations > 0) {
+              comment += `❌ **${branchViolations} submodule(s)** pointing to master (should be on feature/dev branches)\n`;
+              comment += `**Action required:** Use helper script or create feature branches for development changes\n`;
+            } else if (devBranches > 0) {
+              comment += `✅ All submodules on development branches\n`;
+            } else {
+              comment += `ℹ️ No submodules to validate\n`;
+            }
+            
+            comment += `\n### Version Consistency\n`;
+            if (versionInconsistency) {
+              comment += `❌ Version inconsistencies detected (see logs above)\n`;
+            } else {
+              comment += `✅ Version and CHANGELOG in sync\n`;
+            }
+            
+            comment += `\n---\n`;
+            comment += `**Validation Details:** [View in Actions](${context.payload.pull_request.html_url}/checks)\n`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Enforce validation on merge
+        if: failure() || steps.branch_validation.outputs.VIOLATIONS > 0 || steps.version_validation.outputs.VERSION_INCONSISTENCY
+        run: |
+          echo "❌ Validation failed. Please address issues above before merging."
+          exit 1
+
+      - name: Success
+        if: success() && steps.branch_validation.outputs.VIOLATIONS == 0 && !steps.version_validation.outputs.VERSION_INCONSISTENCY
+        run: |
+          echo "✅ All validations passed!"
