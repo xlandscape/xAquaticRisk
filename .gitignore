@@ -14,6 +14,7 @@ controlpanel/python/**/*.pyo
 controlpanel/python/**/*.log
 controlpanel/python/**/pip-delete-this-directory.txt
 controlpanel/server.instance.lock
+.runtime_preflight.ok
 __pycache__/
 *.pyc
 scenario/
